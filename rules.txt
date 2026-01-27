@@ -1,0 +1,89 @@
+﻿Rules, Ancient Scripts and Texts mentioning Chaturanga and Board
+Comparison between Different Variants and Causes of the Differences
+Board Layout (8├ù8)
+8 | ΓÖ£ ΓùÅ . . . . . ΓÖ£
+7 | ΓÖ₧ ΓùÅ . . . . . ΓÖ₧
+6 | ΓÖ¥ ΓùÅ . . . . . ΓÖ¥
+5 | ΓÖ¢ ΓùÅ ΓåÆ . . . . .
+4 | . . . . . ΓåÉ ΓùÅ ΓÖ¢
+3 | . . . Γåæ . . ΓùÅ ΓÖ¥
+2 | ΓùÅ ΓùÅ ΓùÅ ΓùÅ . . ΓùÅ ΓÖ₧
+1 | ΓÖ£ ΓÖ₧ ΓÖ¥ ΓÖ¢ . . ΓùÅ ΓÖ£
+    a b c d e f g h
+(ΓùÅ = Pawn / Nar)
+Symbols / Legend
+ΓùÅ  ΓåÆ αñ¿αñ░  (Nar / Pawn)
+ΓÖ£ ΓåÆ αñ░αñÑ (Rath / Rook)
+ΓÖ₧ ΓåÆ αñàαñ╢αÑìαñ╡ (Ashva / Horse)
+ΓÖ¥ ΓåÆ αñ╣αñ╛αñÑαÑÇ (Hathi / Elephant)
+ΓÖ¢ ΓåÆ αñ░αñ╛αñ£αñ¿ (Rajan / King)
+Points per Piece (PPP)
+αñ¿αñ░ (Pawn)      : 1 point
+αñàαñ╢αÑìαñ╡ (Horse)   : 3 - 3.5 points
+αñ╣αñ╛αñÑαÑÇ (Elephant): 2 - 2.5 points
+αñ░αñÑ (Rook)      : 5 points
+αñ░αñ╛αñ£αñ¿ (King)   : Γê₧ points
+Roll of Die / αñíαñ╛αñ▓αñ╛
+1 ΓåÆ αñ░αñÑ
+3 ΓåÆ αñàαñ╢αÑìαñ╡
+4 ΓåÆ αñ╣αñ╛αñÑαÑÇ
+6 ΓåÆ αñ¿αñ░ / αñ░αñ╛αñ£αñ¿
+Minor / Major Pieces
+Minor Pieces : αñ¿αñ░, αñàαñ╢αÑìαñ╡, αñ╣αñ╛αñÑαÑÇ
+Major Pieces : αñ░αñÑ, αñàαñ╢αÑìαñ╡, αñ░αñ╛αñ£αñ¿
+Minor pieces cannot capture Major pieces.
+But Major pieces can capture any piece.
+Game Type:
+Team Up Game
+Pieces Movement Rules
+1) αñ¿αñ░ (Pawn)
+Can only move forward by one square
+Captures diagonally
+Different from chess pawn ΓåÆ It cannot play 2 squares forward in first move
+2) αñ░αñÑ (Rook)
+Moves exactly like chess rook
+Cannot jump over pieces
+3) αñ╣αñ╛αñÑαÑÇ (Elephant) ΓÇô Different Versions
+I) Version I
+Moves exactly 2 squares diagonally, jumping over any piece.
+\   /
+  H
+/   \
+II) Version II
+Moves exactly 2 squares in any direction
+Γåæ   Γåæ   Γåæ
+ΓåÉ   H   ΓåÆ
+Γåô   Γåô   Γåô
+III) Version III
+One step diagonally OR one step forward
+(Inspired from Thai/Burmese chess ΓÇô Represents 4 legs trunk of elephant)
+\  Γåæ  /
+   H
+/     \
+4) αñàαñ╢αÑìαñ╡ (Horse)
+L-shape movement
+Similar to the knight of chess
+5) αñ░αñ╛αñ£αñ¿ (King)
+Moves one step in any direction
+More Game Rules
+I) Minor cannot capture Major, but Major can capture any piece.
+II) To win: Kill the kings of opponent team (2 players ΓåÆ 2 kings).
+III) King can comeback to the game by killing the king of opponent (at least one king) and keep it anywhere.
+IV) If a king is killed twice, he cannot come back to the game and player cannot move any piece.
+V) Promotion of G2:
+Corresponding piece to the board gets the G2 promotion
+Can get promoted to king
+Can capture pieces of opponent (except king)
+Victory Conditions
+Checkmate
+Boring the King: Capturing all the pieces of the opponent
+Stalemate: If you cannot make a move, you lose
+Agreement of draw or resign
+Here is the verbatim (as-is) typed extraction of the handwritten page you shared, keeping wording, spelling, and structure as close as possible to the original:
+The game of Chaturanga is different and distinct from other similar board games ΓÇô chess, shogi, xiangqi or checkers.
+It involves the ΓÇ£uncertainty elementΓÇ¥ of dice as a player has to compulsorily make the best move of the piece whose number appears on the dice.
+Separate decision trees and integrating the minimax algorithm with alpha-beta pruning would serve out a good result for the Probabilistic Game of Chess.
+Yes, Chaturanga is the Probabilistic Game of Chess with distinct rules played mostly among four players with team up.
+The draw by stalemate is absent and the player who does the stalemate wins.
+The Queen, the most powerful chess piece after King is not present in the game; there is no such rule like ΓÇ£castlingΓÇ¥ and the king has a chance to comeback onto the board once if their teammate gets to capture the king of their opponent and the king has the freedom to get placed on any vacant (unoccupied) square of the Asht─üpada.
+Chaturanga could be called as the Indian version and the ancestor of Modern Chess (or western chaturanga).

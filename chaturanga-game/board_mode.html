@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chaturanga — Board Mode</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/board.css">
+</head>
+<body>
+  <header>
+    <h1>Chaturanga — Board Mode</h1>
+    <div id="controls">
+      <button id="rollBtn">Roll Dice</button>
+      <button id="forfeitBtn">Forfeit Turn</button>
+      <div id="diceFace">—</div>
+      <div id="forcedPiece">Forced: —</div>
+      <div id="turnIndicator">Turn: —</div>
+    </div>
+  </header>
+
+  <main>
+    <section id="gameArea">
+      <div id="board" class="board wooden-board"></div>
+      <aside id="info">
+        <h3>Game Info</h3>
+        <div id="status">Status: Ready</div>
+        <div id="captured">Captured: </div>
+        <div id="history">Move history</div>
+        <div class="legend">
+          <div class="badge red">Red</div>
+          <div class="badge green">Green</div>
+          <div class="badge black">Black</div>
+          <div class="badge yellow">Yellow</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <template id="square-template">
+    <div class="square">
+      <span class="piece"></span>
+    </div>
+  </template>
+
+  <script src="js/game.js"></script>
+  <script src="js/dice.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
