@@ -501,7 +501,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (botCountEl) {
       // Init from URL if present (legacy compatibility)
       const params = new URLSearchParams(window.location.search);
-      if (params.get('mode') === 'computer') {
+      if (params.get('botCount')) {
+        // Support ?botCount=1|2|3 from the website launcher
+        const bc = parseInt(params.get('botCount'), 10);
+        if (bc >= 0 && bc <= 4) {
+          botCountEl.value = String(bc);
+          game.setBotConfig(bc);
+          if (bc === 4 && autoRollDiceEl) autoRollDiceEl.checked = true;
+          if (bc > 0) {
+            setTimeout(() => tryAutoRoll(), 800);
+          }
+        }
+      } else if (params.get('mode') === 'computer') {
         botCountEl.value = '1';
         game.setBotConfig(1);
       }
