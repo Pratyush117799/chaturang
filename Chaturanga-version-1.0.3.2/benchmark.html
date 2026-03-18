@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chaturanga — Bot Benchmark</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg:       #0f1117;
+      --surface:  #1a1d27;
+      --card:     #22263a;
+      --border:   #2e3450;
+      --accent:   #7c6af7;
+      --accent2:  #f7a06a;
+      --green:    #4ade80;
+      --red:      #f87171;
+      --yellow:   #fbbf24;
+      --blue:     #60a5fa;
+      --text:     #e2e8f0;
+      --muted:    #7a839e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    h1 span { color: var(--accent); }
+    .subtitle { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+    /* ── Layout ─────────────────────────────── */
+    .layout { display: flex; gap: 24px; max-width: 1100px; margin: 0 auto; flex-wrap: wrap; }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .config-panel { flex: 0 0 320px; }
+    .results-panel { flex: 1 1 400px; }
+
+    /* ── Config ─────────────────────────────── */
+    h2 { font-size: 1rem; font-weight: 600; color: var(--accent); margin-bottom: 16px;
+         display: flex; align-items: center; gap: 8px; }
+    h2 i { font-size: 0.9rem; }
+
+    .field { margin-bottom: 14px; }
+    label.field-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    select, input[type=range] {
+      width: 100%;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+    }
+    select:hover, select:focus { border-color: var(--accent); }
+
+    .range-row { display: flex; align-items: center; gap: 10px; }
+    .range-row input { flex: 1; cursor: pointer; }
+    .range-val {
+      font-weight: 700; font-size: 1.1rem; color: var(--accent);
+      min-width: 40px; text-align: right;
+    }
+
+    .run-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity 0.2s;
+    }
+    .run-btn:hover { opacity: 0.88; }
+    .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Progress ───────────────────────────── */
+    .progress-wrap {
+      margin-top: 18px; display: none;
+    }
+    .progress-bar-bg {
+      background: var(--card);
+      border-radius: 99px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.15s;
+    }
+    .progress-label { font-size: 0.8rem; color: var(--muted); text-align: center; }
+
+    /* ── vs display ─────────────────────────── */
+    .vs-display {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      gap: 12px;
+    }
+    .vs-side { text-align: center; flex: 1; }
+    .vs-name { font-size: 0.75rem; color: var(--muted); font-weight: 600;
+               text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .vs-elo  { font-size: 1.6rem; font-weight: 700; }
+    .vs-elo.a { color: var(--green); }
+    .vs-elo.b { color: var(--accent2); }
+    .vs-dot  { font-size: 1.4rem; color: var(--muted); font-weight: 900; }
+
+    /* ── Score cards ────────────────────────── */
+    .score-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 20px;
+    }
+    .score-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .score-card .label { font-size: 0.72rem; color: var(--muted);
+                         text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .score-card .value { font-size: 2rem; font-weight: 800; }
+    .score-card.winner-a .value { color: var(--green); }
+    .score-card.winner-b .value { color: var(--accent2); }
+    .score-card.draws    .value { color: var(--yellow); }
+    .score-card.timeout  .value { color: var(--muted); }
+
+    /* ── Win bar ────────────────────────────── */
+    .win-bar-wrap { margin-bottom: 20px; }
+    .win-bar-labels { display: flex; justify-content: space-between;
+                      font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+    .win-bar {
+      height: 14px; border-radius: 99px; overflow: hidden;
+      background: var(--card);
+      display: flex;
+    }
+    .win-bar .seg-a { background: var(--green); transition: width 0.5s; }
+    .win-bar .seg-d { background: var(--yellow); transition: width 0.5s; }
+    .win-bar .seg-b { background: var(--accent2); transition: width 0.5s; }
+
+    /* ── ELO estimate ───────────────────────── */
+    .elo-estimate {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .elo-estimate h3 { font-size: 0.78rem; color: var(--muted);
+                       text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .elo-row { display: flex; justify-content: space-between; align-items: center;
+               padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .elo-row:last-child { border-bottom: none; }
+    .elo-row .name { font-size: 0.85rem; font-weight: 600; }
+    .elo-row .elo-val { font-size: 1rem; font-weight: 800; color: var(--accent); }
+    .elo-row .elo-badge {
+      font-size: 0.72rem; padding: 2px 8px;
+      border-radius: 99px; font-weight: 600;
+    }
+    .badge-up   { background: rgba(74,222,128,0.15); color: var(--green); }
+    .badge-down { background: rgba(248,113,113,0.15); color: var(--red); }
+    .badge-same { background: rgba(122,131,158,0.15); color: var(--muted); }
+
+    /* ── Game log ───────────────────────────── */
+    .log-section h3 { font-size: 0.78rem; color: var(--muted);
+                      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    #gameLog {
+      max-height: 260px; overflow-y: auto;
+      font-size: 0.78rem; color: var(--muted);
+      line-height: 1.7;
+    }
+    #gameLog .log-win  { color: var(--text); }
+    #gameLog .log-draw { color: var(--yellow); }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; }
+    .empty-state i { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+    /* ── Rating table ───────────────────────── */
+    .rating-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .rating-table th {
+      background: var(--card); color: var(--muted); font-weight: 600;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 8px 12px; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .rating-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .rating-table tr:last-child td { border-bottom: none; }
+    .badge-100 { color: var(--muted); }
+    .badge-200 { color: var(--blue); }
+    .badge-300 { color: var(--yellow); }
+    .badge-400 { color: var(--accent); }
+    .badge-500 { color: #e879f9; }
+    .badge-600 { color: #f43f5e; }
+    .badge-500 { color: #e879f9; }
+    .badge-600 { color: #f43f5e; }
+    .pill {
+      display: inline-block; padding: 2px 8px; border-radius: 99px;
+      font-size: 0.7rem; font-weight: 700;
+    }
+
+    /* ── Info box ───────────────────────────── */
+    .info-box {
+      background: rgba(124,106,247,0.08);
+      border: 1px solid rgba(124,106,247,0.25);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 16px;
+    }
+    .info-box strong { color: var(--text); }
+
+    @media (max-width: 720px) { .config-panel { flex: 0 0 100%; } }
+  </style>
+</head>
+<body>
+
+<h1><i class="fa-solid fa-chart-bar"></i> Chaturanga <span>Bot Benchmark</span></h1>
+<p class="subtitle">Pit bot levels against each other — measures Chaturanga ELO ratings empirically</p>
+
+<div class="layout">
+
+  <!-- ── Config Panel ─────────────────────────────────────────── -->
+  <div class="panel config-panel">
+    <h2><i class="fa-solid fa-sliders"></i> Match Setup</h2>
+
+    <div class="field">
+      <label class="field-label">Team A — Red &amp; Green (Team 1)</label>
+      <select id="eloA">
+        <option value="100">ELO 100 — Random</option>
+        <option value="200">ELO 200 — Greedy</option>
+        <option value="300" selected>ELO 300 — Tactical</option>
+        <option value="400">ELO 400 — Strategic</option>
+        <option value="500">ELO 500 — Deep Tactical</option>
+        <option value="600">ELO 600 — Paranoid</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Team B — Blue &amp; Yellow (Team 2)</label>
+      <select id="eloB">
+        <option value="100" selected>ELO 100 — Random</option>
+        <option value="200">ELO 200 — Greedy</option>
+        <option value="300">ELO 300 — Tactical</option>
+        <option value="400">ELO 400 — Strategic</option>
+        <option value="500">ELO 500 — Deep Tactical</option>
+        <option value="600">ELO 600 — Paranoid</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Number of Games</label>
+      <div class="range-row">
+        <input type="range" id="numGames" min="10" max="200" step="10" value="50">
+        <span class="range-val" id="numGamesLabel">50</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Game Mode</label>
+      <select id="gameMode">
+        <option value="team">Team (2 vs 2)</option>
+        <option value="single">Single / Free-for-All</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Max Moves per Game</label>
+      <div class="range-row">
+        <input type="range" id="maxMoves" min="100" max="800" step="50" value="400">
+        <span class="range-val" id="maxMovesLabel">400</span>
+      </div>
+    </div>
+
+    <button class="run-btn" id="runBtn">
+      <i class="fa-solid fa-play"></i> Run Benchmark
+    </button>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Simulating…</div>
+    </div>
+
+    <div class="info-box">
+      <strong>How it works:</strong> Each match runs fully automated games.
+      ELO changes are calculated using the standard Elo formula (K=32).
+      Results update live as games complete.
+    </div>
+
+    <!-- Known ratings table -->
+    <div style="margin-top:24px;">
+      <h2><i class="fa-solid fa-list-ol"></i> Defined ELO Scale</h2>
+      <table class="rating-table">
+        <thead>
+          <tr><th>Level</th><th>Algorithm</th><th>Chaturanga ELO</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill badge-100">ELO 100</span></td>
+            <td>Pure Random</td>
+            <td class="badge-100"><strong>100</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill badge-200">ELO 200</span></td>
+            <td>Greedy Capture</td>
+            <td class="badge-200"><strong>200</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill badge-300">ELO 300</span></td>
+            <td>Tactical Eval</td>
+            <td class="badge-300"><strong>300</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill badge-400">ELO 400</span></td>
+            <td>Expectiminimax</td>
+            <td class="badge-400"><strong>400</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill badge-500">ELO 500</span></td>
+            <td>SEE + 2-ply Lookahead</td>
+            <td class="badge-500"><strong>500</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill badge-600">ELO 600</span></td>
+            <td>Paranoid Algorithm</td>
+            <td class="badge-600"><strong>600</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Results Panel ─────────────────────────────────────────── -->
+  <div class="panel results-panel">
+    <h2><i class="fa-solid fa-trophy"></i> Results</h2>
+
+    <!-- vs display -->
+    <div class="vs-display">
+      <div class="vs-side">
+        <div class="vs-name">Team A (Red/Green)</div>
+        <div class="vs-elo a" id="displayEloA">300</div>
+      </div>
+      <div class="vs-dot">vs</div>
+      <div class="vs-side">
+        <div class="vs-name">Team B (Blue/Yellow)</div>
+        <div class="vs-elo b" id="displayEloB">100</div>
+      </div>
+    </div>
+
+    <!-- Score cards -->
+    <div class="score-grid">
+      <div class="score-card winner-a">
+        <div class="label">Team A Wins</div>
+        <div class="value" id="winsA">—</div>
+      </div>
+      <div class="score-card winner-b">
+        <div class="label">Team B Wins</div>
+        <div class="value" id="winsB">—</div>
+      </div>
+      <div class="score-card draws">
+        <div class="label">Draws / Timeout</div>
+        <div class="value" id="draws">—</div>
+      </div>
+      <div class="score-card timeout">
+        <div class="label">Avg Game Length</div>
+        <div class="value" id="avgMoves">—</div>
+      </div>
+    </div>
+
+    <!-- Win percentage bar -->
+    <div class="win-bar-wrap">
+      <div class="win-bar-labels">
+        <span id="pctA" style="color:var(--green)">—</span>
+        <span style="color:var(--yellow)">Draw</span>
+        <span id="pctB" style="color:var(--accent2)">—</span>
+      </div>
+      <div class="win-bar">
+        <div class="seg-a" id="barA" style="width:0%"></div>
+        <div class="seg-d" id="barD" style="width:0%"></div>
+        <div class="seg-b" id="barB" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- ELO estimate -->
+    <div class="elo-estimate">
+      <h3><i class="fa-solid fa-ranking-star"></i> Estimated ELO after this match</h3>
+      <div class="elo-row">
+        <span class="name">Team A</span>
+        <span class="elo-val" id="eloEstA">—</span>
+        <span class="elo-badge" id="eloBadgeA"></span>
+      </div>
+      <div class="elo-row">
+        <span class="name">Team B</span>
+        <span class="elo-val" id="eloEstB">—</span>
+        <span class="elo-badge" id="eloBadgeB"></span>
+      </div>
+    </div>
+
+    <!-- Game log -->
+    <div class="log-section">
+      <h3><i class="fa-solid fa-scroll"></i> Game Log</h3>
+      <div id="gameLog">
+        <div class="empty-state">
+          <i class="fa-solid fa-play-circle"></i>
+          Run a benchmark to see results
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Engine scripts -->
+<script src="js/game.js"></script>
+<script src="engine/randomMoveGenerator.js"></script>
+<script src="js/bot/randomMove.js"></script>
+<script src="js/bot/tieredBots.js"></script>
+
+<script>
+'use strict';
+
+// ─── UI bindings ───────────────────────────────────────────────────────────
+const eloAEl       = document.getElementById('eloA');
+const eloBEl       = document.getElementById('eloB');
+const numGamesEl   = document.getElementById('numGames');
+const numGamesLbl  = document.getElementById('numGamesLabel');
+const maxMovesEl   = document.getElementById('maxMoves');
+const maxMovesLbl  = document.getElementById('maxMovesLabel');
+const gameModeEl   = document.getElementById('gameMode');
+const runBtn       = document.getElementById('runBtn');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const progressLbl  = document.getElementById('progressLabel');
+
+numGamesEl.addEventListener('input', () => { numGamesLbl.textContent = numGamesEl.value; });
+maxMovesEl.addEventListener('input', () => { maxMovesLbl.textContent = maxMovesEl.value; });
+
+function syncVsDisplay() {
+  document.getElementById('displayEloA').textContent = eloAEl.value;
+  document.getElementById('displayEloB').textContent = eloBEl.value;
+}
+eloAEl.addEventListener('change', syncVsDisplay);
+eloBEl.addEventListener('change', syncVsDisplay);
+syncVsDisplay();
+
+// ─── Simulation core ──────────────────────────────────────────────────────
+
+/**
+ * Run one complete game simulation.
+ * Returns { winner: 0|1|null, moves: number }
+ *   winner 0 → Team A (Red+Green), winner 1 → Team B (Blue+Yellow), null → draw/timeout
+ */
+function simulateOneGame(eloA, eloB, gameMode, maxMoves) {
+  const game = new ChaturangaGame();
+  game.gameMode = gameMode;
+  game.players.forEach(p => p.isBot = true);
+
+  let moveCount = 0;
+
+  while (!game.gameOver && moveCount < maxMoves) {
+    // Roll dice
+    game.rollDice();
+
+    // Auto-forfeit if no legal moves exist
+    if (game.autoForfeitIfNoMove()) {
+      moveCount++;
+      continue;
+    }
+
+    const player  = game.getPlayer();
+    if (!player || player.eliminated) { game.nextTurn(); moveCount++; continue; }
+
+    // Determine ELO for this player
+    const isTeamA = player.team === 0;   // Red=0 Green=0, Blue=1 Yellow=1
+    const elo     = isTeamA ? eloA : eloB;
+
+    let move = null;
+    if (elo === 100) {
+      move = window.ChaturangaRandomBot
+        ? window.ChaturangaRandomBot.getMove(game, player.id)
+        : null;
+    } else {
+      move = window.ChaturangaTieredBot
+        ? window.ChaturangaTieredBot.getMove(game, elo)
+        : null;
+    }
+
+    if (move) {
+      game.makeMove(move.from, move.to);
+
+      // Handle king respawn (team mode) — auto-place on random empty square
+      if (game.pendingKingRespawn) {
+        const empty = game.board.getAllEmptySquares();
+        if (empty.length > 0) {
+          const rSq = empty[Math.floor(Math.random() * empty.length)];
+          game.respawnKing(rSq);
+        } else {
+          game.pendingKingRespawn = null;
+        }
+      }
+
+      // Handle pending eliminations (single mode)
+      if (game.pendingElimination) {
+        game.completeElimination();
+      }
+    } else {
+      // No move found — forfeit
+      if (!game.forfeitTurn()) {
+        // forfeit already at limit — force next turn
+        game.forcedPiece = null;
+        game.lastDice    = null;
+        game.nextTurn();
+      }
+    }
+
+    moveCount++;
+  }
+
+  // Determine outcome
+  if (game.gameOver) {
+    if (game.gameMode === 'team') {
+      return { winner: game.winner, moves: moveCount }; // 0 = Team A, 1 = Team B
+    } else {
+      // FFA: map winnerPlayerId to team
+      if (game.winnerPlayerId != null) {
+        const winTeam = game.players[game.winnerPlayerId].team;
+        return { winner: winTeam, moves: moveCount };
+      }
+    }
+  }
+  return { winner: null, moves: moveCount };
+}
+
+// ─── ELO calculation ──────────────────────────────────────────────────────
+
+/**
+ * Standard Elo expected score formula.
+ * @param {number} rA - rating of player A
+ * @param {number} rB - rating of player B
+ */
+function expectedScore(rA, rB) {
+  return 1 / (1 + Math.pow(10, (rB - rA) / 400));
+}
+
+/**
+ * Calculate updated ELO ratings after a series of results.
+ * @param {number} baseA   - starting ELO for A
+ * @param {number} baseB   - starting ELO for B
+ * @param {number} winsA   - number of A wins
+ * @param {number} winsB   - number of B wins
+ * @param {number} draws   - number of draws
+ * @param {number} K       - K-factor (default 32)
+ */
+function calcElo(baseA, baseB, winsA, winsB, draws, K = 32) {
+  const total   = winsA + winsB + draws;
+  if (total === 0) return { newA: baseA, newB: baseB };
+
+  const scoreA  = (winsA + draws * 0.5) / total;
+  const scoreB  = (winsB + draws * 0.5) / total;
+  const expA    = expectedScore(baseA, baseB);
+  const expB    = expectedScore(baseB, baseA);
+
+  const newA = Math.round(baseA + K * total * (scoreA - expA));
+  const newB = Math.round(baseB + K * total * (scoreB - expB));
+  return { newA, newB };
+}
+
+// ─── Benchmark runner ─────────────────────────────────────────────────────
+
+let running = false;
+
+runBtn.addEventListener('click', async () => {
+  if (running) return;
+  running = true;
+  runBtn.disabled = true;
+
+  const eloA    = parseInt(eloAEl.value);
+  const eloB    = parseInt(eloBEl.value);
+  const n       = parseInt(numGamesEl.value);
+  const maxMov  = parseInt(maxMovesEl.value);
+  const mode    = gameModeEl.value;
+
+  // Reset display
+  ['winsA','winsB','draws','avgMoves','eloEstA','eloEstB'].forEach(id => {
+    document.getElementById(id).textContent = '…';
+  });
+  document.getElementById('eloBadgeA').textContent = '';
+  document.getElementById('eloBadgeB').textContent = '';
+  document.getElementById('barA').style.width = '0%';
+  document.getElementById('barB').style.width = '0%';
+  document.getElementById('barD').style.width = '0%';
+
+  const logEl = document.getElementById('gameLog');
+  logEl.innerHTML = '';
+  progressWrap.style.display = 'block';
+
+  let winsA = 0, winsB = 0, drawCount = 0, totalMoves = 0;
+
+  // Run in chunks of 5 to keep UI responsive
+  const CHUNK = 5;
+  for (let g = 0; g < n; g += CHUNK) {
+    const end = Math.min(g + CHUNK, n);
+
+    for (let i = g; i < end; i++) {
+      const res = simulateOneGame(eloA, eloB, mode, maxMov);
+      totalMoves += res.moves;
+
+      let cls, tag;
+      if (res.winner === 0)      { winsA++;    cls = 'log-win';  tag = `Team A (${eloA}) wins`; }
+      else if (res.winner === 1) { winsB++;    cls = 'log-win';  tag = `Team B (${eloB}) wins`; }
+      else                       { drawCount++; cls = 'log-draw'; tag = `Draw / Timeout`; }
+
+      logEl.innerHTML += `<div class="${cls}">Game ${i+1}: ${tag} — ${res.moves} moves</div>`;
+    }
+
+    // Update progress
+    const pct = Math.round((end / n) * 100);
+    progressFill.style.width = pct + '%';
+    progressLbl.textContent  = `${end} / ${n} games complete`;
+
+    // Update live results
+    updateResults(winsA, winsB, drawCount, totalMoves, end, eloA, eloB);
+    logEl.scrollTop = logEl.scrollHeight;
+
+    // Yield to browser
+    await new Promise(r => setTimeout(r, 0));
+  }
+
+  progressFill.style.width = '100%';
+  progressLbl.textContent  = `Done — ${n} games simulated`;
+  running = false;
+  runBtn.disabled = false;
+});
+
+function updateResults(winsA, winsB, drawCount, totalMoves, gamesPlayed, eloA, eloB) {
+  document.getElementById('winsA').textContent  = winsA;
+  document.getElementById('winsB').textContent  = winsB;
+  document.getElementById('draws').textContent  = drawCount;
+  document.getElementById('avgMoves').textContent = gamesPlayed > 0
+    ? Math.round(totalMoves / gamesPlayed)
+    : '—';
+
+  const total = gamesPlayed;
+  const pctA  = total ? (winsA  / total * 100).toFixed(1) : 0;
+  const pctD  = total ? (drawCount / total * 100).toFixed(1) : 0;
+  const pctB  = total ? (winsB  / total * 100).toFixed(1) : 0;
+
+  document.getElementById('pctA').textContent = `A: ${pctA}%`;
+  document.getElementById('pctB').textContent = `B: ${pctB}%`;
+  document.getElementById('barA').style.width = pctA + '%';
+  document.getElementById('barD').style.width = pctD + '%';
+  document.getElementById('barB').style.width = pctB + '%';
+
+  // ELO estimates
+  const { newA, newB } = calcElo(eloA, eloB, winsA, winsB, drawCount);
+  const diffA = newA - eloA, diffB = newB - eloB;
+  document.getElementById('eloEstA').textContent = newA;
+  document.getElementById('eloEstB').textContent = newB;
+
+  const badgeA = document.getElementById('eloBadgeA');
+  badgeA.textContent  = diffA >= 0 ? `+${diffA}` : `${diffA}`;
+  badgeA.className    = 'elo-badge ' + (diffA > 0 ? 'badge-up' : diffA < 0 ? 'badge-down' : 'badge-same');
+
+  const badgeB = document.getElementById('eloBadgeB');
+  badgeB.textContent  = diffB >= 0 ? `+${diffB}` : `${diffB}`;
+  badgeB.className    = 'elo-badge ' + (diffB > 0 ? 'badge-up' : diffB < 0 ? 'badge-down' : 'badge-same');
+}
+</script>
+</body>
+</html>
