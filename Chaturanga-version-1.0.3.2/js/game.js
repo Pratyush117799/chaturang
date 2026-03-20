@@ -507,7 +507,7 @@ class Game {
     const currentPlayer = this.getPlayer();
     if (currentPlayer && !currentPlayer.frozen && !currentPlayer.eliminated) {
       let hasLegalMove = false;
-      for (let r = 1; r <= 8; r++) {
+      for (let r = 0; r < 8; r++) {
         for (let f = 0; f < 8; f++) {
           const sq = this.coordsToSquare(f, r);
           const piece = this.board.get(sq);
@@ -528,7 +528,7 @@ class Game {
   hasAnyLegalMove() {
     const player = this.getPlayer();
     if (!player || player.frozen || player.eliminated) return false;
-    for (let r = 1; r <= 8; r++) {
+    for (let r = 0; r < 8; r++) {
       for (let f = 0; f < 8; f++) {
         const sq = this.coordsToSquare(f, r);
         const piece = this.board.get(sq);
@@ -589,7 +589,7 @@ class Game {
   canPlayerMove(playerId) {
     const player = this.players[playerId];
     if (!player || player.frozen || player.eliminated) return false;
-    for (let r = 1; r <= 8; r++) {
+    for (let r = 0; r < 8; r++) {
       for (let f = 0; f < 8; f++) {
         const sq = this.coordsToSquare(f, r);
         const piece = this.board.get(sq);
@@ -601,3 +601,5 @@ class Game {
 }
 
 if (typeof window !== 'undefined') window.ChaturangaGame = Game;
+else if (typeof self !== 'undefined') self.ChaturangaGame = Game;
+else globalThis.ChaturangaGame = Game;

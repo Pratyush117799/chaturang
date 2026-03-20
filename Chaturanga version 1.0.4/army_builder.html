@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chaturanga — Custom Army Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold:#c9a84c; --gold-lt:#e8c96a; --dark:#0f0c07; --dark2:#1a1306;
+  --dark3:#231a08; --border:rgba(201,168,76,0.22); --sq-light:#f0d9b5;
+  --sq-dark:#b58863; --r:#e74c3c; --b:#3498db; --g:#27ae60; --y:#f39c12;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:#f5ead0;font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.top-bar{background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:12px}
+.logo{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);font-weight:700}
+.ver-badge{font-size:.7rem;color:#7a6644;background:rgba(201,168,76,.12);padding:2px 8px;border-radius:12px}
+.phase-label{margin-left:auto;font-size:.78rem;color:var(--gold-lt);background:rgba(201,168,76,.15);padding:4px 12px;border-radius:20px}
+
+/* Config bar */
+.config-bar{background:var(--dark3);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.cfg-group{display:flex;flex-direction:column;gap:4px}
+.cfg-label{font-size:.7rem;color:#7a6644;text-transform:uppercase;letter-spacing:.05em}
+.cfg-select{background:#231a08;color:#f5ead0;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:'Outfit',sans-serif;font-size:.83rem;cursor:pointer}
+.cfg-select:focus{outline:none;border-color:var(--gold)}
+.btn-gold{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;border:none;padding:8px 20px;border-radius:20px;font-family:'Cinzel',serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-gold:hover{background:linear-gradient(135deg,#e8b52a,#c8960c);transform:translateY(-1px)}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--border);padding:7px 16px;border-radius:20px;font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s}
+.btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,.1)}
+
+/* Main layout */
+.main{display:flex;gap:0;height:calc(100vh - 96px);overflow:hidden}
+
+/* Left panel: palette */
+.palette{width:220px;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.palette-header{padding:12px 14px;border-bottom:1px solid var(--border)}
+.palette-player-tabs{display:flex;gap:4px;margin-bottom:8px}
+.ptab{flex:1;padding:5px;border-radius:6px;border:1px solid var(--border);background:transparent;color:#7a6644;font-size:.72rem;cursor:pointer;transition:all .2s;text-align:center}
+.ptab.active{background:rgba(201,168,76,.18);color:var(--gold);border-color:var(--gold)}
+.budget-display{text-align:center;padding:8px;background:rgba(201,168,76,.07);border-radius:8px}
+.budget-pts{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--gold-lt)}
+.budget-pts.over{color:#e74c3c}
+.budget-label{font-size:.68rem;color:#7a6644}
+
+.piece-list{padding:10px;flex:1}
+.piece-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all .2s;user-select:none}
+.piece-item:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.piece-item.selected{border-color:var(--gold);background:rgba(201,168,76,.16);box-shadow:0 0 8px rgba(201,168,76,.3)}
+.piece-item.disabled{opacity:.35;cursor:not-allowed}
+.piece-sym{font-size:1.3rem;width:28px;text-align:center}
+.piece-info{flex:1}
+.piece-name{font-size:.8rem;font-weight:500;color:#f5ead0}
+.piece-cost{font-size:.68rem;color:var(--gold)}
+.piece-count{font-size:.72rem;color:#7a6644;font-family:'Cinzel',serif}
+.piece-placed{font-size:.68rem;color:var(--gold-lt);font-weight:500}
+
+.palette-actions{padding:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.guptchar-section{padding:8px;background:rgba(231,76,60,.07);border:1px dashed rgba(231,76,60,.3);border-radius:8px;display:none}
+.guptchar-section.visible{display:block}
+.guptchar-label{font-size:.68rem;color:#e74c3c;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.guptchar-hint{font-size:.68rem;color:#7a6644;line-height:1.4}
+.guptchar-selected{font-size:.75rem;color:#e74c3c;margin-top:4px;font-weight:500}
+
+/* Board center */
+.board-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--dark);position:relative;overflow:hidden}
+.board-container{position:relative}
+.board-labels-top{display:flex;margin-left:28px;margin-bottom:4px}
+.board-labels-top span,.board-labels-side span{font-size:.7rem;color:#7a6644;width:52px;text-align:center}
+.board-labels-side{display:flex;flex-direction:column;margin-right:4px}
+.board-labels-side span{height:52px;display:flex;align-items:center;justify-content:center}
+.board-row-wrap{display:flex}
+.board-grid{display:grid;border:2px solid rgba(201,168,76,.4);border-radius:4px;overflow:hidden}
+.sq{width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;position:relative;transition:background .15s}
+.sq.light{background:var(--sq-light)}
+.sq.dark{background:var(--sq-dark)}
+.sq.zone-p0{background:rgba(231,76,60,.25)!important}
+.sq.zone-p1{background:rgba(52,152,219,.25)!important}
+.sq.zone-p2{background:rgba(39,174,96,.25)!important}
+.sq.zone-p3{background:rgba(243,156,18,.25)!important}
+.sq.hover-valid{outline:3px solid rgba(201,168,76,.7);outline-offset:-3px}
+.sq.has-piece{cursor:pointer}
+.sq.guptchar-sq::after{content:'';position:absolute;inset:0;background:rgba(231,76,60,.3);pointer-events:none;border:2px dashed rgba(231,76,60,.6)}
+
+.piece-on-sq{position:relative;font-size:1.6rem;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.piece-on-sq .remove-hint{display:none;position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:#e74c3c;border-radius:50%;font-size:.55rem;color:#fff;align-items:center;justify-content:center;font-style:normal;line-height:1}
+.sq.has-piece:hover .remove-hint{display:flex}
+
+/* Right panel: status */
+.status-panel{width:200px;background:var(--dark2);border-left:1px solid var(--border);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.status-title{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:8px}
+.player-status{padding:8px;border-radius:8px;border:1px solid var(--border)}
+.ps-header{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.ps-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ps-name{font-size:.75rem;font-weight:500}
+.ps-bar{height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:4px}
+.ps-fill{height:100%;border-radius:2px;transition:width .3s}
+.ps-detail{font-size:.65rem;color:#7a6644}
+.ps-ready{font-size:.65rem;color:#27ae60;font-weight:500}
+
+.rules-box{font-size:.68rem;color:#7a6644;line-height:1.6;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;padding:8px}
+.rules-box b{color:var(--gold-lt)}
+
+/* Board size buttons for 10x10 / 12x12 extension */
+.board-size-10 .sq{width:44px;height:44px;font-size:1.2rem}
+.board-size-12 .sq{width:38px;height:38px;font-size:1rem}
+.board-size-10 .board-labels-top span{width:44px}
+.board-size-12 .board-labels-top span{width:38px}
+.board-size-10 .board-labels-side span{height:44px}
+.board-size-12 .board-labels-side span{height:38px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:999;display:none}
+.modal-overlay.show{display:flex}
+.modal-card{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:440px;width:90%;text-align:center}
+.modal-card h3{font-family:'Cinzel',serif;color:var(--gold);margin-bottom:12px;font-size:1.2rem}
+.modal-card p{color:#c4a97a;font-size:.85rem;line-height:1.6;margin-bottom:16px}
+.modal-army-preview{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.army-badge{padding:8px 14px;border-radius:10px;border:1px solid var(--border);font-size:.75rem;color:#f5ead0;background:rgba(201,168,76,.08)}
+.army-badge b{color:var(--gold-lt);display:block;font-size:.85rem}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="logo">चतुरंग · Chaturanga</span>
+  <span class="ver-badge">v1.0.4</span>
+  <span class="phase-label">Custom Army Builder</span>
+</div>
+
+<div class="config-bar">
+  <div class="cfg-group">
+    <span class="cfg-label">Board</span>
+    <select class="cfg-select" id="boardSize">
+      <option value="8">Ashtapada (8×8)</option>
+      <option value="10">Dasapada (10×10)</option>
+      <option value="12">Vrihadapada (12×12)</option>
+    </select>
+  </div>
+  <div class="cfg-group">
+    <span class="cfg-label">Format</span>
+    <select class="cfg-select" id="gameFormat">
+      <option value="2">2 Players</option>
+      <option value="4">4 Players</option>
+    </select>
+  </div>
+  <div class="cfg-group" style="flex-direction:row;align-items:flex-end;gap:8px;margin-left:auto">
+    <button class="btn-outline" onclick="resetBoard()">Reset</button>
+    <button class="btn-outline" onclick="undoLast()">Undo</button>
+    <button class="btn-gold" id="beginBtn" onclick="beginBattle()" disabled>Begin Battle ⚔</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Palette -->
+  <div class="palette" id="palette">
+    <div class="palette-header">
+      <div class="palette-player-tabs" id="playerTabs"></div>
+      <div class="budget-display">
+        <div class="budget-pts" id="budgetPts">30</div>
+        <div class="budget-label">points remaining</div>
+      </div>
+    </div>
+    <div class="piece-list" id="pieceList"></div>
+    <div class="palette-actions">
+      <div class="guptchar-section" id="guptcharSection">
+        <div class="guptchar-label">Guptchar (Spy)</div>
+        <div class="guptchar-hint">Click a placed piece on the board to designate it as your hidden spy.</div>
+        <div class="guptchar-selected" id="guptcharSelected"></div>
+      </div>
+      <button class="btn-outline" id="playerReadyBtn" onclick="markPlayerReady()">Mark Ready</button>
+    </div>
+  </div>
+
+  <!-- Board -->
+  <div class="board-area">
+    <div class="board-container" id="boardContainer">
+      <div class="board-labels-top" id="labelsTop"></div>
+      <div class="board-row-wrap">
+        <div class="board-labels-side" id="labelsSide"></div>
+        <div class="board-grid" id="boardGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-panel" id="statusPanel">
+    <div class="status-title">Army Status</div>
+    <div id="playerStatusList"></div>
+    <div class="rules-box" id="rulesBox">
+      <b>Point Values</b><br>
+      Nara (pawn) = 1 pt<br>
+      Danti/Ashwa = 3 pts<br>
+      Ratha = 5 pts<br>
+      Raja = free (required)<br><br>
+      <b>Placement zones</b> are highlighted on the board.
+    </div>
+  </div>
+</div>
+
+<!-- Ready Modal -->
+<div class="modal-overlay" id="readyModal">
+  <div class="modal-card">
+    <h3>Armies Ready — Begin Battle?</h3>
+    <p>Both armies have been assembled. Review your formations below, then launch into the ancient war.</p>
+    <div class="modal-army-preview" id="armyPreview"></div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn-outline" onclick="closeModal()">Review More</button>
+      <button class="btn-gold" onclick="launchGame()">Launch Battle ⚔</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ Game Configuration ═══════════════════════════════════════════════════════
+
+const PIECE_COSTS = { pawn:1, horse:3, elephant:3, rook:5 };
+const PIECE_SYMBOLS = {
+  pawn:   ['♟','♟','♟','♟'],   // r,b,g,y
+  horse:  ['♞','♞','♞','♞'],
+  elephant:['♝','♝','♝','♝'],  // using bishop symbol for elephant
+  rook:   ['♜','♜','♜','♜'],
+  king:   ['♚','♚','♚','♚'],
+};
+const PLAYER_COLORS = ['#e74c3c','#3498db','#27ae60','#f39c12'];
+const PLAYER_NAMES  = ['Red','Blue','Green','Yellow'];
+
+// Point budgets per config
+function getBudget(size, players) {
+  const budgets = {
+    8:  { 2:30, 4:15 },
+    10: { 2:43, 4:21 },
+    12: { 2:51, 4:25 },
+  };
+  return (budgets[size] || {})[players] || 30;
+}
+
+// Default army composition (for reference, player can deviate)
+function getDefaultArmy(size) {
+  const armies = {
+    8:  { pawn:8,  horse:2, elephant:2, rook:2 },
+    10: { pawn:10, horse:3, elephant:3, rook:3 },
+    12: { pawn:12, horse:4, elephant:4, rook:3 },
+  };
+  return armies[size] || armies[8];
+}
+
+// ═══ State ════════════════════════════════════════════════════════════════════
+
+let state = {
+  boardSize: 8,
+  numPlayers: 2,
+  currentPlayer: 0,
+  selectedPiece: null,    // type string
+  guptcharMode: false,
+  armies: [],             // per player: [{sq, type, isGuptchar}]
+  ready: [],              // per player: boolean
+  history: [],            // undo stack
+  budgets: [],            // remaining points per player
+  guptchar: [],           // sq of guptchar per player, null if none
+};
+
+function initState() {
+  const size = Number.parseInt(document.getElementById('boardSize').value, 10);
+  const fmt  = Number.parseInt(document.getElementById('gameFormat').value, 10);
+  const budget = getBudget(size, fmt);
+  state = {
+    boardSize: size, numPlayers: fmt,
+    currentPlayer: 0,
+    selectedPiece: null,
+    guptcharMode: false,
+    armies:   Array.from({length:fmt}, () => []),
+    ready:    Array(fmt).fill(false),
+    history:  [],
+    budgets:  Array(fmt).fill(budget),
+    guptchar: Array(fmt).fill(null),
+  };
+  renderAll();
+}
+
+// ═══ Render ════════════════════════════════════════════════════════════════════
+
+function renderAll() {
+  renderPlayerTabs();
+  renderPieceList();
+  renderBoard();
+  renderStatusPanel();
+  renderBudget();
+  renderGuptcharSection();
+  checkBeginButton();
+}
+
+function renderPlayerTabs() {
+  const el = document.getElementById('playerTabs');
+  el.innerHTML = '';
+  for (let i = 0; i < state.numPlayers; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'ptab' + (i === state.currentPlayer ? ' active' : '');
+    btn.style.color = state.ready[i] ? '#27ae60' : '';
+    btn.textContent = PLAYER_NAMES[i] + (state.ready[i] ? ' ✓' : '');
+    btn.onclick = () => { state.currentPlayer = i; state.selectedPiece = null; renderAll(); };
+    el.appendChild(btn);
+  }
+}
+
+function renderBudget() {
+  const rem = state.budgets[state.currentPlayer];
+  const el  = document.getElementById('budgetPts');
+  el.textContent = rem;
+  el.className   = 'budget-pts' + (rem < 0 ? ' over' : '');
+}
+
+function renderPieceList() {
+  const el = document.getElementById('pieceList');
+  el.innerHTML = '';
+  const cp = state.currentPlayer;
+  const items = [
+    { type:'pawn',     name:'Nara (pawn)',    sym:PIECE_SYMBOLS.pawn[cp]    },
+    { type:'horse',    name:'Ashwa (horse)',  sym:PIECE_SYMBOLS.horse[cp]   },
+    { type:'elephant', name:'Danti (eleph.)', sym:PIECE_SYMBOLS.elephant[cp]},
+    { type:'rook',     name:'Ratha (rook)',   sym:PIECE_SYMBOLS.rook[cp]    },
+    { type:'king',     name:'Raja (king)',    sym:PIECE_SYMBOLS.king[cp]    },
+  ];
+
+  for (const item of items) {
+    const placed = state.armies[cp].filter(p => p.type === item.type).length;
+    const cost   = PIECE_COSTS[item.type] || 0;
+    const isKing = item.type === 'king';
+    const kingPlaced = state.armies[cp].some(p => p.type === 'king');
+    const cantAfford = !isKing && (state.budgets[cp] - cost < 0);
+    const disabled   = state.ready[cp] || (isKing && kingPlaced) || cantAfford;
+
+    const div = document.createElement('div');
+    div.className = 'piece-item' + (state.selectedPiece === item.type ? ' selected' : '') + (disabled ? ' disabled' : '');
+    div.innerHTML = `
+      <span class="piece-sym">${item.sym}</span>
+      <div class="piece-info">
+        <div class="piece-name">${item.name}</div>
+        <div class="piece-cost">${isKing ? 'required' : cost+' pt'+(cost>1?'s':'')}</div>
+      </div>
+      <span class="piece-placed">${placed}</span>`;
+    if (!disabled) div.onclick = () => selectPiece(item.type);
+    el.appendChild(div);
+  }
+}
+
+function renderBoard() {
+  const container = document.getElementById('boardContainer');
+  const size = state.boardSize;
+  container.className = `board-container board-size-${size === 8 ? '' : size === 10 ? '10' : '12'}`;
+
+  // Labels
+  const files = 'abcdefghijkl'.substring(0, size);
+  const topEl  = document.getElementById('labelsTop');
+  const sideEl = document.getElementById('labelsSide');
+  topEl.innerHTML  = files.split('').map(f => `<span>${f}</span>`).join('');
+  sideEl.innerHTML = Array.from({length:size}, (_,i) => `<span>${size-i}</span>`).join('');
+
+  const grid = document.getElementById('boardGrid');
+  grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  grid.innerHTML = '';
+
+  for (let r = size; r >= 1; r--) {
+    for (let fi = 0; fi < size; fi++) {
+      const f  = files[fi];
+      const sq = f + r;
+      const isLight = (fi + r) % 2 === 0;
+      const zone    = getZone(sq, size, state.numPlayers);
+      const piece   = getPieceAt(sq);
+      const isGuptchar = piece && state.guptchar[piece.player] === sq;
+
+      const div = document.createElement('div');
+      div.id    = 'sq-' + sq;
+      div.className = `sq ${isLight ? 'light' : 'dark'}`;
+      if (zone !== null) div.classList.add(`zone-p${zone}`);
+      if (piece)         div.classList.add('has-piece');
+      if (isGuptchar)    div.classList.add('guptchar-sq');
+
+      if (piece) {
+        const sym = PIECE_SYMBOLS[piece.type][piece.player];
+        div.innerHTML = `<span class="piece-on-sq" style="color:${PLAYER_COLORS[piece.player]}">${sym}<i class="remove-hint">×</i></span>`;
+      }
+
+      div.onclick = () => handleSquareClick(sq);
+      grid.appendChild(div);
+    }
+  }
+}
+
+function renderStatusPanel() {
+  const el = document.getElementById('playerStatusList');
+  el.innerHTML = '';
+  for (let i = 0; i < state.numPlayers; i++) {
+    const total   = getBudget(state.boardSize, state.numPlayers);
+    const used    = total - state.budgets[i];
+    const pct     = Math.min(100, (used / total) * 100);
+    const pieces  = state.armies[i].length;
+    const div = document.createElement('div');
+    div.className = 'player-status';
+    div.innerHTML = `
+      <div class="ps-header">
+        <div class="ps-dot" style="background:${PLAYER_COLORS[i]}"></div>
+        <span class="ps-name">${PLAYER_NAMES[i]}</span>
+      </div>
+      <div class="ps-bar"><div class="ps-fill" style="width:${pct}%;background:${PLAYER_COLORS[i]}"></div></div>
+      <div class="${state.ready[i] ? 'ps-ready' : 'ps-detail'}">
+        ${state.ready[i] ? '✓ Army ready' : pieces + ' pieces placed · ' + state.budgets[i] + ' pts left'}
+      </div>`;
+    el.appendChild(div);
+  }
+}
+
+function renderGuptcharSection() {
+  const el   = document.getElementById('guptcharSection');
+  const info = document.getElementById('guptcharSelected');
+  const eligible = (state.boardSize >= 10) && (state.numPlayers === 2);
+  if (!eligible) { el.classList.remove('visible'); return; }
+  el.classList.add('visible');
+  const cp = state.currentPlayer;
+  const gq = state.guptchar[cp];
+  if (gq) {
+    const p = getPieceAt(gq);
+    info.textContent = `Spy: ${gq} (${p ? p.type : '?'})`;
+  } else {
+    info.textContent = 'None set yet.';
+  }
+}
+
+function checkBeginButton() {
+  const allReady = state.ready.slice(0, state.numPlayers).every(Boolean);
+  document.getElementById('beginBtn').disabled = !allReady;
+}
+
+// ═══ Interaction ═══════════════════════════════════════════════════════════════
+
+function selectPiece(type) {
+  if (state.ready[state.currentPlayer]) return;
+  state.selectedPiece = type;
+  state.guptcharMode  = false;
+  renderAll();
+}
+
+function handleSquareClick(sq) {
+  const cp    = state.currentPlayer;
+  const piece = getPieceAt(sq);
+
+  // Guptchar designation mode
+  if (state.guptcharMode) {
+    if (piece && piece.player === cp && piece.type !== 'pawn' && piece.type !== 'king') {
+      state.guptchar[cp] = sq;
+      state.guptcharMode = false;
+      renderAll();
+    }
+    return;
+  }
+
+  // Remove own piece by clicking it
+  if (piece && piece.player === cp) {
+    if (state.ready[cp]) return;
+    const cost = PIECE_COSTS[piece.type] || 0;
+    state.history.push(JSON.parse(JSON.stringify(state.armies)));
+    state.armies[cp] = state.armies[cp].filter(p => p.sq !== sq);
+    if (piece.type !== 'king') state.budgets[cp] += cost;
+    if (state.guptchar[cp] === sq) state.guptchar[cp] = null;
+    renderAll();
+    return;
+  }
+
+  // Place selected piece
+  if (!state.selectedPiece || state.ready[cp]) return;
+  const zone = getZone(sq, state.boardSize, state.numPlayers);
+  if (zone !== cp) return; // wrong zone
+
+  if (state.selectedPiece === 'king') {
+    if (state.armies[cp].some(p => p.type === 'king')) return; // already placed
+  } else {
+    const cost = PIECE_COSTS[state.selectedPiece];
+    if (state.budgets[cp] < cost) return; // can't afford
+    state.budgets[cp] -= cost;
+  }
+
+  state.history.push(JSON.parse(JSON.stringify(state.armies)));
+  state.armies[cp].push({ sq, type: state.selectedPiece, player: cp, isGuptchar: false });
+  renderAll();
+}
+
+function markPlayerReady() {
+  const cp = state.currentPlayer;
+  if (!state.armies[cp].some(p => p.type === 'king')) {
+    alert('You must place your Raja (King) before marking ready.');
+    return;
+  }
+  state.ready[cp] = true;
+  state.selectedPiece = null;
+  // Auto-switch to next unready player
+  const next = state.ready.findIndex(r => !r);
+  if (next !== -1) state.currentPlayer = next;
+  renderAll();
+  checkBeginButton();
+  if (state.ready.slice(0, state.numPlayers).every(Boolean)) showReadyModal();
+}
+
+function undoLast() {
+  if (!state.history.length) return;
+  const prev = state.history.pop();
+  // Recompute budgets
+  const total = getBudget(state.boardSize, state.numPlayers);
+  for (let i = 0; i < state.numPlayers; i++) {
+    const used = prev[i].reduce((s, p) => s + (PIECE_COSTS[p.type] || 0), 0);
+    state.budgets[i] = total - used;
+  }
+  state.armies = prev;
+  renderAll();
+}
+
+function resetBoard() {
+  if (!confirm('Reset all placements?')) return;
+  state.armies  = Array.from({length:state.numPlayers}, () => []);
+  state.ready   = Array(state.numPlayers).fill(false);
+  state.history = [];
+  const total   = getBudget(state.boardSize, state.numPlayers);
+  state.budgets = Array(state.numPlayers).fill(total);
+  state.guptchar = Array(state.numPlayers).fill(null);
+  state.selectedPiece = null;
+  renderAll();
+}
+
+// ═══ Utilities ════════════════════════════════════════════════════════════════
+
+function getPieceAt(sq) {
+  for (let i = 0; i < state.numPlayers; i++) {
+    const found = state.armies[i].find(p => p.sq === sq);
+    if (found) return { ...found, player: i };
+  }
+  return null;
+}
+
+/**
+ * Returns which player's starting zone a square belongs to, or null.
+ * 8x8  2P: rows 1-3 = P0, rows 6-8 = P1
+ * 8x8  4P: rows 1-3 = P0, right 3 files = P1, rows 6-8 = P2, left 3 files = P3
+ * 10x10 2P: rows 1-3 = P0, rows 8-10 = P1 (etc.)
+ * 12x12 2P: rows 1-4 = P0, rows 9-12 = P1
+ */
+function getZone(sq, size, numPlayers) {
+  const files = 'abcdefghijkl';
+  const f = files.indexOf(sq[0]);
+  const r = Number.parseInt(sq.substring(1), 10);
+
+  if (numPlayers === 2) {
+    const zoneRows = { 8:3, 10:3, 12:4 }[size] || 3;
+    if (r <= zoneRows)        return 0;
+    if (r > size - zoneRows)  return 1;
+    return null;
+  }
+
+  // 4-player: corner zones (3-deep rows for P0/P2, 3-wide files for P1/P3)
+  const z = 3;
+  if (r <= z)              return 0;   // bottom rows: Red
+  if (f >= size - z)       return 1;   // right files: Blue
+  if (r > size - z)        return 2;   // top rows: Green
+  if (f < z)               return 3;   // left files: Yellow
+  return null;
+}
+
+// ═══ Modal & Launch ══════════════════════════════════════════════════════════
+
+function showReadyModal() {
+  const preview = document.getElementById('armyPreview');
+  preview.innerHTML = '';
+  for (let i = 0; i < state.numPlayers; i++) {
+    const pieces  = state.armies[i];
+    const counts  = {};
+    pieces.forEach(p => { counts[p.type] = (counts[p.type]||0)+1; });
+    const summary = Object.entries(counts).map(([t,c]) => `${c}×${t}`).join(', ');
+    const badge   = document.createElement('div');
+    badge.className = 'army-badge';
+    badge.style.borderColor = PLAYER_COLORS[i];
+    badge.innerHTML = `<b style="color:${PLAYER_COLORS[i]}">${PLAYER_NAMES[i]}</b>${summary}`;
+    if (state.guptchar[i]) {
+      badge.innerHTML += `<br><span style="color:#e74c3c;font-size:.65rem">Spy at ${state.guptchar[i]}</span>`;
+    }
+    preview.appendChild(badge);
+  }
+  document.getElementById('readyModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('readyModal').classList.remove('show');
+}
+
+function launchGame() {
+  // Save army config to localStorage for game.js to consume
+  const config = {
+    boardSize:  state.boardSize,
+    numPlayers: state.numPlayers,
+    armies:     state.armies.map((army, i) => ({
+      player:   i,
+      pieces:   army,
+      guptchar: state.guptchar[i],
+    })),
+    timestamp: Date.now(),
+  };
+  localStorage.setItem('chaturanga_custom_army', JSON.stringify(config));
+  alert('Army config saved! Redirecting to game... (integrate with game.js to consume localStorage.getItem("chaturanga_custom_army"))');
+  // In production: window.location.href = '../game.html?mode=custom';
+}
+
+// ═══ Config change handlers ════════════════════════════════════════════════
+document.getElementById('boardSize').addEventListener('change', initState);
+document.getElementById('gameFormat').addEventListener('change', initState);
+
+// Init
+initState();
+</script>
+</body>
+</html>

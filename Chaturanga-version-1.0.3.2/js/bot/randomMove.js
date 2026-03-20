@@ -10,7 +10,7 @@
     return;
   }
 
-  window.ChaturangaRandomBot = {
+  (typeof window !== 'undefined' ? window : self).ChaturangaRandomBot = {
     getMove: function (game, playerId) {
       return ChaturangaRandomMoveGenerator.getRandomMove(game);
     }

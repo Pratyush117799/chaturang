@@ -146,6 +146,31 @@
     .vs-elo.b { color: var(--accent2); }
     .vs-dot  { font-size: 1.4rem; color: var(--muted); font-weight: 900; }
 
+    /* ── History Sidebar ────────────────────── */
+    .history-panel-bench {
+      flex: 0 0 280px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+    .history-item {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      border-left: 3px solid var(--accent);
+    }
+    .history-item-header {
+      display: flex; justify-content: space-between;
+      color: var(--muted); font-size: 0.75rem; margin-bottom: 6px;
+    }
+    .history-item-result { font-weight: 700; margin-top: 4px; }
+    .history-empty { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 20px; }
+
     /* ── Score cards ────────────────────────── */
     .score-grid {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -249,12 +274,57 @@
       line-height: 1.6;
       margin-top: 16px;
     }
+    /* Preloader Styles */
+    #preloader {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loader-container {
+      position: relative;
+      width: 120px; height: 120px;
+    }
+    .node {
+      position: absolute;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: rotate-bubble 2s infinite linear;
+      top: 50%; left: 50%;
+      margin: -7px;
+    }
+    @keyframes rotate-bubble {
+      0% { transform: rotate(0deg) translate(50px) rotate(0deg); }
+      100% { transform: rotate(360deg) translate(50px) rotate(-360deg); }
+    }
+    .node:nth-child(2) { animation-delay: -0.25s; }
+    .node:nth-child(3) { animation-delay: -0.5s; }
+    .node:nth-child(4) { animation-delay: -0.75s; }
+    .node:nth-child(5) { animation-delay: -1.0s; }
+    .node:nth-child(6) { animation-delay: -1.25s; }
+    .node:nth-child(7) { animation-delay: -1.5s; }
+    .node:nth-child(8) { animation-delay: -1.75s; }
+
+    #preloader h2 { margin-top: 30px; color: var(--accent); font-weight: 300; letter-spacing: 2px; font-size: 1.2rem; }
+
     .info-box strong { color: var(--text); }
 
     @media (max-width: 720px) { .config-panel { flex: 0 0 100%; } }
   </style>
 </head>
 <body>
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="loader-container">
+      <div class="node"></div><div class="node"></div><div class="node"></div><div class="node"></div>
+      <div class="node"></div><div class="node"></div><div class="node"></div><div class="node"></div>
+    </div>
+    <h2>PREPARING BATTLEGROUND...</h2>
+  </div>
 
 <h1><i class="fa-solid fa-chart-bar"></i> Chaturanga <span>Bot Benchmark</span></h1>
 <p class="subtitle">Pit bot levels against each other — measures Chaturanga ELO ratings empirically</p>
@@ -286,6 +356,26 @@
         <option value="400">ELO 400 — Strategic</option>
         <option value="500">ELO 500 — Deep Tactical</option>
         <option value="600">ELO 600 — Paranoid</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Concurrency (Parallelism)</label>
+      <select id="workerCount">
+        <option value="1">1 Worker (Sequential)</option>
+        <option value="2">2 Workers</option>
+        <option value="4" selected>4 Workers (Fast)</option>
+        <option value="8">8 Workers (Turbo)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Optimal Stop Threshold</label>
+      <select id="optimalStop">
+        <option value="1">None (Full 100%)</option>
+        <option value="0.25">Stop after 25% completed</option>
+        <option value="0.5">Stop after 50% completed</option>
+        <option value="0.75">Stop after 75% completed</option>
       </select>
     </div>
 
@@ -439,9 +529,21 @@
       </div>
     </div>
 
+    <!-- History Panel -->
+    <div class="history-panel-bench">
+      <h2><i class="fa-solid fa-history"></i> Run History</h2>
+      <div id="benchmarkHistory">
+        <!-- Persistent history items -->
+      </div>
+      <button onclick="clearHistory()" style="width: 100%; margin-top: 10px; background: none; border: 1px solid var(--border); color: var(--muted); font-size: 0.7rem; cursor: pointer; padding: 4px; border-radius: 4px;">Clear History</button>
+    </div>
+
     <!-- Game log -->
     <div class="log-section">
-      <h3><i class="fa-solid fa-scroll"></i> Game Log</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin-bottom: 0;"><i class="fa-solid fa-scroll"></i> Game Log</h3>
+        <button id="downloadLibraryBtn" style="background: var(--surface); color: var(--accent); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s;" disabled><i class="fa-solid fa-download"></i> Download Library</button>
+      </div>
       <div id="gameLog">
         <div class="empty-state">
           <i class="fa-solid fa-play-circle"></i>
@@ -488,121 +590,74 @@ syncVsDisplay();
 
 // ─── Simulation core ──────────────────────────────────────────────────────
 
-/**
- * Run one complete game simulation.
- * Returns { winner: 0|1|null, moves: number }
- *   winner 0 → Team A (Red+Green), winner 1 → Team B (Blue+Yellow), null → draw/timeout
- */
-function simulateOneGame(eloA, eloB, gameMode, maxMoves) {
-  const game = new ChaturangaGame();
-  game.gameMode = gameMode;
-  game.players.forEach(p => p.isBot = true);
+// ─── Simulation via Web Workers ──────────────────────────────────────────
 
-  let moveCount = 0;
+let activeWorkers = [];
+let resultsReceived = 0;
+let gamesPlanned = 0;
+let currentBenchmarkRun = null;
 
-  while (!game.gameOver && moveCount < maxMoves) {
-    // Roll dice
-    game.rollDice();
-
-    // Auto-forfeit if no legal moves exist
-    if (game.autoForfeitIfNoMove()) {
-      moveCount++;
-      continue;
-    }
-
-    const player  = game.getPlayer();
-    if (!player || player.eliminated) { game.nextTurn(); moveCount++; continue; }
-
-    // Determine ELO for this player
-    const isTeamA = player.team === 0;   // Red=0 Green=0, Blue=1 Yellow=1
-    const elo     = isTeamA ? eloA : eloB;
-
-    let move = null;
-    if (elo === 100) {
-      move = window.ChaturangaRandomBot
-        ? window.ChaturangaRandomBot.getMove(game, player.id)
-        : null;
-    } else {
-      move = window.ChaturangaTieredBot
-        ? window.ChaturangaTieredBot.getMove(game, elo)
-        : null;
-    }
-
-    if (move) {
-      game.makeMove(move.from, move.to);
-
-      // Handle king respawn (team mode) — auto-place on random empty square
-      if (game.pendingKingRespawn) {
-        const empty = game.board.getAllEmptySquares();
-        if (empty.length > 0) {
-          const rSq = empty[Math.floor(Math.random() * empty.length)];
-          game.respawnKing(rSq);
-        } else {
-          game.pendingKingRespawn = null;
-        }
-      }
-
-      // Handle pending eliminations (single mode)
-      if (game.pendingElimination) {
-        game.completeElimination();
-      }
-    } else {
-      // No move found — forfeit
-      if (!game.forfeitTurn()) {
-        // forfeit already at limit — force next turn
-        game.forcedPiece = null;
-        game.lastDice    = null;
-        game.nextTurn();
-      }
-    }
-
-    moveCount++;
+function initWorkers(count) {
+  stopWorkers();
+  for (let i = 0; i < count; i++) {
+    const w = new Worker('benchmark-worker.js');
+    w.onmessage = handleWorkerMessage;
+    w.onerror = handleWorkerError;
+    activeWorkers.push(w);
   }
+}
 
-  // Determine outcome
-  if (game.gameOver) {
-    if (game.gameMode === 'team') {
-      return { winner: game.winner, moves: moveCount }; // 0 = Team A, 1 = Team B
-    } else {
-      // FFA: map winnerPlayerId to team
-      if (game.winnerPlayerId != null) {
-        const winTeam = game.players[game.winnerPlayerId].team;
-        return { winner: winTeam, moves: moveCount };
-      }
-    }
-  }
-  return { winner: null, moves: moveCount };
+function stopWorkers() {
+  activeWorkers.forEach(w => w.terminate());
+  activeWorkers = [];
+}
+
+function handleWorkerError(err) {
+  console.error('Worker error:', err);
+  progressLbl.textContent = 'Error in worker simulation: ' + (err.message || 'Check console');
+  running = false;
+  runBtn.disabled = false;
+}
+
+// ─── Formatting for Game Library ──────────────────────────────────────────
+
+function pieceLetter(piece) {
+  const map = { king: 'K', rook: 'R', horse: 'H', elephant: 'E', pawn: 'P' };
+  return map[piece && piece.type] || '?';
+}
+
+function formatGameForLibrary(history, winner, winnerPlayerId, mode, gameNum, eloA, eloB) {
+  const playerLabel = (id) => (['Red', 'Blue', 'Green', 'Yellow'][id] || 'P' + (id + 1));
+  const turnNotation = (move) => {
+    if (!move) return '—';
+    if (move.forfeit) return 'Forfeit(' + (move.forfeitPiece || '?') + ')';
+    if (!move.piece || !move.to) return '—';
+    return pieceLetter(move.piece) + (move.cap ? 'x' : '') + move.to;
+  };
+  const rounds = [];
+  for (let i = 0; i < history.length; i += 4) rounds.push(history.slice(i, i + 4));
+  let content = `=== Game ${gameNum} ===\nMode: ${mode === 'team' ? 'Team (2v2)' : 'Free-for-All'}\nTeam A (Red/Green) ELO: ${eloA}  vs  Team B (Blue/Yellow) ELO: ${eloB}\n\n`;
+  content += rounds.map((rm, ri) => (ri + 1) + '. ' + rm.map(m => playerLabel(m.playerId ?? 0) + ': ' + turnNotation(m)).join(' | ')).join('\n');
+  
+  let winnerLine = '';
+  if (mode === 'single' && winnerPlayerId != null) winnerLine = 'Winner: ' + playerLabel(winnerPlayerId);
+  else if (winner != null) winnerLine = 'Winner: Team ' + (winner + 1);
+  else winnerLine = 'Result: Draw / Timeout';
+  
+  return content + '\n\n' + winnerLine;
 }
 
 // ─── ELO calculation ──────────────────────────────────────────────────────
 
-/**
- * Standard Elo expected score formula.
- * @param {number} rA - rating of player A
- * @param {number} rB - rating of player B
- */
-function expectedScore(rA, rB) {
-  return 1 / (1 + Math.pow(10, (rB - rA) / 400));
-}
+function expectedScore(rA, rB) { return 1 / (1 + Math.pow(10, (rB - rA) / 400)); }
 
-/**
- * Calculate updated ELO ratings after a series of results.
- * @param {number} baseA   - starting ELO for A
- * @param {number} baseB   - starting ELO for B
- * @param {number} winsA   - number of A wins
- * @param {number} winsB   - number of B wins
- * @param {number} draws   - number of draws
- * @param {number} K       - K-factor (default 32)
- */
 function calcElo(baseA, baseB, winsA, winsB, draws, K = 32) {
-  const total   = winsA + winsB + draws;
+  const total = winsA + winsB + draws;
   if (total === 0) return { newA: baseA, newB: baseB };
-
-  const scoreA  = (winsA + draws * 0.5) / total;
-  const scoreB  = (winsB + draws * 0.5) / total;
-  const expA    = expectedScore(baseA, baseB);
-  const expB    = expectedScore(baseB, baseA);
-
+  const scoreA = (winsA + draws * 0.5) / total;
+  const scoreB = (winsB + draws * 0.5) / total;
+  const expA = expectedScore(baseA, baseB);
+  const expB = expectedScore(baseB, baseA);
   const newA = Math.round(baseA + K * total * (scoreA - expA));
   const newB = Math.round(baseB + K * total * (scoreB - expB));
   return { newA, newB };
@@ -611,22 +666,28 @@ function calcElo(baseA, baseB, winsA, winsB, draws, K = 32) {
 // ─── Benchmark runner ─────────────────────────────────────────────────────
 
 let running = false;
+let winsA = 0, winsB = 0, drawCount = 0, totalMoves = 0;
 
 runBtn.addEventListener('click', async () => {
   if (running) return;
   running = true;
   runBtn.disabled = true;
 
-  const eloA    = parseInt(eloAEl.value);
-  const eloB    = parseInt(eloBEl.value);
-  const n       = parseInt(numGamesEl.value);
-  const maxMov  = parseInt(maxMovesEl.value);
-  const mode    = gameModeEl.value;
+  const eloA = parseInt(eloAEl.value);
+  const eloB = parseInt(eloBEl.value);
+  const n = parseInt(numGamesEl.value);
+  const maxMov = parseInt(maxMovesEl.value);
+  const mode = gameModeEl.value;
+  const workers = parseInt(document.getElementById('workerCount').value);
+  const stopAt = parseFloat(document.getElementById('optimalStop').value);
 
-  // Reset display
-  ['winsA','winsB','draws','avgMoves','eloEstA','eloEstB'].forEach(id => {
-    document.getElementById(id).textContent = '…';
-  });
+  resultsReceived = 0;
+  gamesPlanned = Math.floor(n * stopAt);
+  if (gamesPlanned < 1) gamesPlanned = 1;
+
+  // Reset counters & UI
+  winsA = 0; winsB = 0; drawCount = 0; totalMoves = 0;
+  ['winsA','winsB','draws','avgMoves','eloEstA','eloEstB'].forEach(id => { document.getElementById(id).textContent = '…'; });
   document.getElementById('eloBadgeA').textContent = '';
   document.getElementById('eloBadgeB').textContent = '';
   document.getElementById('barA').style.width = '0%';
@@ -637,77 +698,181 @@ runBtn.addEventListener('click', async () => {
   logEl.innerHTML = '';
   progressWrap.style.display = 'block';
 
-  let winsA = 0, winsB = 0, drawCount = 0, totalMoves = 0;
-
-  // Run in chunks of 5 to keep UI responsive
-  const CHUNK = 5;
-  for (let g = 0; g < n; g += CHUNK) {
-    const end = Math.min(g + CHUNK, n);
-
-    for (let i = g; i < end; i++) {
-      const res = simulateOneGame(eloA, eloB, mode, maxMov);
-      totalMoves += res.moves;
-
-      let cls, tag;
-      if (res.winner === 0)      { winsA++;    cls = 'log-win';  tag = `Team A (${eloA}) wins`; }
-      else if (res.winner === 1) { winsB++;    cls = 'log-win';  tag = `Team B (${eloB}) wins`; }
-      else                       { drawCount++; cls = 'log-draw'; tag = `Draw / Timeout`; }
-
-      logEl.innerHTML += `<div class="${cls}">Game ${i+1}: ${tag} — ${res.moves} moves</div>`;
-    }
-
-    // Update progress
-    const pct = Math.round((end / n) * 100);
-    progressFill.style.width = pct + '%';
-    progressLbl.textContent  = `${end} / ${n} games complete`;
-
-    // Update live results
-    updateResults(winsA, winsB, drawCount, totalMoves, end, eloA, eloB);
-    logEl.scrollTop = logEl.scrollHeight;
-
-    // Yield to browser
-    await new Promise(r => setTimeout(r, 0));
+  window.benchmarkLibrary = [];
+  const dlBtn = document.getElementById('downloadLibraryBtn');
+  if (dlBtn) {
+    dlBtn.disabled = true;
+    dlBtn.style.opacity = '0.5';
+    dlBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download Library (0 games)';
   }
 
-  progressFill.style.width = '100%';
-  progressLbl.textContent  = `Done — ${n} games simulated`;
-  running = false;
-  runBtn.disabled = false;
+  currentBenchmarkRun = { eloA, eloB, n, mode, winsA: 0, winsB: 0, draws: 0, totalMoves: 0 };
+  
+  initWorkers(workers);
+
+  // Send first batch
+  for (let i = 0; i < gamesPlanned; i++) {
+    const w = activeWorkers[i % activeWorkers.length];
+    w.postMessage({ eloA, eloB, gameMode: mode, maxMoves: maxMov, gameIndex: i });
+  }
 });
 
+function handleWorkerMessage(e) {
+  const { res, gameIndex, error } = e.data;
+  if (error) {
+    progressLbl.textContent = 'Worker Error: ' + error;
+    stopWorkers(); running = false; runBtn.disabled = false;
+    return;
+  }
+  
+  resultsReceived++;
+  totalMoves += res.moves;
+  const gameText = formatGameForLibrary(res.history, res.winner, res.winnerPlayerId, currentBenchmarkRun.mode, gameIndex + 1, currentBenchmarkRun.eloA, currentBenchmarkRun.eloB);
+  window.benchmarkLibrary.push(gameText);
+
+  if (res.winner === 0) winsA++;
+  else if (res.winner === 1) winsB++;
+  else drawCount++;
+
+  const logEl = document.getElementById('gameLog');
+  let cls = res.winner === 0 ? 'log-win' : (res.winner === 1 ? 'log-win' : 'log-draw');
+  let tag = res.winner === 0 ? `Team A wins` : (res.winner === 1 ? `Team B wins` : `Draw`);
+  logEl.innerHTML += `<div class="${cls}">Game ${gameIndex+1}: ${tag} — ${res.moves} moves</div>`;
+  
+  const pct = Math.round((resultsReceived / gamesPlanned) * 100);
+  progressFill.style.width = pct + '%';
+  progressLbl.textContent = `${resultsReceived} / ${gamesPlanned} games complete`;
+
+  updateResults(winsA, winsB, drawCount, totalMoves, resultsReceived, currentBenchmarkRun.eloA, currentBenchmarkRun.eloB);
+  logEl.scrollTop = logEl.scrollHeight;
+
+  if (resultsReceived >= gamesPlanned) {
+    currentBenchmarkRun.winsA = winsA;
+    currentBenchmarkRun.winsB = winsB;
+    currentBenchmarkRun.draws = drawCount;
+    currentBenchmarkRun.totalMoves = totalMoves;
+    currentBenchmarkRun.gamesPlayed = resultsReceived;
+    saveToHistory(currentBenchmarkRun);
+    finishBenchmark(gamesPlanned, document.getElementById('downloadLibraryBtn'));
+    stopWorkers();
+  }
+}
+
+function finishBenchmark(num, dlBtn) {
+  progressFill.style.width = '100%';
+  progressLbl.textContent = `Done — ${num} games simulated`;
+  running = false;
+  runBtn.disabled = false;
+  const pre = document.getElementById('preloader');
+  if(pre) pre.style.display = 'none';
+  if (dlBtn && window.benchmarkLibrary && window.benchmarkLibrary.length > 0) {
+    dlBtn.disabled = false;
+    dlBtn.style.opacity = '1';
+    dlBtn.innerHTML = `<i class="fa-solid fa-download"></i> Download Library (${window.benchmarkLibrary.length} games)`;
+  }
+}
+
 function updateResults(winsA, winsB, drawCount, totalMoves, gamesPlayed, eloA, eloB) {
-  document.getElementById('winsA').textContent  = winsA;
-  document.getElementById('winsB').textContent  = winsB;
-  document.getElementById('draws').textContent  = drawCount;
-  document.getElementById('avgMoves').textContent = gamesPlayed > 0
-    ? Math.round(totalMoves / gamesPlayed)
-    : '—';
+  document.getElementById('winsA').textContent = winsA;
+  document.getElementById('winsB').textContent = winsB;
+  document.getElementById('draws').textContent = drawCount;
+  document.getElementById('avgMoves').textContent = gamesPlayed > 0 ? Math.round(totalMoves / gamesPlayed) : '—';
 
   const total = gamesPlayed;
-  const pctA  = total ? (winsA  / total * 100).toFixed(1) : 0;
-  const pctD  = total ? (drawCount / total * 100).toFixed(1) : 0;
-  const pctB  = total ? (winsB  / total * 100).toFixed(1) : 0;
-
+  const pctA = total ? (winsA / total * 100).toFixed(1) : 0;
+  const pctD = total ? (drawCount / total * 100).toFixed(1) : 0;
+  const pctB = total ? (winsB / total * 100).toFixed(1) : 0;
   document.getElementById('pctA').textContent = `A: ${pctA}%`;
   document.getElementById('pctB').textContent = `B: ${pctB}%`;
   document.getElementById('barA').style.width = pctA + '%';
   document.getElementById('barD').style.width = pctD + '%';
   document.getElementById('barB').style.width = pctB + '%';
 
-  // ELO estimates
   const { newA, newB } = calcElo(eloA, eloB, winsA, winsB, drawCount);
   const diffA = newA - eloA, diffB = newB - eloB;
   document.getElementById('eloEstA').textContent = newA;
   document.getElementById('eloEstB').textContent = newB;
-
   const badgeA = document.getElementById('eloBadgeA');
-  badgeA.textContent  = diffA >= 0 ? `+${diffA}` : `${diffA}`;
-  badgeA.className    = 'elo-badge ' + (diffA > 0 ? 'badge-up' : diffA < 0 ? 'badge-down' : 'badge-same');
-
+  badgeA.textContent = diffA >= 0 ? `+${diffA}` : diffA;
+  badgeA.className = 'elo-badge ' + (diffA > 0 ? 'badge-up' : diffA < 0 ? 'badge-down' : 'badge-same');
   const badgeB = document.getElementById('eloBadgeB');
-  badgeB.textContent  = diffB >= 0 ? `+${diffB}` : `${diffB}`;
-  badgeB.className    = 'elo-badge ' + (diffB > 0 ? 'badge-up' : diffB < 0 ? 'badge-down' : 'badge-same');
+  badgeB.textContent = diffB >= 0 ? `+${diffB}` : diffB;
+  badgeB.className = 'elo-badge ' + (diffB > 0 ? 'badge-up' : diffB < 0 ? 'badge-down' : 'badge-same');
 }
+
+// ─── Persistence Logic ────────────────────────────────────────────────────
+
+function saveToHistory(run) {
+  const history = JSON.parse(localStorage.getItem('chaturanga_benchmark_history') || '[]');
+  history.unshift({
+    date: new Date().toLocaleString(),
+    eloA: run.eloA, eloB: run.eloB,
+    n: run.gamesPlayed,
+    winsA: run.winsA, winsB: run.winsB, draws: run.draws,
+    avg: Math.round(run.totalMoves / run.gamesPlayed)
+  });
+  if (history.length > 20) history.pop();
+  localStorage.setItem('chaturanga_benchmark_history', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('chaturanga_benchmark_history') || '[]');
+  const container = document.getElementById('benchmarkHistory');
+  if (!container) return;
+  if (history.length === 0) {
+    container.innerHTML = '<div class="history-empty">No benchmarks yet</div>';
+    return;
+  }
+  container.innerHTML = history.map(h => `
+    <div class="history-item">
+      <div class="history-item-header">
+        <span>${h.date}</span>
+        <span>${h.n} games</span>
+      </div>
+      <div style="font-weight:600">${h.eloA} vs ${h.eloB}</div>
+      <div class="history-item-result">
+        <span style="color:var(--green)">W:${h.winsA}</span> / 
+        <span style="color:var(--accent2)">W:${h.winsB}</span> / 
+        <span style="color:var(--muted)">D:${h.draws}</span>
+      </div>
+      <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">Avg Moves: ${h.avg}</div>
+    </div>
+  `).join('');
+}
+
+function clearHistory() {
+  localStorage.removeItem('chaturanga_benchmark_history');
+  renderHistory();
+}
+
+const globalDlBtn = document.getElementById('downloadLibraryBtn');
+if (globalDlBtn) {
+  globalDlBtn.addEventListener('click', () => {
+    if (!window.benchmarkLibrary || window.benchmarkLibrary.length === 0) return;
+    const content = window.benchmarkLibrary.join('\n\n' + '='.repeat(60) + '\n\n');
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chaturanga_benchmark_library_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+}
+
+window.addEventListener('load', () => {
+  renderHistory();
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    setTimeout(() => {
+      preloader.style.opacity = '0';
+      setTimeout(() => { preloader.style.display = 'none'; }, 500);
+    }, 1200);
+  }
+});
 </script>
 </body>
 </html>

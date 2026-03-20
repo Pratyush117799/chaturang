@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Chaturanga — Documentation Mind Maps</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#c9a84c;--dark:#0f0c07;--dark2:#1a1306;--dark3:#231a08;--border:rgba(201,168,76,0.2);--text:#f5ead0;--muted:#7a6644}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh}
+.top-bar{background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:12px}
+.logo{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);font-weight:700}
+.section-nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--dark3);overflow-x:auto}
+.snav-btn{padding:12px 22px;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer;white-space:nowrap;transition:all .2s}
+.snav-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,.06)}
+.section{display:none;padding:24px;max-width:1100px;margin:0 auto}
+.section.active{display:block}
+.section-title{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold);margin-bottom:6px}
+.section-subtitle{font-size:.85rem;color:var(--muted);margin-bottom:24px;line-height:1.6}
+svg text{font-family:'Outfit',sans-serif}
+.chart-wrap{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;overflow-x:auto}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+/* Interactive dice wheel */
+.dice-board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:600px}
+.dice-card{background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.dice-card:hover,.dice-card.active{border-color:var(--gold);background:rgba(201,168,76,.1)}
+.dice-num{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold)}
+.dice-piece{font-size:.9rem;font-weight:500;margin:4px 0}
+.dice-freq{font-size:.7rem;color:var(--muted)}
+.dice-detail{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px;display:none}
+.dice-detail.show{display:block}
+.detail-title{font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;margin-bottom:8px}
+.detail-body{font-size:.83rem;color:#c4a97a;line-height:1.7}
+.impact-bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin:8px 0}
+.impact-fill{height:100%;border-radius:3px;background:var(--gold)}
+/* Family tree */
+.tree-wrap{overflow-x:auto;padding:10px 0}
+table.comp{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:16px}
+table.comp th{background:rgba(201,168,76,.18);color:var(--gold);padding:8px 12px;text-align:left;border:1px solid var(--border)}
+table.comp td{padding:8px 12px;border:1px solid var(--border);color:#c4a97a;vertical-align:top}
+table.comp tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+table.comp .origin{color:var(--gold);font-weight:500}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <span class="logo">चतुरंग · Chaturanga</span>
+  <span style="font-size:.72rem;color:var(--muted);margin-left:auto">Documentation Hub — Mind Maps &amp; Charts</span>
+</div>
+
+<nav class="section-nav">
+  <button class="snav-btn active" onclick="showSection('rules')">Rule Collection Process</button>
+  <button class="snav-btn"        onclick="showSection('dice')">Dice &amp; Game Influence</button>
+  <button class="snav-btn"        onclick="showSection('ancestry')">Chaturanga as Ancestor</button>
+</nav>
+
+<!-- ═══ SECTION 1: RULE COLLECTION ═══════════════════════════════════════════ -->
+<div class="section active" id="sec-rules">
+  <div class="section-title">How We Decided the Rules</div>
+  <div class="section-subtitle">A flowchart of the sources consulted, conflicts resolved, and design decisions made in codifying authentic Chaturanga rules for the digital implementation.</div>
+
+  <div class="chart-wrap">
+    <svg width="100%" viewBox="0 0 900 680" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#5DCAA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Historical Sources row -->
+      <rect x="30" y="30" width="170" height="54" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="0.5"/>
+      <text x="115" y="53" text-anchor="middle" fill="#c9a84c" font-size="12" font-weight="500">Arthashastra</text>
+      <text x="115" y="70" text-anchor="middle" fill="#7a6644" font-size="11">(Kautilya, ~300 BCE)</text>
+
+      <rect x="220" y="30" width="170" height="54" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="0.5"/>
+      <text x="305" y="53" text-anchor="middle" fill="#c9a84c" font-size="12" font-weight="500">Harshacharita</text>
+      <text x="305" y="70" text-anchor="middle" fill="#7a6644" font-size="11">(Banabhatta, 7th CE)</text>
+
+      <rect x="410" y="30" width="170" height="54" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="0.5"/>
+      <text x="495" y="53" text-anchor="middle" fill="#c9a84c" font-size="12" font-weight="500">Bhavishya Purana</text>
+      <text x="495" y="70" text-anchor="middle" fill="#7a6644" font-size="11">(dice rules, ~1000 CE)</text>
+
+      <rect x="600" y="30" width="170" height="54" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="0.5"/>
+      <text x="685" y="53" text-anchor="middle" fill="#c9a84c" font-size="12" font-weight="500">Murray (1913)</text>
+      <text x="685" y="70" text-anchor="middle" fill="#7a6644" font-size="11">History of Chess</text>
+
+      <!-- Lines to synthesis -->
+      <line x1="115" y1="84" x2="420" y2="164" stroke="#c9a84c" stroke-width="0.8" opacity="0.5" marker-end="url(#arr)"/>
+      <line x1="305" y1="84" x2="420" y2="164" stroke="#c9a84c" stroke-width="0.8" opacity="0.5" marker-end="url(#arr)"/>
+      <line x1="495" y1="84" x2="440" y2="164" stroke="#c9a84c" stroke-width="0.8" opacity="0.5" marker-end="url(#arr)"/>
+      <line x1="685" y1="84" x2="480" y2="164" stroke="#c9a84c" stroke-width="0.8" opacity="0.5" marker-end="url(#arr)"/>
+
+      <!-- Synthesis box -->
+      <rect x="340" y="168" width="220" height="54" rx="8" fill="#2a1e08" stroke="#c9a84c" stroke-width="1.2"/>
+      <text x="450" y="190" text-anchor="middle" fill="#e8b52a" font-size="13" font-weight="500">Source Synthesis</text>
+      <text x="450" y="208" text-anchor="middle" fill="#7a6644" font-size="11">Cross-reference all accounts</text>
+
+      <!-- Three paths down -->
+      <line x1="380" y1="222" x2="200" y2="292" stroke="#5DCAA5" stroke-width="0.8" marker-end="url(#arr2)"/>
+      <line x1="450" y1="222" x2="450" y2="292" stroke="#c9a84c" stroke-width="0.8" marker-end="url(#arr)"/>
+      <line x1="520" y1="222" x2="700" y2="292" stroke="#D85A30" stroke-width="0.8" marker-end="url(#arr3)"/>
+
+      <!-- Conflict areas -->
+      <rect x="100" y="296" width="200" height="66" rx="8" fill="#082014" stroke="#5DCAA5" stroke-width="0.8"/>
+      <text x="200" y="319" text-anchor="middle" fill="#5DCAA5" font-size="12" font-weight="500">Agreed Rules</text>
+      <text x="200" y="336" text-anchor="middle" fill="#7a6644" font-size="10">Board 8×8, 4 players, 4 armies,</text>
+      <text x="200" y="350" text-anchor="middle" fill="#7a6644" font-size="10">Raja + Ratha + Ashwa + Danti + Nara</text>
+
+      <rect x="340" y="296" width="220" height="66" rx="8" fill="#2a1e08" stroke="#c9a84c" stroke-width="0.8"/>
+      <text x="450" y="319" text-anchor="middle" fill="#c9a84c" font-size="12" font-weight="500">Ambiguous Rules</text>
+      <text x="450" y="336" text-anchor="middle" fill="#7a6644" font-size="10">Elephant movement variants,</text>
+      <text x="450" y="350" text-anchor="middle" fill="#7a6644" font-size="10">Dice-piece mapping details</text>
+
+      <rect x="600" y="296" width="200" height="66" rx="8" fill="#140808" stroke="#D85A30" stroke-width="0.8"/>
+      <text x="700" y="319" text-anchor="middle" fill="#D85A30" font-size="12" font-weight="500">Disputed Rules</text>
+      <text x="700" y="336" text-anchor="middle" fill="#7a6644" font-size="10">Minor piece capture restrictions,</text>
+      <text x="700" y="350" text-anchor="middle" fill="#7a6644" font-size="10">King capture prohibition scope</text>
+
+      <!-- Decision process -->
+      <line x1="200" y1="362" x2="380" y2="422" stroke="#5DCAA5" stroke-width="0.8" marker-end="url(#arr2)"/>
+      <line x1="450" y1="362" x2="450" y2="422" stroke="#c9a84c" stroke-width="0.8" marker-end="url(#arr)"/>
+      <line x1="700" y1="362" x2="520" y2="422" stroke="#D85A30" stroke-width="0.8" marker-end="url(#arr3)"/>
+
+      <rect x="310" y="426" width="280" height="66" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="1.2"/>
+      <text x="450" y="452" text-anchor="middle" fill="#e8b52a" font-size="13" font-weight="500">Design Decision Framework</text>
+      <text x="450" y="468" text-anchor="middle" fill="#7a6644" font-size="10">Prefer most-cited historic source · Playtest balance</text>
+      <text x="450" y="482" text-anchor="middle" fill="#7a6644" font-size="10">Document variant in rules.txt when uncertain</text>
+
+      <line x1="450" y1="492" x2="450" y2="540" stroke="#c9a84c" stroke-width="0.8" marker-end="url(#arr)"/>
+
+      <!-- Four codified decisions -->
+      <rect x="50"  y="544" width="180" height="56" rx="8" fill="#082014" stroke="#5DCAA5" stroke-width="0.7"/>
+      <text x="140" y="567" text-anchor="middle" fill="#5DCAA5" font-size="11" font-weight="500">Elephant = 2-diag leap</text>
+      <text x="140" y="584" text-anchor="middle" fill="#7a6644" font-size="10">Bhavishya Purana variant</text>
+
+      <rect x="250" y="544" width="180" height="56" rx="8" fill="#082014" stroke="#5DCAA5" stroke-width="0.7"/>
+      <text x="340" y="567" text-anchor="middle" fill="#5DCAA5" font-size="11" font-weight="500">No king×king capture</text>
+      <text x="340" y="584" text-anchor="middle" fill="#7a6644" font-size="10">Universal consensus</text>
+
+      <rect x="450" y="544" width="180" height="56" rx="8" fill="#140808" stroke="#D85A30" stroke-width="0.7"/>
+      <text x="540" y="567" text-anchor="middle" fill="#D85A30" font-size="11" font-weight="500">Minor↛minor captures</text>
+      <text x="540" y="584" text-anchor="middle" fill="#7a6644" font-size="10">Adopted from Bhavishya</text>
+
+      <rect x="650" y="544" width="200" height="56" rx="8" fill="#082014" stroke="#5DCAA5" stroke-width="0.7"/>
+      <text x="750" y="567" text-anchor="middle" fill="#5DCAA5" font-size="11" font-weight="500">Dice face 2 &amp; 5 = any</text>
+      <text x="750" y="584" text-anchor="middle" fill="#7a6644" font-size="10">Harshacharita account</text>
+
+      <!-- Connecting lines from decision box to final rules -->
+      <path d="M 390 492 L 140 544" fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.4"/>
+      <path d="M 420 492 L 340 544" fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.4"/>
+      <path d="M 480 492 L 540 544" fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.4"/>
+      <path d="M 510 492 L 750 544" fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.4"/>
+
+      <!-- Labels -->
+      <text x="30" y="22" fill="#7a6644" font-size="10" text-anchor="start">HISTORICAL SOURCES</text>
+      <text x="30" y="162" fill="#7a6644" font-size="10" text-anchor="start">SYNTHESIS</text>
+      <text x="30" y="290" fill="#7a6644" font-size="10" text-anchor="start">CLASSIFICATION</text>
+      <text x="30" y="538" fill="#7a6644" font-size="10" text-anchor="start">CODIFIED RULES (rules.js)</text>
+    </svg>
+  </div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#5DCAA5"></div>Agreed / Consensus rules</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#c9a84c"></div>Ambiguous / debated rules</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#D85A30"></div>Disputed / Chaturanga-unique rules</div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 2: DICE INFLUENCE ══════════════════════════════════════════════ -->
+<div class="section" id="sec-dice">
+  <div class="section-title">How the Dice Shapes Everything</div>
+  <div class="section-subtitle">The Pāśaka (die) is not just a randomiser — it is the game's central authority. Click each face to explore its strategic and probabilistic impact.</div>
+
+  <div class="dice-board" id="diceBoard">
+    <button class="dice-card" onclick="showDiceDetail(1)">
+      <div class="dice-num">1</div>
+      <div class="dice-piece">Ratha (Rook)</div>
+      <div class="dice-freq">1/6 chance · 16.7%</div>
+    </button>
+    <button class="dice-card" onclick="showDiceDetail(2)">
+      <div class="dice-num">2</div>
+      <div class="dice-piece">Any piece</div>
+      <div class="dice-freq">2/6 combined · 33.3%</div>
+    </button>
+    <button class="dice-card" onclick="showDiceDetail(3)">
+      <div class="dice-num">3</div>
+      <div class="dice-piece">Ashwa (Horse)</div>
+      <div class="dice-freq">1/6 chance · 16.7%</div>
+    </button>
+    <button class="dice-card" onclick="showDiceDetail(4)">
+      <div class="dice-num">4</div>
+      <div class="dice-piece">Danti (Elephant)</div>
+      <div class="dice-freq">1/6 chance · 16.7%</div>
+    </button>
+    <button class="dice-card" onclick="showDiceDetail(5)">
+      <div class="dice-num">5</div>
+      <div class="dice-piece">Any piece</div>
+      <div class="dice-freq">Combined with 2 → 33.3%</div>
+    </button>
+    <button class="dice-card" onclick="showDiceDetail(6)">
+      <div class="dice-num">6</div>
+      <div class="dice-piece">Nara or Raja</div>
+      <div class="dice-freq">1/6 chance · 16.7%</div>
+    </button>
+  </div>
+
+  <div class="dice-detail" id="diceDetail"></div>
+
+  <div class="chart-wrap" style="margin-top:20px">
+    <svg width="100%" viewBox="0 0 860 340" xmlns="http://www.w3.org/2000/svg">
+      <text x="430" y="22" text-anchor="middle" fill="#c9a84c" font-size="13" font-weight="500">Dice → Strategy cascades</text>
+      <!-- Central dice node -->
+      <rect x="360" y="40" width="140" height="50" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="1"/>
+      <text x="430" y="61" text-anchor="middle" fill="#e8b52a" font-size="12" font-weight="500">Pāśaka Roll</text>
+      <text x="430" y="77" text-anchor="middle" fill="#7a6644" font-size="11">Forces piece type</text>
+      <!-- Branches -->
+      <line x1="360" y1="90" x2="180" y2="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.7"/>
+      <line x1="390" y1="90" x2="330" y2="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.7"/>
+      <line x1="430" y1="90" x2="430" y2="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.7"/>
+      <line x1="470" y1="90" x2="530" y2="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.7"/>
+      <line x1="500" y1="90" x2="680" y2="150" stroke="#c9a84c" stroke-width="0.8" opacity="0.7"/>
+      <!-- Level 2 nodes -->
+      <rect x="90" y="154" width="180" height="48" rx="8" fill="#231a08" stroke="#5DCAA5" stroke-width="0.7"/>
+      <text x="180" y="174" text-anchor="middle" fill="#5DCAA5" font-size="11" font-weight="500">Legal moves constrained</text>
+      <text x="180" y="190" text-anchor="middle" fill="#7a6644" font-size="10">Only forced piece can move</text>
+
+      <rect x="280" y="154" width="160" height="48" rx="8" fill="#231a08" stroke="#5DCAA5" stroke-width="0.7"/>
+      <text x="360" y="174" text-anchor="middle" fill="#5DCAA5" font-size="11" font-weight="500">Threat map ignores dice</text>
+      <text x="360" y="190" text-anchor="middle" fill="#7a6644" font-size="10">Bot eval uses all pieces</text>
+
+      <rect x="360" y="154" width="160" height="48" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="0.7"/>
+      <text x="440" y="174" text-anchor="middle" fill="#c9a84c" font-size="11" font-weight="500">No-move → forfeit</text>
+      <text x="440" y="190" text-anchor="middle" fill="#7a6644" font-size="10">3 forfeits = eliminated</text>
+
+      <rect x="450" y="154" width="160" height="48" rx="8" fill="#231a08" stroke="#D85A30" stroke-width="0.7"/>
+      <text x="530" y="174" text-anchor="middle" fill="#D85A30" font-size="11" font-weight="500">Expectiminimax needed</text>
+      <text x="530" y="190" text-anchor="middle" fill="#7a6644" font-size="10">Bots average 6 outcomes</text>
+
+      <rect x="590" y="154" width="180" height="48" rx="8" fill="#231a08" stroke="#D85A30" stroke-width="0.7"/>
+      <text x="680" y="174" text-anchor="middle" fill="#D85A30" font-size="11" font-weight="500">Dice-aware RL needed</text>
+      <text x="680" y="190" text-anchor="middle" fill="#7a6644" font-size="10">State includes dice face</text>
+
+      <!-- Level 3 -->
+      <line x1="180" y1="202" x2="180" y2="258" stroke="#5DCAA5" stroke-width="0.6" opacity="0.5"/>
+      <line x1="360" y1="202" x2="350" y2="258" stroke="#c9a84c" stroke-width="0.6" opacity="0.5"/>
+      <line x1="530" y1="202" x2="530" y2="258" stroke="#D85A30" stroke-width="0.6" opacity="0.5"/>
+      <line x1="680" y1="202" x2="680" y2="258" stroke="#D85A30" stroke-width="0.6" opacity="0.5"/>
+
+      <rect x="70" y="262" width="220" height="46" rx="8" fill="#082014" stroke="#5DCAA5" stroke-width="0.5"/>
+      <text x="180" y="281" text-anchor="middle" fill="#5DCAA5" font-size="11">Formation matters</text>
+      <text x="180" y="296" text-anchor="middle" fill="#7a6644" font-size="10">Protected pieces depend on dice luck</text>
+
+      <rect x="260" y="262" width="190" height="46" rx="8" fill="#2a1e08" stroke="#c9a84c" stroke-width="0.5"/>
+      <text x="355" y="281" text-anchor="middle" fill="#c9a84c" font-size="11">Freeze strategy</text>
+      <text x="355" y="296" text-anchor="middle" fill="#7a6644" font-size="10">Opponent's king dice = tactical freeze</text>
+
+      <rect x="440" y="262" width="180" height="46" rx="8" fill="#140808" stroke="#D85A30" stroke-width="0.5"/>
+      <text x="530" y="281" text-anchor="middle" fill="#D85A30" font-size="11">ELO tiers scale with dice handling</text>
+      <text x="530" y="296" text-anchor="middle" fill="#7a6644" font-size="10">ELO 400+ model all 6 outcomes</text>
+
+      <rect x="600" y="262" width="180" height="46" rx="8" fill="#140808" stroke="#D85A30" stroke-width="0.5"/>
+      <text x="690" y="281" text-anchor="middle" fill="#D85A30" font-size="11">RL: stochastic MDP</text>
+      <text x="690" y="296" text-anchor="middle" fill="#7a6644" font-size="10">Policy must generalise over dice</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: ANCESTRY ════════════════════════════════════════════════════ -->
+<div class="section" id="sec-ancestry">
+  <div class="section-title">Chaturanga as the Ancestor of Chess</div>
+  <div class="section-subtitle">Chaturanga (c. 280–550 CE) is the earliest known board game with pieces of differing power. Every major strategy game in the world traces its lineage through it. The diagram below shows the transmission routes and how features were preserved or transformed.</div>
+
+  <div class="chart-wrap">
+    <svg width="100%" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+      <!-- Root -->
+      <rect x="350" y="20" width="200" height="60" rx="10" fill="#2a1e08" stroke="#c9a84c" stroke-width="1.5"/>
+      <text x="450" y="46" text-anchor="middle" fill="#e8b52a" font-size="14" font-weight="700">Chaturanga</text>
+      <text x="450" y="63" text-anchor="middle" fill="#7a6644" font-size="11">India, c. 280-600 CE · 4-player</text>
+
+      <!-- Main branches -->
+      <line x1="380" y1="80" x2="200" y2="160" stroke="#c9a84c" stroke-width="1.2"/>
+      <line x1="450" y1="80" x2="450" y2="160" stroke="#c9a84c" stroke-width="1.2"/>
+      <line x1="520" y1="80" x2="700" y2="160" stroke="#c9a84c" stroke-width="1.2"/>
+
+      <!-- Chatrang (Persia) -->
+      <rect x="110" y="164" width="180" height="56" rx="8" fill="#231a08" stroke="#EF9F27" stroke-width="0.8"/>
+      <text x="200" y="186" text-anchor="middle" fill="#EF9F27" font-size="12" font-weight="500">Chatrang / Shatranj</text>
+      <text x="200" y="202" text-anchor="middle" fill="#7a6644" font-size="10">Persia / Arabia, 600–900 CE</text>
+      <text x="200" y="216" text-anchor="middle" fill="#7a6644" font-size="10">2-player, dice removed</text>
+
+      <!-- Chaturaji (4P chess) -->
+      <rect x="350" y="164" width="200" height="56" rx="8" fill="#231a08" stroke="#c9a84c" stroke-width="0.8"/>
+      <text x="450" y="186" text-anchor="middle" fill="#c9a84c" font-size="12" font-weight="500">Chaturaji</text>
+      <text x="450" y="202" text-anchor="middle" fill="#7a6644" font-size="10">India, 1000–1400 CE</text>
+      <text x="450" y="216" text-anchor="middle" fill="#7a6644" font-size="10">4-player, dice retained</text>
+
+      <!-- East Asia branch -->
+      <rect x="610" y="164" width="180" height="56" rx="8" fill="#231a08" stroke="#5DCAA5" stroke-width="0.8"/>
+      <text x="700" y="186" text-anchor="middle" fill="#5DCAA5" font-size="12" font-weight="500">Xiangqi (象棋)</text>
+      <text x="700" y="202" text-anchor="middle" fill="#7a6644" font-size="10">China, 7th–10th CE</text>
+      <text x="700" y="216" text-anchor="middle" fill="#7a6644" font-size="10">River barrier, cannon added</text>
+
+      <!-- Level 3 -->
+      <line x1="200" y1="220" x2="200" y2="300" stroke="#EF9F27" stroke-width="1"/>
+      <line x1="200" y1="220" x2="380" y2="300" stroke="#EF9F27" stroke-width="0.7" stroke-dasharray="4 3"/>
+      <line x1="700" y1="220" x2="700" y2="300" stroke="#5DCAA5" stroke-width="1"/>
+      <line x1="700" y1="220" x2="560" y2="300" stroke="#5DCAA5" stroke-width="0.7" stroke-dasharray="4 3"/>
+
+      <rect x="110" y="304" width="180" height="56" rx="8" fill="#231a08" stroke="#EF9F27" stroke-width="0.8"/>
+      <text x="200" y="328" text-anchor="middle" fill="#EF9F27" font-size="12" font-weight="500">Medieval Chess</text>
+      <text x="200" y="344" text-anchor="middle" fill="#7a6644" font-size="10">Europe, 1000–1400 CE</text>
+      <text x="200" y="358" text-anchor="middle" fill="#7a6644" font-size="10">Queen / bishop evolve</text>
+
+      <rect x="300" y="304" width="180" height="56" rx="8" fill="#231a08" stroke="#5DCAA5" stroke-width="0.8"/>
+      <text x="390" y="328" text-anchor="middle" fill="#5DCAA5" font-size="12" font-weight="500">Shogi (将棋)</text>
+      <text x="390" y="344" text-anchor="middle" fill="#7a6644" font-size="10">Japan, ~1000 CE</text>
+      <text x="390" y="358" text-anchor="middle" fill="#7a6644" font-size="10">Captured pieces rejoin</text>
+
+      <rect x="610" y="304" width="180" height="56" rx="8" fill="#231a08" stroke="#5DCAA5" stroke-width="0.8"/>
+      <text x="700" y="328" text-anchor="middle" fill="#5DCAA5" font-size="12" font-weight="500">Makruk (หมากรุก)</text>
+      <text x="700" y="344" text-anchor="middle" fill="#7a6644" font-size="10">Thailand, ~1000 CE</text>
+      <text x="700" y="358" text-anchor="middle" fill="#7a6644" font-size="10">Closest to Chaturanga</text>
+
+      <!-- Level 4 -->
+      <line x1="200" y1="360" x2="200" y2="430" stroke="#EF9F27" stroke-width="1"/>
+      <rect x="110" y="434" width="180" height="56" rx="8" fill="#231a08" stroke="#E24B4A" stroke-width="1.2"/>
+      <text x="200" y="458" text-anchor="middle" fill="#E24B4A" font-size="12" font-weight="600">Modern Chess</text>
+      <text x="200" y="474" text-anchor="middle" fill="#7a6644" font-size="10">Global, 1475 CE onward</text>
+      <text x="200" y="488" text-anchor="middle" fill="#7a6644" font-size="10">Queen supercharged; no dice</text>
+
+      <line x1="700" y1="360" x2="700" y2="430" stroke="#5DCAA5" stroke-width="0.7"/>
+      <rect x="610" y="434" width="180" height="56" rx="8" fill="#231a08" stroke="#5DCAA5" stroke-width="0.8"/>
+      <text x="700" y="458" text-anchor="middle" fill="#5DCAA5" font-size="12" font-weight="500">Janggi (장기)</text>
+      <text x="700" y="474" text-anchor="middle" fill="#7a6644" font-size="10">Korea, 10th CE</text>
+      <text x="700" y="488" text-anchor="middle" fill="#7a6644" font-size="10">Palace moves, flat cannon</text>
+
+      <!-- Labels -->
+      <text x="30" y="58" fill="#7a6644" font-size="10" text-anchor="start">ORIGIN</text>
+      <text x="30" y="200" fill="#7a6644" font-size="10" text-anchor="start">1ST GEN</text>
+      <text x="30" y="340" fill="#7a6644" font-size="10" text-anchor="start">2ND GEN</text>
+      <text x="30" y="470" fill="#7a6644" font-size="10" text-anchor="start">MODERN</text>
+    </svg>
+  </div>
+
+  <!-- Comparison table -->
+  <table class="comp">
+    <tr>
+      <th>Feature</th>
+      <th>Chaturanga</th>
+      <th>Modern Chess</th>
+      <th>Xiangqi</th>
+      <th>Shogi</th>
+      <th>Makruk</th>
+    </tr>
+    <tr>
+      <td>Players</td>
+      <td class="origin">4 (or 2)</td>
+      <td>2</td><td>2</td><td>2</td><td>2</td>
+    </tr>
+    <tr>
+      <td>Dice mechanic</td>
+      <td class="origin">Yes — mandatory</td>
+      <td>No</td><td>No</td><td>No</td><td>No</td>
+    </tr>
+    <tr>
+      <td>Board</td>
+      <td class="origin">8×8 Ashtapada</td>
+      <td>8×8</td><td>9×10 grid</td><td>9×9</td><td>8×8</td>
+    </tr>
+    <tr>
+      <td>Piece equivalent to Queen</td>
+      <td class="origin">None (weakest piece = Mantri)</td>
+      <td>Queen (strongest)</td><td>None (General)</td><td>None (Gold/Silver)</td><td>Met (weak queen)</td>
+    </tr>
+    <tr>
+      <td>King capture</td>
+      <td class="origin">King×King forbidden</td>
+      <td>Checkmate (King safe)</td><td>General×General forbidden</td><td>King captured normally</td><td>Normal</td>
+    </tr>
+    <tr>
+      <td>Piece promotion</td>
+      <td class="origin">Pawn → Mantri (weak)</td>
+      <td>Pawn → Any piece</td><td>No promotion</td><td>Most pieces promote</td><td>Pawn → Met</td>
+    </tr>
+    <tr>
+      <td>Captured pieces</td>
+      <td class="origin">Removed from game</td>
+      <td>Removed from game</td><td>Removed</td><td>Can be re-dropped!</td><td>Removed</td>
+    </tr>
+    <tr>
+      <td>Team/Alliance</td>
+      <td class="origin">2v2 teams possible</td>
+      <td>No (1v1 only)</td><td>No</td><td>No</td><td>No</td>
+    </tr>
+    <tr>
+      <td>Minor piece restriction</td>
+      <td class="origin">Minor ↛ minor captures</td>
+      <td>No restriction</td><td>No</td><td>No</td><td>No</td>
+    </tr>
+  </table>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
+  const target = document.getElementById('sec-' + id);
+  if (target) target.classList.add('active');
+  const btns = document.querySelectorAll('.snav-btn');
+  let idx = 0;
+  if (id === 'dice') idx = 1;
+  else if (id === 'ancestry') idx = 2;
+  if (btns[idx]) btns[idx].classList.add('active');
+}
+
+const DICE_DETAILS = {
+  1: {
+    title: 'Face 1 — Ratha (Rook) must move',
+    body: 'The Ratha (Chariot) moves any number of squares in a straight line — the most powerful piece in Chaturanga. Rolling a 1 is both a great opportunity and a liability: you must move your Ratha whether you want to or not. If your Ratha is well-placed, this is an attacking turn. If not, it may be forced into danger.',
+    impact: 85,
+    impactLabel: 'Tactical impact: Very High',
+    notes: ['Ratha = 5 points (highest value)', 'Forces strongest piece to commit', 'Opponent threat maps ignore dice — they already know your Ratha range', 'No Ratha on board = forfeit']
+  },
+  2: {
+    title: 'Face 2 — Any piece can move',
+    body: 'Faces 2 and 5 both give you freedom to move any piece. Combined, they represent 2/6 = 33.3% of all rolls — the single most common outcome. This is when strategy truly shines: you choose what to develop, protect, or attack with. The bot at ELO 400+ explicitly models this combined 2/6 weight when computing expected opponent responses.',
+    impact: 60,
+    impactLabel: 'Strategic impact: High (maximum flexibility)',
+    notes: ['Dice faces 2 and 5 are identical in effect', 'Combined probability = 33.3% — most common outcome', 'ELO 400 bot naturally weights this 2/6 in expectiminimax', 'Best time to move threatened pieces to safety']
+  },
+  3: {
+    title: 'Face 3 — Ashwa (Horse) must move',
+    body: 'The Ashwa moves in an L-shape, identical to the chess knight. It can jump over pieces — making it especially powerful in crowded mid-game positions. Rolling a 3 often creates unexpected threats since the L-shape creates forks easily. Losing all Ashwa = forfeit on dice 3.',
+    impact: 65,
+    impactLabel: 'Tactical impact: High (fork potential)',
+    notes: ['Ashwa = 3 points', 'L-shape jumps over all pieces', 'Central horses control up to 8 squares', 'ELO 300+ bots know not to let a horse fork their king']
+  },
+  4: {
+    title: 'Face 4 — Danti (Elephant) must move',
+    body: 'The Danti leaps exactly 2 squares diagonally, jumping over any piece in between. This unusual movement is unique to Chaturanga — it\'s not the same as the chess bishop. Each Danti only ever occupies squares of one diagonal colour. This makes them stronger early, weaker if the board opens up.',
+    impact: 55,
+    impactLabel: 'Tactical impact: Medium (diagonal specialist)',
+    notes: ['Danti = 3 points', 'Jumps exactly 2 diagonals — not a sliding piece', 'Colour-bound: always stays on one diagonal complex', 'Minor piece: cannot capture other minor pieces']
+  },
+  5: {
+    title: 'Face 5 — Any piece can move',
+    body: 'Identical in effect to face 2. Together, dice 2 and 5 create the 33.3% "any piece" window. The Chaturanga bot\'s expectiminimax correctly accumulates the 2/6 weight for these outcomes automatically — no special-casing needed.',
+    impact: 60,
+    impactLabel: 'Strategic impact: High (maximum flexibility)',
+    notes: ['Same as face 2 — free choice of piece', 'The two "any" faces are the most strategically potent rolls', 'Good time to advance pawns toward promotion', 'ELO 600 paranoid bot models coalition responses through these turns']
+  },
+  6: {
+    title: 'Face 6 — Nara (pawn) or Raja (King) must move',
+    body: 'Perhaps the most dramatic roll. You must move either a pawn or your king — no other choice. Moving the king is almost always dangerous; moving a pawn advances your endgame. This is the only dice face that directly threatens your king. Good players plan to have safe king retreat paths before a 6 becomes disaster.',
+    impact: 90,
+    impactLabel: 'Risk impact: Extreme (king safety crisis roll)',
+    notes: ['Forces King to move if no pawn moves exist', 'King = 100 pts — most valuable piece', 'ELO 300+ bots apply −40 penalty to moving king into threats', 'Frozen players (no pawn/king) lose forfeit count', 'This roll is why king safety matters early']
+  }
+};
+
+function showDiceDetail(face) {
+  const d = DICE_DETAILS[face];
+  const el = document.getElementById('diceDetail');
+  el.innerHTML = `
+    <div class="detail-title">${d.title}</div>
+    <div class="detail-body">${d.body}</div>
+    <div style="margin:10px 0">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px">${d.impactLabel}</div>
+      <div class="impact-bar"><div class="impact-fill" style="width:${d.impact}%"></div></div>
+    </div>
+    <ul style="font-size:.75rem;color:#c4a97a;padding-left:16px;line-height:1.8">
+      ${d.notes.map(n => `<li>${n}</li>`).join('')}
+    </ul>`;
+  el.classList.add('show');
+  document.querySelectorAll('.dice-card').forEach((c,i) => c.classList.toggle('active', i+1 === face));
+}
+</script>
+</body>
+</html>

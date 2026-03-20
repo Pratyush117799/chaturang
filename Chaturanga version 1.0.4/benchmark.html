@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chaturanga v1.0.4 — Bot Benchmark</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --bg:       #0a0b0e;
+      --surface:  #14161d;
+      --card:     #1c1f2a;
+      --border:   #2d3142;
+      --accent:   #d4af37; /* Gold */
+      --accent2:  #c5a02c;
+      --green:    #4ade80;
+      --red:      #f87171;
+      --yellow:   #fbbf24;
+      --blue:     #60a5fa;
+      --text:     #e2e8f0;
+      --muted:    #8b949e;
+      --header-font: 'Cinzel', serif;
+      --body-font: 'Outfit', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      text-align: center;
+      font-family: var(--header-font);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    h1 span { color: var(--accent); }
+    .subtitle { 
+      text-align: center; 
+      color: var(--muted); 
+      font-size: 0.95rem; 
+      margin-bottom: 32px;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ── Layout ─────────────────────────────── */
+    .layout { display: flex; gap: 24px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .config-panel { flex: 0 0 350px; }
+    .results-panel { flex: 1 1 500px; }
+
+    /* ── Config ─────────────────────────────── */
+    h2 { 
+      font-family: var(--header-font);
+      font-size: 1.1rem; 
+      font-weight: 600; 
+      color: var(--accent); 
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+    h2 i { font-size: 0.9rem; }
+
+    .field { margin-bottom: 18px; }
+    label.field-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    select, input[type=range] {
+      width: 100%;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--body-font);
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+    }
+    select:hover, select:focus { border-color: var(--accent); }
+
+    .range-row { display: flex; align-items: center; gap: 12px; }
+    .range-row input { flex: 1; cursor: pointer; accent-color: var(--accent); }
+    .range-val {
+      font-weight: 700; font-size: 1.1rem; color: var(--accent);
+      min-width: 45px; text-align: right;
+    }
+
+    .run-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--header-font);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+    }
+    .run-btn:hover { background: #fff; transform: translateY(-2px); }
+    .run-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+    /* ── Progress ───────────────────────────── */
+    .progress-wrap {
+      margin-top: 24px; display: none;
+    }
+    .progress-bar-bg {
+      background: var(--card);
+      border-radius: 2px;
+      height: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.2s;
+    }
+    .progress-label { font-size: 0.8rem; color: var(--muted); text-align: center; font-weight: 500; }
+
+    /* ── vs display ─────────────────────────── */
+    .vs-display {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      gap: 16px;
+      border: 1px solid var(--border);
+    }
+    .vs-side { text-align: center; flex: 1; }
+    .vs-name { font-size: 0.7rem; color: var(--muted); font-weight: 700;
+               text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+    .vs-elo  { font-family: var(--header-font); font-size: 1.8rem; font-weight: 700; }
+    .vs-elo.a { color: var(--green); }
+    .vs-elo.b { color: var(--yellow); }
+    .vs-dot  { font-family: var(--header-font); font-size: 1.5rem; color: var(--accent); opacity: 0.5; }
+
+    /* ── Results formatting ─────────────────── */
+    .score-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 24px;
+    }
+    .score-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      text-align: center;
+    }
+    .score-card .label { font-size: 0.7rem; color: var(--muted);
+                         text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .score-card .value { font-family: var(--header-font); font-size: 2rem; font-weight: 700; }
+    .score-card.winner-a .value { color: var(--green); }
+    .score-card.winner-b .value { color: var(--yellow); }
+    .score-card.draws    .value { color: var(--blue); }
+
+    /* ── Win bar ────────────────────────────── */
+    .win-bar-wrap { margin-bottom: 24px; }
+    .win-bar-labels { display: flex; justify-content: space-between;
+                      font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
+    .win-bar {
+      height: 12px; border-radius: 2px; overflow: hidden;
+      background: var(--card);
+      display: flex;
+    }
+    .win-bar .seg-a { background: var(--green); transition: width 0.5s; }
+    .win-bar .seg-d { background: var(--blue); transition: width 0.5s; }
+    .win-bar .seg-b { background: var(--yellow); transition: width 0.5s; }
+
+    /* ── History Sidebar ────────────────────── */
+    .history-panel-bench {
+      margin-top: 32px;
+    }
+    .history-scroll {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .history-item {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      border-left: 3px solid var(--accent);
+      border: 1px solid var(--border);
+      border-left-width: 4px;
+    }
+    .history-item-header {
+      display: flex; justify-content: space-between;
+      color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .history-item-result { font-weight: 700; margin-top: 6px; display: flex; gap: 8px; justify-content: center; }
+
+    /* ── Game log ───────────────────────────── */
+    .log-section h3 { font-family: var(--header-font); font-size: 0.9rem; color: var(--accent);
+                      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    #gameLog {
+      max-height: 300px; overflow-y: auto;
+      font-size: 0.8rem; color: var(--muted);
+      line-height: 1.8;
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    #gameLog .log-win-a  { color: var(--green); font-weight: 600; }
+    #gameLog .log-win-b  { color: var(--yellow); font-weight: 600; }
+    #gameLog .log-draw   { color: var(--blue); }
+
+    /* ── Preloader ────────────────────────────── */
+    #preloader {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 10000;
+      transition: opacity 0.6s ease;
+    }
+    .loader-wheel {
+      width: 60px; height: 60px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #preloader h2 { border: none; font-family: var(--header-font); margin-top: 24px; color: var(--accent); letter-spacing: 4px; font-size: 1rem; }
+
+    .rating-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
+    .rating-table th { padding: 8px; text-align: left; color: var(--muted); border-bottom: 1px solid var(--border); font-size: 0.7rem; }
+    .rating-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; background: var(--card); }
+
+    @media (max-width: 900px) { .config-panel { flex: 1 1 100%; } }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <div class="loader-wheel"></div>
+    <h2>CALCULATING STRATEGIES</h2>
+  </div>
+
+  <h1>चतुरंग <span>Bot Benchmark</span></h1>
+  <p class="subtitle">Empirical ELO measurement for v1.0.4 AI Engines</p>
+
+  <div class="layout">
+    
+    <!-- Config -->
+    <div class="panel config-panel">
+      <h2><i class="fa-solid fa-gears"></i> SETUP</h2>
+
+      <div class="field">
+        <label class="field-label" for="eloA">Team A (Red &amp; Green)</label>
+        <select id="eloA">
+          <option value="100">ELO 100 — Random</option>
+          <option value="200">ELO 200 — Greedy</option>
+          <option value="300">ELO 300 — Tactical</option>
+          <option value="400">ELO 400 — Strategic</option>
+          <option value="500">ELO 500 — Deep Tactical</option>
+          <option value="600" selected>ELO 600 — Paranoid</option>
+          <option value="700">ELO 700 — Grandmaster</option>
+          <option value="800">ELO 800 — Maharaja</option>
+          <option value="900">ELO 900 — Samrat</option>
+          <option value="1000">ELO 1000 — Chakravarti</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="eloB">Team B (Blue &amp; Yellow)</label>
+        <select id="eloB">
+          <option value="100">ELO 100 — Random</option>
+          <option value="200">ELO 200 — Greedy</option>
+          <option value="300" selected>ELO 300 — Tactical</option>
+          <option value="400">ELO 400 — Strategic</option>
+          <option value="500">ELO 500 — Deep Tactical</option>
+          <option value="600">ELO 600 — Paranoid</option>
+          <option value="700">ELO 700 — Grandmaster</option>
+          <option value="800">ELO 800 — Maharaja</option>
+          <option value="900">ELO 900 — Samrat</option>
+          <option value="1000">ELO 1000 — Chakravarti</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="workerCount">Concurrency</label>
+        <select id="workerCount">
+          <option value="1">1 Worker</option>
+          <option value="2">2 Workers</option>
+          <option value="4" selected>4 Workers</option>
+          <option value="8">8 Workers</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="numGames">Games Count</label>
+        <div class="range-row">
+          <input type="range" id="numGames" min="10" max="200" step="10" value="50">
+          <span class="range-val" id="numGamesLabel">50</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="gameMode">Mode</label>
+        <select id="gameMode">
+          <option value="team">Team (2 vs 2)</option>
+          <option value="single">Single (Free-for-All)</option>
+        </select>
+      </div>
+
+      <button class="run-btn" id="runBtn">
+        <i class="fa-solid fa-play"></i> INITIATE WAR
+      </button>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">Initializing...</div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h2><i class="fa-solid fa-list-ol"></i> ELO TIERS</h2>
+        <table class="rating-table">
+          <tr><th>Tier</th><th>Algorithm</th></tr>
+          <tr><td><span class="pill" style="color:var(--muted)">100</span></td><td>Random</td></tr>
+          <tr><td><span class="pill" style="color:var(--blue)">400</span></td><td>Expectiminimax</td></tr>
+          <tr><td><span class="pill" style="color:var(--accent)">700</span></td><td>Alpha-Beta d3</td></tr>
+          <tr><td><span class="pill" style="color:#f43f5e">1000</span></td><td>TT + Quiesc d6</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="panel results-panel">
+      <div id="resultsContent">
+        <div class="vs-display">
+          <div class="vs-side"><div class="vs-name">TEAM A</div><div class="vs-elo a" id="displayEloA">600</div></div>
+          <div class="vs-dot">VS</div>
+          <div class="vs-side"><div class="vs-name">TEAM B</div><div class="vs-elo b" id="displayEloB">300</div></div>
+        </div>
+
+        <div class="score-grid">
+          <div class="score-card winner-a"><div class="label">A Wins</div><div class="value" id="winsA">0</div></div>
+          <div class="score-card winner-b"><div class="label">B Wins</div><div class="value" id="winsB">0</div></div>
+          <div class="score-card draws"><div class="label">Draws</div><div class="value" id="draws">0</div></div>
+          <div class="score-card"><div class="label">Avg Moves</div><div class="value" id="avgMoves">0</div></div>
+        </div>
+
+        <div class="win-bar-wrap">
+          <div class="win-bar-labels"><span id="pctA">0%</span><span>Draw</span><span id="pctB">0%</span></div>
+          <div class="win-bar">
+            <div class="seg-a" id="barA" style="width:0%"></div>
+            <div class="seg-d" id="barD" style="width:100%"></div>
+            <div class="seg-b" id="barB" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="log-section">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0">BATTLE LOG</h3>
+            <button id="dlBtn" class="pill" style="cursor:pointer; border:1px solid var(--border); padding:4px 10px; opacity:0.5" disabled>Download PGMs</button>
+          </div>
+          <div id="gameLog"><div style="text-align:center; padding:40px; color:var(--muted)">Waiting for battle start...</div></div>
+        </div>
+
+        <div class="history-panel-bench">
+          <h2><i class="fa-solid fa-clock-rotate-left"></i> HISTORY</h2>
+          <div class="history-scroll" id="historyList"></div>
+          <button onclick="clearHistory()" style="background:none; border:none; color:var(--muted); font-size:0.7rem; cursor:pointer; margin-top:10px; width:100%; text-decoration:underline">Clear History</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    'use strict';
+    
+    // UI elements
+    const runBtn = document.getElementById('runBtn');
+    const logs = document.getElementById('gameLog');
+    const dlBtn = document.getElementById('dlBtn');
+    
+    // Setup inputs
+    const eloA = document.getElementById('eloA');
+    const eloB = document.getElementById('eloB');
+    const nGames = document.getElementById('numGames');
+    const nGamesLbl = document.getElementById('numGamesLabel');
+    const gMode = document.getElementById('gameMode');
+    const wCount = document.getElementById('workerCount');
+    
+    nGames.oninput = () => nGamesLbl.innerText = nGames.value;
+    [eloA, eloB].forEach(el => el.onchange = () => {
+      document.getElementById('displayEloA').innerText = eloA.value;
+      document.getElementById('displayEloB').innerText = eloB.value;
+    });
+
+    let workers = [];
+    let state = { running: false, results: 0, total: 0, winsA: 0, winsB: 0, draws: 0, moves: 0, lib: [] };
+
+    function stopWorkers() { workers.forEach(w => w.terminate()); workers = []; }
+
+    runBtn.onclick = () => {
+      if (state.running) return;
+      state = { running:true, results:0, total:Number.parseInt(nGames.value, 10), winsA:0, winsB:0, draws:0, moves:0, lib:[] };
+      
+      runBtn.disabled = true;
+      dlBtn.disabled = true;
+      dlBtn.style.opacity = '0.5';
+      document.getElementById('progressWrap').style.display = 'block';
+      logs.innerHTML = '';
+      
+      const count = Number.parseInt(wCount.value, 10);
+      stopWorkers();
+      for(let i=0; i<count; i++) {
+        const w = new Worker('benchmark-worker.js');
+        w.onmessage = handleMessage;
+        w.onerror = (e) => console.error('Worker Error:', e);
+        workers.push(w);
+      }
+
+      // Dispatch games
+      for(let i=0; i<state.total; i++) {
+        workers[i % count].postMessage({
+          eloA: Number.parseInt(eloA.value, 10),
+          eloB: Number.parseInt(eloB.value, 10),
+          gameMode: gMode.value,
+          maxMoves: 400,
+          gameIndex: i
+        });
+      }
+    };
+
+    function handleMessage(e) {
+      if (!state.running) return;
+      const { res, error } = e.data;
+      if (error) { console.error(error); return; }
+
+      state.results++;
+      state.moves += res.moves;
+      state.lib.push(res);
+
+      if (res.winner === 0) state.winsA++;
+      else if (res.winner === 1) state.winsB++;
+      else state.draws++;
+
+      updateUI();
+
+      if (state.results >= state.total) {
+        state.running = false;
+        runBtn.disabled = false;
+        dlBtn.disabled = false;
+        dlBtn.style.opacity = '1';
+        saveToHistory();
+        stopWorkers();
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('winsA').innerText = state.winsA;
+      document.getElementById('winsB').innerText = state.winsB;
+      document.getElementById('draws').innerText = state.draws;
+      document.getElementById('avgMoves').innerText = Math.round(state.moves / state.results);
+
+      const pA = (state.winsA / state.results * 100).toFixed(1);
+      const pB = (state.winsB / state.results * 100).toFixed(1);
+      const pD = (state.draws / state.results * 100).toFixed(1);
+
+      document.getElementById('pctA').innerText = pA + '%';
+      document.getElementById('pctB').innerText = pB + '%';
+      document.getElementById('barA').style.width = pA + '%';
+      document.getElementById('barB').style.width = pB + '%';
+      document.getElementById('barD').style.width = pD + '%';
+
+      document.getElementById('progressFill').style.width = (state.results / state.total * 100) + '%';
+      document.getElementById('progressLabel').innerText = `${state.results} / ${state.total} BATTLES FINISHED`;
+
+      const last = state.lib[state.lib.length-1];
+      let winTag = 'DRAW';
+      if (last.winner === 0) winTag = 'TEAM A VICTOR';
+      else if (last.winner === 1) winTag = 'TEAM B VICTOR';
+
+      let winCls = 'log-draw';
+      if (last.winner === 0) winCls = 'log-win-a';
+      else if (last.winner === 1) winCls = 'log-win-b';
+
+      logs.innerHTML += `<div>Game ${state.results}: <span class="${winCls}">${winTag}</span> (${last.moves} moves)</div>`;
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    function saveToHistory() {
+      const history = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
+      history.unshift({
+        date: new Date().toLocaleString(),
+        eloA: eloA.value, eloB: eloB.value,
+        n: state.total, winsA: state.winsA, winsB: state.winsB, draws: state.draws,
+        avg: Math.round(state.moves / state.total)
+      });
+      localStorage.setItem('chaturanga_v104_bench', JSON.stringify(history.slice(0, 10)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const h = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
+      const list = document.getElementById('historyList');
+      if (!h.length) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-size:0.8rem">No previous records</div>';
+        return;
+      }
+      list.innerHTML = h.map(item => `
+        <div class="history-item">
+          <div class="history-item-header"><span>${item.date}</span> <span>${item.n} games</span></div>
+          <div style="font-weight:700; color:var(--accent)">ELO ${item.eloA} vs ${item.eloB}</div>
+          <div class="history-item-result">
+            <span style="color:var(--green)">W:${item.winsA}</span>
+            <span style="color:var(--yellow)">W:${item.winsB}</span>
+            <span style="color:var(--blue)">D:${item.draws}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('chaturanga_v104_bench');
+      renderHistory();
+    }
+
+    dlBtn.onclick = () => {
+      const content = state.lib.map((g, i) => `Game ${i+1}\nWinner: ${g.winner}\nMoves: ${g.moves}\n---`).join('\n\n');
+      const blob = new Blob([content], {type: 'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `chaturanga_bench_${Date.now()}.txt`;
+      a.click();
+    };
+
+    window.onload = () => {
+      renderHistory();
+      setTimeout(() => {
+        document.getElementById('preloader').style.opacity = '0';
+        setTimeout(() => document.getElementById('preloader').style.display = 'none', 600);
+      }, 1000);
+    };
+  </script>
+</body>
+</html>

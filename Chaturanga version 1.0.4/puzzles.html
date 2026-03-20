@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Puzzles — v1.0.4</title>
+  <meta name="description" content="Solve ancient Chaturanga battle puzzles. 20+ puzzles with cultural moral lessons from Mahabharata, Panchatantra and Chanakya Niti."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/themes.css"/>
+  <script>(function(){var t=localStorage.getItem('chaturanga_theme');if(t&&t!=='classic')document.documentElement.className='theme-'+t;})();</script>
+  <style>
+    :root{--sq:56px}
+    .puzzles-layout{display:grid;grid-template-columns:260px 1fr 220px;gap:0;height:calc(100vh - 52px);overflow:hidden}
+    .pz-sidebar{padding:16px;border-right:1px solid var(--border,rgba(201,168,76,.18));overflow-y:auto;background:var(--dark2,#17130a)}
+    .pz-main{padding:20px;display:flex;flex-direction:column;align-items:center;overflow-y:auto}
+    .pz-right{padding:16px;border-left:1px solid var(--border,rgba(201,168,76,.18));overflow-y:auto;background:var(--dark2,#17130a)}
+    .pz-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+    .pz-card{background:rgba(201,168,76,.06);border:1px solid var(--border,rgba(201,168,76,.18));border-radius:8px;padding:10px;cursor:pointer;transition:all .2s}
+    .pz-card:hover{background:rgba(201,168,76,.14);border-color:var(--gold,#c9a84c)}
+    .pz-card.solved{border-color:#4ade80;background:rgba(74,222,128,.06)}
+    .pz-card.active{border-color:var(--gold,#c9a84c);background:rgba(201,168,76,.14)}
+    .pz-card-title{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold,#c9a84c);margin-bottom:4px}
+    .pz-card-meta{font-size:.68rem;color:#888}
+    .pz-rating{font-weight:700}
+    .pz-board{display:grid;grid-template-columns:repeat(8,var(--sq));margin:12px 0}
+    .pz-sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:background .15s}
+    .pz-sq.light{background:#f0d9b5}.pz-sq.dark{background:#b58863}
+    .pz-sq.highlight{outline:3px solid var(--gold,#c9a84c);outline-offset:-3px}
+    .pz-sq.selected{background:rgba(201,168,76,.5) !important}
+    .pz-sq.legal-move::after{content:'';width:30%;height:30%;background:rgba(0,0,0,.3);border-radius:50%;display:block}
+    .pz-sq.legal-capture{outline:3px solid #f87171;outline-offset:-3px}
+    .pz-sq.correct-flash{animation:correctFlash .5s}
+    .pz-sq.wrong-flash{animation:wrongFlash .5s}
+    @keyframes correctFlash{0%,100%{background:inherit} 50%{background:rgba(74,222,128,.6)}}
+    @keyframes wrongFlash{0%,100%{background:inherit} 50%{background:rgba(248,113,113,.6)}}
+    .pz-piece{width:80%;height:80%;object-fit:contain;pointer-events:none}
+    .pz-piece-fb{font-size:calc(var(--sq)*.55);line-height:1}
+    .pz-hint-box{background:rgba(201,168,76,.1);border:1px solid var(--gold,#c9a84c);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--gold,#c9a84c);margin-top:10px;max-width:450px;width:100%}
+    .pz-moral{background:#14532d;border:1px solid #166534;border-radius:8px;padding:10px 14px;font-size:.8rem;color:#86efac;margin-top:8px;max-width:450px;width:100%}
+    .pz-status{font-size:.9rem;min-height:28px;margin:8px 0;font-weight:600}
+    .pz-status.correct{color:#4ade80}.pz-status.wrong{color:#f87171}
+    .streak-badge{background:linear-gradient(135deg,#c9a84c,#f0cc7a);color:#1a1306;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:700;display:inline-block;margin-top:4px}
+    .filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .ftab{background:transparent;border:1px solid var(--border,rgba(201,168,76,.18));color:var(--text-muted,#888);border-radius:4px;padding:3px 8px;font-size:.7rem;cursor:pointer;font-family:'Outfit',sans-serif}
+    .ftab.active, .ftab:hover{background:rgba(201,168,76,.1);border-color:var(--gold,#c9a84c);color:var(--gold,#c9a84c)}
+    .progress-ring{text-align:center;margin-bottom:12px}
+    .nav-logo-text{font-family:'Cinzel',serif;color:var(--gold,#c9a84c)}
+    @media(max-width:900px){.puzzles-layout{grid-template-columns:1fr}.pz-sidebar,.pz-right{height:auto}}
+  </style>
+</head>
+<body>
+<nav class="top-nav" style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <a href="game.html" class="nav-logo" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+    <i class="fa-solid fa-chess-king" style="color:var(--gold,#c9a84c)"></i>
+    <span class="nav-logo-text">Chaturanga Puzzles</span>
+    <span class="nav-version">v1.0.4</span>
+  </a>
+  <div style="display:flex;gap:10px">
+    <a href="lessons.html" class="nav-icon-btn" style="text-decoration:none"><i class="fa-solid fa-graduation-cap"></i></a>
+    <a href="tournament.html" class="nav-icon-btn" style="text-decoration:none"><i class="fa-solid fa-trophy"></i></a>
+    <a href="game.html" class="nav-icon-btn" style="text-decoration:none"><i class="fa-solid fa-chess-board"></i></a>
+  </div>
+</nav>
+
+<div class="puzzles-layout">
+  <!-- LEFT: Puzzle Browser -->
+  <aside class="pz-sidebar" aria-label="Puzzle Sidebar">
+    <h4 class="section-label"><i class="fa-solid fa-puzzle-piece"></i> Puzzles</h4>
+    <div class="progress-ring" id="progressSummary">Loading…</div>
+    <div class="filter-tabs" id="filterTabs"></div>
+    <div class="pz-grid" id="puzzleGrid"></div>
+  </aside>
+
+  <!-- CENTER: Active Board -->
+  <main class="pz-main">
+    <div id="pzEmpty" style="text-align:center;margin-top:60px;color:var(--text-muted,#888)">
+      <i class="fa-solid fa-puzzle-piece" style="font-size:3rem;color:var(--gold,#c9a84c);display:block;margin-bottom:16px"></i>
+      <p>Select a puzzle from the left to begin</p>
+    </div>
+    <div id="pzActive" style="display:none;width:100%;align-items:center;flex-direction:column">
+      <h3 id="pzTitle" style="font-family:'Cinzel',serif;color:var(--gold,#c9a84c);margin-bottom:4px">Puzzle</h3>
+      <div id="pzTypeBadge" style="font-size:.72rem;color:#888;margin-bottom:10px"></div>
+      <div id="pzStatus" class="pz-status"></div>
+      <div id="pzBoard" class="pz-board"></div>
+      <div id="pzHint" class="pz-hint-box" style="display:none"></div>
+      <div id="pzMoral" class="pz-moral" style="display:none"></div>
+      <button id="pzHintBtn" style="margin-top:8px;background:transparent;border:1px solid var(--border,rgba(201,168,76,.18));color:var(--gold,#c9a84c);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:.75rem">
+        <i class="fa-solid fa-lightbulb"></i> Hint
+      </button>
+    </div>
+  </main>
+
+  <!-- RIGHT: Stats & Streak -->
+  <aside class="pz-right" aria-label="Stats Sidebar">
+    <h4 class="section-label"><i class="fa-solid fa-chart-simple"></i> Progress</h4>
+    <div id="pzStats" style="font-size:.82rem">
+      <div class="seer-stat"><span class="seer-key">Solved</span><span class="seer-val" id="statSolved">0</span></div>
+      <div class="seer-stat"><span class="seer-key">Total</span><span class="seer-val" id="statTotal">20</span></div>
+      <div class="seer-stat"><span class="seer-key">Streak</span><span class="seer-val" id="statStreak">0 🔥</span></div>
+    </div>
+    <hr style="border-color:var(--border,rgba(201,168,76,.18));margin:12px 0"/>
+    <h4 class="section-label"><i class="fa-solid fa-scroll"></i> Wisdom Earned</h4>
+    <div id="wisdomList" style="font-size:.75rem;color:#888">Solve puzzles to unlock wisdom.</div>
+  </aside>
+</div>
+
+<script src="puzzles/puzzle-data.js"></script>
+<script src="puzzles/puzzle-engine.js"></script>
+<script>
+const PIECE_SYMBOLS = { pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚' };
+const PLAYER_COLORS = ['red','blue','green','yellow'];
+const PIECE_NAMES = { pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja' };
+
+let currentPuzzle = null, puzzleState = null, boardMap = new Map();
+let selectedSq = null, legalSqs = [];
+
+// ── Build browser ─────────────────────────────────────────────────────────
+function buildBrowser(filterType) {
+  const grid = document.getElementById('puzzleGrid');
+  const puzzles = globalThis.ChaturangaPuzzleData || [];
+  const types = [...new Set(puzzles.map(p=>p.type))];
+
+  // Filter tabs
+  if (!document.getElementById('filterTabs').childElementCount) {
+    const tabsEl = document.getElementById('filterTabs');
+    const all = document.createElement('button');
+    all.className='ftab active'; all.textContent='All'; all.dataset.type='all';
+    all.onclick=()=>{buildBrowser('all');document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));all.classList.add('active');};
+    tabsEl.appendChild(all);
+    types.forEach(t=>{
+      const btn=document.createElement('button');
+      btn.className='ftab';btn.textContent=t.replace('-',' ');btn.dataset.type=t;
+      btn.onclick=()=>{buildBrowser(t);document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');};
+      tabsEl.appendChild(btn);
+    });
+  }
+
+  const pList = filterType&&filterType!=='all' ? puzzles.filter(p=>p.type===filterType) : puzzles;
+  grid.innerHTML = '';
+  pList.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'pz-card' + (globalThis.ChaturangaPuzzleEngine.isSolved(p.id)?' solved':'');
+    card.innerHTML = `<div class="pz-card-title">${p.title}</div><div class="pz-card-meta">${p.type.replaceAll('-',' ')} · <span class="pz-rating">${p.rating}</span></div>${globalThis.ChaturangaPuzzleEngine.isSolved(p.id)?'<span style="color:#4ade80;font-size:.7rem">✔ Solved</span>':''}`;
+    card.onclick=()=>loadPuzzle(p);
+    grid.appendChild(card);
+  });
+  updateStats();
+}
+
+// ── Load puzzle ─────────────────────────────────────────────────────────
+function loadPuzzle(p) {
+  currentPuzzle = p;
+  puzzleState   = globalThis.ChaturangaPuzzleEngine.loadPuzzle(p);
+  selectedSq = null; legalSqs = [];
+
+  // Build boardMap
+  boardMap = new Map();
+  Object.entries(p.boardState||{}).forEach(([sq, val])=>{
+    const [owner,type] = val.split(':');
+    boardMap.set(sq, { owner:Number.parseInt(owner, 10), type });
+  });
+
+  document.getElementById('pzEmpty').style.display='none';
+  document.getElementById('pzActive').style.display='flex';
+  document.getElementById('pzTitle').textContent=p.title;
+  document.getElementById('pzTypeBadge').textContent=p.type.replaceAll('-',' ')+'  ·  Rating '+p.rating;
+  document.getElementById('pzHint').style.display='none';
+  document.getElementById('pzMoral').style.display='none';
+  document.getElementById('pzStatus').textContent='Move '+(['Red','Blue','Green','Yellow'][p.turnIndex]||'Red')+'\'s piece.';
+  document.getElementById('pzStatus').className='pz-status';
+
+  renderPzBoard();
+  // Active card highlight
+  document.querySelectorAll('.pz-card').forEach(c=>{
+    const title=c.querySelector('.pz-card-title');
+    c.classList.toggle('active',title&&title.textContent===p.title);
+  });
+}
+
+// ── Render board ───────────────────────────────────────────────────────
+function renderPzBoard() {
+  const boardEl = document.getElementById('pzBoard');
+  boardEl.innerHTML = '';
+  for (let r = 8; r >= 1; r--) {
+    for (let f = 0; f < 8; f++) {
+      const sq = String.fromCodePoint(97 + f) + r;
+      const cell = createPzCell(sq, f, r);
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+function createPzCell(sq, f, r) {
+  const cell = document.createElement('div');
+  cell.className = `pz-sq ${(f + r) % 2 === 0 ? 'light' : 'dark'}`;
+  cell.dataset.sq = sq;
+  if (selectedSq === sq) cell.classList.add('selected');
+  const piece = boardMap.get(sq);
+  if (legalSqs.includes(sq)) cell.classList.add(piece ? 'legal-capture' : 'legal-move');
+  
+  if (piece) {
+    const img = document.createElement('img');
+    img.className = 'pz-piece';
+    const tName = (PIECE_NAMES[piece.type] || piece.type).toLowerCase();
+    img.src = `images/pieces/${PLAYER_COLORS[piece.owner]}_${tName}.png`;
+    img.onerror = () => {
+      img.style.display = 'none';
+      const s = document.createElement('span');
+      s.className = 'pz-piece-fb';
+      s.textContent = PIECE_SYMBOLS[piece.type] || '?';
+      cell.appendChild(s);
+    };
+    cell.appendChild(img);
+  }
+  cell.onclick = () => onPzClick(sq);
+  return cell;
+}
+
+// ── Click handler ──────────────────────────────────────────────────────
+function onPzClick(sq) {
+  if (!puzzleState||puzzleState.complete) return;
+  if (selectedSq) {
+    if (legalSqs.includes(sq)) {
+      attemptPzMove(selectedSq, sq);
+    } else {
+      const piece=boardMap.get(sq);
+      const p=currentPuzzle;
+      if (piece&&piece.owner===p.turnIndex) {
+        selectedSq=sq; legalSqs=getPzLegalMoves(sq);
+      } else {
+        selectedSq=null; legalSqs=[];
+      }
+      renderPzBoard();
+    }
+  } else {
+    const piece=boardMap.get(sq);
+    if (!piece) return;
+    if (piece.owner!==currentPuzzle.turnIndex) { flashCell(sq,'wrong'); return; }
+    selectedSq=sq; legalSqs=getPzLegalMoves(sq);
+    renderPzBoard();
+  }
+}
+
+function getPzLegalMoves(sq) {
+  const piece = boardMap.get(sq);
+  if (!piece) return [];
+  const f = sq.codePointAt(0) - 97;
+  const r = Number.parseInt(sq[1], 10);
+  const moves = [];
+  
+  const addSq = (nf, nr) => {
+    if (nf >= 0 && nf < 8 && nr >= 1 && nr <= 8) {
+      const nsq = String.fromCodePoint(97 + nf) + nr;
+      const t = boardMap.get(nsq);
+      if (!t || t.owner !== piece.owner) { moves.push(nsq); }
+    }
+  };
+
+  if (piece.type === 'rook') {
+    [[0, 1], [0, -1], [1, 0], [-1, 0]].forEach(([df, dr]) => {
+      for (let i = 1; i < 8; i++) {
+        const nf = f + df * i, nr = r + dr * i;
+        if (nf < 0 || nf > 7 || nr < 1 || nr > 8) break;
+        const nsq = String.fromCodePoint(97 + nf) + nr;
+        const target = boardMap.get(nsq);
+        if (target) {
+          if (target.owner !== piece.owner) moves.push(nsq);
+          break;
+        }
+        moves.push(nsq);
+      }
+    });
+  } else if (piece.type === 'horse') {
+    [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]].forEach(([df, dr]) => addSq(f + df, r + dr));
+  } else if (piece.type === 'elephant') {
+    [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([df, dr]) => addSq(f + df * 2, r + dr * 2));
+  } else if (piece.type === 'king') {
+    [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([df, dr]) => addSq(f + df, r + dr));
+  } else if (piece.type === 'pawn') {
+    const dir = piece.owner <= 1 ? 1 : -1;
+    const fwdSq = String.fromCodePoint(97 + f) + (r + dir);
+    if (!boardMap.has(fwdSq) && r + dir >= 1 && r + dir <= 8) { moves.push(fwdSq); }
+    [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([df, dr]) => {
+      if (dr === dir) {
+        const nsq = String.fromCodePoint(97 + f + df) + (r + dr);
+        if (boardMap.has(nsq) && boardMap.get(nsq).owner !== piece.owner) { moves.push(nsq); }
+      }
+    });
+  }
+  return moves;
+}
+
+function attemptPzMove(from, to) {
+  const result = globalThis.ChaturangaPuzzleEngine.validateMove(puzzleState, from, to);
+  if (result.correct) {
+    // Apply move
+    const piece = boardMap.get(from);
+    boardMap.set(to, piece);
+    boardMap.delete(from);
+    selectedSq = null;
+    legalSqs = [];
+    flashCell(to, 'correct');
+    setTimeout(() => {
+      renderPzBoard();
+      if (result.complete) {
+        const elapsed = Math.round((Date.now() - puzzleState.startTime) / 1000);
+        const score = globalThis.ChaturangaPuzzleEngine.calculateScore(currentPuzzle, puzzleState.hintsUsed, elapsed, puzzleState.wrongAttempts);
+        globalThis.ChaturangaPuzzleEngine.saveProgress(currentPuzzle.id, score, true);
+        document.getElementById('pzStatus').textContent='✔ Solved! Score: '+score;
+        document.getElementById('pzStatus').className='pz-status correct';
+        document.getElementById('pzMoral').textContent='📜 '+currentPuzzle.moralLesson;
+        document.getElementById('pzMoral').style.display='block';
+        document.querySelectorAll('.pz-card').forEach(c=>{if(c.querySelector('.pz-card-title')?.textContent===currentPuzzle.title){c.classList.add('solved');}});
+        updateStats();
+      } else {
+        document.getElementById('pzStatus').textContent='Correct! Next move…';
+        document.getElementById('pzStatus').className='pz-status correct';
+      }
+    },300);
+  } else {
+    puzzleState.wrongAttempts[puzzleState.currentStep]=(puzzleState.wrongAttempts[puzzleState.currentStep]||0)+1;
+    selectedSq=null; legalSqs=[];
+    flashCell(from,'wrong');
+    document.getElementById('pzStatus').textContent='Wrong move — try again.';
+    document.getElementById('pzStatus').className='pz-status wrong';
+    if (result.hint) {
+      document.getElementById('pzHint').textContent='Hint: '+result.hint;
+      document.getElementById('pzHint').style.display='block';
+    }
+    setTimeout(renderPzBoard,300);
+  }
+}
+
+function flashCell(sq, type) {
+  const el=document.querySelector('[data-sq="'+sq+'"]');
+  if (!el) return;
+  el.classList.add(type+'-flash');
+  setTimeout(()=>el.classList.remove(type+'-flash'),600);
+}
+
+function updateStats() {
+  const prog=globalThis.ChaturangaPuzzleEngine.getTotalProgress();
+  document.getElementById('statSolved').textContent=prog.solved;
+  document.getElementById('statTotal').textContent=(globalThis.ChaturangaPuzzleData||[]).length;
+  document.getElementById('statStreak').textContent=prog.streak+' 🔥';
+  const pct=Math.round(prog.solved/(globalThis.ChaturangaPuzzleData||[1]).length*100);
+  document.getElementById('progressSummary').innerHTML=
+    '<div style="font-size:2rem;font-weight:700;color:var(--gold,#c9a84c)">'+pct+'%</div>'+
+    '<div style="font-size:.72rem;color:#888">'+prog.solved+' of '+(globalThis.ChaturangaPuzzleData||[]).length+' solved</div>'+
+    (prog.streak?'<span class="streak-badge">'+prog.streak+' day streak 🔥</span>':'');
+  // Wisdom unlocks
+  const wEl=document.getElementById('wisdomList');
+  const solved=globalThis.ChaturangaPuzzleData.filter(p=>globalThis.ChaturangaPuzzleEngine.isSolved(p.id));
+  wEl.innerHTML=solved.length?solved.map(p=>'<div style="margin-bottom:8px;padding:6px;background:rgba(201,168,76,.06);border-radius:6px"><div style="color:var(--gold,#c9a84c);font-size:.72rem;font-weight:600">'+p.title+'</div><div style="color:#888;font-size:.68rem;margin-top:2px;font-style:italic">'+p.moralLesson.slice(0,80)+'…</div></div>').join(''):'<p style="color:#888">Solve puzzles to unlock wisdom.</p>';
+}
+
+// ── Hint button ────────────────────────────────────────────────────────
+document.getElementById('pzHintBtn').onclick=()=>{
+  if (!puzzleState) return;
+  const hint=globalThis.ChaturangaPuzzleEngine.getHint(puzzleState);
+  document.getElementById('pzHint').textContent='Hint: '+hint;
+  document.getElementById('pzHint').style.display='block';
+};
+
+// ── Init ───────────────────────────────────────────────────────────────
+buildBrowser('all');
+</script>
+</body>
+</html>

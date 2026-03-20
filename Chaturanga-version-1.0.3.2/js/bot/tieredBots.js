@@ -940,7 +940,7 @@
   // ══════════════════════════════════════════════════════════════════════════
   // Public API
   // ══════════════════════════════════════════════════════════════════════════
-  window.ChaturangaTieredBot = {
+  (typeof window !== 'undefined' ? window : self).ChaturangaTieredBot = {
     /**
      * Returns a move object { from, to } or null.
      *
@@ -957,8 +957,9 @@
         case 600: return paranoidGetMove(game);
         case 100:
         default:
-          return window.ChaturangaRandomBot
-            ? window.ChaturangaRandomBot.getMove(game, game.turnIndex)
+          const randomBot = (typeof window !== 'undefined' ? window : self).ChaturangaRandomBot;
+          return randomBot
+            ? randomBot.getMove(game, game.turnIndex)
             : null;
       }
     },
