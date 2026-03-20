@@ -1,17 +1,17 @@
-name: Deploy Chaturanga v1.0.3
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -25,7 +25,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./Chaturanga-version-1.0.3.2"
+          path: ./Chaturanga-version-1.0.3.2
 
       - name: Deploy to GitHub Pages
         id: deployment
