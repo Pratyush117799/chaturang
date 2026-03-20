@@ -11,12 +11,44 @@ globalThis.ChaturangaPuzzleEngine = (function() {
     if (!data.solved) data.solved = [];
     if (!data.scores) data.scores = {};
     if (!data.streak) data.streak = 0;
+    if (data.elo === undefined) data.elo = 100; // Default starting ELO
+
     if (solved && !data.solved.includes(puzzleId)) {
       data.solved.push(puzzleId);
-      const last = data.lastSolvedAt ? new Date(data.lastSolvedAt) : null;
-      const now  = new Date();
-      if (last && (now - last) < 86400000) data.streak++;
-      else data.streak = (solved ? 1 : data.streak);
+      data.elo += Math.max(5, Math.floor((score || 10) / 10)); // Increase ELO on first solve
+
+      // BUG #11 FIX: streak is a DAILY streak, not a per-puzzle counter.
+      // Old code incremented streak whenever last solve was within 24h, so
+      // solving 5 puzzles in one day gave a 5-day streak. Completely wrong.
+      //
+      // Correct rules:
+      //   Same calendar day as last solve → already counted today, no increment
+      //   Yesterday → consecutive day → increment streak
+      //   2+ days ago or first ever solve → streak broken → reset to 1
+      const now        = new Date();
+      const todayStr   = now.toDateString();
+
+      if (data.lastSolvedAt) {
+        const lastDate     = new Date(data.lastSolvedAt);
+        const lastStr      = lastDate.toDateString();
+        const yesterday    = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toDateString();
+
+        if (lastStr === todayStr) {
+          // Already solved a puzzle today — streak unchanged, just save
+        } else if (lastStr === yesterdayStr) {
+          // Last solve was yesterday → consecutive → increment
+          data.streak = (data.streak || 0) + 1;
+        } else {
+          // Gap of 2+ days → streak broken → restart
+          data.streak = 1;
+        }
+      } else {
+        // First ever puzzle solved
+        data.streak = 1;
+      }
+
       data.lastSolvedAt = now.toISOString();
     }
     if (score !== undefined) data.scores[puzzleId] = Math.max(data.scores[puzzleId] || 0, score);
@@ -73,10 +105,12 @@ globalThis.ChaturangaPuzzleEngine = (function() {
 
   function getTotalProgress() {
     const data = loadProgress();
+    if (data.elo === undefined) data.elo = 100; // migrate older saves
     return {
       solved: (data.solved || []).length,
       streak: data.streak || 0,
-      scores: data.scores || {}
+      scores: data.scores || {},
+      elo: data.elo || 100
     };
   }
 

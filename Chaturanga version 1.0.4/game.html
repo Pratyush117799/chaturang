@@ -1,303 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chaturanga 1.0.4 — Ancient 4-Player War Game</title>
-  <meta name="description" content="Play Chaturanga v1.0.4 — the ancient Indian 4-player strategy game with ELO 700-1000 bots, puzzle system, lessons, tournament, and full analytics." />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/animations.css" />
-  <link rel="stylesheet" href="css/themes.css" />
-  <script>
-    // Apply theme early to avoid flash
-    (function() {
-      var t = localStorage.getItem('chaturanga_theme');
-      if (t && t !== 'classic') document.documentElement.className = 'theme-' + t;
-    })();
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js').catch(function(){});
-      });
-    }
-  </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chaturanga 1.0.4 — Ancient 4-Player War Game</title>
+    <meta name="description" content="Play Chaturanga v1.0.4 — the ancient Indian 4-player strategy game with ELO 700-1000 bots, puzzle system, lessons, tournament, and full analytics." />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/themes.css" />
+    <script>
+        // Apply theme early to avoid flash
+        (function() {
+            var t = localStorage.getItem('chaturanga_theme');
+            if (t && t !== 'classic') document.documentElement.className = 'theme-' + t;
+        })();
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js').catch(function() {});
+            });
+        }
+    </script>
 </head>
+
 <body>
 
-  <!-- ═══ TOP NAVIGATION BAR ═══ -->
-  <nav class="top-nav" id="topNav">
-    <div class="nav-left">
-      <a href="documentation_hub.html" class="nav-logo" title="Documentation Hub">
-        <i class="fa-solid fa-chess-king"></i>
-        <span class="nav-logo-text">चतुरंग</span>
-        <span class="nav-logo-sub">Chaturanga</span>
-      </a>
-      <span class="nav-version">v1.0.4</span>
-    </div>
-    <div class="nav-center" id="turnBanner">
-      <span class="turn-color-dot" id="turnDot"></span>
-      <span id="turnIndicator" class="turn-label">—</span>
-    </div>
-    <div class="nav-right">
-      <a href="puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none">
-        <i class="fa-solid fa-puzzle-piece"></i>
-      </a>
-      <a href="lessons.html" class="nav-icon-btn" title="Lessons" style="text-decoration:none">
-        <i class="fa-solid fa-graduation-cap"></i>
-      </a>
-      <a href="tournament.html" class="nav-icon-btn" title="Tournament" style="text-decoration:none">
-        <i class="fa-solid fa-trophy"></i>
-      </a>
-      <a href="army_builder.html" class="nav-icon-btn" title="Army Builder" style="text-decoration:none">
-        <i class="fa-solid fa-shield-halved"></i>
-      </a>
-      <button id="benchmarkBtn" onclick="location.href='benchmark.html'" class="nav-icon-btn" title="Bot Benchmark" style="color:var(--text-secondary) !important; display: flex !important;">
+    <!-- ═══ TOP NAVIGATION BAR ═══ -->
+    <nav class="top-nav" id="topNav">
+        <a href="vyuha_builder.html" class="nav-icon-btn" title="Vyuha Formations" style="text-decoration:none">
+            <i class="fa-solid fa-dharmachakra"></i>
+        </a>
+        <div class="nav-left">
+            <a href="documentation_hub.html" class="nav-logo" title="Documentation Hub">
+                <i class="fa-solid fa-chess-king"></i>
+                <span class="nav-logo-text">चतुरंग</span>
+                <span class="nav-logo-sub">Chaturanga</span>
+            </a>
+            <span class="nav-version">v1.0.4</span>
+        </div>
+        <div class="nav-center" id="turnBanner">
+            <span class="turn-color-dot" id="turnDot"></span>
+            <span id="turnIndicator" class="turn-label">—</span>
+        </div>
+        <div class="nav-right">
+            <a href="puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none">
+                <i class="fa-solid fa-puzzle-piece"></i>
+            </a>
+            <a href="lessons.html" class="nav-icon-btn" title="Lessons" style="text-decoration:none">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </a>
+            <a href="tournament.html" class="nav-icon-btn" title="Tournament" style="text-decoration:none">
+                <i class="fa-solid fa-trophy"></i>
+            </a>
+            <a href="army_builder.html" class="nav-icon-btn" title="Army Builder" style="text-decoration:none">
+                <i class="fa-solid fa-shield-halved"></i>
+            </a>
+            <button id="muteBtn" class="nav-icon-btn" title="Toggle Sound">
+        <i class="fa-solid fa-volume-high" id="muteIcon"></i>
+      </button>
+            <button id="benchmarkBtn" onclick="location.href='benchmark.html'" class="nav-icon-btn" title="Bot Benchmark" style="color:var(--text-secondary) !important; display: flex !important;">
         <i class="fa-solid fa-bolt"></i>
       </button>
-      <button id="multiplayerBtn" class="nav-icon-btn" title="Online Multiplayer">
+            <button id="multiplayerBtn" class="nav-icon-btn" title="Online Multiplayer">
         <i class="fa-solid fa-wifi"></i>
       </button>
-      <button id="rollBtn" class="nav-roll-btn" title="Roll the Pāśaka dice">
+            <button id="rollBtn" class="nav-roll-btn" title="Roll the Pāśaka dice">
         <i class="fa-solid fa-dice-d6"></i>
         <span>Roll Dice</span>
       </button>
-      <button id="forfeitBtn" class="nav-forfeit-btn" title="Forfeit Turn" disabled>
+            <button id="forfeitBtn" class="nav-forfeit-btn" title="Forfeit Turn" disabled>
         <i class="fa-solid fa-flag"></i>
       </button>
-      <button class="nav-icon-btn" id="settingsToggleBtn" title="Settings">
+            <button class="nav-icon-btn" id="settingsToggle" title="Settings">
         <i class="fa-solid fa-sliders"></i>
       </button>
-      <button class="nav-icon-btn" id="fullscreenBtn" title="Fullscreen">
+            <button class="nav-icon-btn" id="fullscreenBtn" title="Fullscreen">
         <i class="fa-solid fa-expand"></i>
       </button>
-    </div>
-  </nav>
-
-  <!-- ═══ MAIN LAYOUT: left | board | right ═══ -->
-  <div class="game-layout" id="gameLayout">
-
-    <!-- ═══ LEFT PANEL ═══ -->
-    <aside class="panel panel-left" id="panelLeft" aria-label="Left Panel">
-
-      <!-- Player Cards -->
-      <div class="player-cards">
-        <div class="player-card" id="pcard0" data-player="0">
-          <div class="pcard-color red-swatch"></div>
-          <div class="pcard-body">
-            <span class="pcard-name">Red · Team 1</span>
-            <span class="pcard-kings" id="player0-kings">♚ ×1</span>
-          </div>
-          <span class="pcard-forfeits" id="player0-forfeits">0/3</span>
-          <span class="pcard-badge" id="pcard0-badge"></span>
         </div>
-        <div class="player-card" id="pcard1" data-player="1">
-          <div class="pcard-color blue-swatch"></div>
-          <div class="pcard-body">
-            <span class="pcard-name">Blue · Team 2</span>
-            <span class="pcard-kings" id="player1-kings">♚ ×1</span>
-          </div>
-          <span class="pcard-forfeits" id="player1-forfeits">0/3</span>
-          <span class="pcard-badge" id="pcard1-badge"></span>
-        </div>
-        <div class="player-card" id="pcard2" data-player="2">
-          <div class="pcard-color green-swatch"></div>
-          <div class="pcard-body">
-            <span class="pcard-name">Green · Team 1</span>
-            <span class="pcard-kings" id="player2-kings">♚ ×1</span>
-          </div>
-          <span class="pcard-forfeits" id="player2-forfeits">0/3</span>
-          <span class="pcard-badge" id="pcard2-badge"></span>
-        </div>
-        <div class="player-card" id="pcard3" data-player="3">
-          <div class="pcard-color yellow-swatch"></div>
-          <div class="pcard-body">
-            <span class="pcard-name">Yellow · Team 2</span>
-            <span class="pcard-kings" id="player3-kings">♚ ×1</span>
-          </div>
-          <span class="pcard-forfeits" id="player3-forfeits">0/3</span>
-          <span class="pcard-badge" id="pcard3-badge"></span>
-        </div>
-      </div>
+    </nav>
 
-      <!-- Dice Panel -->
-      <div class="dice-panel">
-        <div class="dice-face-wrap">
-          <div id="diceFace" class="dice-face-large">
-            <i class="fa-solid fa-question"></i>
-          </div>
-          <div id="forcedPiece" class="forced-label">Roll the Pāśaka</div>
-        </div>
-        <div class="dice-strip">
-          <div class="dice-cell" id="diceCell0"><span class="dc-label">R</span><span class="dc-val dc-face">—</span></div>
-          <div class="dice-cell" id="diceCell1"><span class="dc-label">B</span><span class="dc-val dc-face">—</span></div>
-          <div class="dice-cell" id="diceCell2"><span class="dc-label">G</span><span class="dc-val dc-face">—</span></div>
-          <div class="dice-cell" id="diceCell3"><span class="dc-label">Y</span><span class="dc-val dc-face">—</span></div>
-        </div>
-      </div>
+    <!-- ═══ MAIN LAYOUT: left | board | right ═══ -->
+    <div class="game-layout" id="gameLayout">
 
-      <!-- Captured Pieces -->
-      <div class="panel-section">
-        <h4 class="section-label"><i class="fa-solid fa-skull-crossbones"></i> Fallen Pieces</h4>
-        <div id="captured" class="captured-box">None yet</div>
-      </div>
+        <!-- ═══ LEFT PANEL ═══ -->
+        <aside class="panel panel-left" id="panelLeft" aria-label="Left Panel">
 
-      <!-- Game Status -->
-      <div class="panel-section">
-        <div id="gameState" class="game-state-badge"></div>
-        <div id="status" class="status-msg">Ready to roll — it's Red's turn</div>
-      </div>
+            <!-- Player Cards -->
+            <div class="player-cards">
+                <div class="player-card" id="pcard0" data-player="0">
+                    <div class="pcard-color red-swatch"></div>
+                    <div class="pcard-body">
+                        <span class="pcard-name">Red · Team 1</span>
+                        <span class="pcard-kings" id="player0-kings">♚ ×1</span>
+                    </div>
+                    <span class="pcard-forfeits" id="player0-forfeits">0/3</span>
+                    <span class="pcard-badge" id="pcard0-badge"></span>
+                </div>
+                <div class="player-card" id="pcard1" data-player="1">
+                    <div class="pcard-color blue-swatch"></div>
+                    <div class="pcard-body">
+                        <span class="pcard-name">Blue · Team 2</span>
+                        <span class="pcard-kings" id="player1-kings">♚ ×1</span>
+                    </div>
+                    <span class="pcard-forfeits" id="player1-forfeits">0/3</span>
+                    <span class="pcard-badge" id="pcard1-badge"></span>
+                </div>
+                <div class="player-card" id="pcard2" data-player="2">
+                    <div class="pcard-color green-swatch"></div>
+                    <div class="pcard-body">
+                        <span class="pcard-name">Green · Team 1</span>
+                        <span class="pcard-kings" id="player2-kings">♚ ×1</span>
+                    </div>
+                    <span class="pcard-forfeits" id="player2-forfeits">0/3</span>
+                    <span class="pcard-badge" id="pcard2-badge"></span>
+                </div>
+                <div class="player-card" id="pcard3" data-player="3">
+                    <div class="pcard-color yellow-swatch"></div>
+                    <div class="pcard-body">
+                        <span class="pcard-name">Yellow · Team 2</span>
+                        <span class="pcard-kings" id="player3-kings">♚ ×1</span>
+                    </div>
+                    <span class="pcard-forfeits" id="player3-forfeits">0/3</span>
+                    <span class="pcard-badge" id="pcard3-badge"></span>
+                </div>
+            </div>
 
-      <!-- Anti-Cheat Notice (hidden by default) -->
-      <div id="fairPlayNotice" class="fair-play-notice" style="display:none">
-        <i class="fa-solid fa-shield-check"></i>
-        <span id="fairPlayMsg">Ensuring a fair game for everyone.</span>
-        <button onclick="document.getElementById('fairPlayNotice').style.display='none'">×</button>
-      </div>
+            <!-- Dice Panel -->
+            <div class="dice-panel">
+                <div class="dice-face-wrap">
+                    <div id="diceFace" class="dice-face-large">
+                        <i class="fa-solid fa-question"></i>
+                    </div>
+                    <div id="forcedPiece" class="forced-label">Roll the Pāśaka</div>
+                </div>
+                <div class="dice-strip">
+                    <div class="dice-cell" id="diceCell0"><span class="dc-label">R</span><span class="dc-val dc-face">—</span></div>
+                    <div class="dice-cell" id="diceCell1"><span class="dc-label">B</span><span class="dc-val dc-face">—</span></div>
+                    <div class="dice-cell" id="diceCell2"><span class="dc-label">G</span><span class="dc-val dc-face">—</span></div>
+                    <div class="dice-cell" id="diceCell3"><span class="dc-label">Y</span><span class="dc-val dc-face">—</span></div>
+                </div>
+            </div>
 
-    </aside>
+            <!-- Captured Pieces -->
+            <div class="panel-section">
+                <h4 class="section-label"><i class="fa-solid fa-skull-crossbones"></i> Fallen Pieces</h4>
+                <div id="captured" class="captured-box">None yet</div>
+            </div>
 
-    <!-- ═══ BOARD CENTER ═══ -->
-    <main class="board-center">
+            <!-- Game Status -->
+            <div class="panel-section">
+                <div id="gameState" class="game-state-badge"></div>
+                <div id="status" class="status-msg">Ready to roll — it's Red's turn</div>
+            </div>
 
-      <!-- Board wrapper with background -->
-      <div class="board-wrap" id="boardWrap">
-        <div class="board-labels-top">
-          <span>a</span><span>b</span><span>c</span><span>d</span>
-          <span>e</span><span>f</span><span>g</span><span>h</span>
-        </div>
-        <div class="board-row-wrap">
-          <div class="board-labels-side" id="rankLabels"></div>
-          <div id="board" class="board" role="grid" aria-label="Chaturanga board"></div>
-        </div>
-      </div>
+            <!-- Anti-Cheat Notice (hidden by default) -->
+            <div id="fairPlayNotice" class="fair-play-notice" style="display:none">
+                <i class="fa-solid fa-shield-check"></i>
+                <span id="fairPlayMsg">Ensuring a fair game for everyone.</span>
+                <button onclick="document.getElementById('fairPlayNotice').style.display='none'">×</button>
+            </div>
 
-      <!-- Mobile-only quick controls -->
-      <div class="mobile-controls">
-        <button id="rollBtnMobile" class="mob-btn mob-roll">
+        </aside>
+
+        <!-- ═══ BOARD CENTER ═══ -->
+        <main class="board-center">
+
+            <!-- Material Advantage Score Bar -->
+            <div id="scoreBar" class="score-bar" style="width:100%; max-width:calc(var(--sq) * 8); height:8px; display:flex; border-radius:4px; overflow:hidden; background:var(--bg-card); margin-bottom:8px; border:1px solid var(--border)">
+                <div id="scoreFillTeam1" style="background:var(--red); width:50%; transition:width 0.3s ease;"></div>
+                <div id="scoreFillTeam2" style="background:var(--blue); width:50%; transition:width 0.3s ease;"></div>
+            </div>
+
+            <!-- Board wrapper with background -->
+            <div class="board-wrap" id="boardWrap" style="position:relative;">
+                <svg id="moveArrowSvg" width="100%" height="100%" style="position:absolute; top:0; left:22px; width:calc(100% - 22px); height:calc(100% - 4px); pointer-events:none; z-index:5;">
+          <defs>
+            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+              <path d="M 0 0 L 6 3 L 0 6 z" fill="rgba(234, 179, 8, 0.6)" />
+            </marker>
+          </defs>
+        </svg>
+
+                <div class="board-labels-top">
+                    <span>a</span><span>b</span><span>c</span><span>d</span>
+                    <span>e</span><span>f</span><span>g</span><span>h</span>
+                </div>
+                <div class="board-row-wrap">
+                    <div class="board-labels-side" id="rankLabels"></div>
+                    <div id="board" class="board" role="grid" aria-label="Chaturanga board"></div>
+                </div>
+            </div>
+
+            <!-- Mobile-only quick controls -->
+            <div class="mobile-controls">
+                <button id="rollBtnMobile" class="mob-btn mob-roll">
           <i class="fa-solid fa-dice-d6"></i> Roll Pāśaka
         </button>
-        <button id="forfeitBtnMobile" class="mob-btn mob-forfeit" disabled>
+                <button id="forfeitBtnMobile" class="mob-btn mob-forfeit" disabled>
           <i class="fa-solid fa-flag"></i> Forfeit
         </button>
-        <div class="mob-forced" id="mobForced">—</div>
-      </div>
+                <div class="mob-forced" id="mobForced">—</div>
+            </div>
 
-    </main>
+        </main>
 
-    <!-- ═══ RIGHT PANEL ═══ -->
-    <aside class="panel panel-right" id="panelRight" aria-label="Right Panel">
+        <!-- ═══ RIGHT PANEL ═══ -->
+        <aside class="panel panel-right" id="panelRight" aria-label="Right Panel">
 
-      <!-- Move History -->
-      <div class="panel-section panel-section-grow">
-        <h4 class="section-label">
-          <i class="fa-solid fa-clock-rotate-left"></i> Move Log
-          <button id="downloadHistoryBtn" class="dl-btn" title="Save game log">
+            <!-- Move History -->
+            <div class="panel-section panel-section-grow">
+                <h4 class="section-label">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Move Log
+                    <button id="downloadHistoryBtn" class="dl-btn" title="Save game log">
             <i class="fa-solid fa-download"></i>
           </button>
-        </h4>
-        <div id="history" class="history-scroll">No moves yet</div>
-      </div>
+                </h4>
+                <div id="history" class="history-scroll">No moves yet</div>
+            </div>
 
-      <!-- Seer Engine — Full Battle Intel -->
-      <div class="panel-section seer-panel">
-        <h4 class="section-label">
-          <i class="fa-solid fa-eye"></i> Battle Intel
-          <div class="seer-tabs">
-            <button class="seer-tab active" id="seerTabLive" onclick="switchSeerTab('live')">Live</button>
-            <button class="seer-tab" id="seerTabHistory" onclick="switchSeerTab('history')">Vault</button>
-          </div>
-        </h4>
+            <!-- Seer Engine — Full Battle Intel -->
+            <div class="panel-section seer-panel">
+                <h4 class="section-label">
+                    <i class="fa-solid fa-eye"></i> Battle Intel
+                    <div class="seer-tabs">
+                        <button class="seer-tab active" id="seerTabLive" onclick="switchSeerTab('live')">Live</button>
+                        <button class="seer-tab" id="seerTabHistory" onclick="switchSeerTab('history')">Vault</button>
+                    </div>
+                </h4>
 
-        <!-- Live Tab -->
-        <div id="seerLivePanel">
-          <div class="seer-stats">
-            <div class="seer-stat">
-              <span class="seer-key">Moves</span>
-              <span class="seer-val" id="seerMoves">0</span>
-            </div>
-            <div class="seer-stat">
-              <span class="seer-key">Captures</span>
-              <span class="seer-val" id="seerCaptures">0</span>
-            </div>
-            <div class="seer-stat">
-              <span class="seer-key">Material</span>
-              <span class="seer-val" id="seerMaterial">±0</span>
-            </div>
-            <div class="seer-stat">
-              <span class="seer-key">Hunted</span>
-              <span class="seer-val" id="seerTopPiece">—</span>
-            </div>
-          </div>
-          <div class="seer-insight" id="seerInsight">Waiting for the first move…</div>
-          <div class="seer-turning-point" id="seerTurningPoint" style="display:none">
-            <i class="fa-solid fa-bolt"></i>
-            <span id="seerTurningPointText">—</span>
-          </div>
-          <button id="seerExportBtn" class="seer-export-btn" style="display:none">
+                <!-- Live Tab -->
+                <div id="seerLivePanel">
+                    <div class="seer-stats">
+                        <div class="seer-stat">
+                            <span class="seer-key">Moves</span>
+                            <span class="seer-val" id="seerMoves">0</span>
+                        </div>
+                        <div class="seer-stat">
+                            <span class="seer-key">Captures</span>
+                            <span class="seer-val" id="seerCaptures">0</span>
+                        </div>
+                        <div class="seer-stat">
+                            <span class="seer-key">Material</span>
+                            <span class="seer-val" id="seerMaterial">±0</span>
+                        </div>
+                        <div class="seer-stat">
+                            <span class="seer-key">Hunted</span>
+                            <span class="seer-val" id="seerTopPiece">—</span>
+                        </div>
+                    </div>
+                    <div class="seer-insight" id="seerInsight">Waiting for the first move…</div>
+                    <div class="seer-turning-point" id="seerTurningPoint" style="display:none">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span id="seerTurningPointText">—</span>
+                    </div>
+                    <button id="seerExportBtn" class="seer-export-btn" style="display:none">
             <i class="fa-solid fa-file-export"></i> Export Report
           </button>
-        </div>
+                </div>
 
-        <!-- Vault Tab -->
-        <div id="seerHistoryPanel" style="display:none">
-          <div id="seerVaultList" class="seer-vault-list">
-            <p class="seer-empty">No saved games yet.<br>Complete a game to fill the vault.</p>
-          </div>
-          <button onclick="if(window.ChaturangaSeer)ChaturangaSeer.clearVault()" class="seer-clear-btn">
+                <!-- Vault Tab -->
+                <div id="seerHistoryPanel" style="display:none">
+                    <div id="seerVaultList" class="seer-vault-list">
+                        <p class="seer-empty">No saved games yet.<br>Complete a game to fill the vault.</p>
+                    </div>
+                    <button onclick="if(window.ChaturangaSeer)ChaturangaSeer.clearVault()" class="seer-clear-btn">
             <i class="fa-solid fa-trash"></i> Clear Vault
           </button>
-        </div>
-      </div>
+                </div>
+            </div>
 
-      <!-- Quick Rules -->
-      <div class="panel-section">
-        <h4 class="section-label"><i class="fa-solid fa-scroll"></i> Dice Guide</h4>
-        <div class="quick-rules">
-          <div class="qr-row"><span class="qr-die">1</span><span class="qr-piece">Ratha — Rook moves</span></div>
-          <div class="qr-row"><span class="qr-die">2</span><span class="qr-piece">Any piece (free choice)</span></div>
-          <div class="qr-row"><span class="qr-die">3</span><span class="qr-piece">Ashwa — Knight jump</span></div>
-          <div class="qr-row"><span class="qr-die">4</span><span class="qr-piece">Danti — 2-diag leap</span></div>
-          <div class="qr-row"><span class="qr-die">5</span><span class="qr-piece">Any piece (free choice)</span></div>
-          <div class="qr-row"><span class="qr-die">6</span><span class="qr-piece">Nara or Raja</span></div>
-          <p class="qr-note">⚔ Minor pieces can't capture Ratha or Raja</p>
-        </div>
-      </div>
+            <!-- Quick Rules -->
+            <div class="panel-section">
+                <h4 class="section-label"><i class="fa-solid fa-scroll"></i> Dice Guide</h4>
+                <div class="quick-rules">
+                    <div class="qr-row"><span class="qr-die">1</span><span class="qr-piece">Ratha — Rook moves</span></div>
+                    <div class="qr-row"><span class="qr-die">2</span><span class="qr-piece">Any piece (free choice)</span></div>
+                    <div class="qr-row"><span class="qr-die">3</span><span class="qr-piece">Ashwa — Knight jump</span></div>
+                    <div class="qr-row"><span class="qr-die">4</span><span class="qr-piece">Danti — 2-diag leap</span></div>
+                    <div class="qr-row"><span class="qr-die">5</span><span class="qr-piece">Any piece (free choice)</span></div>
+                    <div class="qr-row"><span class="qr-die">6</span><span class="qr-piece">Nara or Raja</span></div>
+                    <p class="qr-note">⚔ Minor pieces can't capture Ratha or Raja</p>
+                </div>
+            </div>
 
-    </aside>
-  </div>
+        </aside>
+    </div>
 
-  <!-- ═══ SETTINGS DRAWER ═══ -->
-  <div class="settings-drawer" id="settingsDrawer">
-    <div class="settings-panel">
-      <h3><i class="fa-solid fa-sliders"></i> Settings</h3>
-      <button class="settings-close" id="settingsCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+    <!-- ═══ SETTINGS DRAWER ═══ -->
+    <div class="settings-drawer" id="settingsDrawer">
+        <div class="settings-panel">
+            <h3><i class="fa-solid fa-sliders"></i> Settings</h3>
+            <button class="settings-close" id="settingsCloseBtn"><i class="fa-solid fa-xmark"></i></button>
 
-      <div class="setting-row">
-        <span><i class="fa-solid fa-users"></i> Game Mode</span>
-        <div class="mode-btns">
-          <button id="modeTeam" class="mode-btn active">Team 2v2</button>
-          <button id="modeSingle" class="mode-btn">Free for All</button>
-        </div>
-      </div>
+            <div class="setting-row">
+                <span><i class="fa-solid fa-users"></i> Game Mode</span>
+                <div class="mode-btns">
+                    <button id="modeTeam" class="mode-btn active">Team 2v2</button>
+                    <button id="modeSingle" class="mode-btn">Free for All</button>
+                </div>
+            </div>
 
-      <div class="setting-row">
-        <span><i class="fa-solid fa-robot"></i> Bot Players</span>
-        <select id="botCount" class="settings-select">
+            <div class="setting-row">
+                <span><i class="fa-solid fa-robot"></i> Bot Players</span>
+                <select id="botCount" class="settings-select">
           <option value="0">0 — PvP</option>
           <option value="1">1 — Blue is Bot</option>
           <option value="2" selected>2 — Team 2 are Bots</option>
           <option value="3">3 — vs Red only</option>
           <option value="4">4 — Full Auto</option>
         </select>
-      </div>
+            </div>
 
-      <div class="setting-row">
-        <span><i class="fa-solid fa-brain"></i> Bot ELO</span>
-        <select id="botElo" class="settings-select">
+            <div class="setting-row">
+                <span><i class="fa-solid fa-brain"></i> Bot ELO</span>
+                <select id="botElo" class="settings-select">
           <option value="100">100 — Random</option>
           <option value="200">200 — Greedy</option>
           <option value="300" selected>300 — Tactical</option>
@@ -309,185 +331,320 @@
           <option value="900">900 — Samrat ✦✦✦</option>
           <option value="1000">1000 — Chakravarti ✦✦✦✦</option>
         </select>
-      </div>
+            </div>
 
-      <div class="setting-row">
-        <label for="autoRollDice"><span><i class="fa-solid fa-dice"></i> Auto-roll Dice</span></label>
-        <label class="toggle-switch">
+            <div class="setting-row">
+                <label for="autoRollDice"><span><i class="fa-solid fa-dice"></i> Auto-roll Dice</span></label>
+                <label class="toggle-switch">
           <input type="checkbox" id="autoRollDice" aria-label="Auto-roll Dice" />
           <span class="toggle-track"></span>
         </label>
-      </div>
+            </div>
 
-      <div class="setting-row">
-        <label for="autoDownloadOnEnd"><span><i class="fa-solid fa-save"></i> Auto-save on End</span></label>
-        <label class="toggle-switch">
+            <div class="setting-row">
+                <label for="autoDownloadOnEnd"><span><i class="fa-solid fa-save"></i> Auto-save on End</span></label>
+                <label class="toggle-switch">
           <input type="checkbox" id="autoDownloadOnEnd" aria-label="Auto-save on End" />
           <span class="toggle-track"></span>
         </label>
-      </div>
+            </div>
 
-      <div class="setting-row">
-        <span><i class="fa-solid fa-chess-board"></i> Board Theme</span>
-        <select id="boardTheme" class="settings-select">
+            <div class="setting-row">
+                <span><i class="fa-solid fa-chess-board"></i> Board Theme</span>
+                <select id="boardTheme" class="settings-select">
           <option value="standard" selected>Standard (Clean)</option>
           <option value="traditional">Traditional (Image)</option>
         </select>
-      </div>
+            </div>
 
-      <div class="setting-row">
-        <span><i class="fa-solid fa-palette"></i> UI Theme</span>
-        <div class="theme-btns">
-          <button class="theme-btn active" id="themeClassicBtn" onclick="applyUITheme('classic')" title="Classic">⚜ Classic</button>
-          <button class="theme-btn" id="themeNightBtn" onclick="applyUITheme('night')" title="Night">🌑 Night</button>
-          <button class="theme-btn" id="themeParchmentBtn" onclick="applyUITheme('parchment')" title="Parchment">📜 Parchment</button>
+            <div class="setting-row">
+                <span><i class="fa-solid fa-chess-pawn"></i> Piece Style</span>
+                <select id="pieceStyle" class="settings-select">
+          <option value="traditional" selected>Traditional (Artwork)</option>
+          <option value="unicode">Unicode (♟♞♝♜♚)</option>
+          <option value="minimal">Minimal (Letters)</option>
+        </select>
+            </div>
+
+            <div class="setting-row">
+                <span><i class="fa-solid fa-palette"></i> UI Theme</span>
+                <div class="theme-btns">
+                    <button class="theme-btn active" id="themeClassicBtn" onclick="applyUITheme('classic')" title="Classic">⚜ Classic</button>
+                    <button class="theme-btn" id="themeNightBtn" onclick="applyUITheme('night')" title="Night">🌑 Night</button>
+                    <button class="theme-btn" id="themeParchmentBtn" onclick="applyUITheme('parchment')" title="Parchment">📜 Parchment</button>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <span><i class="fa-solid fa-maximize"></i> Board Size</span>
+                <div class="slider-row">
+                    <input type="range" id="boardSize" min="70" max="130" value="110" class="settings-slider" />
+                    <span id="boardSizeLabel">110%</span>
+                </div>
+            </div>
+
+            <div class="setting-row" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
+                <span><i class="fa-solid fa-link"></i> Quick Links</span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <a href="benchmark.html" class="mode-btn" style="text-decoration:none;font-size:0.75rem;padding:6px 12px;background:var(--gold);color:#000;font-weight:700">Benchmark</a>
+                    <a href="puzzles.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Puzzles</a>
+                    <a href="lessons.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Lessons</a>
+                    <a href="tournament.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Tournament</a>
+                    <a href="army_builder.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Army Builder</a>
+                    <a href="admin.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Admin</a>
+                </div>
+            </div>
+
         </div>
-      </div>
-
-      <div class="setting-row">
-        <span><i class="fa-solid fa-maximize"></i> Board Size</span>
-        <div class="slider-row">
-          <input type="range" id="boardSize" min="70" max="130" value="110" class="settings-slider" />
-          <span id="boardSizeLabel">110%</span>
-        </div>
-      </div>
-
-      <div class="setting-row" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
-        <span><i class="fa-solid fa-link"></i> Quick Links</span>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <a href="benchmark.html" class="mode-btn" style="text-decoration:none;font-size:0.75rem;padding:6px 12px;background:var(--gold);color:#000;font-weight:700">Benchmark</a>
-          <a href="puzzles.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Puzzles</a>
-          <a href="lessons.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Lessons</a>
-          <a href="tournament.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Tournament</a>
-          <a href="army_builder.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Army Builder</a>
-          <a href="admin.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Admin</a>
-        </div>
-      </div>
-
     </div>
-  </div>
 
-  <!-- ═══ KING RESPAWN MODAL ═══ -->
-  <div id="kingRespawnModal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-icon"><i class="fa-solid fa-crown"></i></div>
-      <h3>Raja Respawn</h3>
-      <p>Your teammate captured an enemy Raja! Your King may return to the battlefield.</p>
-      <p class="modal-hint">Click any empty square to place your Raja.</p>
-      <button id="cancelRespawn" class="modal-cancel-btn">Decline Respawn</button>
+    <!-- ═══ KING RESPAWN MODAL ═══ -->
+    <div id="kingRespawnModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="fa-solid fa-crown"></i></div>
+            <h3>Raja Respawn</h3>
+            <p>Your teammate captured an enemy Raja! Your King may return to the battlefield.</p>
+            <p class="modal-hint">Click any empty square to place your Raja.</p>
+            <button id="cancelRespawn" class="modal-cancel-btn">Decline Respawn</button>
+        </div>
     </div>
-  </div>
 
-  <!-- ═══ GAME OVER OVERLAY ═══ -->
-  <div id="gameOverOverlay" class="modal-overlay" style="display:none">
-    <div class="modal-card gameover-card">
-      <div class="modal-icon"><i class="fa-solid fa-trophy"></i></div>
-      <h3 id="gameOverTitle">Game Over</h3>
-      <p id="gameOverMsg"></p>
-      <button onclick="location.reload()" class="play-again-btn">
+    <!-- ═══ GAME OVER OVERLAY ═══ -->
+    <div id="gameOverOverlay" class="modal-overlay" style="display:none">
+        <div class="modal-card gameover-card">
+            <div class="modal-icon"><i class="fa-solid fa-trophy"></i></div>
+            <h3 id="gameOverTitle">Game Over</h3>
+            <p id="gameOverMsg"></p>
+            <button onclick="location.reload()" class="play-again-btn">
         <i class="fa-solid fa-rotate-right"></i> Play Again
       </button>
-      <a href="documentation_hub.html" class="back-btn">
-        <i class="fa-solid fa-home"></i> Home
-      </a>
-    </div>
-  </div>
-
-  <!-- ═══ FOCUS DICE OVERLAY ═══ -->
-  <div id="focusDiceOverlay" class="focus-overlay">
-    <div id="focusDiceFace" class="focus-dice">?</div>
-    <div id="focusForced" class="focus-forced">Roll</div>
-  </div>
-
-  <!-- ═══ MULTIPLAYER MODAL ═══ -->
-  <div id="multiplayerModal" class="modal-overlay" style="display:none">
-    <div class="modal-card" style="max-width:420px">
-      <div class="modal-icon"><i class="fa-solid fa-wifi"></i></div>
-      <h3>Online Multiplayer</h3>
-      <div id="mpJoinCreate">
-        <p style="color:var(--text-muted);margin-bottom:16px">Connect with friends over WebSocket.</p>
-        <input type="text" id="mpPlayerName" placeholder="Your name" class="settings-select" style="width:100%;margin-bottom:10px" />
-        <div style="display:flex;gap:10px;margin-bottom:10px">
-          <button onclick="mpCreate()" class="play-again-btn" style="flex:1"><i class="fa-solid fa-plus"></i> Create Room</button>
+            <a href="documentation_hub.html" class="back-btn">
+                <i class="fa-solid fa-home"></i> Home
+            </a>
         </div>
-        <div style="display:flex;gap:10px">
-          <input type="text" id="mpRoomCode" placeholder="Room code (6 chars)" class="settings-select" style="flex:1;text-transform:uppercase" maxlength="6" />
-          <button onclick="mpJoin()" class="play-again-btn" style="white-space:nowrap"><i class="fa-solid fa-right-to-bracket"></i> Join</button>
-        </div>
-        <div id="mpStatus" style="margin-top:12px;color:var(--gold);font-size:0.85rem;min-height:20px"></div>
-      </div>
-      <button onclick="document.getElementById('multiplayerModal').style.display='none'" class="modal-cancel-btn" style="margin-top:16px">Close</button>
     </div>
-  </div>
 
-  <!-- ═══ PIECE TOOLTIP ═══ -->
-  <div id="pieceTooltip" class="piece-tooltip" style="display:none"></div>
+    <!-- ═══ FOCUS DICE OVERLAY ═══ -->
+    <div id="focusDiceOverlay" class="focus-overlay">
+        <div id="focusDiceFace" class="focus-dice">?</div>
+        <div id="focusForced" class="focus-forced">Roll</div>
+    </div>
 
-  <!-- ═══ THEME SCRIPT ═══ -->
-  <script>
-    function applyUITheme(t) {
-      document.documentElement.className = t === 'classic' ? '' : 'theme-' + t;
-      localStorage.setItem('chaturanga_theme', t);
-      ['classic','night','parchment'].forEach(n => {
-        const b = document.getElementById('theme' + n.charAt(0).toUpperCase() + n.slice(1) + 'Btn');
-        if (b) b.classList.toggle('active', n === t);
-      });
-    }
-    (function(){
-      var t = localStorage.getItem('chaturanga_theme') || 'classic';
-      applyUITheme(t);
-    })();
+    <!-- ═══ MULTIPLAYER MODAL ═══ -->
+    <div id="multiplayerModal" class="modal-overlay" style="display:none">
+        <div class="modal-card" style="max-width:420px">
+            <div class="modal-icon"><i class="fa-solid fa-wifi"></i></div>
+            <h3>Online Multiplayer</h3>
+            <div id="mpJoinCreate">
+                <p style="color:var(--text-muted);margin-bottom:16px">Connect with friends over WebSocket.</p>
+                <input type="text" id="mpPlayerName" placeholder="Your name" class="settings-select" style="width:100%;margin-bottom:10px" />
+                <div style="display:flex;gap:10px;margin-bottom:10px">
+                    <button onclick="mpCreate()" class="play-again-btn" style="flex:1"><i class="fa-solid fa-plus"></i> Create Room</button>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <input type="text" id="mpRoomCode" placeholder="Room code (6 chars)" class="settings-select" style="flex:1;text-transform:uppercase" maxlength="6" />
+                    <button onclick="mpJoin()" class="play-again-btn" style="white-space:nowrap"><i class="fa-solid fa-right-to-bracket"></i> Join</button>
+                </div>
+                <div id="mpStatus" style="margin-top:12px;color:var(--gold);font-size:0.85rem;min-height:20px"></div>
+            </div>
+            <button onclick="document.getElementById('multiplayerModal').style.display='none'" class="modal-cancel-btn" style="margin-top:16px">Close</button>
+        </div>
+    </div>
 
-    function switchSeerTab(tab) {
-      document.getElementById('seerLivePanel').style.display = tab === 'live' ? '' : 'none';
-      document.getElementById('seerHistoryPanel').style.display = tab === 'history' ? '' : 'none';
-      document.getElementById('seerTabLive').classList.toggle('active', tab === 'live');
-      document.getElementById('seerTabHistory').classList.toggle('active', tab === 'history');
-      if (tab === 'history' && globalThis.ChaturangaSeer) ChaturangaSeer.renderVaultList();
-    }
+    <!-- ═══ PIECE TOOLTIP ═══ -->
+    <div id="pieceTooltip" class="piece-tooltip" style="display:none"></div>
 
-    function mpCreate() {
-      var name = document.getElementById('mpPlayerName').value.trim() || 'Player';
-      document.getElementById('mpStatus').textContent = 'Connecting to ws://localhost:8766…';
-      if (globalThis.ChaturangaWS) {
-        ChaturangaWS.connect('ws://localhost:8766');
-        setTimeout(() => ChaturangaWS.createRoom(name, {}), 500);
-      } else {
-        document.getElementById('mpStatus').textContent = 'WebSocket server not running. Start server-ws.js first.';
-      }
-    }
-    function mpJoin() {
-      var name = document.getElementById('mpPlayerName').value.trim() || 'Player';
-      var code = document.getElementById('mpRoomCode').value.trim().toUpperCase();
-      if (!code || code.length !== 6) { document.getElementById('mpStatus').textContent = 'Enter a valid 6-character room code.'; return; }
-      if (globalThis.ChaturangaWS) {
-        ChaturangaWS.connect('ws://localhost:8766');
-        setTimeout(() => ChaturangaWS.joinRoom(code, name), 500);
-      } else {
-        document.getElementById('mpStatus').textContent = 'WebSocket server not running. Start server-ws.js first.';
-      }
-    }
-  </script>
+    <!-- ═══ THEME SCRIPT ═══ -->
+    <script>
+        function applyUITheme(t) {
+            document.documentElement.className = t === 'classic' ? '' : 'theme-' + t;
+            localStorage.setItem('chaturanga_theme', t);
+            ['classic', 'night', 'parchment'].forEach(n => {
+                const b = document.getElementById('theme' + n.charAt(0).toUpperCase() + n.slice(1) + 'Btn');
+                if (b) b.classList.toggle('active', n === t);
+            });
+        }
+        (function() {
+            var t = localStorage.getItem('chaturanga_theme') || 'classic';
+            applyUITheme(t);
+        })();
 
-  <!-- Scripts — load order matters -->
-  <script src="js/game.js"></script>
-  <script src="js/dice.js"></script>
-  <script src="engine/randomMoveGenerator.js"></script>
-  <script src="js/bot/randomMove.js"></script>
-  <script src="js/bot/tieredBots.js"></script>
-  <script src="js/bot/advancedBots.js"></script>
-  <script src="js/seer.js"></script>
-  <script src="js/anticheat.js"></script>
-  <script src="js/ws-client.js"></script>
-  <script src="js/ui-enhancements.js"></script>
-  <script src="js/ui.js"></script>
+        function switchSeerTab(tab) {
+            document.getElementById('seerLivePanel').style.display = tab === 'live' ? '' : 'none';
+            document.getElementById('seerHistoryPanel').style.display = tab === 'history' ? '' : 'none';
+            document.getElementById('seerTabLive').classList.toggle('active', tab === 'live');
+            document.getElementById('seerTabHistory').classList.toggle('active', tab === 'history');
+            if (tab === 'history' && globalThis.ChaturangaSeer) ChaturangaSeer.renderVaultList();
+        }
 
-  <script>
-    // Multiplayer modal button
-    document.getElementById('multiplayerBtn').addEventListener('click', function() {
-      document.getElementById('multiplayerModal').style.display = 'flex';
-    });
-  </script>
+        function mpCreate() {
+            var name = document.getElementById('mpPlayerName').value.trim() || 'Player';
+            document.getElementById('mpStatus').textContent = 'Connecting to ws://localhost:8766…';
+            if (globalThis.ChaturangaWS) {
+                ChaturangaWS.connect('ws://localhost:8766');
+                setTimeout(() => {
+                    let settings = {};
+                    const params = new URLSearchParams(globalThis.location.search);
+                    if (params.get('mode') === 'custom') {
+                        try {
+                            const ca = localStorage.getItem('chaturanga_custom_army');
+                            if (ca) settings.customArmy = JSON.parse(ca);
+                        } catch (e) {
+                            console.error('Failed to parse custom army:', e);
+                        }
+                    }
+                    ChaturangaWS.createRoom(name, settings);
+                }, 500);
+            } else {
+                document.getElementById('mpStatus').textContent = 'WebSocket server not running. Start server-ws.js first.';
+            }
+        }
+
+        function mpJoin() {
+            var name = document.getElementById('mpPlayerName').value.trim() || 'Player';
+            var code = document.getElementById('mpRoomCode').value.trim().toUpperCase();
+            if (!code || code.length !== 6) {
+                document.getElementById('mpStatus').textContent = 'Enter a valid 6-character room code.';
+                return;
+            }
+            if (globalThis.ChaturangaWS) {
+                ChaturangaWS.connect('ws://localhost:8766');
+                setTimeout(() => ChaturangaWS.joinRoom(code, name), 500);
+            } else {
+                document.getElementById('mpStatus').textContent = 'WebSocket server not running. Start server-ws.js first.';
+            }
+        }
+    </script>
+
+    <!-- Scripts — load order matters -->
+    <script src="js/game.js"></script>
+    <script src="js/dice.js"></script>
+    <script src="engine/randomMoveGenerator.js"></script>
+    <script src="js/bot/randomMove.js"></script>
+    <script src="js/bot/tieredBots.js"></script>
+    <script src="js/bot/advancedBots.js"></script>
+    <script src="js/seer.js"></script>
+    <script src="js/anticheat.js"></script>
+    <script src="js/ws-client.js"></script>
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/ui.js"></script>
+
+    <script>
+        // Multiplayer modal button
+        document.getElementById('multiplayerBtn').addEventListener('click', function() {
+            document.getElementById('multiplayerModal').style.display = 'flex';
+        });
+    </script>
+
+    <!-- ═══ SAFE INIT FALLBACK ═══
+       Runs after all scripts. Wires up UI elements that ui.js may have
+       failed to wire (e.g. settingsToggle id mismatch). Null-guarded
+       throughout — it never itself crashes.                               -->
+    <script>
+        (function safeInitFallback() {
+            // ── Settings drawer ──────────────────────────────────────────────────
+            var settingsToggle = document.getElementById('settingsToggle');
+            var settingsDrawer = document.getElementById('settingsDrawer');
+            var settingsCloseBtn = document.getElementById('settingsCloseBtn');
+
+            if (settingsToggle && settingsDrawer && !settingsToggle._safeWired) {
+                settingsToggle._safeWired = true;
+                settingsToggle.addEventListener('click', function() {
+                    settingsDrawer.classList.toggle('open');
+                });
+            }
+            if (settingsCloseBtn && settingsDrawer && !settingsCloseBtn._safeWired) {
+                settingsCloseBtn._safeWired = true;
+                settingsCloseBtn.addEventListener('click', function() {
+                    settingsDrawer.classList.remove('open');
+                });
+            }
+
+            // ── Board render guard ───────────────────────────────────────────────
+            // If ui.js crashed before rendering, the #board div is empty.
+            // Show a clear message instead of a black void.
+            var boardEl = document.getElementById('board');
+            var statusEl = document.getElementById('status');
+            if (boardEl && boardEl.children.length === 0) {
+                boardEl.style.cssText =
+                    'display:flex;align-items:center;justify-content:center;' +
+                    'color:#c9a84c;font-size:0.85rem;text-align:center;' +
+                    'padding:20px;min-height:200px;';
+                boardEl.textContent =
+                    'Board failed to render. Ensure js/ui.js, js/dice.js and ' +
+                    'engine/randomMoveGenerator.js are present in your project folder.';
+                if (statusEl) statusEl.textContent = 'Script load error — see board area.';
+            }
+
+            // ── Board size slider ────────────────────────────────────────────────
+            var slider = document.getElementById('boardSize');
+            var sliderLbl = document.getElementById('boardSizeLabel');
+            if (slider && !slider._safeWired) {
+                slider._safeWired = true;
+                slider.addEventListener('input', function() {
+                    document.documentElement.style.setProperty('--board-scale', this.value / 100);
+                    if (sliderLbl) sliderLbl.textContent = this.value + '%';
+                    try {
+                        localStorage.setItem('chaturanga_boardSize', this.value);
+                    } catch (e) {}
+                });
+                var saved = localStorage.getItem('chaturanga_boardSize');
+                if (saved) {
+                    slider.value = saved;
+                    document.documentElement.style.setProperty('--board-scale', saved / 100);
+                    if (sliderLbl) sliderLbl.textContent = saved + '%';
+                }
+            }
+
+            // ── Mute button ──────────────────────────────────────────────────────
+            var muteBtn = document.getElementById('muteBtn');
+            var muteIcon = document.getElementById('muteIcon');
+            if (muteBtn && muteIcon && !muteBtn._safeWired) {
+                muteBtn._safeWired = true;
+                var muted = localStorage.getItem('chaturanga_muted') === '1';
+                muteIcon.className = muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+                muteBtn.addEventListener('click', function() {
+                    muted = !muted;
+                    muteIcon.className = muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+                    try {
+                        localStorage.setItem('chaturanga_muted', muted ? '1' : '0');
+                    } catch (e) {}
+                });
+            }
+
+            // ── Fullscreen button ────────────────────────────────────────────────
+            var fsBtn = document.getElementById('fullscreenBtn');
+            if (fsBtn && !fsBtn._safeWired) {
+                fsBtn._safeWired = true;
+                fsBtn.addEventListener('click', function() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(function() {});
+                    } else {
+                        document.exitFullscreen().catch(function() {});
+                    }
+                });
+            }
+
+            // ── Download history ─────────────────────────────────────────────────
+            var dlBtn = document.getElementById('downloadHistoryBtn');
+            if (dlBtn && !dlBtn._safeWired) {
+                dlBtn._safeWired = true;
+                dlBtn.addEventListener('click', function() {
+                    var histEl = document.getElementById('history');
+                    if (!histEl) return;
+                    var text = histEl.innerText || 'No moves recorded.';
+                    var blob = new Blob([text], {
+                        type: 'text/plain'
+                    });
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'chaturanga-game-' + Date.now() + '.txt';
+                    a.click();
+                });
+            }
+        })();
+    </script>
 
 </body>
+
 </html>

@@ -55,6 +55,7 @@ table.comp .origin{color:var(--gold);font-weight:500}
   <button class="snav-btn active" onclick="showSection('rules')">Rule Collection Process</button>
   <button class="snav-btn"        onclick="showSection('dice')">Dice &amp; Game Influence</button>
   <button class="snav-btn"        onclick="showSection('ancestry')">Chaturanga as Ancestor</button>
+  <button class="snav-btn"        onclick="showSection('vyuha')">Vyuha Niti (Formations)</button>
 </nav>
 
 <!-- ═══ SECTION 1: RULE COLLECTION ═══════════════════════════════════════════ -->
@@ -406,6 +407,55 @@ table.comp .origin{color:var(--gold);font-weight:500}
       <td>No restriction</td><td>No</td><td>No</td><td>No</td>
     </tr>
   </table>
+<!-- ═══ SECTION 4: VYUHA NITI ════════════════════════════════════════════════════ -->
+<div class="section" id="sec-vyuha">
+  <div class="section-title">Vyuha Niti (Battle Formations)</div>
+  <div class="section-subtitle">Dhanurveda, the ancient Indian science of archery and warfare, describes complex geometric military arrays called Vyuhas. These were used to maximize defensive strength or crack open enemy lines. Our <a href="lessons/vyuha-formations.html" style="color:var(--gold)">Interactive Vyuha Visualizer</a> maps these ancient blueprints onto the Chaturanga framework.</div>
+
+  <table class="comp">
+    <tr>
+      <th>Formation Name</th>
+      <th>Meaning / Shape</th>
+      <th>Primary Tactical Purpose</th>
+      <th>Mahabharata Context</th>
+    </tr>
+    <tr>
+      <td class="origin">Chakra Vyuha</td>
+      <td>Wheel or Disc</td>
+      <td>Impenetrable, rotating concentric defense</td>
+      <td>Used by Drona to trap Abhimanyu on the 13th day of the Kurukshetra war.</td>
+    </tr>
+    <tr>
+      <td class="origin">Padma Vyuha</td>
+      <td>Blooming Lotus</td>
+      <td>Surround and envelop</td>
+      <td>Often utilized alongside Chakra Vyuha to crush penetrating forces.</td>
+    </tr>
+    <tr>
+      <td class="origin">Garuda Vyuha</td>
+      <td>Eagle</td>
+      <td>Aggressive piercing wedge</td>
+      <td>Favored by Bhishma to break through dense infantry lines.</td>
+    </tr>
+    <tr>
+      <td class="origin">Makara Vyuha</td>
+      <td>Crocodile / Sea Monster</td>
+      <td>Pincer attack using strong flanks</td>
+      <td>Deployed by the Kauravas to counter half-moon formations.</td>
+    </tr>
+    <tr>
+      <td class="origin">Shakata Vyuha</td>
+      <td>Cart or Box</td>
+      <td>Mobile, defensible escort</td>
+      <td>Used to protect high-value targets while moving lines.</td>
+    </tr>
+  </table>
+
+  <div style="margin-top:24px;text-align:center">
+    <a href="lessons/vyuha-formations.html" style="display:inline-block;background:var(--gold);color:var(--dark);padding:12px 24px;text-decoration:none;font-weight:600;border-radius:6px;font-family:'Cinzel',serif">Open 14x14 Interactive Vyuha Board</a>
+    <br><br>
+    <a href="lessons/vyuha-guide.md" style="color:var(--muted);font-size:0.85rem">Download Standalone Print Guide (Markdown)</a>
+  </div>
 </div>
 
 <script>
@@ -418,6 +468,7 @@ function showSection(id) {
   let idx = 0;
   if (id === 'dice') idx = 1;
   else if (id === 'ancestry') idx = 2;
+  else if (id === 'vyuha') idx = 3;
   if (btns[idx]) btns[idx].classList.add('active');
 }
 

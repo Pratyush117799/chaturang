@@ -3,6 +3,7 @@
 /**
  * Chaturanga v1.0.4 — Benchmark Web Worker
  * Handles heavy bot simulations on a background thread.
+ * v1.0.4.1: Batch mode — process multiple games per message to reduce IPC overhead.
  */
 
 // Import required engine and bot scripts
@@ -11,8 +12,28 @@ importScripts('js/game.js', 'js/bot/randomMove.js', 'js/bot/tieredBots.js', 'js/
 
 self.onmessage = function(e) {
   try {
-    const { eloA, eloB, gameMode, maxMoves, gameIndex } = e.data;
-    const res = simulateOneGame(eloA, eloB, gameMode, maxMoves);
+    const data = e.data;
+
+    // ── BATCH MODE ─────────────────────────────────────────────────────
+    // Caller sends { batch: [{eloA,eloB,gameMode,maxMoves,gameIndex},...] }
+    // We process every item and reply once with all results.
+    // This removes per-game postMessage overhead (~10x IPC reduction).
+    if (data.batch && Array.isArray(data.batch)) {
+      const results = data.batch.map(cfg => {
+        try {
+          const res = simulateOneGame(cfg.eloA, cfg.eloB, cfg.gameMode, cfg.maxMoves || 400);
+          return { res, gameIndex: cfg.gameIndex };
+        } catch (err) {
+          return { error: err.message, gameIndex: cfg.gameIndex };
+        }
+      });
+      self.postMessage({ batch: results });
+      return;
+    }
+
+    // ── SINGLE MODE (legacy / backward compatible) ─────────────────────
+    const { eloA, eloB, gameMode, maxMoves, gameIndex } = data;
+    const res = simulateOneGame(eloA, eloB, gameMode, maxMoves || 400);
     self.postMessage({ res, gameIndex });
   } catch (err) {
     self.postMessage({ error: err.message, gameIndex: e.data.gameIndex });
@@ -48,7 +69,7 @@ function simulateOneGame(eloA, eloB, gameMode, maxMoves) {
 
     const isTeamA = (game.gameMode === 'team') 
       ? (player.team === 0) 
-      : (player.id === 0 || player.id === 2); // In FFA, we group Red/Green as Team A for comparison
+      : (player.id === 0 || player.id === 2); // In FFA, group Red/Green as Team A
     
     const elo = isTeamA ? eloA : eloB;
 
@@ -64,8 +85,6 @@ function simulateOneGame(eloA, eloB, gameMode, maxMoves) {
     if (move) {
       game.makeMove(move.from, move.to);
       
-      // Handle 1.0.3/1.0.4 specific engine states if they arise during simulation
-      // (1.0.4 game.js makeMove handles promotion and captures, but check for manual triggers if needed)
       if (game.pendingKingRespawn) {
         const empty = game.board.getAllEmptySquares();
         if (empty.length > 0) {
@@ -76,11 +95,10 @@ function simulateOneGame(eloA, eloB, gameMode, maxMoves) {
         }
       }
       if (game.pendingElimination) {
-        // In simulation, we immediately complete elimination without animation delay
         game.completeElimination();
       }
     } else {
-      // Forfeit turn manually if bot failed to find a move despite game.autoForfeitIfNoMove()
+      // Forfeit turn manually if bot failed to find a move
       if (!game.forfeitTurn()) {
         game.forcedPiece = null; 
         game.lastDice = null; 
@@ -94,12 +112,10 @@ function simulateOneGame(eloA, eloB, gameMode, maxMoves) {
   const wId = game.winnerPlayerId;
   let winner = null;
   if (game.gameOver) {
-    // winner: 0 = Team A (Red/Green), 1 = Team B (Blue/Yellow)
     if (game.gameMode === 'team') {
       winner = game.winner;
     } else {
-        // In FFA/Single mode, map winning player to their pseudo-team
-        winner = (game.winnerPlayerId === 0 || game.winnerPlayerId === 2) ? 0 : 1;
+      winner = (game.winnerPlayerId === 0 || game.winnerPlayerId === 2) ? 0 : 1;
     }
   }
 

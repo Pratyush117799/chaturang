@@ -127,6 +127,10 @@ class Game {
   }
 
   initPosition() {
+    // BUG #5 FIX: check for a custom army config from army_builder.html first.
+    // If one is found and valid, use it instead of the standard starting setup.
+    if (this.loadCustomArmyIfPresent()) return;
+
     this.initWarnings = [];
     this.board.squares = {};
     this.players.forEach(p => p.reset());
@@ -431,11 +435,29 @@ class Game {
     this.legalMoves = [];
   }
 
-  handleCapture(player, target, toSquare) {
+  handleCapture(player, target, toSquare, fromSquare) {
     if (target.type === 'king') {
       this.handleKingCapture(player, target, toSquare);
     }
     player.capturedPieces.push(target);
+
+    // BUG #5 FIX — Guptchar (Spy) interception:
+    // If the captured piece was the spy AND the capturing piece is NOT a king,
+    // the capturing piece is also simultaneously removed from the board.
+    if (this.guptcharSquares) {
+      const spySq = this.guptcharSquares[target.owner];
+      if (spySq === toSquare && player.id !== null) {
+        const capturingPiece = this.board.get(toSquare);
+        if (capturingPiece && capturingPiece.type !== 'king') {
+          this.board.set(fromSquare, null); // remove capturing piece too
+          this.guptcharNotification = {
+            player: target.owner,
+            sq: toSquare
+          };
+          console.log('[Chaturanga] Guptchar revealed! Spy and attacker both removed.');
+        }
+      }
+    }
   }
 
   handleKingCapture(player, target, toSquare) {
@@ -594,5 +616,73 @@ class Game {
     return false;
   }
 }
+
+// ═══════════════════════════════════════════════════════════
+// BUG #5 FIX — Custom Army Builder integration
+// Reads localStorage key 'chaturanga_custom_army' written by
+// army_builder.html and applies it instead of the default setup.
+// Called automatically from initPosition() when a valid config exists.
+// ═══════════════════════════════════════════════════════════
+
+Game.prototype.loadCustomArmyIfPresent = function() {
+  try {
+    const raw = localStorage.getItem('chaturanga_custom_army');
+    if (!raw) return false;
+    const config = JSON.parse(raw);
+
+    // Only consume configs written within the last 5 minutes
+    if (!config.timestamp || Date.now() - config.timestamp > 300000) {
+      localStorage.removeItem('chaturanga_custom_army');
+      return false;
+    }
+
+    // Validate minimum shape
+    if (!config.armies || !Array.isArray(config.armies)) return false;
+
+    // Clear board and reset player state
+    this.board.squares = {};
+    this.players.forEach(p => p.reset());
+    this.initWarnings = [];
+
+    // Place each piece from the saved config
+    config.armies.forEach(armyData => {
+      const playerId = armyData.player;
+      if (playerId < 0 || playerId > 3) return;
+      (armyData.pieces || []).forEach(p => {
+        if (!p.sq || !p.type) return;
+        if (!this.board.isEmpty(p.sq)) {
+          this.initWarnings.push('Custom army conflict at ' + p.sq);
+          return;
+        }
+        const piece = new Piece(p.type, this.players[playerId].color, playerId);
+        this.board.set(p.sq, piece);
+        if (p.type === 'king') this.players[playerId].hasKingOnBoard = true;
+      });
+
+      // Track guptchar square so capture handler can use it
+      if (armyData.guptchar) {
+        if (!this.guptcharSquares) this.guptcharSquares = {};
+        this.guptcharSquares[playerId] = armyData.guptchar;
+      }
+    });
+
+    // Players without a king on board are marked accordingly
+    this.players.forEach(p => {
+      const hasKing = Object.values(this.board.squares).some(
+        piece => piece.owner === p.id && piece.type === 'king'
+      );
+      p.hasKingOnBoard = hasKing;
+    });
+
+    // Consume the config — don't apply it again on page reload
+    localStorage.removeItem('chaturanga_custom_army');
+    console.log('[Chaturanga] Custom army loaded successfully.', this.initWarnings.length ? this.initWarnings : '');
+    return true;
+
+  } catch(e) {
+    console.warn('[Chaturanga] Custom army load failed:', e.message);
+    return false;
+  }
+};
 
 globalThis.ChaturangaGame = Game;

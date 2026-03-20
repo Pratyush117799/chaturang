@@ -83,7 +83,8 @@ body{background:var(--dark);color:#f5ead0;font-family:'Outfit',sans-serif;min-he
 .sq.has-piece{cursor:pointer}
 .sq.guptchar-sq::after{content:'';position:absolute;inset:0;background:rgba(231,76,60,.3);pointer-events:none;border:2px dashed rgba(231,76,60,.6)}
 
-.piece-on-sq{position:relative;font-size:1.6rem;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.piece-on-sq{position:relative;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.piece-on-sq img{width:72%;height:72%;object-fit:contain;pointer-events:none}
 .piece-on-sq .remove-hint{display:none;position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:#e74c3c;border-radius:50%;font-size:.55rem;color:#fff;align-items:center;justify-content:center;font-style:normal;line-height:1}
 .sq.has-piece:hover .remove-hint{display:flex}
 
@@ -217,15 +218,26 @@ body{background:var(--dark);color:#f5ead0;font-family:'Outfit',sans-serif;min-he
 // ═══ Game Configuration ═══════════════════════════════════════════════════════
 
 const PIECE_COSTS = { pawn:1, horse:3, elephant:3, rook:5 };
+// Fallback Unicode symbols used when images fail to load
 const PIECE_SYMBOLS = {
-  pawn:   ['♟','♟','♟','♟'],   // r,b,g,y
-  horse:  ['♞','♞','♞','♞'],
-  elephant:['♝','♝','♝','♝'],  // using bishop symbol for elephant
-  rook:   ['♜','♜','♜','♜'],
-  king:   ['♚','♚','♚','♚'],
+  pawn:     ['♟','♟','♟','♟'],
+  horse:    ['♞','♞','♞','♞'],
+  elephant: ['♝','♝','♝','♝'],
+  rook:     ['♜','♜','♜','♜'],
+  king:     ['♚','♚','♚','♚'],
 };
+// Maps engine type names → Chaturanga image file segment
+const PIECE_IMG_NAMES    = { pawn:'nara', horse:'ashwa', elephant:'danti', rook:'ratha', king:'raja' };
+const PLAYER_COLOR_NAMES = ['red','blue','green','yellow'];
 const PLAYER_COLORS = ['#e74c3c','#3498db','#27ae60','#f39c12'];
 const PLAYER_NAMES  = ['Red','Blue','Green','Yellow'];
+
+/** Returns the relative path to the Chaturanga piece image */
+function pieceImgUrl(type, playerIdx) {
+  const color = PLAYER_COLOR_NAMES[playerIdx] || 'red';
+  const name  = PIECE_IMG_NAMES[type] || type;
+  return `images/pieces/${color}_${name}.png`;
+}
 
 // Point budgets per config
 function getBudget(size, players) {
@@ -334,11 +346,13 @@ function renderPieceList() {
 
     const div = document.createElement('div');
     div.className = 'piece-item' + (state.selectedPiece === item.type ? ' selected' : '') + (disabled ? ' disabled' : '');
+    // Show piece image in palette; fall back to symbol if image fails
+    const imgEl = `<img src="${pieceImgUrl(item.type, cp)}" alt="${item.name}" style="width:26px;height:26px;object-fit:contain" onerror="this.style.display='none';this.nextSibling.style.display='inline'"><span class="piece-sym" style="display:none">${(PIECE_SYMBOLS[item.type]||[])[cp]||'?'}</span>`;
     div.innerHTML = `
-      <span class="piece-sym">${item.sym}</span>
+      <span class="piece-sym">${imgEl}</span>
       <div class="piece-info">
         <div class="piece-name">${item.name}</div>
-        <div class="piece-cost">${isKing ? 'required' : cost+' pt'+(cost>1?'s':'')}</div>
+        <div class="piece-cost">${isKing ? 'required' : cost+'pt'+(cost>1?'s':'')}</div>
       </div>
       <span class="piece-placed">${placed}</span>`;
     if (!disabled) div.onclick = () => selectPiece(item.type);
@@ -379,8 +393,25 @@ function renderBoard() {
       if (isGuptchar)    div.classList.add('guptchar-sq');
 
       if (piece) {
-        const sym = PIECE_SYMBOLS[piece.type][piece.player];
-        div.innerHTML = `<span class="piece-on-sq" style="color:${PLAYER_COLORS[piece.player]}">${sym}<i class="remove-hint">×</i></span>`;
+        const wrapper = document.createElement('span');
+        wrapper.className = 'piece-on-sq';
+        const img = document.createElement('img');
+        img.style.cssText = 'width:72%;height:72%;object-fit:contain;pointer-events:none';
+        img.alt = piece.type;
+        img.src = pieceImgUrl(piece.type, piece.player);
+        img.onerror = function() {
+          this.style.display = 'none';
+          const fb = document.createElement('span');
+          fb.style.cssText = `font-size:1.5rem;line-height:1;color:${PLAYER_COLORS[piece.player]}`;
+          fb.textContent = (PIECE_SYMBOLS[piece.type] || ['?'])[piece.player];
+          wrapper.appendChild(fb);
+        };
+        const rmHint = document.createElement('i');
+        rmHint.className = 'remove-hint';
+        rmHint.textContent = '×';
+        wrapper.appendChild(img);
+        wrapper.appendChild(rmHint);
+        div.appendChild(wrapper);
       }
 
       div.onclick = () => handleSquareClick(sq);
@@ -604,8 +635,8 @@ function launchGame() {
     timestamp: Date.now(),
   };
   localStorage.setItem('chaturanga_custom_army', JSON.stringify(config));
-  alert('Army config saved! Redirecting to game... (integrate with game.js to consume localStorage.getItem("chaturanga_custom_army"))');
-  // In production: window.location.href = '../game.html?mode=custom';
+  // BUG #5 FIX: redirect to game — game.js now reads 'chaturanga_custom_army' automatically.
+  globalThis.location.href = 'game.html?mode=custom';
 }
 
 // ═══ Config change handlers ════════════════════════════════════════════════

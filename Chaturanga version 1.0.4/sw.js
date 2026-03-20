@@ -1,5 +1,5 @@
 // Chaturanga v1.0.4 — Service Worker (offline bot play)
-const CACHE_NAME = 'chaturanga-v1.0.4';
+const CACHE_NAME = 'chaturanga-v1.0.4b';
 const ASSETS = [
   'game.html',
   'puzzles.html',

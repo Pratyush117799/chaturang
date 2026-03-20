@@ -69,6 +69,17 @@
         updateMpStatus(data.name + ' joined the room.', 'green');
         break;
       case 'game_started':
+        if (data.settings && data.settings.customArmy) {
+          localStorage.setItem('chaturanga_custom_army', JSON.stringify(data.settings.customArmy));
+          if (globalThis.ChaturangaGame && globalThis._chaturangaGame) {
+             // Let the frontend know we're in custom mode now, we might need a page reload or a manual re-init
+             const params = new URLSearchParams(globalThis.location.search);
+             if (params.get('mode') !== 'custom') {
+               globalThis.location.href = 'game.html?mode=custom';
+               return;
+             }
+          }
+        }
         updateMpStatus('Game started!', 'gold');
         hideMultiplayerModal();
         break;

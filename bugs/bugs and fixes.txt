@@ -1,0 +1,18 @@
+1. the red player gets forfeit too often even for turns it is eligible to make legal move for.(solved)
+2. Benchmark is still slow.
+3. Benchmark history must give access to download previous runned simulations.
+4. In the custom army builder, the pieces are classic chess pieces and must be converted to traditional chaturanga pieces.
+5. custom army builder is not connected to the game.(solved)
+6. Learning different vyuha formations of dhanurveda and following their rules of formations, strategy etc. to be incorporated on vrihadapada and larger boards of 14x14 and 16x16 for learning purposes.
+7. The game site in latest version 1.0.4 is still not much giving a feel of the game. Nara pieces still look like not worthy.
+8. customised featured to change pieces type and board style
+9. The game webpage is still not competent to chess.com advanced and smooth features.
+10. Android app format of the game doesn't exists.
+11. on completing a puzzles adds one day streak which is not technically correct-> if a player solves 5 puzzles in a day, he gets 5 day streak, that's wrong.(solved)
+12. Increase the number of puzzles.
+13. Improve custom builder and add feature of online 2 player format for custom army builder game format.
+14. Detailed explanation and guide to vyuha formations for this specific learning task.
+15. Improve the game chatbot and train it with already existing questions set plus 5000+ more queries in english/hinglish format for newly added features.
+16. A specific coach- acharya for learning vyuha formations and solving puzzles.
+17. Add puzzules as per the rating formats from 100 to 1000 rated.
+18. Make the website run more smoothly and avoid lags.

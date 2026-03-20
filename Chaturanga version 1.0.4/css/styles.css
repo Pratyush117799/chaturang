@@ -532,6 +532,7 @@ select { font-family: inherit; }
   cursor: grab;
   /* Ensure crisp rendering */
   image-rendering: auto;
+  will-change: transform, filter;
 }
 .piece:hover {
   transform: scale(1.1);
@@ -549,6 +550,21 @@ select { font-family: inherit; }
 
 /* piece capture animation */
 .piece-eliminating { animation: eliminateFlash 0.5s ease-out forwards; }
+
+/* Specific piece visual tweaks */
+img.piece[data-piece-type="king"] {
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.85)) drop-shadow(0 0 6px var(--gold));
+  z-index: 3;
+}
+img.piece[data-piece-type="king"]:hover {
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.9)) drop-shadow(0 0 10px var(--gold-light)) brightness(1.1);
+}
+img.piece[data-piece-type="pawn"] {
+  transform: scale(0.88);
+}
+img.piece[data-piece-type="pawn"]:hover {
+  transform: scale(0.96);
+}
 
 /* Rank / File corner labels */
 .rank-label, .file-label {

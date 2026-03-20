@@ -221,11 +221,17 @@
       border-left-width: 4px;
     }
     .history-item-header {
-      display: flex; justify-content: space-between;
+      display: flex; justify-content: space-between; align-items: center;
       color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;
       font-weight: 500;
     }
     .history-item-result { font-weight: 700; margin-top: 6px; display: flex; gap: 8px; justify-content: center; }
+    .hist-dl-btn {
+      background: none; border: 1px solid var(--border); color: var(--accent);
+      border-radius: 4px; padding: 2px 7px; font-size: 0.7rem; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .hist-dl-btn:hover { background: rgba(212,175,55,0.1); }
 
     /* ── Game log ───────────────────────────── */
     .log-section h3 { font-family: var(--header-font); font-size: 0.9rem; color: var(--accent);
@@ -326,6 +332,8 @@
           <option value="2">2 Workers</option>
           <option value="4" selected>4 Workers</option>
           <option value="8">8 Workers</option>
+          <option value="16" disabled>16 Workers (ELO 600+)</option>
+          <option value="32" disabled>32 Workers (ELO 600+)</option>
         </select>
       </div>
 
@@ -394,13 +402,16 @@
         <div class="log-section">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h3 style="margin:0">BATTLE LOG</h3>
-            <button id="dlBtn" class="pill" style="cursor:pointer; border:1px solid var(--border); padding:4px 10px; opacity:0.5" disabled>Download PGMs</button>
+            <button id="dlBtn" class="pill" style="cursor:pointer; border:1px solid var(--border); padding:4px 10px; opacity:0.5" disabled>JSON Option</button>
           </div>
           <div id="gameLog"><div style="text-align:center; padding:40px; color:var(--muted)">Waiting for battle start...</div></div>
         </div>
 
         <div class="history-panel-bench">
-          <h2><i class="fa-solid fa-clock-rotate-left"></i> HISTORY</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <h2 style="margin:0"><i class="fa-solid fa-clock-rotate-left"></i> HISTORY</h2>
+            <button id="dlAllBtn" onclick="downloadAllHistory()" class="pill" style="cursor:pointer;border:1px solid var(--border);padding:4px 10px;color:var(--accent);font-size:0.7rem;background:none" title="Download all history as JSON">⬇ All</button>
+          </div>
           <div class="history-scroll" id="historyList"></div>
           <button onclick="clearHistory()" style="background:none; border:none; color:var(--muted); font-size:0.7rem; cursor:pointer; margin-top:10px; width:100%; text-decoration:underline">Clear History</button>
         </div>
@@ -411,172 +422,298 @@
 
   <script>
     'use strict';
-    
-    // UI elements
-    const runBtn = document.getElementById('runBtn');
-    const logs = document.getElementById('gameLog');
-    const dlBtn = document.getElementById('dlBtn');
-    
-    // Setup inputs
-    const eloA = document.getElementById('eloA');
-    const eloB = document.getElementById('eloB');
-    const nGames = document.getElementById('numGames');
+
+    // ── UI References ─────────────────────────────────────────────────────────
+    const runBtn    = document.getElementById('runBtn');
+    const logs      = document.getElementById('gameLog');
+    const dlBtn     = document.getElementById('dlBtn');
+    const eloA      = document.getElementById('eloA');
+    const eloB      = document.getElementById('eloB');
+    const nGames    = document.getElementById('numGames');
     const nGamesLbl = document.getElementById('numGamesLabel');
-    const gMode = document.getElementById('gameMode');
-    const wCount = document.getElementById('workerCount');
-    
+    const gMode     = document.getElementById('gameMode');
+    const wCount    = document.getElementById('workerCount');
+
     nGames.oninput = () => nGamesLbl.innerText = nGames.value;
-    [eloA, eloB].forEach(el => el.onchange = () => {
+    
+    function updateWorkerConcurrency() {
+      const eA = Number.parseInt(eloA.value, 10);
+      const eB = Number.parseInt(eloB.value, 10);
+      const isHighElo = eA >= 600 && eB >= 600;
+      for (const opt of wCount.options) {
+        if (opt.value === '16' || opt.value === '32') {
+          opt.disabled = !isHighElo;
+          if (opt.selected && !isHighElo) wCount.value = '8'; // fallback
+        }
+      }
+    }
+    
+    [eloA, eloB].forEach(el => el.addEventListener('change', () => {
       document.getElementById('displayEloA').innerText = eloA.value;
       document.getElementById('displayEloB').innerText = eloB.value;
-    });
+      updateWorkerConcurrency();
+    }));
 
-    let workers = [];
-    let state = { running: false, results: 0, total: 0, winsA: 0, winsB: 0, draws: 0, moves: 0, lib: [] };
+    // ── State ─────────────────────────────────────────────────────────────────
+    let workers  = [];
+    let raf      = null;   // requestAnimationFrame handle
+    let pending  = false;  // RAF render pending
+    let state    = { running:false, results:0, total:0, winsA:0, winsB:0, draws:0, moves:0, lib:[] };
+    const BATCH_SIZE = 10; // games per postMessage — reduces IPC overhead ~10x
 
-    function stopWorkers() { workers.forEach(w => w.terminate()); workers = []; }
+    function stopWorkers() { workers.forEach(w => w.terminate()); workers = []; cancelAnimationFrame(raf); }
 
+    // ── Launch ────────────────────────────────────────────────────────────────
     runBtn.onclick = () => {
       if (state.running) return;
-      state = { running:true, results:0, total:Number.parseInt(nGames.value, 10), winsA:0, winsB:0, draws:0, moves:0, lib:[] };
-      
+      const total = Number.parseInt(nGames.value, 10);
+      state = { running:true, results:0, total, winsA:0, winsB:0, draws:0, moves:0, lib:[] };
+
       runBtn.disabled = true;
-      dlBtn.disabled = true;
-      dlBtn.style.opacity = '0.5';
+      dlBtn.disabled = true; dlBtn.style.opacity = '0.5';
       document.getElementById('progressWrap').style.display = 'block';
       logs.innerHTML = '';
-      
+
       const count = Number.parseInt(wCount.value, 10);
       stopWorkers();
-      for(let i=0; i<count; i++) {
+      for (let i = 0; i < count; i++) {
         const w = new Worker('benchmark-worker.js');
         w.onmessage = handleMessage;
-        w.onerror = (e) => console.error('Worker Error:', e);
+        w.onerror   = (e) => console.error('Worker error:', e);
         workers.push(w);
       }
 
-      // Dispatch games
-      for(let i=0; i<state.total; i++) {
-        workers[i % count].postMessage({
-          eloA: Number.parseInt(eloA.value, 10),
-          eloB: Number.parseInt(eloB.value, 10),
-          gameMode: gMode.value,
-          maxMoves: 400,
-          gameIndex: i
-        });
+      // Build all game configs
+      const cfg = {
+        eloA: Number.parseInt(eloA.value, 10),
+        eloB: Number.parseInt(eloB.value, 10),
+        gameMode: gMode.value,
+        maxMoves: 400
+      };
+      const allGames = Array.from({ length: total }, (_, i) => ({ ...cfg, gameIndex: i }));
+
+      // Chunk into BATCH_SIZE groups and distribute round-robin across workers
+      const chunks = [];
+      for (let i = 0; i < allGames.length; i += BATCH_SIZE) {
+        chunks.push(allGames.slice(i, i + BATCH_SIZE));
       }
+      chunks.forEach((batch, ci) => {
+        workers[ci % count].postMessage({ batch });
+      });
     };
 
+    // ── Message Handler ───────────────────────────────────────────────────────
     function handleMessage(e) {
       if (!state.running) return;
-      const { res, error } = e.data;
-      if (error) { console.error(error); return; }
+      const data = e.data;
 
-      state.results++;
-      state.moves += res.moves;
-      state.lib.push(res);
+      // Batch reply from worker
+      const results = data.batch ? data.batch : [data]; // single-mode compat
+      for (const item of results) {
+        if (item.error) { console.error(item.error); continue; }
+        const { res } = item;
+        state.results++;
+        state.moves += res.moves;
+        state.lib.push(res);
+        if (res.winner === 0)      state.winsA++;
+        else if (res.winner === 1) state.winsB++;
+        else                       state.draws++;
+      }
 
-      if (res.winner === 0) state.winsA++;
-      else if (res.winner === 1) state.winsB++;
-      else state.draws++;
-
-      updateUI();
+      // Throttle DOM updates with RAF
+      if (!pending) {
+        pending = true;
+        raf = requestAnimationFrame(() => { pending = false; updateUI(); });
+      }
 
       if (state.results >= state.total) {
         state.running = false;
         runBtn.disabled = false;
-        dlBtn.disabled = false;
-        dlBtn.style.opacity = '1';
+        dlBtn.disabled = false; dlBtn.style.opacity = '1';
+        cancelAnimationFrame(raf);
+        updateUI(); // final paint
+        addLogLine('──────── Benchmark Complete ────────', 'log-draw');
+        
+        // Auto-download TXT (1.0.3.2 style) in designated subfolder naming
+        const txtData = formatTxtLog(state, eloA.value, eloB.value, gMode.value);
+        triggerDownload(txtData, 'text/plain', `database/bot_${eloA.value}_vs_${eloB.value}/chaturanga_benchmark_library_${state.total}_games.txt`);
+        
         saveToHistory();
         stopWorkers();
       }
     }
 
+    // ── UI Update (called via RAF — max 1 per frame) ──────────────────────────
     function updateUI() {
-      document.getElementById('winsA').innerText = state.winsA;
-      document.getElementById('winsB').innerText = state.winsB;
-      document.getElementById('draws').innerText = state.draws;
+      if (!state.results) return;
+      document.getElementById('winsA').innerText    = state.winsA;
+      document.getElementById('winsB').innerText    = state.winsB;
+      document.getElementById('draws').innerText    = state.draws;
       document.getElementById('avgMoves').innerText = Math.round(state.moves / state.results);
 
       const pA = (state.winsA / state.results * 100).toFixed(1);
       const pB = (state.winsB / state.results * 100).toFixed(1);
       const pD = (state.draws / state.results * 100).toFixed(1);
-
-      document.getElementById('pctA').innerText = pA + '%';
-      document.getElementById('pctB').innerText = pB + '%';
+      document.getElementById('pctA').innerText   = pA + '%';
+      document.getElementById('pctB').innerText   = pB + '%';
       document.getElementById('barA').style.width = pA + '%';
       document.getElementById('barB').style.width = pB + '%';
       document.getElementById('barD').style.width = pD + '%';
+      document.getElementById('progressFill').style.width  = (state.results / state.total * 100) + '%';
+      document.getElementById('progressLabel').innerText   = `${state.results} / ${state.total} BATTLES FINISHED`;
 
-      document.getElementById('progressFill').style.width = (state.results / state.total * 100) + '%';
-      document.getElementById('progressLabel').innerText = `${state.results} / ${state.total} BATTLES FINISHED`;
+      // Log the last few results processed this frame
+      const recent = state.lib.slice(-BATCH_SIZE);
+      for (const res of recent) {
+        let [tag, cls] = ['DRAW', 'log-draw'];
+        if (res.winner === 0) [tag, cls] = ['TEAM A VICTOR', 'log-win-a'];
+        if (res.winner === 1) [tag, cls] = ['TEAM B VICTOR', 'log-win-b'];
+        addLogLine(`Game ${state.lib.indexOf(res)+1}: <span class="${cls}">${tag}</span> (${res.moves} moves)`);
+      }
+    }
 
-      const last = state.lib[state.lib.length-1];
-      let winTag = 'DRAW';
-      if (last.winner === 0) winTag = 'TEAM A VICTOR';
-      else if (last.winner === 1) winTag = 'TEAM B VICTOR';
-
-      let winCls = 'log-draw';
-      if (last.winner === 0) winCls = 'log-win-a';
-      else if (last.winner === 1) winCls = 'log-win-b';
-
-      logs.innerHTML += `<div>Game ${state.results}: <span class="${winCls}">${winTag}</span> (${last.moves} moves)</div>`;
+    function addLogLine(html, cls) {
+      const d = document.createElement('div');
+      if (cls) d.className = cls;
+      d.innerHTML = html;
+      logs.appendChild(d);
       logs.scrollTop = logs.scrollHeight;
     }
 
+    // ── History ───────────────────────────────────────────────────────────────
     function saveToHistory() {
-      const history = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
-      history.unshift({
-        date: new Date().toLocaleString(),
-        eloA: eloA.value, eloB: eloB.value,
-        n: state.total, winsA: state.winsA, winsB: state.winsB, draws: state.draws,
-        avg: Math.round(state.moves / state.total)
+      const h = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
+      h.unshift({
+        date:  new Date().toISOString(),
+        eloA:  Number(eloA.value), eloB: Number(eloB.value),
+        n:     state.total,
+        winsA: state.winsA, winsB: state.winsB, draws: state.draws,
+        avg:   Math.round(state.moves / state.total),
+        lib:   state.lib.map(g => ({ winner: g.winner, moves: g.moves, winnerPlayerId: g.winnerPlayerId }))
       });
-      localStorage.setItem('chaturanga_v104_bench', JSON.stringify(history.slice(0, 10)));
+      localStorage.setItem('chaturanga_v104_bench', JSON.stringify(h.slice(0, 15)));
       renderHistory();
     }
 
     function renderHistory() {
-      const h = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
+      const h    = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
       const list = document.getElementById('historyList');
       if (!h.length) {
-        list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-size:0.8rem">No previous records</div>';
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:0.8rem">No previous records</div>';
         return;
       }
-      list.innerHTML = h.map(item => `
+      list.innerHTML = h.map((item, idx) => `
         <div class="history-item">
-          <div class="history-item-header"><span>${item.date}</span> <span>${item.n} games</span></div>
-          <div style="font-weight:700; color:var(--accent)">ELO ${item.eloA} vs ${item.eloB}</div>
-          <div class="history-item-result">
-            <span style="color:var(--green)">W:${item.winsA}</span>
-            <span style="color:var(--yellow)">W:${item.winsB}</span>
-            <span style="color:var(--blue)">D:${item.draws}</span>
+          <div class="history-item-header">
+            <span>${new Date(item.date).toLocaleString()}</span>
+            <button class="hist-dl-btn" onclick="downloadHistoryItem(${idx})" title="Download this run as JSON">💾 Download</button>
           </div>
+          <div style="font-weight:700;color:var(--accent)">ELO ${item.eloA} vs ${item.eloB} · ${item.n} games</div>
+          <div class="history-item-result">
+            <span style="color:var(--green)">A:${item.winsA} (${(item.winsA/item.n*100).toFixed(0)}%)</span>
+            <span style="color:var(--blue)">D:${item.draws}</span>
+            <span style="color:var(--yellow)">B:${item.winsB} (${(item.winsB/item.n*100).toFixed(0)}%)</span>
+          </div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:4px">Avg moves: ${item.avg}</div>
         </div>
       `).join('');
     }
 
+    /** Download a single history entry as a formatted JSON file */
+    function downloadHistoryItem(idx) {
+      const h    = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
+      const item = h[idx];
+      if (!item) return;
+      const payload = JSON.stringify(item, null, 2);
+      triggerDownload(payload, 'application/json', `chaturanga_bench_run_${idx+1}_${item.eloA}v${item.eloB}.json`);
+    }
+
+    /** Download every history entry in a single JSON file */
+    function downloadAllHistory() {
+      const h = JSON.parse(localStorage.getItem('chaturanga_v104_bench') || '[]');
+      if (!h.length) { alert('No benchmark history to download yet.'); return; }
+      triggerDownload(JSON.stringify(h, null, 2), 'application/json', `chaturanga_bench_all_history_${Date.now()}.json`);
+    }
+
+    function triggerDownload(content, type, filename) {
+      const blob = new Blob([content], { type });
+      const url  = URL.createObjectURL(blob);
+      const a    = Object.assign(document.createElement('a'), { href: url, download: filename });
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
     function clearHistory() {
+      if (!confirm('Clear all benchmark history?')) return;
       localStorage.removeItem('chaturanga_v104_bench');
       renderHistory();
     }
 
+    // ── Live run download / format definitions ────────────────────────────────
+    const PLAYER_LABELS = ['Red', 'Blue', 'Green', 'Yellow'];
+    function formatTxtLog(stateObj, eA, eB, gameMode) {
+      const isTeam = gameMode === 'team';
+      let out = '';
+      const pieceLetter = p => {
+        if (!p) return '';
+        const t = p.toLowerCase();
+        if (t === 'horse') return 'H';
+        if (t === 'elephant') return 'E';
+        if (t === 'rook') return 'R';
+        if (t === 'king') return 'K';
+        if (t.includes('pawn')) return 'P';
+        return '?';
+      };
+      const turnNotation = m => {
+        if (!m) return '—';
+        if (m.forfeit) return 'Forfeit(' + (m.forfeitPiece || 'any') + ')';
+        if (!m.piece || !m.to) return '—';
+        return pieceLetter(m.piece) + (m.cap ? 'x' : '') + m.to;
+      };
+
+      stateObj.lib.forEach((g, gIdx) => {
+        out += `=== Game ${gIdx+1} ===\nMode: ${isTeam ? 'Team (2v2)' : 'Single (Free-for-All)'}\n`;
+        out += `Team A (Red/Green) ELO: ${eA}  vs  Team B (Blue/Yellow) ELO: ${eB}\n\n`;
+        
+        const hist = g.history || [];
+        const rounds = [];
+        for (let i = 0; i < hist.length; i += 4) rounds.push(hist.slice(i, i + 4));
+        
+        rounds.forEach((rm, rIdx) => {
+          const parts = rm.map(m => PLAYER_LABELS[m.playerId || 0] + ': ' + turnNotation(m));
+          out += `${rIdx+1}. ${parts.join(' | ')}\n`;
+        });
+        
+        out += '\nResult: ';
+        if (g.winner === 0) {
+          if (isTeam) out += 'Team 1 wins';
+          else out += g.winnerPlayerId == null ? 'Team 1 wins' : PLAYER_LABELS[g.winnerPlayerId] + ' wins';
+        } else if (g.winner === 1) {
+          if (isTeam) out += 'Team 2 wins';
+          else out += g.winnerPlayerId == null ? 'Team 2 wins' : PLAYER_LABELS[g.winnerPlayerId] + ' wins';
+        } else {
+          out += 'Draw / Timeout';
+        }
+        
+        out += '\n\n============================================================\n\n';
+      });
+      return out;
+    }
+
     dlBtn.onclick = () => {
-      const content = state.lib.map((g, i) => `Game ${i+1}\nWinner: ${g.winner}\nMoves: ${g.moves}\n---`).join('\n\n');
-      const blob = new Blob([content], {type: 'text/plain'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `chaturanga_bench_${Date.now()}.txt`;
-      a.click();
+      // JSON side option
+      const filteredLib = state.lib.map(g => ({ winner: g.winner, moves: g.moves, winnerPlayerId: g.winnerPlayerId }));
+      triggerDownload(JSON.stringify(filteredLib, null, 2), 'application/json', `chaturanga_bench_live_${Date.now()}.json`);
     };
 
     window.onload = () => {
+      updateWorkerConcurrency();
       renderHistory();
       setTimeout(() => {
-        document.getElementById('preloader').style.opacity = '0';
-        setTimeout(() => document.getElementById('preloader').style.display = 'none', 600);
-      }, 1000);
+        const pl = document.getElementById('preloader');
+        pl.style.opacity = '0';
+        setTimeout(() => pl.style.display = 'none', 600);
+      }, 800);
     };
   </script>
 </body>
