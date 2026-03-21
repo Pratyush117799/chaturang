@@ -228,6 +228,7 @@ class Game {
 
   canCapture(piece, target) {
     if (!target || target.owner === piece.owner) return false;
+    if (piece.type === 'king' && target.type === 'king') return false;
     if (piece.isMinor()) {
       if (target.isMinor()) return true;
       if (target.isMajor()) return false;

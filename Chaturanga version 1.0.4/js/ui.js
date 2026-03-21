@@ -120,6 +120,7 @@ function initUI(game) {
     function getBotMove() {
       const elo = botEloEl ? Number.parseInt(botEloEl.value, 10) : 100;
       if (elo === 100) return globalThis.ChaturangaRandomBot ? globalThis.ChaturangaRandomBot.getMove(game, game.turnIndex) : null;
+      if (elo >= 700)  return globalThis.ChaturangaAdvancedBots ? globalThis.ChaturangaAdvancedBots.getMove(game, elo) : null;
       return globalThis.ChaturangaTieredBot ? globalThis.ChaturangaTieredBot.getMove(game, elo) : null;
     }
     function isBotTurn() {
@@ -146,7 +147,7 @@ function initUI(game) {
       let team1Score = 0; // Red (0) + Green (2)
       let team2Score = 0; // Blue (1) + Yellow (3)
       const vals = { pawn:1, horse:3, elephant:3, rook:5, king:0 };
-      for (const p of game.board.values()) {
+      for (const p of Object.values(game.board.squares)) {
         const v = vals[p.type] || 0;
         if (p.owner === 0 || p.owner === 2) team1Score += v;
         if (p.owner === 1 || p.owner === 3) team2Score += v;
@@ -691,27 +692,39 @@ function initUI(game) {
       if (game.gameOver) { return; }
       const elo = botEloEl ? Number.parseInt(botEloEl.value, 10) : 100;
       if (elo >= 400 && statusEl) { statusEl.textContent = 'Bot is thinking…'; }
-      const delay = elo >= 400 ? 600 : 200;
+      const delay = elo >= 700 ? 1400 : elo >= 400 ? 600 : 200;
       setTimeout(() => {
         const move = getBotMove();
-        if (move && game.makeMove(move.from, move.to)) {
-          lastMoveFrom = move.from;
-          lastMoveTo   = move.to;
-          if (move.cap) {
-            playCaptureSfx();
-            seerCaptures++;
-          } else {
-            playMoveSfx();
-          }
-          if (game.pendingElimination) {
-            animateElimination(game.pendingElimination.squares, () => {
-              game.completeElimination();
+        if (move) {
+          const botTarget = game.board.get(move.to); // snapshot before makeMove clears the square
+          if (game.makeMove(move.from, move.to)) {
+            lastMoveFrom = move.from;
+            lastMoveTo   = move.to;
+            if (botTarget) {
+              playCaptureSfx();
+              seerCaptures++;
+            } else {
+              playMoveSfx();
+            }
+            if (game.pendingElimination) {
+              animateElimination(game.pendingElimination.squares, () => {
+                game.completeElimination();
+                render();
+                tryAutoRoll();
+              });
+            } else {
               render();
               tryAutoRoll();
-            });
+            }
           } else {
+            // makeMove was rejected — recover gracefully
+            if (!game.autoForfeitIfNoMove()) {
+              console.warn('Chaturanga: bot move rejected by engine. Recovering turn for player', game.turnIndex);
+              game.forcedPiece = null;
+              game.lastDice    = null;
+            }
             render();
-            tryAutoRoll();
+            setTimeout(tryAutoRoll, 300);
           }
         } else if (game.autoForfeitIfNoMove()) {
           render();
@@ -966,7 +979,7 @@ function getDOMReferences() {
     botEloEl: document.getElementById('botElo'),
     boardSizeEl: document.getElementById('boardSize'),
     boardSizeLabel: document.getElementById('boardSizeLabel'),
-    settingsToggle: document.getElementById('settingsToggleBtn'),
+    settingsToggle: document.getElementById('settingsToggle'),
     settingsClose: document.getElementById('settingsCloseBtn'),
     settingsDrawer: document.getElementById('settingsDrawer'),
     fullscreenBtn: document.getElementById('fullscreenBtn'),
