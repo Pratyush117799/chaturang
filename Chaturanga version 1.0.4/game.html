@@ -32,7 +32,10 @@
 
     <!-- ═══ TOP NAVIGATION BAR ═══ -->
     <nav class="top-nav" id="topNav">
-        <a href="vyuha_builder.html" class="nav-icon-btn" title="Vyuha Formations" style="text-decoration:none">
+        <a href="index.html" class="nav-icon-btn" title="Home" style="text-decoration:none">
+            <i class="fa-solid fa-house"></i>
+        </a>
+        <a href="lessons/vyuha_builder.html" class="nav-icon-btn" title="Vyuha Formations" style="text-decoration:none">
             <i class="fa-solid fa-dharmachakra"></i>
         </a>
         <div class="nav-left">
@@ -54,7 +57,7 @@
             <a href="lessons.html" class="nav-icon-btn" title="Lessons" style="text-decoration:none">
                 <i class="fa-solid fa-graduation-cap"></i>
             </a>
-            <a href="tournament.html" class="nav-icon-btn" title="Tournament" style="text-decoration:none">
+            <a href="tournament/index.html" class="nav-icon-btn" title="Tournament" style="text-decoration:none">
                 <i class="fa-solid fa-trophy"></i>
             </a>
             <a href="army_builder.html" class="nav-icon-btn" title="Army Builder" style="text-decoration:none">
@@ -262,6 +265,7 @@
                     <button id="seerExportBtn" class="seer-export-btn" style="display:none">
             <i class="fa-solid fa-file-export"></i> Export Report
           </button>
+                    <a href="seer.html" class="seer-export-btn" style="text-decoration:none;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px"><i class="fa-solid fa-arrow-up-right-from-square"></i> Full Analysis Page</a>
                 </div>
 
                 <!-- Vault Tab -->
@@ -389,7 +393,7 @@
                     <a href="benchmark.html" class="mode-btn" style="text-decoration:none;font-size:0.75rem;padding:6px 12px;background:var(--gold);color:#000;font-weight:700">Benchmark</a>
                     <a href="puzzles.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Puzzles</a>
                     <a href="lessons.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Lessons</a>
-                    <a href="tournament.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Tournament</a>
+                    <a href="tournament/index.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Tournament</a>
                     <a href="army_builder.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Army Builder</a>
                     <a href="admin.html" class="mode-btn" style="text-decoration:none;font-size:0.7rem;padding:4px 8px">Admin</a>
                 </div>
@@ -561,20 +565,22 @@
             }
 
             // ── Board render guard ───────────────────────────────────────────────
-            // If ui.js crashed before rendering, the #board div is empty.
-            // Show a clear message instead of a black void.
-            var boardEl = document.getElementById('board');
-            var statusEl = document.getElementById('status');
-            if (boardEl && boardEl.children.length === 0) {
-                boardEl.style.cssText =
-                    'display:flex;align-items:center;justify-content:center;' +
-                    'color:#c9a84c;font-size:0.85rem;text-align:center;' +
-                    'padding:20px;min-height:200px;';
-                boardEl.textContent =
-                    'Board failed to render. Ensure js/ui.js, js/dice.js and ' +
-                    'engine/randomMoveGenerator.js are present in your project folder.';
-                if (statusEl) statusEl.textContent = 'Script load error — see board area.';
-            }
+            // Deferred: render() uses requestAnimationFrame so board is empty
+            // when scripts first finish. Wait 800ms before checking.
+            setTimeout(function() {
+                var boardEl = document.getElementById('board');
+                var statusEl = document.getElementById('status');
+                if (boardEl && boardEl.children.length === 0) {
+                    boardEl.style.cssText =
+                        'display:flex;align-items:center;justify-content:center;' +
+                        'color:#c9a84c;font-size:0.85rem;text-align:center;' +
+                        'padding:20px;min-height:200px;';
+                    boardEl.textContent =
+                        'Board failed to render. Ensure js/ui.js, js/dice.js and ' +
+                        'engine/randomMoveGenerator.js are present in your project folder.';
+                    if (statusEl) statusEl.textContent = 'Script load error — see board area.';
+                }
+            }, 800);
 
             // ── Board size slider ────────────────────────────────────────────────
             var slider = document.getElementById('boardSize');

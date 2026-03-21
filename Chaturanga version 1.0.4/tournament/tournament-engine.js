@@ -1,207 +1,322 @@
-globalThis.ChaturangaTournamentEngine = (function() {
+/**
+ * Chaturanga — Tournament Engine v1.0.4
+ * Arena · Swiss · Round Robin · Bot Championship
+ */
+(function (G) {
   'use strict';
-  const STORAGE_KEY = 'chaturanga_tournaments';
 
-  function loadAll() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
-  }
-  function saveAll(arr) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  }
+  const CHESS_ELO = {100:200,200:400,300:600,400:700,500:875,600:1050,700:1225,800:1400,900:1575,1000:1750};
+  const BOT_NAMES  = {100:'Novice',200:'Greedy',300:'Tactical',400:'Strategic',500:'Deep Tactical',600:'Paranoid',700:'Grandmaster',800:'Maharaja',900:'Samrat',1000:'Chakravarti'};
+  const BOT_ELOS   = [100,200,300,400,500,600,700,800,900,1000];
+  const LS_KEY     = 'chaturanga_elo_leaderboard';
 
-  function createTournament(config) {
-    const id = String(Date.now());
-    const tournament = {
-      id,
-      name: config.name || 'Unnamed Tournament',
-      format: config.format || 'round-robin',
-      participants: config.participants || [],
-      timeControlSeconds: config.timeControlSeconds || 300,
-      status: 'active',
-      createdAt: new Date().toISOString(),
-      rounds: [],
-      standings: []
-    };
-    if (config.format === 'round-robin') {
-      tournament.rounds = generateRoundRobin(config.participants);
-    } else if (config.format === 'single-elim') {
-      tournament.rounds = generateSingleElim(config.participants);
-    } else if (config.format === 'bot-championship') {
-      tournament.participants = generateBotChampionship();
-      tournament.rounds = generateRoundRobin(tournament.participants);
-    }
-    tournament.standings = initStandings(tournament.participants);
-    const all = loadAll();
-    all.push(tournament);
-    saveAll(all);
-    return id;
+  // ── ELO Simulator ─────────────────────────────────────────────────────────
+  function simulateGame(pA, pB) {
+    const a = CHESS_ELO[pA.elo] || pA.elo || 800;
+    const b = CHESS_ELO[pB.elo] || pB.elo || 800;
+    const pWin = 1 / (1 + Math.pow(10, (b - a) / 400));
+    const r = Math.random();
+    if (r < pWin - 0.04)       return 'A';
+    if (r < pWin + 0.04)       return 'D';
+    return 'B';
   }
 
-  function generateRoundRobin(participants) {
-    const rounds = [];
-    const ps = [...participants];
-    if (ps.length % 2 !== 0) ps.push({ id: 'bye', name: 'BYE', type: 'bye' });
-    const n = ps.length;
-    for (let r = 0; r < n - 1; r++) {
-      const round = { round: r + 1, matches: [] };
-      for (let i = 0; i < n / 2; i++) {
-        const p1 = ps[i], p2 = ps[n - 1 - i];
-        if (p1.id !== 'bye' && p2.id !== 'bye') {
-          round.matches.push({ id: r + '_' + i, p1: p1.id, p2: p2.id, result: null });
-        }
-      }
-      // Rotate everyone except the last player
-      ps.splice(1, 0, ps.pop());
-      rounds.push(round);
-    }
-    return rounds;
+  function makePlayer(name, elo, isBot) {
+    return { id: `${isBot?'bot':'human'}_${elo||Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+             name, elo: elo||0, isBot: !!isBot,
+             score:0, wins:0, draws:0, losses:0 };
   }
 
-  function generateSingleElim(participants) {
-    const sorted = [...participants].sort((a,b) => (b.rating||0)-(a.rating||0));
-    let size = 4;
-    while (size < sorted.length) size *= 2;
-    // Seed with byes: top seeds get byes
-    const seeded = [];
-    for (let i = 0; i < size; i++) seeded.push(sorted[i] || { id: 'bye', name: 'BYE', type: 'bye' });
-    const rounds = [];
-    let current = seeded;
-    let rIdx = 1;
-    while (current.length > 1) {
-      const round = { round: rIdx++, matches: [] };
-      const next = [];
-      for (let i = 0; i < current.length; i += 2) {
-        const p1 = current[i], p2 = current[i+1];
-        const mId = 'se_' + rIdx + '_' + i;
-        if (p1.id === 'bye') { next.push(p2); continue; }
-        if (p2.id === 'bye') { next.push(p1); continue; }
-        round.matches.push({ id: mId, p1: p1.id, p2: p2.id, result: null });
-        next.push(null); // placeholder for winner
-      }
-      rounds.push(round);
-      current = next.filter(Boolean);
-    }
-    return rounds;
-  }
+  function makeBotPlayer(elo) { return makePlayer(BOT_NAMES[elo]||`ELO ${elo}`, elo, true); }
+  function makeHumanPlayer(name, elo) { return makePlayer(name, elo||1200, false); }
 
-  function generateBotChampionship() {
-    const elos = [100,200,300,400,500,600,700,800,900,1000];
-    const names = ['Random','Greedy','Tactical','Strategic','Deep Tactical','Paranoid','Grandmaster','Maharaja','Samrat','Chakravarti'];
-    return elos.map((elo,i) => ({ id:'bot_'+elo, name:names[i]+' ('+elo+')', type:'bot', eloLevel:elo, rating:elo }));
-  }
-
-  function initStandings(participants) {
-    return participants.map(p => ({ id: p.id, name: p.name, points: 0, wins: 0, draws: 0, losses: 0, ratingChange: 0 }));
-  }
-
-  function recordResult(tournamentId, matchId, winnerId) {
-    const all = loadAll();
-    const t   = all.find(x => x.id === tournamentId);
-    if (!t) return;
-
-    for (const round of t.rounds) {
-      const match = round.matches.find(m => m.id === matchId);
-      if (!match) continue;
-      match.result = winnerId === 'draw' ? 'draw' : winnerId;
-
-      // Update standings
-      const s1 = t.standings.find(s => s.id === match.p1);
-      const s2 = t.standings.find(s => s.id === match.p2);
-      if (s1 && s2) {
-        if (winnerId === 'draw') {
-          s1.points+=1; s1.draws++;
-          s2.points+=1; s2.draws++;
-        } else if (winnerId === match.p1) {
-          s1.points+=3; s1.wins++;
-          s2.losses++;
-        } else {
-          s2.points+=3; s2.wins++;
-          s1.losses++;
-        }
-        // ELO update
-        const p1info = t.participants.find(p => p.id === match.p1);
-        const p2info = t.participants.find(p => p.id === match.p2);
-        if (p1info && p2info) {
-          const K1 = ((p1info.gamesPlayed||0) < 30) ? 32 : 16;
-          const K2 = ((p2info.gamesPlayed||0) < 30) ? 32 : 16;
-          const r1 = p1info.rating || 500, r2 = p2info.rating || 500;
-          const e1 = 1 / (1 + Math.pow(10, (r2-r1)/400));
-          const e2 = 1 - e1;
-          const a1 = winnerId === match.p1 ? 1 : winnerId === 'draw' ? 0.5 : 0;
-          const a2 = 1 - a1;
-          s1.ratingChange = Math.round(s1.ratingChange + K1 * (a1 - e1));
-          s2.ratingChange = Math.round(s2.ratingChange + K2 * (a2 - e2));
-        }
-      }
-      break;
-    }
-
-    saveAll(all);
-  }
-
-  function getStandings(tournamentId) {
-    const t = loadAll().find(x => x.id === tournamentId);
-    if (!t) return [];
-    return [...t.standings].sort((a,b) => b.points-a.points || b.wins-a.wins || (b.ratingChange||0)-(a.ratingChange||0));
-  }
-
-  function exportResults(tournamentId) {
-    const t = loadAll().find(x => x.id === tournamentId);
-    if (!t) return '';
-    const standings = getStandings(tournamentId);
-    let md = '# ' + t.name + ' — ' + t.format + '\n';
-    md += '**Date:** ' + new Date(t.createdAt).toLocaleString() + '\n\n';
-    md += '## Standings\n| Rank | Player | Pts | W/D/L | ELO Δ |\n|---|---|---|---|---|\n';
-    standings.forEach((s,i) => {
-      md += '| ' + (i+1) + ' | ' + s.name + ' | ' + s.points + ' | ' + s.wins + '/' + s.draws + '/' + s.losses + ' | ' + (s.ratingChange>=0?'+':'')+s.ratingChange + ' |\n';
-    });
-    md += '\n## Results\n';
-    t.rounds.forEach(r => {
-      md += '### Round ' + r.round + '\n';
-      r.matches.forEach(m => {
-        const p1 = t.participants.find(p=>p.id===m.p1);
-        const p2 = t.participants.find(p=>p.id===m.p2);
-        md += '- ' + (p1?.name||m.p1) + ' vs ' + (p2?.name||m.p2) + ': ' + (m.result||'Pending') + '\n';
+  // ── Persistent ELO Leaderboard ─────────────────────────────────────────────
+  const Leaderboard = {
+    load() {
+      try { return JSON.parse(localStorage.getItem(LS_KEY)||'{"players":{},"history":[]}'); }
+      catch(e) { return {players:{},history:[]}; }
+    },
+    save(data) { try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){} },
+    recordTournament(format, standings) {
+      const data = this.load();
+      standings.forEach((p, i) => {
+        if (p.isBot) return;
+        if (!data.players[p.name]) data.players[p.name] = {elo:1200, wins:0, draws:0, losses:0, played:0};
+        const entry = data.players[p.name];
+        entry.played++;
+        entry.wins   += p.wins   || 0;
+        entry.draws  += p.draws  || 0;
+        entry.losses += p.losses || 0;
+        if (i === 0) entry.trophies = (entry.trophies||0)+1;
       });
-    });
-    return md;
+      data.history.unshift({ date: new Date().toLocaleDateString(), format,
+        winner: standings[0]?.name, count: standings.length });
+      if (data.history.length > 20) data.history = data.history.slice(0,20);
+      this.save(data);
+    },
+    getTopPlayers() {
+      const data = this.load();
+      return Object.entries(data.players)
+        .map(([name, d]) => ({name, ...d}))
+        .sort((a,b) => (b.trophies||0)-(a.trophies||0) || b.wins-a.wins);
+    },
+    getHistory() { return this.load().history; }
+  };
+
+  // ── Arena Engine ────────────────────────────────────────────────────────────
+  class ArenaEngine {
+    constructor(config) {
+      this.duration   = (config.duration||10) * 60; // seconds
+      this.players    = config.players.map(p => ({...p, score:0, wins:0, draws:0,
+                          losses:0, streak:0, gamesPlayed:0, inGame:false, lastOpp:null}));
+      this.games      = [];
+      this.startTime  = null;
+      this.active     = false;
+      this._timers    = [];
+      this.onGameDone = null;
+      this.onTick     = null;
+    }
+
+    start() {
+      this.startTime = Date.now();
+      this.active    = true;
+      this._tickInterval = setInterval(() => {
+        if (this.onTick) this.onTick(this.timeRemaining());
+        if (this.isOver()) this._end();
+      }, 1000);
+      this._pairAvailable();
+    }
+
+    stop() {
+      this.active = false;
+      clearInterval(this._tickInterval);
+      this._timers.forEach(clearTimeout);
+    }
+
+    _end() {
+      this.stop();
+      Leaderboard.recordTournament('Arena', this.getLeaderboard());
+    }
+
+    timeRemaining() {
+      if (!this.startTime) return this.duration;
+      return Math.max(0, this.duration - Math.floor((Date.now()-this.startTime)/1000));
+    }
+
+    isOver() { return this.timeRemaining() === 0; }
+
+    _available() { return this.players.filter(p => !p.inGame); }
+
+    _pairAvailable() {
+      if (!this.active || this.isOver()) return;
+      const avail = this._available();
+      avail.sort((a,b) => b.score - a.score);
+      for (let i = 0; i+1 < avail.length; i += 2) {
+        this._runGame(avail[i], avail[i+1]);
+      }
+    }
+
+    _runGame(pA, pB) {
+      pA.inGame = pB.inGame = true;
+      const game = { id: Date.now()+Math.random(), pA: pA.id, pB: pB.id,
+                     berserkA: false, berserkB: false, result: null, startTime: Date.now() };
+      this.games.push(game);
+
+      const delay = (pA.isBot && pB.isBot) ? (2000 + Math.random()*6000) : 0;
+      const t = setTimeout(() => {
+        if (!this.active) return;
+        const r = simulateGame(pA, pB);
+        game.result    = r;
+        game.duration  = Math.floor((Date.now()-game.startTime)/1000);
+
+        if (r==='A') {
+          pA.streak++; pB.streak=0;
+          const pts = (pA.streak>=2?4:2) + (game.berserkA?1:0);
+          pA.score+=pts; pA.wins++;
+          pB.losses++;
+        } else if (r==='B') {
+          pB.streak++; pA.streak=0;
+          const pts = (pB.streak>=2?4:2) + (game.berserkB?1:0);
+          pB.score+=pts; pB.wins++;
+          pA.losses++;
+        } else {
+          pA.score+=1; pB.score+=1;
+          pA.streak=pB.streak=0;
+          pA.draws++; pB.draws++;
+        }
+        pA.gamesPlayed++; pB.gamesPlayed++;
+        pA.inGame=pB.inGame=false;
+        pA.lastOpp=pB.id; pB.lastOpp=pA.id;
+        if (this.onGameDone) this.onGameDone(game, pA, pB);
+        if (!this.isOver()) this._pairAvailable();
+      }, delay);
+      this._timers.push(t);
+    }
+
+    getLeaderboard() {
+      return [...this.players].sort((a,b) => b.score!==a.score ? b.score-a.score : b.wins-a.wins);
+    }
+
+    recentGames(n=8) {
+      return this.games.filter(g=>g.result).slice(-n).reverse()
+        .map(g => ({...g, nameA: this.players.find(p=>p.id===g.pA)?.name||'?',
+                          nameB: this.players.find(p=>p.id===g.pB)?.name||'?'}));
+    }
   }
 
-  function simulateBotMatch(t, match) {
-    // Simple simulation: higher ELO wins with probability based on ELO diff
-    const p1 = t.participants.find(p=>p.id===match.p1);
-    const p2 = t.participants.find(p=>p.id===match.p2);
-    if (!p1||!p2) return match.p1;
-    const r1=p1.eloLevel||p1.rating||500, r2=p2.eloLevel||p2.rating||500;
-    const e1=1/(1+Math.pow(10,(r2-r1)/400));
-    const rand=Math.random();
-    if (rand < e1-0.1) return match.p1;
-    if (rand > e1+0.1) return match.p2;
-    return 'draw';
-  }
+  // ── Swiss Engine ─────────────────────────────────────────────────────────────
+  class SwissEngine {
+    constructor(config) {
+      this.totalRounds = config.rounds || 5;
+      this.players = config.players.map(p => ({...p, score:0, wins:0, draws:0,
+                       losses:0, buchholz:0, opponents:[]}));
+      this.rounds  = [];
+      this.current = 0;
+    }
 
-  function simulateBotChampionship(tournamentId) {
-    const all = loadAll();
-    const t   = all.find(x => x.id === tournamentId);
-    if (!t) return;
-    t.rounds.forEach(round => {
-      round.matches.forEach(match => {
-        if (!match.result) {
-          match.result = simulateBotMatch(t, match);
-          const s1=t.standings.find(s=>s.id===match.p1);
-          const s2=t.standings.find(s=>s.id===match.p2);
-          if (s1&&s2) {
-            if (match.result==='draw'){s1.points+=1;s1.draws++;s2.points+=1;s2.draws++;}
-            else if (match.result===match.p1){s1.points+=3;s1.wins++;s2.losses++;}
-            else {s2.points+=3;s2.wins++;s1.losses++;}
+    get isFinished() { return this.current>=this.totalRounds && this._roundComplete(); }
+
+    _roundComplete() {
+      if (!this.rounds.length) return true;
+      return this.rounds[this.rounds.length-1].pairings.every(p=>p.result!==null);
+    }
+
+    startNextRound() {
+      if (this.current >= this.totalRounds || !this._roundComplete()) return null;
+      this.current++;
+      const pairings = this._pair();
+      const round = { number: this.current, pairings, complete: false };
+      this.rounds.push(round);
+      return round;
+    }
+
+    _pair() {
+      const sorted = [...this.players]
+        .sort((a,b) => b.score!==a.score ? b.score-a.score : (b.elo||0)-(a.elo||0));
+      const used = new Set();
+      const pairs = [];
+
+      for (let i=0; i<sorted.length; i++) {
+        if (used.has(sorted[i].id)) continue;
+        let paired = false;
+        // prefer unplayed opponents in same score bracket
+        for (let j=i+1; j<sorted.length; j++) {
+          if (used.has(sorted[j].id)) continue;
+          if (!sorted[i].opponents.includes(sorted[j].id)) {
+            pairs.push({white:sorted[i],black:sorted[j],result:null});
+            used.add(sorted[i].id); used.add(sorted[j].id);
+            paired=true; break;
           }
         }
+        if (!paired) {
+          for (let j=i+1; j<sorted.length; j++) {
+            if (!used.has(sorted[j].id)) {
+              pairs.push({white:sorted[i],black:sorted[j],result:null});
+              used.add(sorted[i].id); used.add(sorted[j].id); break;
+            }
+          }
+        }
+      }
+      // Bye for odd players
+      sorted.forEach(p => {
+        if (!used.has(p.id)) { pairs.push({white:p,black:null,result:'bye'}); p.score+=1; }
       });
-    });
-    t.status='finished';
-    saveAll(all);
-    return t;
+      return pairs;
+    }
+
+    submitResult(roundIdx, pairIdx, result) {
+      const r = this.rounds[roundIdx];
+      if (!r) return;
+      const p = r.pairings[pairIdx];
+      if (!p || p.result || !p.black) return;
+      p.result = result;
+      const w=p.white, b=p.black;
+      w.opponents.push(b.id); b.opponents.push(w.id);
+      if (result==='W') { w.score+=1; w.wins++; b.losses++; }
+      else if (result==='D') { w.score+=.5; b.score+=.5; w.draws++; b.draws++; }
+      else { b.score+=1; b.wins++; w.losses++; }
+      r.complete = r.pairings.every(p=>p.result!==null);
+      if (r.complete) this._buchholz();
+    }
+
+    simulateRound(roundIdx) {
+      const r = this.rounds[roundIdx];
+      if (!r) return;
+      r.pairings.forEach((p,i) => {
+        if (p.result || !p.black) return;
+        const res = simulateGame(p.white, p.black);
+        this.submitResult(roundIdx, i, res==='A'?'W':res==='D'?'D':'L');
+      });
+    }
+
+    _buchholz() {
+      this.players.forEach(p => {
+        p.buchholz = p.opponents.reduce((s,id) => {
+          const o = this.players.find(x=>x.id===id);
+          return s+(o?o.score:0);
+        },0);
+      });
+    }
+
+    getStandings() {
+      return [...this.players].sort((a,b) =>
+        b.score!==a.score ? b.score-a.score : b.buchholz-a.buchholz);
+    }
   }
 
-  return { createTournament, generateRoundRobin, generateSingleElim, recordResult, getStandings, exportResults, loadAll, simulateBotChampionship };
-})();
+  // ── Round Robin Engine ────────────────────────────────────────────────────────
+  class RoundRobinEngine {
+    constructor(config) {
+      this.players = config.players.map(p=>({...p,score:0,wins:0,draws:0,losses:0}));
+      this.games   = [];
+      this.done    = false;
+      // Generate all pairings
+      for (let i=0; i<this.players.length; i++)
+        for (let j=i+1; j<this.players.length; j++)
+          this.games.push({id:`${i}-${j}`, pA:this.players[i], pB:this.players[j], result:null});
+    }
+
+    simulateAll(onGame) {
+      let d=0;
+      this.games.forEach(g=>{
+        setTimeout(()=>{
+          if (g.result) return;
+          const r = simulateGame(g.pA, g.pB);
+          g.result=r;
+          if (r==='A') { g.pA.score+=1; g.pA.wins++; g.pB.losses++; }
+          else if (r==='D') { g.pA.score+=.5; g.pA.draws++; g.pB.score+=.5; g.pB.draws++; }
+          else { g.pB.score+=1; g.pB.wins++; g.pA.losses++; }
+          if (onGame) onGame(g);
+          this.done = this.games.every(x=>x.result);
+          if (this.done) Leaderboard.recordTournament('Round Robin', this.getStandings());
+        }, d);
+        d += 300 + Math.random()*400;
+      });
+    }
+
+    getStandings() {
+      return [...this.players].sort((a,b)=>b.score!==a.score?b.score-a.score:b.wins-a.wins);
+    }
+
+    getMatrix() {
+      const m={};
+      this.players.forEach(p=>{m[p.id]={};});
+      this.games.forEach(g=>{
+        const a=g.pA.id,b=g.pB.id;
+        if (!g.result) { m[a][b]=m[b][a]='–'; return; }
+        if (g.result==='A') { m[a][b]=1; m[b][a]=0; }
+        else if (g.result==='B') { m[b][a]=1; m[a][b]=0; }
+        else { m[a][b]=m[b][a]='½'; }
+      });
+      return m;
+    }
+  }
+
+  // ── Public ───────────────────────────────────────────────────────────────────
+  G.ChaturangaTournament = {
+    ArenaEngine, SwissEngine, RoundRobinEngine,
+    makeHumanPlayer, makeBotPlayer, simulateGame,
+    BOT_NAMES, BOT_ELOS, Leaderboard
+  };
+
+})(window);

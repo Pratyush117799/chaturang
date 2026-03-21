@@ -139,9 +139,16 @@ function loadLesson(l){
   globalThis.ChaturangaLessonEngine.startLesson(l);
   const step=l.steps[0];
   lsBoardMap=new Map();
-  // Default board setup for lesson (simplified)
-  const DEFAULT_BOARD={'a1':'0:rook','b1':'0:horse','c1':'0:elephant','d1':'0:king','e1':'0:rook','a2':'0:pawn','b2':'0:pawn','c2':'0:pawn','d2':'0:pawn','e2':'0:pawn','h8':'1:king','a8':'1:rook','h5':'1:rook','g5':'1:horse','f5':'1:pawn'};
-  Object.entries(DEFAULT_BOARD).forEach(([sq,v])=>{const[o,t]=v.split(':');lsBoardMap.set(sq,{owner:Number.parseInt(o),type:t});});
+  // Use lesson-specific boardState; fall back to a minimal default if absent
+  const boardDef = l.boardState || {
+    'a1':{owner:0,type:'rook'}, 'e1':{owner:0,type:'king'},
+    'h8':{owner:1,type:'king'}, 'h7':{owner:1,type:'rook'}
+  };
+  Object.entries(boardDef).forEach(([sq,v])=>{
+    lsBoardMap.set(sq, typeof v==='string'
+      ? (([o,t])=>({owner:parseInt(o),type:t}))(v.split(':'))
+      : v);
+  });
 
   document.getElementById('lsEmpty').style.display='none';
   document.getElementById('lsActive').style.display='flex';

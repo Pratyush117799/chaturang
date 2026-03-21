@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const game = new globalThis.ChaturangaGame();
+    if (globalThis.ChaturangaSeer) {
+      globalThis.ChaturangaSeer.startGame({ format: 'Standard', date: new Date().toLocaleDateString() });
+    }
     initUI(game);
   } catch(err) {
     console.error('Chaturanga UI init error:', err);
@@ -404,6 +407,10 @@ function initUI(game) {
       animateMove(from, to, () => {
         const success = game.makeMove(from, to);
         if (success) {
+          if (globalThis.ChaturangaSeer) {
+            const mover = game.moveHistory[game.moveHistory.length - 1];
+            globalThis.ChaturangaSeer.recordMove(game, { from, to }, PLAYER_LABELS[mover?.playerId ?? 0] + ' (Human)');
+          }
           lastMoveFrom = from;
           lastMoveTo   = to;
           if (isCapture) {
@@ -600,6 +607,11 @@ function initUI(game) {
         let msg = 'Game Over!';
         if (game.gameMode === 'single' && game.winnerPlayerId !== null) { msg = PLAYER_LABELS[game.winnerPlayerId] + ' wins!'; }
         else if (game.winner !== null) { msg = 'Team ' + (game.winner + 1) + ' wins the Ashtāpada!'; }
+        if (globalThis.ChaturangaSeer && !game._seerFinalized) {
+          game._seerFinalized = true;
+          const winnerLabel = game.winnerPlayerId != null ? PLAYER_LABELS[game.winnerPlayerId] : game.winner != null ? 'Team ' + (game.winner + 1) : 'Unknown';
+          globalThis.ChaturangaSeer.finalizeGame({ winner: winnerLabel, format: game.gameMode || 'team' });
+        }
         if (gameState) { gameState.textContent = msg; gameState.className = 'game-state-badge game-over'; }
         if (gameOverOverlay) {
           gameOverOverlay.style.display = 'flex';
@@ -621,6 +633,7 @@ function initUI(game) {
 
     // ── Seer Engine ─────────────────────────────────────────────────────
     function updateSeer() {
+      if (globalThis.ChaturangaSeer) globalThis.ChaturangaSeer.updatePanel(game);
       const seerMoves = document.getElementById('seerMoves');
       const seerCapEl = document.getElementById('seerCaptures');
       const seerTop   = document.getElementById('seerTopPiece');
@@ -698,6 +711,11 @@ function initUI(game) {
         if (move) {
           const botTarget = game.board.get(move.to); // snapshot before makeMove clears the square
           if (game.makeMove(move.from, move.to)) {
+            if (globalThis.ChaturangaSeer) {
+              const mover = game.moveHistory[game.moveHistory.length - 1];
+              const elo   = botEloEl ? Number.parseInt(botEloEl.value, 10) : 0;
+              globalThis.ChaturangaSeer.recordMove(game, { from: move.from, to: move.to }, PLAYER_LABELS[mover?.playerId ?? 0] + ' (Bot ELO ' + elo + ')');
+            }
             lastMoveFrom = move.from;
             lastMoveTo   = move.to;
             if (botTarget) {
@@ -810,11 +828,12 @@ function initUI(game) {
     }
 
     // ── Settings Drawer ────────────────────────────────────────────────────
-    if (settingsToggle) settingsToggle.addEventListener('click', () => settingsDrawer && settingsDrawer.classList.toggle('open'));
-    if (settingsClose)  settingsClose.addEventListener('click', () => settingsDrawer && settingsDrawer.classList.remove('open'));
+    if (settingsToggle) { settingsToggle.addEventListener('click', () => settingsDrawer && settingsDrawer.classList.toggle('open')); settingsToggle._safeWired = true; }
+    if (settingsClose)  { settingsClose.addEventListener('click', () => settingsDrawer && settingsDrawer.classList.remove('open')); settingsClose._safeWired = true; }
 
     // ── Fullscreen ────────────────────────────────────────────────────────
     if (fullscreenBtn) {
+      fullscreenBtn._safeWired = true;
       fullscreenBtn.addEventListener('click', () => {
         if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
         else document.exitFullscreen();
@@ -856,6 +875,7 @@ function initUI(game) {
 
     // ── Board Size ─────────────────────────────────────────────────────────
     if (boardSizeEl && boardSizeLabel) {
+      boardSizeEl._safeWired = true;
       const saved = localStorage.getItem('chaturanga_boardSize_v3');
       const val   = saved ? Math.min(130, Math.max(70, Number.parseInt(saved, 10))) : 100;
       boardSizeEl.value = val;
@@ -926,7 +946,7 @@ function initUI(game) {
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     }
-    if (downloadHistoryBtn) downloadHistoryBtn.addEventListener('click', downloadHistory);
+    if (downloadHistoryBtn) { downloadHistoryBtn._safeWired = true; downloadHistoryBtn.addEventListener('click', downloadHistory); }
 
     // ── History color spans CSS ───────────────────────────────────────────
     const histStyle = document.createElement('style');
@@ -1002,6 +1022,7 @@ function initMuteControl(isMuted, setter) {
   const muteBtn = document.getElementById('muteBtn');
   const muteIcon = document.getElementById('muteIcon');
   if (muteBtn && muteIcon) {
+    muteBtn._safeWired = true;
     if (isMuted) muteIcon.className = 'fa-solid fa-volume-xmark';
     muteBtn.addEventListener('click', () => {
       const val = !isMuted;
