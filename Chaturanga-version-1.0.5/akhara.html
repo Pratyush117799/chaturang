@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Akhara Training Dojo — Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root {
+  --gold:#c9a84c;--gold2:#e8c96a;--gold3:#f5e4a0;
+  --dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;--dark4:#241c0c;
+  --border:rgba(201,168,76,.18);--border2:rgba(201,168,76,.32);
+  --text:#f0e4c8;--muted:#8a7050;--muted2:#5a4830;
+  --red:#e74c3c;--blue:#60a5fa;--green:#4ade80;--yellow:#fbbf24;
+  --sq:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+.nav{background:var(--dark2);border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;
+  text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-badge{font-size:.65rem;background:rgba(201,168,76,.12);color:var(--muted);
+  padding:2px 8px;border-radius:10px;border:1px solid var(--border)}
+.nav-links{margin-left:auto;display:flex;gap:4px}
+.nav-link{padding:5px 12px;border-radius:6px;font-size:.8rem;color:var(--muted);
+  text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px}
+.nav-link:hover{background:rgba(201,168,76,.08);color:var(--gold)}
+
+/* ── SCREENS ──────────────────────────────────────────────────── */
+.screen{display:none;min-height:calc(100vh - 52px)}
+.screen.active{display:block}
+
+/* ── HOME SCREEN ──────────────────────────────────────────────── */
+#homeScreen{padding:28px 16px 48px}
+.home-inner{max-width:760px;margin:0 auto}
+
+.rank-card{background:linear-gradient(150deg,#1c1508,#0f0c07);
+  border:1px solid var(--border2);border-radius:14px;padding:22px 26px;
+  display:flex;align-items:center;gap:20px;margin-bottom:24px;
+  box-shadow:0 0 40px rgba(201,168,76,.06)}
+.rank-badge{width:68px;height:68px;border-radius:50%;
+  background:rgba(201,168,76,.1);border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rank-badge-icon{font-size:1.8rem;color:var(--gold2)}
+.rank-info{flex:1}
+.rank-name{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold2);font-weight:700}
+.rank-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.rank-elo-row{display:flex;align-items:center;gap:10px}
+.rank-elo-val{font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold);min-width:60px}
+.elo-bar-track{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.elo-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;transition:width .6s ease}
+.rank-next{font-size:.7rem;color:var(--muted);margin-top:6px}
+
+.section-title{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:.06em}
+
+.drills-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+@media(max-width:500px){.drills-grid{grid-template-columns:1fr}}
+.drill-card{background:var(--dark2);border:1px solid var(--border);border-radius:12px;
+  padding:18px 18px 16px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.drill-card:hover{border-color:var(--gold);background:var(--dark3);transform:translateY(-2px);
+  box-shadow:0 4px 20px rgba(201,168,76,.08)}
+.drill-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,
+  rgba(201,168,76,.04) 0%,transparent 60%);pointer-events:none}
+.dc-icon{font-size:1.5rem;margin-bottom:10px;color:var(--gold)}
+.dc-name{font-family:'Cinzel',serif;font-size:.88rem;color:var(--gold2);margin-bottom:3px;font-weight:600}
+.dc-sanskrit{font-size:.72rem;color:rgba(201,168,76,.45);font-style:italic;margin-bottom:8px}
+.dc-desc{font-size:.76rem;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.dc-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.dc-timer{font-size:.68rem;color:var(--muted);background:rgba(255,255,255,.04);
+  padding:2px 8px;border-radius:8px;border:1px solid var(--border)}
+.dc-max{font-size:.68rem;color:var(--gold);background:rgba(201,168,76,.07);
+  padding:2px 8px;border-radius:8px;border:1px solid rgba(201,168,76,.15)}
+.dc-begin-btn{width:100%;padding:8px;border-radius:7px;border:none;font-family:'Outfit',sans-serif;
+  font-size:.8rem;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;transition:all .2s}
+.dc-begin-btn:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+
+.history-strip{margin-bottom:24px}
+.history-rows{display:flex;flex-direction:column;gap:6px}
+.hr-row{display:flex;align-items:center;gap:10px;background:var(--dark2);
+  border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.78rem}
+.hr-type{color:var(--muted);width:100px;flex-shrink:0}
+.hr-score{font-family:'Cinzel',serif;color:var(--gold2);min-width:70px}
+.hr-delta{font-family:'Cinzel',serif;font-size:.75rem;min-width:40px}
+.hr-delta.pos{color:var(--green)}
+.hr-delta.neg{color:var(--red)}
+.hr-delta.zero{color:var(--muted)}
+.hr-date{font-size:.7rem;color:var(--muted2);margin-left:auto}
+.hr-empty{font-size:.78rem;color:var(--muted);font-style:italic;padding:8px 0;text-align:center}
+
+.rank-scroll-btn{width:100%;padding:11px;border-radius:8px;border:none;font-family:'Cinzel',serif;
+  font-size:.82rem;font-weight:600;cursor:pointer;background:transparent;
+  color:rgba(201,168,76,.6);border:1px solid rgba(201,168,76,.2);transition:all .2s}
+.rank-scroll-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.05)}
+
+/* ── DRILL SCREEN ─────────────────────────────────────────────── */
+#drillScreen{padding:16px 16px 32px;display:flex;flex-direction:column;align-items:center}
+.drill-header{width:100%;max-width:500px;display:flex;align-items:center;
+  gap:12px;margin-bottom:14px}
+.drill-back-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;
+  font-family:'Outfit',sans-serif;transition:all .2s}
+.drill-back-btn:hover{border-color:var(--gold);color:var(--gold)}
+.drill-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold2);font-weight:700}
+.drill-progress{font-size:.75rem;color:var(--muted);margin-left:auto}
+.drill-score-badge{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);
+  background:rgba(201,168,76,.08);border:1px solid var(--border);
+  padding:3px 10px;border-radius:10px}
+
+/* ── COUNTDOWN BAR ────────────────────────────────────────────── */
+.countdown-wrap{width:100%;max-width:500px;height:6px;
+  background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.countdown-fill{height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold),#f87171);width:100%}
+@keyframes countdown{from{width:100%}to{width:0%}}
+.countdown-fill.t3 {animation:countdown 3s linear forwards}
+.countdown-fill.t5 {animation:countdown 5s linear forwards}
+.countdown-fill.t8 {animation:countdown 8s linear forwards}
+.countdown-fill.t10{animation:countdown 10s linear forwards}
+.countdown-fill.t15{animation:countdown 15s linear forwards}
+
+/* ── DRILL BOARD ──────────────────────────────────────────────── */
+.drill-board-area{width:100%;max-width:500px}
+.drill-prompt{font-size:.88rem;color:var(--gold2);line-height:1.6;
+  margin-bottom:10px;text-align:center;min-height:40px;
+  background:rgba(201,168,76,.05);border:1px solid var(--border);
+  border-radius:7px;padding:8px 14px}
+.board-labels-top{display:flex;width:calc(var(--sq)*8);margin-left:20px}
+.blt-sq{width:var(--sq);text-align:center;font-size:.58rem;color:var(--muted);padding-bottom:3px}
+.board-row-wrap{display:flex;align-items:center}
+.board-ranks{display:flex;flex-direction:column;width:20px}
+.rank-lbl{height:var(--sq);display:flex;align-items:center;justify-content:center;
+  font-size:.58rem;color:var(--muted)}
+.board{display:grid;grid-template-columns:repeat(8,var(--sq));
+  border:2px solid rgba(201,168,76,.25);border-radius:2px}
+.sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background .1s}
+.sq.sq-light{background:#f0d9b5}
+.sq.sq-dark{background:#b58863}
+.sq.sq-selected{background:rgba(201,168,76,.6)!important;outline:2px solid var(--gold);outline-offset:-2px}
+.sq.sq-legal::after{content:'';width:26%;height:26%;background:rgba(0,0,0,.2);
+  border-radius:50%;display:block;pointer-events:none}
+.sq.sq-capture{outline:2px solid #f87171;outline-offset:-2px}
+.sq.sq-hint{background:rgba(74,222,128,.35)!important;outline:2px solid #4ade80;outline-offset:-2px}
+.sq.sq-correct{background:rgba(74,222,128,.5)!important;outline:2px solid #4ade80;outline-offset:-2px}
+.sq.sq-wrong{background:rgba(248,113,113,.4)!important;outline:2px solid #f87171;outline-offset:-2px}
+.sq.sq-target{animation:targetPulse .6s ease-in-out 3}
+@keyframes targetPulse{0%,100%{outline:2px solid transparent}50%{outline:2px solid var(--gold);background:rgba(201,168,76,.3)!important}}
+.piece{font-size:calc(var(--sq)*.56);line-height:1;user-select:none;pointer-events:none;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);transition:transform .12s}
+.sq:hover .piece{transform:scale(1.07)}
+
+/* ── DICE ROW ──────────────────────────────────────────────────── */
+.dice-display{display:flex;align-items:center;gap:12px;
+  width:calc(var(--sq)*8 + 20px);margin-top:10px;
+  background:rgba(201,168,76,.06);border:1px solid var(--border);
+  border-radius:8px;padding:8px 14px}
+.dice-face{font-size:1.8rem;line-height:1}
+.dice-piece-name{font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold)}
+.dice-instruction{font-size:.75rem;color:var(--muted);margin-left:auto}
+
+/* ── DRILL FEEDBACK ────────────────────────────────────────────── */
+.drill-feedback{width:calc(var(--sq)*8 + 20px);margin-top:10px;min-height:36px;
+  text-align:center;font-size:.82rem;padding:7px 12px;border-radius:6px;
+  border:1px solid transparent;transition:all .2s}
+.drill-feedback.correct{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.2);color:#4ade80}
+.drill-feedback.wrong  {background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.2);color:#f87171}
+.drill-feedback.timeout{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.15);color:#fbbf24}
+
+/* ── FLASH BOARD PHASE ─────────────────────────────────────────── */
+.flash-board-wrap{}
+.flash-memorize-banner{text-align:center;margin-bottom:8px}
+.flash-memorize-label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(201,168,76,.5);margin-bottom:4px}
+.flash-countdown-num{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold2);
+  width:calc(var(--sq)*8 + 20px);text-align:center}
+
+/* ── FLASH QUESTION PHASE ─────────────────────────────────────── */
+.flash-q-wrap{display:none;width:100%;max-width:500px}
+.flash-question-num{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;text-align:center}
+.flash-question-text{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold2);
+  text-align:center;margin-bottom:18px;line-height:1.4}
+.flash-choices{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.flash-choice-btn{padding:10px 20px;border-radius:8px;border:1px solid var(--border);
+  background:var(--dark2);color:var(--text);font-family:'Cinzel',serif;font-size:.88rem;
+  cursor:pointer;transition:all .2s;min-width:80px;text-align:center}
+.flash-choice-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--gold2)}
+.flash-choice-btn.correct{background:rgba(74,222,128,.12)!important;border-color:#4ade80!important;color:#4ade80!important}
+.flash-choice-btn.wrong  {background:rgba(248,113,113,.1)!important;border-color:#f87171!important;color:#f87171!important}
+.flash-q-score{text-align:center;font-size:.78rem;color:var(--muted)}
+
+/* ── RESULT SCREEN ─────────────────────────────────────────────── */
+#resultScreen{padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center}
+.result-card{background:linear-gradient(150deg,#1a1306,#0f0c07);
+  border:1px solid rgba(201,168,76,.28);border-radius:14px;
+  padding:28px 26px;max-width:480px;width:100%;
+  box-shadow:0 0 50px rgba(201,168,76,.07)}
+.rc-eyebrow{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(201,168,76,.45);margin-bottom:6px;text-align:center}
+.rc-icon{font-size:2.6rem;text-align:center;margin-bottom:8px}
+.rc-title{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--gold2);
+  text-align:center;margin-bottom:4px}
+.rc-drill-name{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:20px}
+.rc-stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px}
+.rc-stat{background:rgba(201,168,76,.06);border:1px solid var(--border);
+  border-radius:8px;padding:10px;text-align:center}
+.rc-stat-val{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold2)}
+.rc-stat-lbl{font-size:.6rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.rc-elo-row{display:flex;align-items:center;justify-content:center;gap:12px;
+  background:rgba(201,168,76,.06);border:1px solid var(--border);
+  border-radius:10px;padding:14px;margin-bottom:18px}
+.rc-elo-before{font-family:'Cinzel',serif;font-size:1rem;color:var(--muted)}
+.rc-elo-arrow{color:var(--gold);font-size:1rem}
+.rc-elo-after{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold2)}
+.rc-elo-delta{font-size:.82rem;padding:3px 10px;border-radius:10px;font-family:'Cinzel',serif}
+.rc-elo-delta.pos{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.rc-elo-delta.neg{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.rc-elo-delta.zero{background:rgba(201,168,76,.08);color:var(--muted);border:1px solid var(--border)}
+.rc-rank-badge{text-align:center;margin-bottom:18px}
+.rc-rank-name{font-family:'Cinzel',serif;font-size:.88rem;color:var(--gold);
+  background:rgba(201,168,76,.08);border:1px solid var(--border);
+  display:inline-block;padding:4px 18px;border-radius:20px}
+.rc-pos-items{margin-bottom:20px}
+.rc-pos-row{display:flex;align-items:center;gap:8px;font-size:.78rem;
+  padding:4px 0;border-bottom:1px solid rgba(201,168,76,.06)}
+.rc-pos-num{color:var(--muted);width:20px}
+.rc-pos-result{width:16px;text-align:center}
+.rc-pos-pts{font-family:'Cinzel',serif;color:var(--gold2);margin-left:auto}
+.rc-btns{display:flex;gap:10px}
+.rc-btn{flex:1;padding:11px;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.82rem;cursor:pointer;transition:all .2s;border:none;font-weight:600}
+.rc-btn-primary{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00}
+.rc-btn-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.rc-btn-ghost{background:transparent;color:rgba(201,168,76,.6);
+  border:1px solid rgba(201,168,76,.2)!important;font-weight:400}
+.rc-btn-ghost:hover{border-color:var(--gold)!important;color:var(--gold)}
+
+/* ── RANK SCROLL SCREEN ────────────────────────────────────────── */
+#rankScreen{padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center}
+.rs-inner{max-width:480px;width:100%}
+.rs-back-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:.78rem;cursor:pointer;
+  font-family:'Outfit',sans-serif;transition:all .2s;margin-bottom:20px;
+  display:inline-flex;align-items:center;gap:6px}
+.rs-back-btn:hover{border-color:var(--gold);color:var(--gold)}
+.rs-header{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold2);
+  margin-bottom:4px;text-align:center}
+.rs-sub{font-size:.8rem;color:var(--muted);text-align:center;margin-bottom:24px}
+.ranks-ladder{margin-bottom:28px}
+.rank-tier{border:1px solid var(--border);border-radius:10px;padding:14px 18px;
+  margin-bottom:8px;display:flex;align-items:center;gap:14px;background:var(--dark2);
+  transition:all .2s}
+.rank-tier.current{border-color:var(--gold2);background:var(--dark3);
+  box-shadow:0 0 20px rgba(201,168,76,.08)}
+.rt-icon{font-size:1.4rem;width:36px;text-align:center}
+.rt-info{flex:1}
+.rt-name{font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold);margin-bottom:2px}
+.rt-range{font-size:.7rem;color:var(--muted)}
+.rt-badge{font-size:.68rem;padding:2px 10px;border-radius:10px;
+  background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+.history-section-title{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);
+  margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.history-list{display:flex;flex-direction:column;gap:6px}
+.hl-row{display:flex;align-items:center;gap:10px;background:var(--dark2);
+  border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.78rem}
+.hl-type{color:var(--muted);flex:1}
+.hl-score{font-family:'Cinzel',serif;color:var(--gold2);min-width:60px;text-align:right}
+.hl-delta{font-family:'Cinzel',serif;font-size:.75rem;min-width:44px;text-align:right}
+.hl-delta.pos{color:var(--green)} .hl-delta.neg{color:var(--red)} .hl-delta.zero{color:var(--muted)}
+.hl-date{font-size:.68rem;color:var(--muted2);min-width:80px;text-align:right}
+.hl-empty{font-size:.78rem;color:var(--muted);font-style:italic;text-align:center;padding:14px 0}
+
+/* ── RESPONSIVE ────────────────────────────────────────────────── */
+@media(max-width:520px){
+  :root{--sq:44px}
+  .drills-grid{grid-template-columns:1fr 1fr}
+  .flash-question-text{font-size:.9rem}
+}
+@media(max-width:400px){
+  :root{--sq:38px}
+  .drills-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <a href="game.html" class="nav-logo">
+    <i class="fa-solid fa-chess-king" style="color:var(--gold)"></i>
+    <span style="font-family:'Cinzel',serif">Chaturanga</span>
+  </a>
+  <span class="nav-badge">Akhara</span>
+  <div class="nav-links">
+    <a href="game.html"        class="nav-link"><i class="fa-solid fa-chess-board fa-xs"></i> Game</a>
+    <a href="puzzles.html"     class="nav-link"><i class="fa-solid fa-puzzle-piece fa-xs"></i> Puzzles</a>
+    <a href="kurukshetra.html" class="nav-link"><i class="fa-solid fa-scroll fa-xs"></i> Campaign</a>
+    <a href="shubh.html"       class="nav-link"><i class="fa-solid fa-sun fa-xs"></i> Shubh</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════
+     HOME SCREEN
+     ════════════════════════════════════════════════════════════════ -->
+<div id="homeScreen" class="screen">
+<div class="home-inner">
+
+  <!-- Rank card -->
+  <div class="rank-card">
+    <div class="rank-badge">
+      <span class="rank-badge-icon" id="homeRankIcon">♟</span>
+    </div>
+    <div class="rank-info">
+      <div class="rank-label">Your Rank</div>
+      <div class="rank-name" id="homeRankName">—</div>
+      <div class="rank-elo-row">
+        <span class="rank-elo-val" id="homeElo">0 ELO</span>
+        <div class="elo-bar-track">
+          <div class="elo-bar-fill" id="homeEloFill"></div>
+        </div>
+      </div>
+      <div class="rank-next" id="homeRankNext"></div>
+    </div>
+  </div>
+
+  <!-- Drills -->
+  <div class="section-title"><i class="fa-solid fa-dumbbell fa-xs"></i> Choose Your Drill</div>
+  <div class="drills-grid">
+    <div class="drill-card" onclick="startDrill('flash')">
+      <div class="dc-icon"><i class="fa-solid fa-eye"></i></div>
+      <div class="dc-name">Smriti Pariksha</div>
+      <div class="dc-sanskrit">स्मृति परीक्षा · Memory Test</div>
+      <div class="dc-desc">Memorise the position in 3 seconds, then answer three questions from memory.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 3s + 15s/Q</span>
+        <span class="dc-max">Max 300 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('flash')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('fork')">
+      <div class="dc-icon"><i class="fa-solid fa-horse"></i></div>
+      <div class="dc-name">Ashwa Vyu</div>
+      <div class="dc-sanskrit">अश्व व्यूह · Horse Formation</div>
+      <div class="dc-desc">Find the square where the Ashwa can fork two enemy pieces. Click it in 5 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 5s / position</span>
+        <span class="dc-max">Max 200 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('fork')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('ratha')">
+      <div class="dc-icon"><i class="fa-solid fa-chess-rook"></i></div>
+      <div class="dc-name">Ratha Lakshya</div>
+      <div class="dc-sanskrit">रथ लक्ष्य · Ratha Target</div>
+      <div class="dc-desc">Identify the enemy Ratha that can be captured for free. Click it within 8 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 8s / position</span>
+        <span class="dc-max">Max 150 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('ratha')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('dice')">
+      <div class="dc-icon"><i class="fa-solid fa-dice-d6"></i></div>
+      <div class="dc-name">Pāśaka Niti</div>
+      <div class="dc-sanskrit">पाशक नीति · Dice Strategy</div>
+      <div class="dc-desc">The Pāśaka has been rolled. Execute the best move for the given piece in 10 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 10s / position</span>
+        <span class="dc-max">Max 250 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('dice')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('danti')">
+      <div class="dc-icon"><i class="fa-solid fa-chess-bishop"></i></div>
+      <div class="dc-name">Danti Chhalaang</div>
+      <div class="dc-sanskrit">दन्ती छलांग · Elephant Leap</div>
+      <div class="dc-desc">The Danti leaps exactly two diagonal squares. Spot the enemy piece it can capture and click it within 8 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 8s / position</span>
+        <span class="dc-max">Max 200 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('danti')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('king')">
+      <div class="dc-icon"><i class="fa-solid fa-chess-king"></i></div>
+      <div class="dc-name">Raja Jagriti</div>
+      <div class="dc-sanskrit">राज जागृति · King Awakening</div>
+      <div class="dc-desc">The endgame has arrived. The Raja must march to escort the Nara toward promotion. Click the best king move in 10 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 10s / position</span>
+        <span class="dc-max">Max 200 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('king')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('promo')">
+      <div class="dc-icon"><i class="fa-solid fa-arrow-up"></i></div>
+      <div class="dc-name">Nara Uttarayan</div>
+      <div class="dc-sanskrit">नर उत्तरायण · Pawn's Ascent</div>
+      <div class="dc-desc">Multiple Naras stand ready. Identify which one is closest to becoming the Mantri and click its next square. 6 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 6s / position</span>
+        <span class="dc-max">Max 200 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('promo')">Begin Training</button>
+    </div>
+    <div class="drill-card" onclick="startDrill('combo')">
+      <div class="dc-icon"><i class="fa-solid fa-swords"></i></div>
+      <div class="dc-name">Samuha Astra</div>
+      <div class="dc-sanskrit">समूह अस्त्र · Combined Strike</div>
+      <div class="dc-desc">Multiple captures are available. Find and execute the one that wins the most valuable enemy piece. Select your piece, then click its destination. 12 seconds.</div>
+      <div class="dc-meta">
+        <span class="dc-timer"><i class="fa-regular fa-clock fa-xs"></i> 12s / position</span>
+        <span class="dc-max">Max 250 pts</span>
+      </div>
+      <button class="dc-begin-btn" onclick="event.stopPropagation();startDrill('combo')">Begin Training</button>
+    </div>
+  </div>
+
+  <!-- Recent history -->
+  <div class="history-strip">
+    <div class="section-title"><i class="fa-solid fa-clock-rotate-left fa-xs"></i> Recent Sessions</div>
+    <div class="history-rows" id="homeHistory"></div>
+  </div>
+
+  <button class="rank-scroll-btn" onclick="showRankScreen()">
+    <i class="fa-solid fa-scroll fa-xs"></i> &nbsp;View Rank Scroll &amp; Full History
+  </button>
+
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     DRILL SCREEN
+     ════════════════════════════════════════════════════════════════ -->
+<div id="drillScreen" class="screen">
+
+  <!-- Header row -->
+  <div class="drill-header">
+    <button class="drill-back-btn" onclick="confirmAbort()">
+      <i class="fa-solid fa-chevron-left fa-xs"></i> Quit
+    </button>
+    <div class="drill-title" id="dTitle">—</div>
+    <div class="drill-progress" id="dProgress">1 / 10</div>
+    <div class="drill-score-badge" id="dScoreBadge">0 pts</div>
+  </div>
+
+  <!-- Countdown bar -->
+  <div class="countdown-wrap">
+    <div class="countdown-fill" id="countdownFill"></div>
+  </div>
+
+  <!-- Flash board phase -->
+  <div id="flashBoardArea" class="drill-board-area" style="display:none">
+    <div class="flash-memorize-banner">
+      <div class="flash-memorize-label">Memorise this position!</div>
+    </div>
+    <div class="board-labels-top" id="fbLabels"></div>
+    <div class="board-row-wrap">
+      <div class="board-ranks" id="fbRanks"></div>
+      <div class="board" id="flashBoard"></div>
+    </div>
+    <div class="flash-countdown-num" id="flashCountNum">3</div>
+  </div>
+
+  <!-- Flash question phase -->
+  <div id="flashQArea" class="flash-q-wrap">
+    <div class="flash-question-num" id="flashQNum">Question 1 of 3</div>
+    <div class="flash-question-text" id="flashQText">—</div>
+    <div class="flash-choices" id="flashChoices"></div>
+    <div class="flash-q-score" id="flashQScore"></div>
+  </div>
+
+  <!-- Main drill board (fork/ratha/dice) -->
+  <div id="mainBoardArea" class="drill-board-area" style="display:none">
+    <div class="drill-prompt" id="drillPrompt">—</div>
+    <div class="board-labels-top" id="mbLabels"></div>
+    <div class="board-row-wrap">
+      <div class="board-ranks" id="mbRanks"></div>
+      <div class="board" id="mainBoard"></div>
+    </div>
+    <div class="dice-display" id="diceRow" style="display:none">
+      <span class="dice-face" id="dFace">—</span>
+      <span class="dice-piece-name" id="dPiece">—</span>
+      <span class="dice-instruction">Select the piece then click its destination</span>
+    </div>
+    <div class="drill-feedback" id="drillFeedback"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     RESULT SCREEN
+     ════════════════════════════════════════════════════════════════ -->
+<div id="resultScreen" class="screen">
+  <div class="result-card">
+    <div class="rc-eyebrow">Drill Complete</div>
+    <div class="rc-icon" id="rcIcon">—</div>
+    <div class="rc-title" id="rcTitle">—</div>
+    <div class="rc-drill-name" id="rcDrillName">—</div>
+    <div class="rc-stats-grid">
+      <div class="rc-stat"><div class="rc-stat-val" id="rcScore">—</div><div class="rc-stat-lbl">Score</div></div>
+      <div class="rc-stat"><div class="rc-stat-val" id="rcCorrect">—</div><div class="rc-stat-lbl">Correct</div></div>
+      <div class="rc-stat"><div class="rc-stat-val" id="rcPct">—</div><div class="rc-stat-lbl">Accuracy</div></div>
+    </div>
+    <div class="rc-elo-row">
+      <span class="rc-elo-before" id="rcEloBefore">—</span>
+      <i class="fa-solid fa-arrow-right rc-elo-arrow"></i>
+      <span class="rc-elo-after" id="rcEloAfter">—</span>
+      <span class="rc-elo-delta" id="rcEloDelta">—</span>
+    </div>
+    <div class="rc-rank-badge"><span class="rc-rank-name" id="rcRankName">—</span></div>
+    <div class="rc-pos-items" id="rcPosItems"></div>
+    <div class="rc-btns">
+      <button class="rc-btn rc-btn-primary" onclick="startDrill(LAST_DRILL_TYPE)">
+        <i class="fa-solid fa-rotate-right fa-xs"></i> Train Again
+      </button>
+      <button class="rc-btn rc-btn-ghost" onclick="goHome()">
+        <i class="fa-solid fa-house fa-xs"></i> Home
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     RANK SCROLL SCREEN
+     ════════════════════════════════════════════════════════════════ -->
+<div id="rankScreen" class="screen">
+<div class="rs-inner">
+  <button class="rs-back-btn" onclick="goHome()">
+    <i class="fa-solid fa-chevron-left fa-xs"></i> Back to Akhara
+  </button>
+  <div class="rs-header">Rank Scroll</div>
+  <div class="rs-sub">Drona's five tiers of mastery on the Ashtāpada</div>
+
+  <div class="ranks-ladder" id="ranksLadder"></div>
+
+  <div class="history-section-title">
+    <i class="fa-solid fa-clock-rotate-left fa-xs"></i> Full Training History
+  </div>
+  <div class="history-list" id="fullHistory"></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     SCRIPT
+     ════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const PSYMBOLS = {king:'♚',rook:'♜',horse:'♞',elephant:'♝',pawn:'♟'};
+const PNAMES   = {king:'Raja',rook:'Ratha',horse:'Ashwa',elephant:'Danti',pawn:'Nara'};
+const PCOLORS  = ['#e74c3c','#60a5fa','#4ade80','#fbbf24'];
+const DICE_FACES = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+const DRILL_LABELS = {
+  flash:'Smriti Pariksha', fork:'Ashwa Vyu', ratha:'Ratha Lakshya', dice:'Pāśaka Niti',
+  danti:'Danti Chhalaang', king:'Raja Jagriti', promo:'Nara Uttarayan', combo:'Samuha Astra'
+};
+const DRILL_MAX = {flash:300, fork:200, ratha:150, dice:250,
+  danti:200, king:200, promo:200, combo:250};
+
+const RANKS = [
+  {name:'Shishya',  sanskrit:'शिष्य',  icon:'♟', min:0,   max:199, desc:'Novice — learning the movement of pieces'},
+  {name:'Yoddha',   sanskrit:'योद्धा', icon:'♞', min:200, max:399, desc:'Warrior — understanding basic tactics'},
+  {name:'Sarathi',  sanskrit:'सारथी',  icon:'♝', min:400, max:599, desc:'Charioteer — guiding forces with purpose'},
+  {name:'Arjuna',   sanskrit:'अर्जुन', icon:'♜', min:600, max:799, desc:'Archer — precision and foresight combined'},
+  {name:'Brahmastra',sanskrit:'ब्रह्मास्त्र',icon:'♚',min:800,max:1000,desc:'The divine weapon — complete mastery of the Ashtāpada'},
+];
+
+function getRankForElo(elo) {
+  return RANKS.find(r => elo >= r.min && elo <= r.max) || RANKS[0];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════════
+const AKHARA_KEY = 'chaturanga_akhara';
+
+function loadAkhara() {
+  try { return JSON.parse(localStorage.getItem(AKHARA_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveAkhara(d) {
+  try { localStorage.setItem(AKHARA_KEY, JSON.stringify(d)); } catch {}
+}
+function getElo() { return loadAkhara().eloAkhara ?? 100; }
+
+// ── Granth integration ─────────────────────────────────────────
+function grantGranth(id) {
+  try {
+    const d = JSON.parse(localStorage.getItem('chaturanga_granth') || '{}');
+    if (!d.inscriptions) d.inscriptions = {};
+    if (d.inscriptions[id]) return;
+    d.inscriptions[id] = {
+      ts: Date.now(),
+      date: new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'})
+    };
+    localStorage.setItem('chaturanga_granth', JSON.stringify(d));
+  } catch {}
+}
+
+function applyEloDelta(score, maxScore) {
+  const pct = maxScore > 0 ? (score / maxScore) * 100 : 0;
+  if (pct >= 80) return +25;
+  if (pct >= 60) return +10;
+  if (pct >= 40) return   0;
+  return -10;
+}
+
+function commitDrillResult(type, score, maxScore, answers) {
+  const d = loadAkhara();
+  if (!d.eloAkhara) d.eloAkhara = 100;
+  if (!d.drillHistory) d.drillHistory = [];
+
+  const delta = applyEloDelta(score, maxScore);
+  const prevElo = d.eloAkhara;
+  d.eloAkhara = Math.max(0, Math.min(1000, d.eloAkhara + delta));
+
+  const entry = {
+    type, score, maxScore, delta,
+    eloAfter: d.eloAkhara,
+    correct: answers.filter(Boolean).length,
+    total: answers.length,
+    date: new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short'}),
+    ts: Date.now()
+  };
+  d.drillHistory.unshift(entry);
+  if (d.drillHistory.length > 60) d.drillHistory.length = 60;
+
+  // Integration flag for puzzles.html
+  if (d.eloAkhara >= 400) {
+    try { localStorage.setItem('chaturanga_akhara_suggest','hard'); } catch {}
+  }
+
+  // Granth: mastery rank achievements (thresholds are crossed, not re-awarded)
+  if (d.eloAkhara >= 200) grantGranth('yoddha-prapti');
+  if (d.eloAkhara >= 600) grantGranth('arjuna-drshti');
+  if (d.eloAkhara >= 800) grantGranth('brahmastra-prapti');
+  if (d.eloAkhara >= 1000) grantGranth('chakravarti-prapti');
+
+  saveAkhara(d);
+  return { delta, prevElo, newElo: d.eloAkhara };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD RENDERING
+// ═══════════════════════════════════════════════════════════════
+function parsePiece(str) {
+  if (!str) return null;
+  const [o, t] = str.split(':');
+  return {owner: +o, type: t};
+}
+
+function renderBoard(boardObj, boardEl, labelsEl, ranksEl, opts = {}) {
+  const {selected=null, legalSqs=[], onSqClick=null, highlightSqs={}} = opts;
+  // highlightSqs: { sq: 'correct'|'wrong'|'hint'|'target' }
+
+  if (labelsEl) {
+    labelsEl.innerHTML = ['a','b','c','d','e','f','g','h']
+      .map(l=>`<div class="blt-sq">${l}</div>`).join('');
+  }
+  if (ranksEl) {
+    ranksEl.innerHTML = Array.from({length:8},(_,i)=>
+      `<div class="rank-lbl">${8-i}</div>`).join('');
+  }
+
+  boardEl.innerHTML = '';
+  for (let r = 8; r >= 1; r--) {
+    for (let fi = 0; fi < 8; fi++) {
+      const sq = String.fromCharCode(97+fi) + r;
+      const piece = parsePiece(boardObj[sq]);
+      const isLight = (fi + r) % 2 === 0;
+
+      const div = document.createElement('div');
+      let cls = `sq ${isLight ? 'sq-light' : 'sq-dark'}`;
+      if (sq === selected) cls += ' sq-selected';
+      if (legalSqs.includes(sq)) cls += piece ? ' sq-capture' : ' sq-legal';
+      if (highlightSqs[sq]) cls += ' sq-' + highlightSqs[sq];
+      div.className = cls;
+      div.dataset.sq = sq;
+
+      if (piece) {
+        const span = document.createElement('span');
+        span.className = 'piece';
+        span.textContent = PSYMBOLS[piece.type] || '?';
+        span.style.color = PCOLORS[piece.owner] || '#fff';
+        div.appendChild(span);
+      }
+      if (onSqClick) div.addEventListener('click', () => onSqClick(sq));
+      boardEl.appendChild(div);
+    }
+  }
+}
+
+function getLegalMoves(boardObj, from, forcedType) {
+  const piece = parsePiece(boardObj[from]);
+  if (!piece) return [];
+  if (forcedType && forcedType !== 'any') {
+    if (forcedType === 'pawn-king' && piece.type !== 'pawn' && piece.type !== 'king') return [];
+    if (forcedType !== 'pawn-king' && piece.type !== forcedType) return [];
+  }
+  const f = from.charCodeAt(0) - 97, r = parseInt(from[1]);
+  const moves = [];
+  const addSq = (nf, nr) => {
+    if (nf < 0 || nf > 7 || nr < 1 || nr > 8) return false;
+    const ns = String.fromCharCode(97+nf)+nr;
+    const t = parsePiece(boardObj[ns]);
+    if (t && t.owner === piece.owner) return false;
+    moves.push(ns);
+    return !t;
+  };
+  switch (piece.type) {
+    case 'rook':
+      [[0,1],[0,-1],[1,0],[-1,0]].forEach(([df,dr]) => {
+        for (let i=1;i<8;i++) {
+          const nf=f+df*i, nr=r+dr*i;
+          if (nf<0||nf>7||nr<1||nr>8) break;
+          const ns=String.fromCharCode(97+nf)+nr;
+          const t=parsePiece(boardObj[ns]);
+          if (t){if(t.owner!==piece.owner)moves.push(ns);break;}
+          moves.push(ns);
+        }
+      }); break;
+    case 'horse':
+      [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[2,-1],[-2,1],[-2,-1]]
+        .forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'elephant':
+      [[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'king':
+      [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]
+        .forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'pawn': {
+      const dir = piece.owner===0?1:-1;
+      const fwd = String.fromCharCode(97+f)+(r+dir);
+      if (r+dir>=1&&r+dir<=8&&!boardObj[fwd]) moves.push(fwd);
+      [[1,dir],[-1,dir]].forEach(([df,dr])=>{
+        const ns=String.fromCharCode(97+f+df)+(r+dr);
+        if (f+df>=0&&f+df<=7&&r+dr>=1&&r+dr<=8) {
+          const t=parsePiece(boardObj[ns]);
+          if(t&&t.owner!==piece.owner) moves.push(ns);
+        }
+      }); break;
+    }
+  }
+  return moves;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DRILL POSITION DATA
+// ═══════════════════════════════════════════════════════════════
+
+// ── FLASH DRILL (10 positions) ─────────────────────────────────
+// Each has boardObj, 3 questions, answers, choices
+// Q1: hanging (undefended enemy pieces capturable for free)
+// Q2: capturable enemy pieces total
+// Q3: which Red piece is most threatened (multiple choice)
+const FLASH_POS = [
+  { board:{'a1':'0:king','d4':'0:rook','e8':'1:king','h4':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:1, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:1, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ratha', choices:['Raja','Ratha','Ashwa','Danti']}
+    ]},
+  { board:{'a1':'0:king','e4':'0:rook','b3':'0:horse','h8':'1:king','e7':'1:rook','a5':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Raja', choices:['Raja','Ratha','Ashwa','Nara']}
+    ]},
+  { board:{'a1':'0:king','e5':'0:rook','h8':'1:king','e7':'1:horse','g5':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ratha', choices:['Raja','Ratha','Ashwa','Danti']}
+    ]},
+  { board:{'e1':'0:king','d4':'0:horse','h8':'1:king','c6':'1:pawn','d8':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:1, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:1, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ashwa', choices:['Raja','Ratha','Ashwa','Nara']}
+    ]},
+  { board:{'a1':'0:king','c3':'0:elephant','h8':'1:king','e5':'1:rook','b1':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Raja', choices:['Raja','Ratha','Danti','Nara']}
+    ]},
+  { board:{'e1':'0:king','h5':'0:rook','b8':'1:king','e5':'1:pawn','h2':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ratha', choices:['Raja','Ratha','Ashwa','Nara']}
+    ]},
+  { board:{'e1':'0:king','a8':'0:rook','g3':'0:horse','h8':'1:king','f8':'1:rook','a3':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ratha', choices:['Raja','Ratha','Ashwa','Danti']}
+    ]},
+  { board:{'e1':'0:king','d6':'0:rook','e2':'0:horse','a8':'1:king','f4':'1:horse','d2':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ashwa', choices:['Raja','Ratha','Ashwa','Nara']}
+    ]},
+  { board:{'a1':'0:king','d4':'0:pawn','f6':'0:rook','h8':'1:king','d7':'1:rook','f3':'1:horse'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:1, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:1, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Nara', choices:['Raja','Ratha','Ashwa','Nara']}
+    ]},
+  { board:{'a1':'0:king','h3':'0:rook','g1':'0:horse','e8':'1:king','b3':'1:rook','h8':'1:rook'},
+    qs:[
+      {q:'How many Blue pieces are hanging (undefended, capturable)?', ans:2, choices:[0,1,2,3]},
+      {q:'How many Blue pieces can Red capture this move?',            ans:2, choices:[0,1,2,3]},
+      {q:'Which Red piece is most threatened?', ans:'Ratha', choices:['Raja','Ratha','Ashwa','Danti']}
+    ]}
+];
+
+// ── FORK FINDER (10 positions) ─────────────────────────────────
+// Red: king + horse. Blue: king + rook at distinct squares.
+// solution[0].to = the fork square (horse lands here, attacks both Blue pieces).
+const FORK_POSITIONS = [
+  // Horse e3 → f5, forks Blue king g7 and Blue rook d6
+  { board:{'e1':'0:king','e3':'0:horse','g7':'1:king','d6':'1:rook'},
+    solution:[{from:'e3',to:'f5'}],
+    prompt:'Find the square where the Ashwa can fork the Blue Raja (g7) and Ratha (d6).'},
+  // Horse c3 → d5, forks Blue king e7 and Blue rook b4
+  { board:{'a1':'0:king','c3':'0:horse','e7':'1:king','b4':'1:rook'},
+    solution:[{from:'c3',to:'d5'}],
+    prompt:'The Ashwa can leap to fork both Blue pieces. Click the fork square.'},
+  // Horse b4 → c6, forks Blue king e7 and Blue rook d8
+  { board:{'a1':'0:king','b4':'0:horse','e7':'1:king','d8':'1:rook'},
+    solution:[{from:'b4',to:'c6'}],
+    prompt:'One L-shaped leap attacks two Blue pieces simultaneously. Find it.'},
+  // Horse g3 → f5, forks Blue king g7 and Blue rook d4
+  { board:{'e1':'0:king','g3':'0:horse','g7':'1:king','d4':'1:rook'},
+    solution:[{from:'g3',to:'f5'}],
+    prompt:'The Ashwa sees a fork. Which square does it leap to?'},
+  // Horse a3 → b5, forks Blue king c7 and Blue rook d4
+  { board:{'e1':'0:king','a3':'0:horse','c7':'1:king','d4':'1:rook'},
+    solution:[{from:'a3',to:'b5'}],
+    prompt:'Find the Ashwa fork — one square attacks the Raja and Ratha at once.'},
+  // Horse e2 → d4, forks Blue king c6 and Blue rook b5
+  { board:{'h1':'0:king','e2':'0:horse','c6':'1:king','b5':'1:rook'},
+    solution:[{from:'e2',to:'d4'}],
+    prompt:'The Ashwa on e2 can leap to fork two Blue pieces. Where?'},
+  // Horse f6 → e4, forks Blue king d2 and Blue rook c5
+  { board:{'h8':'0:king','f6':'0:horse','d2':'1:king','c5':'1:rook'},
+    solution:[{from:'f6',to:'e4'}],
+    prompt:'Click the fork square — one move, two threats.'},
+  // Horse h5 → g7, forks Blue king e8 and Blue rook f5
+  { board:{'a1':'0:king','h5':'0:horse','e8':'1:king','f5':'1:rook'},
+    solution:[{from:'h5',to:'g7'}],
+    prompt:'The Ashwa on h5 has a devastating fork. Find the landing square.'},
+  // Horse c5 → e6, forks Blue king g7 and Blue rook d8
+  { board:{'a1':'0:king','c5':'0:horse','g7':'1:king','d8':'1:rook'},
+    solution:[{from:'c5',to:'e6'}],
+    prompt:'Which square allows the Ashwa to threaten the Raja and Ratha simultaneously?'},
+  // Horse g5 → f7, forks Blue king h8 and Blue rook d8
+  { board:{'a1':'0:king','g5':'0:horse','h8':'1:king','d8':'1:rook'},
+    solution:[{from:'g5',to:'f7'}],
+    prompt:'One leap. Two pieces threatened. Find the fork square.'}
+];
+
+// ── RATHA HUNT (10 positions) ──────────────────────────────────
+// Player clicks the capturable enemy Ratha square (solution[0].to)
+const RATHA_POSITIONS = [
+  // Red Rook d1 takes Blue Rook d8 (open d-file)
+  { board:{'e1':'0:king','d1':'0:rook','f8':'1:king','d8':'1:rook'},
+    solution:[{from:'d1',to:'d8'}],
+    prompt:'Click the Blue Ratha that can be captured for free.'},
+  // Red Rook h1 takes Blue Rook h8
+  { board:{'e1':'0:king','h1':'0:rook','b8':'1:king','h8':'1:rook'},
+    solution:[{from:'h1',to:'h8'}],
+    prompt:'Spot the hanging Blue Ratha and click it.'},
+  // Red Rook a5 takes Blue Rook g5 (open rank 5)
+  { board:{'a1':'0:king','a5':'0:rook','e8':'1:king','g5':'1:rook'},
+    solution:[{from:'a5',to:'g5'}],
+    prompt:'The Blue Ratha is undefended. Click it to capture.'},
+  // Red Rook e3 takes Blue Rook e7
+  { board:{'a1':'0:king','e3':'0:rook','c8':'1:king','e7':'1:rook'},
+    solution:[{from:'e3',to:'e7'}],
+    prompt:'Find and click the capturable Blue Ratha.'},
+  // Red Rook b4 takes Blue Rook f4 (open rank 4)
+  { board:{'a1':'0:king','b4':'0:rook','e8':'1:king','f4':'1:rook'},
+    solution:[{from:'b4',to:'f4'}],
+    prompt:'The Blue Ratha on the same rank is hanging. Click it.'},
+  // Red Horse d4 takes Blue Rook f5
+  { board:{'a1':'0:king','d4':'0:horse','e8':'1:king','f5':'1:rook'},
+    solution:[{from:'d4',to:'f5'}],
+    prompt:'The Ashwa can capture a Blue Ratha. Click the Ratha.'},
+  // Red Elephant a1 takes Blue Rook c3
+  { board:{'e1':'0:king','a1':'0:elephant','e8':'1:king','c3':'1:rook'},
+    solution:[{from:'a1',to:'c3'}],
+    prompt:'The Danti can leap onto the undefended Blue Ratha. Click it.'},
+  // Red Rook b2 takes Blue Rook b7
+  { board:{'a1':'0:king','b2':'0:rook','d8':'1:king','b7':'1:rook'},
+    solution:[{from:'b2',to:'b7'}],
+    prompt:'Spot the hanging Blue Ratha and click it.'},
+  // Red Rook g1 takes Blue Rook g6
+  { board:{'e1':'0:king','g1':'0:rook','a8':'1:king','g6':'1:rook'},
+    solution:[{from:'g1',to:'g6'}],
+    prompt:'Click the capturable enemy Ratha.'},
+  // Red Horse c4 takes Blue Rook b6
+  { board:{'e1':'0:king','c4':'0:horse','g8':'1:king','b6':'1:rook'},
+    solution:[{from:'c4',to:'b6'}],
+    prompt:'The Ashwa can reach the Blue Ratha in one leap. Click it.'}
+];
+
+// ── DICE DRILL (10 positions) ──────────────────────────────────
+// forcedType = piece type, diceVal = die face shown, solution = [{from,to}]
+const DICE_POSITIONS = [
+  // Ratha (1): Rook a1 takes Blue Rook a8
+  { board:{'e1':'0:king','a1':'0:rook','h8':'1:king','a8':'1:rook'},
+    forcedType:'rook', diceVal:1,
+    solution:[{from:'a1',to:'a8'}],
+    prompt:'The Pāśaka shows Ratha (⚀). Execute the best Ratha move.'},
+  // Ashwa (3): Horse d4 → e6 forks Blue king g7 and rook c7
+  { board:{'a1':'0:king','d4':'0:horse','g7':'1:king','c7':'1:rook'},
+    forcedType:'horse', diceVal:3,
+    solution:[{from:'d4',to:'e6'}],
+    prompt:'The Pāśaka shows Ashwa (⚂). Find the best Ashwa move.'},
+  // Danti (4): Elephant c1 takes Blue Rook e3
+  { board:{'a1':'0:king','c1':'0:elephant','g8':'1:king','e3':'1:rook'},
+    forcedType:'elephant', diceVal:4,
+    solution:[{from:'c1',to:'e3'}],
+    prompt:'The Pāśaka shows Danti (⚃). Use the Danti to capture.'},
+  // Nara (6): Pawn d6 advances to d7
+  { board:{'e1':'0:king','d6':'0:pawn','e8':'1:king','h7':'1:rook'},
+    forcedType:'pawn', diceVal:6,
+    solution:[{from:'d6',to:'d7'}],
+    prompt:'The Pāśaka shows Nara (⚅). Advance the Nara toward promotion.'},
+  // Ratha (1): Rook a4 takes Blue Rook f4
+  { board:{'a1':'0:king','a4':'0:rook','e8':'1:king','f4':'1:rook'},
+    forcedType:'rook', diceVal:1,
+    solution:[{from:'a4',to:'f4'}],
+    prompt:'The Pāśaka shows Ratha (⚀). Capture the enemy Ratha.'},
+  // Ashwa (3): Horse b1 takes Blue Rook d2
+  { board:{'e1':'0:king','b1':'0:horse','e8':'1:king','d2':'1:rook'},
+    forcedType:'horse', diceVal:3,
+    solution:[{from:'b1',to:'d2'}],
+    prompt:'The Pāśaka shows Ashwa (⚂). The Ashwa can capture a Ratha.'},
+  // Danti (4): Elephant f2 takes Blue Rook d4
+  { board:{'a1':'0:king','f2':'0:elephant','h8':'1:king','d4':'1:rook'},
+    forcedType:'elephant', diceVal:4,
+    solution:[{from:'f2',to:'d4'}],
+    prompt:'The Pāśaka shows Danti (⚃). Leap to capture.'},
+  // Nara (6): Pawn e5 advances to e6
+  { board:{'a1':'0:king','e5':'0:pawn','e8':'1:king','h5':'1:rook'},
+    forcedType:'pawn', diceVal:6,
+    solution:[{from:'e5',to:'e6'}],
+    prompt:'The Pāśaka shows Nara (⚅). Advance the Nara.'},
+  // Ratha (1): Rook c3 takes Blue Rook c7
+  { board:{'e1':'0:king','c3':'0:rook','a8':'1:king','c7':'1:rook'},
+    forcedType:'rook', diceVal:1,
+    solution:[{from:'c3',to:'c7'}],
+    prompt:'The Pāśaka shows Ratha (⚀). The open file awaits.'},
+  // Ashwa (3): Horse g4 takes Blue Rook f6
+  { board:{'e1':'0:king','g4':'0:horse','b8':'1:king','f6':'1:rook'},
+    forcedType:'horse', diceVal:3,
+    solution:[{from:'g4',to:'f6'}],
+    prompt:'The Pāśaka shows Ashwa (⚂). One L-shaped leap wins material.'}
+];
+
+// ── DANTI CHHALAANG (10 positions) ────────────────────────────
+// Red Elephant can leap 2 diagonal squares to capture a Blue piece.
+// Player clicks the target (destination) square.
+const DANTI_POSITIONS = [
+  { board:{'e1':'0:king','a1':'0:elephant','h8':'1:king','c3':'1:rook'},
+    solution:[{from:'a1',to:'c3'}],
+    prompt:'The Danti sees an enemy piece within diagonal reach. Click the piece it can capture.' },
+  { board:{'a1':'0:king','h1':'0:elephant','a8':'1:king','f3':'1:rook'},
+    solution:[{from:'h1',to:'f3'}],
+    prompt:'The Danti leaps exactly two diagonal squares. Spot the target and click it.' },
+  { board:{'e1':'0:king','a6':'0:elephant','h8':'1:king','c8':'1:rook'},
+    solution:[{from:'a6',to:'c8'}],
+    prompt:'The enemy Ratha is two diagonals away. Click it before time runs out.' },
+  { board:{'a1':'0:king','h8':'0:elephant','e1':'1:king','f6':'1:rook'},
+    solution:[{from:'h8',to:'f6'}],
+    prompt:'The Danti from h8 — which enemy piece is exactly two diagonals away?' },
+  { board:{'a1':'0:king','e4':'0:elephant','h8':'1:king','c2':'1:rook','g4':'1:pawn'},
+    solution:[{from:'e4',to:'c2'}],
+    prompt:'Two enemy pieces visible. Which one can the Danti capture? Click the correct target.' },
+  { board:{'e1':'0:king','d5':'0:elephant','h8':'1:king','f7':'1:rook'},
+    solution:[{from:'d5',to:'f7'}],
+    prompt:'The Danti on d5 sees a Ratha. Click the capture square.' },
+  { board:{'a1':'0:king','b2':'0:elephant','h8':'1:king','d4':'1:rook'},
+    solution:[{from:'b2',to:'d4'}],
+    prompt:'The Danti can leap and capture. Click the enemy piece it takes.' },
+  { board:{'h8':'0:king','g3':'0:elephant','a8':'1:king','e5':'1:rook','h5':'1:pawn'},
+    solution:[{from:'g3',to:'e5'}],
+    prompt:'The Danti on g3 can reach one enemy piece for free. Click it.' },
+  { board:{'a1':'0:king','c7':'0:elephant','h8':'1:king','a5':'1:rook'},
+    solution:[{from:'c7',to:'a5'}],
+    prompt:'Look for the enemy piece two diagonal squares from the Danti. Click to capture.' },
+  { board:{'a1':'0:king','f6':'0:elephant','a8':'1:king','h8':'1:rook','d4':'1:pawn'},
+    solution:[{from:'f6',to:'h8'}],
+    prompt:'The Danti has a powerful leap available. Find the most valuable target and click it.' }
+];
+
+// ── RAJA JAGRITI (10 positions) ───────────────────────────────
+// Endgame: Red King must march toward the passed Nara to escort it.
+// Player clicks the best next square for the Red Raja.
+const KING_POSITIONS = [
+  { board:{'a1':'0:king','a6':'0:pawn','h8':'1:king'},
+    solution:[{from:'a1',to:'b2'}],
+    prompt:'The Nara on a6 needs the Raja\'s escort. Click the best Raja step forward.' },
+  { board:{'h1':'0:king','h6':'0:pawn','a8':'1:king'},
+    solution:[{from:'h1',to:'g2'}],
+    prompt:'March the Raja toward the advancing Nara. Click its best move.' },
+  { board:{'e1':'0:king','e6':'0:pawn','a8':'1:king'},
+    solution:[{from:'e1',to:'f2'}],
+    prompt:'The Nara on e6 is two steps from the Mantri. Activate the Raja.' },
+  { board:{'a1':'0:king','d5':'0:pawn','h8':'1:king'},
+    solution:[{from:'a1',to:'b2'}],
+    prompt:'The passed Nara on d5 needs support. Click the best Raja move.' },
+  { board:{'h8':'0:king','a5':'0:pawn','h1':'1:king'},
+    solution:[{from:'h8',to:'g7'}],
+    prompt:'The Raja is far from the Nara. Click the most direct path toward it.' },
+  { board:{'e2':'0:king','e6':'0:pawn','a8':'1:king'},
+    solution:[{from:'e2',to:'e3'}],
+    prompt:'Advance the Raja directly to lead the Nara forward.' },
+  { board:{'c1':'0:king','c5':'0:pawn','g8':'1:king'},
+    solution:[{from:'c1',to:'d2'}],
+    prompt:'The Raja must race toward the Nara on c5. Click the best step.' },
+  { board:{'g1':'0:king','b6':'0:pawn','h8':'1:king'},
+    solution:[{from:'g1',to:'f2'}],
+    prompt:'The Nara on b6 is almost promoting. March the Raja toward it.' },
+  { board:{'f1':'0:king','f6':'0:pawn','a8':'1:king'},
+    solution:[{from:'f1',to:'e2'}],
+    prompt:'Lead the Nara to the 8th rank. Click the best Raja square.' },
+  { board:{'a1':'0:king','g5':'0:pawn','a8':'1:king'},
+    solution:[{from:'a1',to:'b2'}],
+    prompt:'The Nara on g5 is racing forward. Click the first step for the Raja.' }
+];
+
+// ── NARA UTTARAYAN (10 positions) ─────────────────────────────
+// Multiple Red Pawns. Click the destination of the most advanced one.
+// Teaching: the most advanced Nara (highest rank number) should push first.
+const PROMO_POSITIONS = [
+  { board:{'a1':'0:king','a3':'0:pawn','d6':'0:pawn','g2':'0:pawn','h8':'1:king'},
+    solution:[{from:'d6',to:'d7'}],
+    prompt:'Three Naras are on the board. Which one is closest to promotion? Click its next square.' },
+  { board:{'a1':'0:king','b4':'0:pawn','f7':'0:pawn','c2':'0:pawn','h1':'1:king'},
+    solution:[{from:'f7',to:'f8'}],
+    prompt:'One Nara is about to become the Mantri! Click its promotion square.' },
+  { board:{'e1':'0:king','e5':'0:pawn','h2':'0:pawn','b6':'0:pawn','a8':'1:king'},
+    solution:[{from:'b6',to:'b7'}],
+    prompt:'Identify the most advanced Nara and click where it should go.' },
+  { board:{'a1':'0:king','c5':'0:pawn','g5':'0:pawn','a7':'0:pawn','h8':'1:king'},
+    solution:[{from:'a7',to:'a8'}],
+    prompt:'One Nara is one step from becoming the Mantri. Click that square now.' },
+  { board:{'e1':'0:king','d3':'0:pawn','e6':'0:pawn','b5':'0:pawn','h8':'1:king'},
+    solution:[{from:'e6',to:'e7'}],
+    prompt:'Which Nara leads the race to promotion? Click its advance square.' },
+  { board:{'a1':'0:king','f4':'0:pawn','g6':'0:pawn','h3':'0:pawn','h8':'1:king'},
+    solution:[{from:'g6',to:'g7'}],
+    prompt:'The most advanced Nara should move first. Click its best square.' },
+  { board:{'e1':'0:king','b7':'0:pawn','c4':'0:pawn','g3':'0:pawn','a8':'1:king'},
+    solution:[{from:'b7',to:'b8'}],
+    prompt:'One Nara is on the seventh rank! Click its promotion square.' },
+  { board:{'a1':'0:king','a5':'0:pawn','d7':'0:pawn','f3':'0:pawn','h8':'1:king'},
+    solution:[{from:'d7',to:'d8'}],
+    prompt:'Find the Nara about to transform into a Mantri. Click the destination.' },
+  { board:{'h1':'0:king','e4':'0:pawn','h6':'0:pawn','c3':'0:pawn','a8':'1:king'},
+    solution:[{from:'h6',to:'h7'}],
+    prompt:'Which Nara is closest to the 8th rank? Click where it should advance.' },
+  { board:{'a1':'0:king','g5':'0:pawn','b6':'0:pawn','d4':'0:pawn','h8':'1:king'},
+    solution:[{from:'b6',to:'b7'}],
+    prompt:'Two Naras are advanced. Click the destination of the one that is furthest ahead.' }
+];
+
+// ── SAMUHA ASTRA (10 positions) ───────────────────────────────
+// Multiple captures available. Find and execute the one that wins
+// the most valuable enemy piece. Two-step: select piece, click destination.
+// Ratha (5 pts) > Elephant/Horse (3 pts) > Pawn (1 pt)
+const COMBO_POSITIONS = [
+  // Ratha c1→c7 wins enemy Ratha; Horse b1→c3 only wins enemy Pawn
+  { board:{'e1':'0:king','c1':'0:rook','b1':'0:horse','h8':'1:king','c7':'1:rook','c3':'1:pawn'},
+    solution:[{from:'c1',to:'c7'}],
+    prompt:'Two captures are available. Find the one that wins the most valuable piece. Select your piece then click its destination.' },
+  // Horse b3→d4 wins enemy Ratha; Ratha g5→h5 only wins enemy Pawn
+  { board:{'a1':'0:king','b3':'0:horse','g5':'0:rook','h8':'1:king','d4':'1:rook','h5':'1:pawn'},
+    solution:[{from:'b3',to:'d4'}],
+    prompt:'Multiple captures available — one wins a Ratha, one a Pawn. Choose wisely.' },
+  // Elephant c1→e3 wins enemy Ratha; Ratha a3→a6 only wins enemy Pawn
+  { board:{'a1':'0:king','c1':'0:elephant','a3':'0:rook','h8':'1:king','e3':'1:rook','a6':'1:pawn'},
+    solution:[{from:'c1',to:'e3'}],
+    prompt:'The Danti or the Ratha — which piece wins the greater prize? Execute the best capture.' },
+  // Ratha d3→d6 wins enemy Ratha; Horse b1→c3 wins enemy Pawn
+  { board:{'e1':'0:king','d3':'0:rook','b1':'0:horse','a8':'1:king','d6':'1:rook','c3':'1:pawn'},
+    solution:[{from:'d3',to:'d6'}],
+    prompt:'Two captures. One wins a Ratha. Find it and execute it.' },
+  // Elephant g1→e3 wins enemy Ratha; Horse a3→b5 wins enemy Pawn
+  { board:{'a1':'0:king','g1':'0:elephant','a3':'0:horse','h8':'1:king','e3':'1:rook','b5':'1:pawn'},
+    solution:[{from:'g1',to:'e3'}],
+    prompt:'The Danti sees a high-value target. Find the best capture and execute it.' },
+  // Horse d4→f5 wins enemy Ratha; Ratha b7→b6 wins enemy Pawn
+  { board:{'a1':'0:king','d4':'0:horse','b7':'0:rook','h8':'1:king','f5':'1:rook','b6':'1:pawn'},
+    solution:[{from:'d4',to:'f5'}],
+    prompt:'Which piece should move to win the most material? Select and capture.' },
+  // Elephant c5→e7 wins enemy Ratha; Ratha a4→a3 wins enemy Pawn
+  { board:{'a1':'0:king','c5':'0:elephant','a4':'0:rook','h8':'1:king','e7':'1:rook','a3':'1:pawn'},
+    solution:[{from:'c5',to:'e7'}],
+    prompt:'The Danti can leap to a high-value target. Find the best capture.' },
+  // Ratha d2→d7 wins enemy Ratha; Horse g3→h5 wins enemy Pawn
+  { board:{'h1':'0:king','d2':'0:rook','g3':'0:horse','a8':'1:king','d7':'1:rook','h5':'1:pawn'},
+    solution:[{from:'d2',to:'d7'}],
+    prompt:'Execute the most valuable capture available to Red.' },
+  // Elephant b2→d4 wins enemy Ratha; Horse f4→g6 wins enemy Pawn
+  { board:{'a1':'0:king','b2':'0:elephant','f4':'0:horse','h8':'1:king','d4':'1:rook','g6':'1:pawn'},
+    solution:[{from:'b2',to:'d4'}],
+    prompt:'Two pieces can capture. One wins a Ratha. Find it.' },
+  // Ratha c4→c8 wins enemy Ratha; Horse e3→d5 wins enemy Pawn
+  { board:{'e1':'0:king','c4':'0:rook','e3':'0:horse','a8':'1:king','c8':'1:rook','d5':'1:pawn'},
+    solution:[{from:'c4',to:'c8'}],
+    prompt:'Choose the capture that wins the greatest material. Execute it.' }
+];
+  // Ratha (1): Rook a1 takes Blue Rook a8
+  { board:{'e1':'0:king','a1':'0:rook','h8':'1:king','a8':'1:rook'},
+    forcedType:'rook', diceVal:1,
+    solution:[{from:'a1',to:'a8'}],
+    prompt:'The Pāśaka shows Ratha (⚀). Execute the best Ratha move.'},
+  // Ashwa (3): Horse d4 → e6 forks Blue king g7 and rook c7
+  { board:{'a1':'0:king','d4':'0:horse','g7':'1:king','c7':'1:rook'},
+    forcedType:'horse', diceVal:3,
+    solution:[{from:'d4',to:'e6'}],
+    prompt:'The Pāśaka shows Ashwa (⚂). Find the best Ashwa move.'},
+  // Danti (4): Elephant c1 takes Blue Rook e3
+  { board:{'a1':'0:king','c1':'0:elephant','g8':'1:king','e3':'1:rook'},
+    forcedType:'elephant', diceVal:4,
+    solution:[{from:'c1',to:'e3'}],
+    prompt:'The Pāśaka shows Danti (⚃). Use the Danti to capture.'},
+  // Nara (6): Pawn d6 advances to d7
+  { board:{'e1':'0:king','d6':'0:pawn','e8':'1:king','h7':'1:rook'},
+    forcedType:'pawn', diceVal:6,
+    solution:[{from:'d6',to:'d7'}],
+    prompt:'The Pāśaka shows Nara (⚅). Advance the Nara toward promotion.'},
+  // Ratha (1): Rook a4 takes Blue Rook f4
+  { board:{'a1':'0:king','a4':'0:rook','e8':'1:king','f4':'1:rook'},
+    forcedType:'rook', diceVal:1,
+    solution:[{from:'a4',to:'f4'}],
+    prompt:'The Pāśaka shows Ratha (⚀). Capture the enemy Ratha.'},
+  // Ashwa (3): Horse b1 takes Blue Rook d2
+  { board:{'e1':'0:king','b1':'0:horse','e8':'1:king','d2':'1:rook'},
+    forcedType:'horse', diceVal:3,
+    solution:[{from:'b1',to:'d2'}],
+    prompt:'The Pāśaka shows Ashwa (⚂). The Ashwa can capture a Ratha.'},
+  // Danti (4): Elephant f2 takes Blue Rook d4
+  { board:{'a1':'0:king','f2':'0:elephant','h8':'1:king','d4':'1:rook'},
+    forcedType:'elephant', diceVal:4,
+    solution:[{from:'f2',to:'d4'}],
+    prompt:'The Pāśaka shows Danti (⚃). Leap to capture.'},
+  // Nara (6): Pawn e5 advances to e6
+  { board:{'a1':'0:king','e5':'0:pawn','e8':'1:king','h5':'1:rook'},
+    forcedType:'pawn', diceVal:6,
+    solution:[{from:'e5',to:'e6'}],
+    prompt:'The Pāśaka shows Nara (⚅). Advance the Nara.'},
+  // Ratha (1): Rook c3 takes Blue Rook c7
+  { board:{'e1':'0:king','c3':'0:rook','a8':'1:king','c7':'1:rook'},
+    forcedType:'rook', diceVal:1,
+    solution:[{from:'c3',to:'c7'}],
+    prompt:'The Pāśaka shows Ratha (⚀). The open file awaits.'},
+  // Ashwa (3): Horse g4 takes Blue Rook f6
+  { board:{'e1':'0:king','g4':'0:horse','b8':'1:king','f6':'1:rook'},
+    forcedType:'horse', diceVal:3,
+    solution:[{from:'g4',to:'f6'}],
+    prompt:'The Pāśaka shows Ashwa (⚂). One L-shaped leap wins material.'}
+];
+
+// ═══════════════════════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById(id);
+  if (s) { s.classList.add('active'); window.scrollTo(0,0); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HOME SCREEN
+// ═══════════════════════════════════════════════════════════════
+function renderHome() {
+  const elo = getElo();
+  const rank = getRankForElo(elo);
+  const nextRank = RANKS.find(r => r.min > elo);
+  const prevRankMax = rank.min;
+  const pct = rank.min === rank.max ? 100
+    : ((elo - rank.min) / (rank.max - rank.min)) * 100;
+
+  document.getElementById('homeRankIcon').textContent  = rank.icon;
+  document.getElementById('homeRankName').textContent  = rank.name;
+  document.getElementById('homeElo').textContent       = `${elo} ELO`;
+  document.getElementById('homeEloFill').style.width   = pct + '%';
+  document.getElementById('homeRankNext').textContent  = nextRank
+    ? `${nextRank.min - elo} ELO to ${nextRank.name}` : 'Maximum rank achieved';
+
+  // Recent history (last 5)
+  const d = loadAkhara();
+  const hist = (d.drillHistory || []).slice(0, 5);
+  const el = document.getElementById('homeHistory');
+  if (!hist.length) {
+    el.innerHTML = '<div class="hr-empty">No sessions yet — begin a drill above!</div>';
+  } else {
+    el.innerHTML = hist.map(h => {
+      const pctH = Math.round((h.score / h.maxScore) * 100);
+      const cls = h.delta > 0 ? 'pos' : h.delta < 0 ? 'neg' : 'zero';
+      const deltaStr = h.delta > 0 ? `+${h.delta}` : `${h.delta}`;
+      return `<div class="hr-row">
+        <span class="hr-type">${DRILL_LABELS[h.type] || h.type}</span>
+        <span class="hr-score">${h.score}/${h.maxScore}</span>
+        <span class="hr-delta ${cls}">${deltaStr} ELO</span>
+        <span class="hr-date">${h.date}</span>
+      </div>`;
+    }).join('');
+  }
+
+  showScreen('homeScreen');
+}
+
+function goHome() { renderHome(); }
+
+// ═══════════════════════════════════════════════════════════════
+// DRILL STATE
+// ═══════════════════════════════════════════════════════════════
+let D = {};           // current drill state
+let LAST_DRILL_TYPE = 'flash';
+
+function startDrill(type) {
+  LAST_DRILL_TYPE = type;
+  const posArr = type === 'flash'  ? FLASH_POS
+               : type === 'fork'   ? FORK_POSITIONS
+               : type === 'ratha'  ? RATHA_POSITIONS
+               : type === 'dice'   ? DICE_POSITIONS
+               : type === 'danti'  ? DANTI_POSITIONS
+               : type === 'king'   ? KING_POSITIONS
+               : type === 'promo'  ? PROMO_POSITIONS
+               : type === 'combo'  ? COMBO_POSITIONS : [];
+
+  // Shuffle positions for variety
+  const positions = posArr.slice().sort(() => Math.random() - 0.5);
+
+  D = {
+    type, positions,
+    pos: 0,
+    score: 0,
+    maxScore: DRILL_MAX[type],
+    answers: [],
+    pointsEarned: [],
+    timerHandle: null,
+    flashPhase: null,
+    flashQIdx: 0,
+    flashPosScore: 0,
+    flashQAnswered: false,
+    selectedSq: null,
+    legalSqs: [],
+    boardState: null,
+    positionAnswered: false,
+  };
+
+  document.getElementById('dTitle').textContent     = DRILL_LABELS[type];
+  document.getElementById('dProgress').textContent  = `1 / ${positions.length}`;
+  document.getElementById('dScoreBadge').textContent= '0 pts';
+  showScreen('drillScreen');
+  runCurrentPosition();
+}
+
+function runCurrentPosition() {
+  const pos = D.positions[D.pos];
+  D.positionAnswered = false;
+  updateDrillHeader();
+  clearFeedback();
+
+  if      (D.type === 'flash')  runFlash(pos);
+  else if (D.type === 'fork')   runFork(pos);
+  else if (D.type === 'ratha')  runRatha(pos);
+  else if (D.type === 'dice')   runDice(pos);
+  else if (D.type === 'danti')  runDanti(pos);
+  else if (D.type === 'king')   runKing(pos);
+  else if (D.type === 'promo')  runPromo(pos);
+  else if (D.type === 'combo')  runCombo(pos);
+}
+
+function updateDrillHeader() {
+  document.getElementById('dProgress').textContent =
+    `${D.pos + 1} / ${D.positions.length}`;
+  document.getElementById('dScoreBadge').textContent = `${D.score} pts`;
+}
+
+function clearFeedback() {
+  const fb = document.getElementById('drillFeedback');
+  fb.textContent = '';
+  fb.className = 'drill-feedback';
+}
+
+function showFeedback(msg, type) {
+  const fb = document.getElementById('drillFeedback');
+  fb.textContent = msg;
+  fb.className = `drill-feedback ${type}`;
+}
+
+function advancePosition(correct, pts) {
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  D.answers.push(correct);
+  D.pointsEarned.push(pts);
+  D.score += pts;
+  updateDrillHeader();
+  D.pos++;
+  if (D.pos >= D.positions.length) {
+    setTimeout(finishDrill, 500);
+  } else {
+    setTimeout(runCurrentPosition, correct ? 900 : 1400);
+  }
+}
+
+function finishDrill() {
+  const { delta, prevElo, newElo } = commitDrillResult(
+    D.type, D.score, D.maxScore, D.answers
+  );
+  showResultScreen(delta, prevElo, newElo);
+}
+
+function confirmAbort() {
+  if (confirm('Quit this drill? Progress will be lost.')) goHome();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COUNTDOWN BARS (CSS-only animation)
+// ═══════════════════════════════════════════════════════════════
+function startCountdown(secs) {
+  const fill = document.getElementById('countdownFill');
+  fill.className = 'countdown-fill'; // remove all animation classes
+  void fill.offsetWidth;             // force reflow to restart
+  fill.classList.add('t' + secs);
+}
+function stopCountdown() {
+  const fill = document.getElementById('countdownFill');
+  fill.style.animation = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FLASH DRILL
+// ═══════════════════════════════════════════════════════════════
+function runFlash(pos) {
+  document.getElementById('flashBoardArea').style.display = 'block';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'none';
+
+  D.flashPosScore = 0;
+  D.flashQIdx = 0;
+  D.flashPosScore = 0;
+
+  // Render the board
+  renderBoard(
+    pos.board,
+    document.getElementById('flashBoard'),
+    document.getElementById('fbLabels'),
+    document.getElementById('fbRanks'),
+    {}
+  );
+
+  // 3-second countdown display
+  let count = 3;
+  document.getElementById('flashCountNum').textContent = count;
+  startCountdown(3);
+
+  const tick = setInterval(() => {
+    count--;
+    if (count > 0) {
+      document.getElementById('flashCountNum').textContent = count;
+    } else {
+      clearInterval(tick);
+      flashAskQuestion(0);
+    }
+  }, 1000);
+}
+
+function flashAskQuestion(qIdx) {
+  const pos = D.positions[D.pos];
+  const q = pos.qs[qIdx];
+
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'block';
+  document.getElementById('flashQNum').textContent        = `Question ${qIdx+1} of 3`;
+  document.getElementById('flashQText').textContent       = q.q;
+  document.getElementById('flashQScore').textContent      = '';
+
+  // Build choices
+  const choicesEl = document.getElementById('flashChoices');
+  choicesEl.innerHTML = '';
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'flash-choice-btn';
+    btn.textContent = c;
+    btn.onclick = () => flashAnswer(btn, c, q, qIdx);
+    choicesEl.appendChild(btn);
+  });
+
+  startCountdown(15);
+  D.flashQAnswered = false;
+
+  // Auto-advance after 15s
+  D.timerHandle = setTimeout(() => {
+    if (!D.flashQAnswered) {
+      flashAnswer(null, null, q, qIdx); // timeout = no answer
+    }
+  }, 15000);
+}
+
+function flashAnswer(btn, choice, q, qIdx) {
+  if (D.flashQAnswered) return;
+  D.flashQAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = choice === q.ans || (choice !== null && String(choice) === String(q.ans));
+  const pts = correct ? 10 : 0;
+  D.flashPosScore += pts;
+
+  // Highlight buttons
+  const choicesEl = document.getElementById('flashChoices');
+  choicesEl.querySelectorAll('.flash-choice-btn').forEach(b => {
+    if (String(b.textContent) === String(q.ans)) b.classList.add('correct');
+    else if (b === btn && !correct) b.classList.add('wrong');
+    b.disabled = true;
+  });
+
+  const scoreEl = document.getElementById('flashQScore');
+  scoreEl.textContent = correct ? `+10 pts` : `Correct answer: ${q.ans}`;
+
+  setTimeout(() => {
+    if (qIdx + 1 < D.positions[D.pos].qs.length) {
+      flashAskQuestion(qIdx + 1);
+    } else {
+      // End of this flash position
+      const posCorrect = D.flashPosScore >= 20; // at least 2/3 correct
+      advancePosition(posCorrect, D.flashPosScore);
+    }
+  }, 1200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FORK FINDER
+// ═══════════════════════════════════════════════════════════════
+function runFork(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+  document.getElementById('diceRow').style.display        = 'none';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'Click the square where the Ashwa can fork two enemy pieces.';
+
+  renderBoard(
+    pos.board,
+    document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'),
+    document.getElementById('mbRanks'),
+    { onSqClick: (sq) => onForkClick(sq, pos) }
+  );
+
+  startCountdown(5);
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) {
+      forkTimeout(pos);
+    }
+  }, 5000);
+}
+
+function onForkClick(sq, pos) {
+  if (D.positionAnswered) return;
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = sq === pos.solution[0].to;
+  const pts = correct ? 20 : 0;
+
+  const hl = {};
+  hl[pos.solution[0].to] = 'correct';
+  if (!correct) hl[sq] = 'wrong';
+
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    {highlightSqs: hl});
+
+  if (correct) {
+    showFeedback(`Correct! The fork square is ${pos.solution[0].to}. +20 pts`, 'correct');
+  } else {
+    showFeedback(`Wrong. The fork square was ${pos.solution[0].to}.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function forkTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].to] = 'correct';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    {highlightSqs: hl});
+  showFeedback(`Time! The fork square was ${pos.solution[0].to}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RATHA HUNT
+// ═══════════════════════════════════════════════════════════════
+function runRatha(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+  document.getElementById('diceRow').style.display        = 'none';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'Click the Blue Ratha that can be captured for free.';
+
+  renderBoard(
+    pos.board,
+    document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'),
+    document.getElementById('mbRanks'),
+    { onSqClick: (sq) => onRathaClick(sq, pos) }
+  );
+
+  startCountdown(8);
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) rathaTimeout(pos);
+  }, 8000);
+}
+
+function onRathaClick(sq, pos) {
+  if (D.positionAnswered) return;
+  const piece = parsePiece(pos.board[sq]);
+  if (!piece || piece.type !== 'rook' || piece.owner !== 1) return; // must click Blue rook
+
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = sq === pos.solution[0].to;
+  const pts = correct ? 15 : 0;
+
+  const hl = {};
+  hl[pos.solution[0].to] = 'correct';
+  if (!correct) hl[sq] = 'wrong';
+
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    {highlightSqs: hl});
+
+  if (correct) {
+    showFeedback(`Correct! The capturable Ratha was on ${sq}. +15 pts`, 'correct');
+  } else {
+    showFeedback(`Wrong. The capturable Ratha was on ${pos.solution[0].to}.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function rathaTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].to] = 'correct';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    {highlightSqs: hl});
+  showFeedback(`Time! The capturable Ratha was on ${pos.solution[0].to}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DICE DRILL
+// ═══════════════════════════════════════════════════════════════
+function runDice(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'Execute the best move for the rolled piece.';
+
+  // Show dice
+  document.getElementById('diceRow').style.display = 'flex';
+  document.getElementById('dFace').textContent  = DICE_FACES[pos.diceVal] || '?';
+  document.getElementById('dPiece').textContent =
+    pos.forcedType === 'pawn' ? 'Nara or Raja' : PNAMES[pos.forcedType] || '?';
+
+  D.boardState  = Object.assign({}, pos.board);
+  D.selectedSq  = null;
+  D.legalSqs    = [];
+
+  // Auto-select if only one piece of forced type
+  const candidates = Object.keys(pos.board).filter(sq => {
+    const p = parsePiece(pos.board[sq]);
+    return p && p.owner === 0 && p.type === pos.forcedType;
+  });
+  if (candidates.length === 1) {
+    D.selectedSq = candidates[0];
+    D.legalSqs = getLegalMoves(pos.board, candidates[0], pos.forcedType);
+  }
+
+  diceRenderBoard(pos);
+  startCountdown(10);
+
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) diceTimeout(pos);
+  }, 10000);
+}
+
+function diceRenderBoard(pos) {
+  renderBoard(
+    D.boardState,
+    document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'),
+    document.getElementById('mbRanks'),
+    {
+      selected: D.selectedSq,
+      legalSqs: D.legalSqs,
+      onSqClick: (sq) => onDiceClick(sq, pos)
+    }
+  );
+}
+
+function onDiceClick(sq, pos) {
+  if (D.positionAnswered) return;
+  const piece = parsePiece(D.boardState[sq]);
+
+  // If clicking a valid friendly piece of the forced type
+  if (!D.selectedSq && piece && piece.owner === 0 && piece.type === pos.forcedType) {
+    D.selectedSq = sq;
+    D.legalSqs = getLegalMoves(D.boardState, sq, pos.forcedType);
+    diceRenderBoard(pos);
+    return;
+  }
+  // Re-select another own piece of correct type
+  if (D.selectedSq && piece && piece.owner === 0 && piece.type === pos.forcedType) {
+    D.selectedSq = sq;
+    D.legalSqs = getLegalMoves(D.boardState, sq, pos.forcedType);
+    diceRenderBoard(pos);
+    return;
+  }
+  // Clicking a legal destination
+  if (D.selectedSq && D.legalSqs.includes(sq)) {
+    diceExecuteMove(D.selectedSq, sq, pos);
+    return;
+  }
+  // Deselect
+  D.selectedSq = null;
+  D.legalSqs = [];
+  diceRenderBoard(pos);
+}
+
+function diceExecuteMove(from, to, pos) {
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = from === pos.solution[0].from && to === pos.solution[0].to;
+  const pts = correct ? 25 : 0;
+
+  // Execute move on state for visual
+  const piece = parsePiece(D.boardState[from]);
+  D.boardState[to] = D.boardState[from];
+  delete D.boardState[from];
+
+  const hl = {};
+  hl[from] = correct ? 'correct' : 'wrong';
+  hl[to]   = correct ? 'correct' : 'wrong';
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+
+  renderBoard(D.boardState, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    {highlightSqs: hl});
+
+  if (correct) {
+    showFeedback(`Correct! ${PNAMES[piece?.type] || 'Piece'} ${from}→${to}. +25 pts`, 'correct');
+  } else {
+    showFeedback(`Wrong. Best move was ${pos.solution[0].from}→${pos.solution[0].to}.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function diceTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  renderBoard(D.boardState || pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    {highlightSqs: hl});
+  showFeedback(`Time! Best move was ${pos.solution[0].from}→${pos.solution[0].to}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DANTI CHHALAANG — click the target the Elephant can leap to
+// ═══════════════════════════════════════════════════════════════
+function runDanti(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+  document.getElementById('diceRow').style.display        = 'none';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'The Danti can leap two diagonal squares to capture. Click the target square.';
+
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { onSqClick: (sq) => onDantiClick(sq, pos) });
+
+  startCountdown(8);
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) dantiTimeout(pos);
+  }, 8000);
+}
+
+function onDantiClick(sq, pos) {
+  if (D.positionAnswered) return;
+  // Must click a Blue piece (enemy target), not an empty square
+  const piece = parsePiece(pos.board[sq]);
+  if (!piece || piece.owner !== 1) return;
+
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = sq === pos.solution[0].to;
+  const pts     = correct ? 20 : 0;
+
+  const hl = {};
+  hl[pos.solution[0].to] = 'correct';
+  if (!correct) hl[sq] = 'wrong';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+
+  if (correct) {
+    showFeedback(`Correct! The Danti leaps from ${pos.solution[0].from} to ${sq}. +20 pts`, 'correct');
+  } else {
+    showFeedback(`Wrong. The correct target was ${pos.solution[0].to} — two diagonals from ${pos.solution[0].from}.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function dantiTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+  showFeedback(`Time! The Danti on ${pos.solution[0].from} captures on ${pos.solution[0].to}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RAJA JAGRITI — click the best King march square in the endgame
+// ═══════════════════════════════════════════════════════════════
+function runKing(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+  document.getElementById('diceRow').style.display        = 'none';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'The endgame has arrived. Click the best square for the Red Raja to march toward the Nara.';
+
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { onSqClick: (sq) => onKingClick(sq, pos) });
+
+  startCountdown(10);
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) kingTimeout(pos);
+  }, 10000);
+}
+
+function onKingClick(sq, pos) {
+  if (D.positionAnswered) return;
+  // Only valid if clicking an empty square or the king's own square
+  const piece = parsePiece(pos.board[sq]);
+  if (piece && piece.owner === 0) return; // don't click own pieces
+
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = sq === pos.solution[0].to;
+  const pts     = correct ? 20 : 0;
+
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  if (!correct) hl[sq] = 'wrong';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+
+  if (correct) {
+    showFeedback(`Correct! Raja marches to ${sq} — the ideal escort step. +20 pts`, 'correct');
+  } else {
+    showFeedback(`Not quite. The best Raja step was ${pos.solution[0].to} — closer to the Nara.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function kingTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+  showFeedback(`Time! The Raja should march to ${pos.solution[0].to}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NARA UTTARAYAN — click the destination of the most advanced pawn
+// ═══════════════════════════════════════════════════════════════
+function runPromo(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+  document.getElementById('diceRow').style.display        = 'none';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'Multiple Naras wait. Click the destination square of the one closest to promotion.';
+
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { onSqClick: (sq) => onPromoClick(sq, pos) });
+
+  startCountdown(6);
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) promoTimeout(pos);
+  }, 6000);
+}
+
+function onPromoClick(sq, pos) {
+  if (D.positionAnswered) return;
+  // Must click an empty square or the promotion rank — a valid pawn destination
+  const piece = parsePiece(pos.board[sq]);
+  if (piece && piece.owner === 0) return;  // don't click own pieces
+  if (piece && piece.owner === 1) return;  // don't click enemy pieces (captures not in scope here)
+
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = sq === pos.solution[0].to;
+  const pts     = correct ? 20 : 0;
+
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  if (!correct) hl[sq] = 'wrong';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+
+  if (correct) {
+    showFeedback(`Correct! The Nara on ${pos.solution[0].from} advances to ${sq}. +20 pts`, 'correct');
+  } else {
+    showFeedback(`Wrong. The most advanced Nara was on ${pos.solution[0].from} — it should push to ${pos.solution[0].to}.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function promoTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  renderBoard(pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+  showFeedback(`Time! The most advanced Nara was on ${pos.solution[0].from}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SAMUHA ASTRA — two-step: find and execute the highest-value capture
+// ═══════════════════════════════════════════════════════════════
+function runCombo(pos) {
+  document.getElementById('flashBoardArea').style.display = 'none';
+  document.getElementById('flashQArea').style.display     = 'none';
+  document.getElementById('mainBoardArea').style.display  = 'block';
+  document.getElementById('diceRow').style.display        = 'none';
+
+  document.getElementById('drillPrompt').textContent = pos.prompt ||
+    'Multiple captures are available. Find and execute the one that wins the most valuable piece.';
+
+  D.boardState    = Object.assign({}, pos.board);
+  D.selectedSq    = null;
+  D.legalSqs      = [];
+  comboRenderBoard(pos);
+
+  startCountdown(12);
+  D.timerHandle = setTimeout(() => {
+    if (!D.positionAnswered) comboTimeout(pos);
+  }, 12000);
+}
+
+function comboRenderBoard(pos) {
+  renderBoard(
+    D.boardState,
+    document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'),
+    document.getElementById('mbRanks'),
+    {
+      selected:  D.selectedSq,
+      legalSqs:  D.legalSqs,
+      onSqClick: (sq) => onComboClick(sq, pos)
+    }
+  );
+}
+
+function onComboClick(sq, pos) {
+  if (D.positionAnswered) return;
+  const piece = parsePiece(D.boardState[sq]);
+
+  // Select a Red piece
+  if (!D.selectedSq && piece && piece.owner === 0) {
+    D.selectedSq = sq;
+    D.legalSqs   = getLegalMoves(D.boardState, sq, 'any');
+    comboRenderBoard(pos);
+    return;
+  }
+  // Re-select a different Red piece
+  if (D.selectedSq && piece && piece.owner === 0) {
+    D.selectedSq = sq;
+    D.legalSqs   = getLegalMoves(D.boardState, sq, 'any');
+    comboRenderBoard(pos);
+    return;
+  }
+  // Execute move to legal square
+  if (D.selectedSq && D.legalSqs.includes(sq)) {
+    comboExecuteMove(D.selectedSq, sq, pos);
+    return;
+  }
+  // Deselect
+  D.selectedSq = null;
+  D.legalSqs   = [];
+  comboRenderBoard(pos);
+}
+
+function comboExecuteMove(from, to, pos) {
+  D.positionAnswered = true;
+  if (D.timerHandle) { clearTimeout(D.timerHandle); D.timerHandle = null; }
+  stopCountdown();
+
+  const correct = from === pos.solution[0].from && to === pos.solution[0].to;
+  const pts     = correct ? 25 : 0;
+
+  const movingPiece = parsePiece(D.boardState[from]);
+  D.boardState[to] = D.boardState[from];
+  delete D.boardState[from];
+
+  const hl = {};
+  hl[from] = correct ? 'correct' : 'wrong';
+  hl[to]   = correct ? 'correct' : 'wrong';
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+
+  renderBoard(D.boardState, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+
+  const pname = PNAMES[movingPiece?.type] || 'Piece';
+  if (correct) {
+    showFeedback(`Correct! ${pname} ${from}→${to} wins the highest-value piece. +25 pts`, 'correct');
+  } else {
+    showFeedback(`Wrong. The best capture was ${pos.solution[0].from}→${pos.solution[0].to} — the higher-value target.`, 'wrong');
+  }
+  advancePosition(correct, pts);
+}
+
+function comboTimeout(pos) {
+  D.positionAnswered = true;
+  stopCountdown();
+  const hl = {};
+  hl[pos.solution[0].from] = 'correct';
+  hl[pos.solution[0].to]   = 'correct';
+  renderBoard(D.boardState || pos.board, document.getElementById('mainBoard'),
+    document.getElementById('mbLabels'), document.getElementById('mbRanks'),
+    { highlightSqs: hl });
+  showFeedback(`Time! Best capture: ${pos.solution[0].from}→${pos.solution[0].to}.`, 'timeout');
+  advancePosition(false, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESULT SCREEN
+// ═══════════════════════════════════════════════════════════════
+function showResultScreen(delta, prevElo, newElo) {
+  const correct = D.answers.filter(Boolean).length;
+  const total   = D.answers.length;
+  const pct     = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  const excellent = pct >= 80;
+  const good      = pct >= 60;
+
+  document.getElementById('rcIcon').textContent    = excellent ? '✦' : good ? '⚔' : '✓';
+  document.getElementById('rcTitle').textContent   = excellent ? 'Excellent Form!' : good ? 'Good Session' : 'Keep Training';
+  document.getElementById('rcDrillName').textContent = DRILL_LABELS[D.type];
+  document.getElementById('rcScore').textContent   = `${D.score}/${D.maxScore}`;
+  document.getElementById('rcCorrect').textContent = `${correct}/${total}`;
+  document.getElementById('rcPct').textContent     = `${pct}%`;
+
+  document.getElementById('rcEloBefore').textContent = `${prevElo}`;
+  document.getElementById('rcEloAfter').textContent  = `${newElo}`;
+  const deltaCls = delta > 0 ? 'pos' : delta < 0 ? 'neg' : 'zero';
+  const deltaStr = delta > 0 ? `+${delta}` : `${delta}`;
+  const deltaEl  = document.getElementById('rcEloDelta');
+  deltaEl.textContent = deltaStr + ' ELO';
+  deltaEl.className   = `rc-elo-delta ${deltaCls}`;
+
+  document.getElementById('rcRankName').textContent = getRankForElo(newElo).name;
+
+  // Per-position breakdown
+  const posEl = document.getElementById('rcPosItems');
+  posEl.innerHTML = D.answers.map((ok, i) => {
+    const pts = D.pointsEarned[i] || 0;
+    return `<div class="rc-pos-row">
+      <span class="rc-pos-num">${i+1}.</span>
+      <span class="rc-pos-result" style="color:${ok?'#4ade80':'#f87171'}">${ok?'✓':'✗'}</span>
+      <span style="font-size:.76rem;color:var(--muted);flex:1">Position ${i+1}</span>
+      <span class="rc-pos-pts">+${pts} pts</span>
+    </div>`;
+  }).join('');
+
+  showScreen('resultScreen');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RANK SCROLL SCREEN
+// ═══════════════════════════════════════════════════════════════
+function showRankScreen() {
+  const elo = getElo();
+
+  // Ranks ladder
+  const ladderEl = document.getElementById('ranksLadder');
+  ladderEl.innerHTML = RANKS.map(r => {
+    const isCurrent = elo >= r.min && elo <= r.max;
+    return `<div class="rank-tier ${isCurrent?'current':''}">
+      <div class="rt-icon">${r.icon}</div>
+      <div class="rt-info">
+        <div class="rt-name">${r.name} <span style="font-size:.72rem;color:var(--muted);font-family:'Outfit',sans-serif">${r.sanskrit}</span></div>
+        <div class="rt-range">${r.min}–${r.max} ELO · ${r.desc}</div>
+      </div>
+      ${isCurrent ? '<span class="rt-badge">Your Rank</span>' : ''}
+    </div>`;
+  }).join('');
+
+  // Full history
+  const d = loadAkhara();
+  const hist = d.drillHistory || [];
+  const histEl = document.getElementById('fullHistory');
+  if (!hist.length) {
+    histEl.innerHTML = '<div class="hl-empty">No training sessions yet.</div>';
+  } else {
+    histEl.innerHTML = hist.map(h => {
+      const cls = h.delta > 0 ? 'pos' : h.delta < 0 ? 'neg' : 'zero';
+      const deltaStr = h.delta > 0 ? `+${h.delta}` : `${h.delta}`;
+      return `<div class="hl-row">
+        <span class="hl-type">${DRILL_LABELS[h.type] || h.type}</span>
+        <span class="hl-score">${h.score}/${h.maxScore}</span>
+        <span class="hl-delta ${cls}">${deltaStr}</span>
+        <span class="hl-date">${h.date}</span>
+      </div>`;
+    }).join('');
+  }
+
+  showScreen('rankScreen');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderHome();
+});
+
+/*
+  ── NAV ADDITION FOR game.html ────────────────────────────────
+  Add this link inside .nav-links in game.html:
+
+  <a href="akhara.html" class="nav-icon-btn" title="Akhara Training">
+    <i class="fa-solid fa-dumbbell"></i>
+  </a>
+  ──────────────────────────────────────────────────────────────
+*/
+</script>
+</body>
+</html>

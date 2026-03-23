@@ -1,3 +1,4 @@
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const WebSocket = require('ws');
@@ -70,6 +71,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(port, () => {
     console.log('Chaturanga v1.0.5 Web Server running at http://localhost:' + port);
+    console.log('WebSocket Server upgraded to v1.0.5');
     console.log('Backend API and WebSocket Multiplayer active.');
 });
 
@@ -416,5 +418,5 @@ setInterval(() => {
       }
     });
     if ((room.status === 'finished' || room.players.every(p=>!p||!p.connected)) && (now - room.createdAt > 3600000)) rooms.delete(code);
-  }, 10000);
-});
+  });
+}, 10000);

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Admin — Fair Play</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/themes.css"/>
+  <style>
+    body{margin:0;padding:20px;min-height:100vh}
+    .admin-header{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold,#c9a84c);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+    .admin-panel{max-width:800px;margin:0 auto}
+    .rep-card{background:rgba(201,168,76,.05);border:1px solid var(--border,rgba(201,168,76,.18));border-radius:10px;padding:16px;margin-bottom:12px}
+    .rep-title{font-family:'Cinzel',serif;font-size:.88rem;color:var(--gold,#c9a84c);margin-bottom:8px}
+    .rep-table{width:100%;border-collapse:collapse;font-size:.78rem}
+    .rep-table th,.rep-table td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--border,rgba(201,168,76,.1))}
+    .rep-table th{color:#888}
+    .suspicion-clean{color:#4ade80}.suspicion-watch{color:#fbbf24}.suspicion-flag{color:#f87171}
+    .vault-game{padding:8px 0;border-bottom:1px solid var(--border,rgba(201,168,76,.1));font-size:.78rem}
+    .vault-winner{color:var(--gold,#c9a84c);font-weight:600}
+    .badge-red{background:#b91c1c;color:#fee2e2;border-radius:4px;padding:1px 6px;font-size:.68rem}
+    .badge-amber{background:#b45309;color:#fef3c7;border-radius:4px;padding:1px 6px;font-size:.68rem}
+    .badge-green{background:#15803d;color:#dcfce7;border-radius:4px;padding:1px 6px;font-size:.68rem}
+    .btn-red{background:transparent;border:1px solid rgba(248,113,113,.4);color:#f87171;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'Outfit', sans-serif;font-size:.75rem}
+    .btn-red:hover{background:rgba(248,113,113,.1)}
+    
+    /* Puzzle Forge Board Styles */
+    #forgeBoard {
+      gap: 0;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    .pz-sq {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      cursor: crosshair;
+    }
+    .pz-sq.light { background: #f0d9b5; }
+    .pz-sq.dark { background: #b58863; }
+    .pz-sq:hover { opacity: 0.8; }
+    .palette-item {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.05);
+      font-size: 1.4rem;
+    }
+    .palette-item:hover { background: rgba(255,255,255,0.1); }
+    .palette-active { border-color: var(--gold) !important; background: rgba(201,168,76,0.2) !important; }
+  </style>
+</head>
+<body>
+<div class="admin-panel">
+  <div id="adminGate">
+    <div class="admin-header"><i class="fa-solid fa-shield-halved"></i> Admin — Fair Play</div>
+    <p style="color:#888;font-size:.85rem">Enter admin password to access the fair play dashboard.</p>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <input type="password" id="adminPass" class="settings-select" placeholder="Password" style="flex:1" onkeydown="if(event.key==='Enter')checkPass()"/>
+      <button onclick="checkPass()" style="background:linear-gradient(135deg,var(--gold,#c9a84c),#f0cc7a);color:#1a1306;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-family:'Cinzel', serif">
+        <i class="fa-solid fa-unlock"></i> Enter
+      </button>
+    </div>
+    <div id="passMsg" style="color:#f87171;font-size:.78rem;margin-top:8px;min-height:16px"></div>
+  </div>
+
+  <div id="adminDash" style="display:none">
+    <div class="admin-header"><i class="fa-solid fa-shield-check"></i> Fair Play Dashboard</div>
+    <p style="color:#888;font-size:.8rem;margin-bottom:16px">
+      Chaturanga v1.0.5 — Anti-Cheat Report &nbsp;|&nbsp; <a href="game.html" style="color:var(--gold,#c9a84c)">← Back to Game</a>
+    </p>
+
+    <!-- Recent Games Vault -->
+    <div class="rep-card">
+      <div class="rep-title"><i class="fa-solid fa-vault"></i> Recent Games Vault (Last 20)</div>
+      <div id="vaultReport"><p style="color:#888;font-size:.78rem">No games in vault yet. Play some games with bots to generate data.</p></div>
+      <button class="btn-red" style="margin-top:10px" onclick="clearVault()"><i class="fa-solid fa-trash"></i> Clear Vault</button>
+    </div>
+
+    <!-- Fair Play Metrics -->
+    <div class="rep-card">
+      <div class="rep-title"><i class="fa-solid fa-chart-bar"></i> Per-Player Metrics</div>
+      <p style="color:#888;font-size:.75rem;margin-bottom:10px">Metrics are populated when ChaturangaAntiCheat is initialised from an ongoing game session.</p>
+      <div id="metricsReport">
+        <p style="color:#888;font-size:.78rem">No metrics available. These are populated during a live game session and accessible via <code style="font-size:.72rem;background:rgba(255,255,255,.05);padding:1px 4px;border-radius:3px">ChaturangaAntiCheat.getFairPlayReport(game)</code> in the browser console during gameplay.</p>
+      </div>
+    </div>
+
+    <!-- Suspicion Levels Reference -->
+    <div class="rep-card">
+      <div class="rep-title"><i class="fa-solid fa-info-circle"></i> Suspicion Level Guide</div>
+      <table class="rep-table">
+        <thead><tr><th>Level</th><th>Engine Correlation</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge-green">clean</span></td><td>&lt; 65%</td><td>No action needed</td></tr>
+          <tr><td><span class="badge-amber">watch</span></td><td>65–85%</td><td>Monitor — may be a skilled player</td></tr>
+          <tr><td><span class="badge-red">flag</span></td><td>&gt; 85% (≥10 moves)</td><td>Fair Play Notice shown to player</td></tr>
+        </tbody>
+      </table>
+      <p style="color:#888;font-size:.72rem;margin-top:8px">Note: These are statistical indicators only. High correlation can result from skilled play as well as engine assistance. No accusations are made — only non-confrontational notices are shown.</p>
+    </div>
+
+    <!-- Rate Limiter Info -->
+    <div class="rep-card">
+      <div class="rep-title"><i class="fa-solid fa-stopwatch"></i> Rate Limiter</div>
+      <p style="color:#888;font-size:.78rem">Moves are rate-limited to a minimum of <strong style="color:var(--gold,#c9a84c)">200ms</strong> per move per player. Moves submitted faster than this threshold are silently discarded at the UI layer. This is a client-side protection; server-side validation occurs in <code style="font-size:.72rem">server-ws.js</code> for online play.</p>
+    </div>
+
+    <!-- PUZZLE FORGE (New v1.0.5 Feature) -->
+    <div class="rep-card" style="border-top: 2px solid var(--gold,#c9a84c); background: rgba(201,168,76,0.08)">
+      <div class="rep-title" style="font-size: 1.1rem"><i class="fa-solid fa-screwdriver-wrench"></i> Admin Puzzle Forge</div>
+      <p style="color:#bbb;font-size:.8rem;margin-bottom:16px">Create, calculate, and deploy new puzzles directly to the game library.</p>
+      
+      <div style="display:grid; grid-template-columns: 1fr 300px; gap: 20px;">
+        <!-- Left: Board Editor -->
+        <div id="forgeBoardContainer" style="background:#1a1306; border:1px solid var(--border); border-radius:8px; padding:15px; display:flex; flex-direction:column; align-items:center">
+           <div id="forgeBoard" class="pz-board" style="--sq: 45px; display: grid; grid-template-columns: repeat(8, 45px); cursor: crosshair"></div>
+           <div style="margin-top:15px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center" id="piecePalette">
+              <!-- Palette filled by JS -->
+           </div>
+        </div>
+
+        <!-- Right: Config & Deployment -->
+        <div style="display:flex; flex-direction:column; gap:12px">
+          <div>
+            <label class="pc-label">Puzzle Title</label>
+            <input type="text" id="forgeTitle" class="pc-name-input" style="width:100%" placeholder="e.g. The Lion's Pounce"/>
+          </div>
+          <div style="display:flex; gap:10px">
+            <div style="flex:1">
+              <label class="pc-label">Turn</label>
+              <select id="forgeTurn" class="pc-name-input" style="width:100%; height:34px">
+                <option value="0">Red (Player)</option>
+                <option value="1">Blue (Opponent)</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label class="pc-label">Difficulty</label>
+              <input type="number" id="forgeRating" class="pc-name-input" style="width:100%" value="800"/>
+            </div>
+          </div>
+          
+          <div style="margin-top:10px">
+            <button class="pc-save-btn" style="width:100%; padding:12px" onclick="calculateSolution()">
+              <i class="fa-solid fa-microchip"></i> Calculate Best Move (AI)
+            </button>
+          </div>
+
+          <div id="forgeResult" style="display:none; background:rgba(0,0,0,0.3); padding:10px; border-radius:6px; border:1px solid var(--border)">
+             <div style="font-size:0.75rem; color:var(--gold)">Solution Found:</div>
+             <div id="forgeSolutionText" style="font-size:0.9rem; font-weight:700; color:#4ade80; margin:4px 0"></div>
+             <label class="pc-label">Moral Lesson / Hint</label>
+             <textarea id="forgeMoral" class="pc-name-input" style="width:100%; height:60px; font-size:0.75rem" placeholder="A wise warrior strikes where the fog is thinnest..."></textarea>
+          </div>
+
+          <div style="margin-top:auto">
+            <button class="pc-save-btn" id="btnDeploy" style="width:100%; padding:15px; background:linear-gradient(135deg,#4ade80,#166534); color:#fff; display:none" onclick="deployPuzzle()">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Deploy to Game Library
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASS = 'chaturanga1040';
+let forgeBoard = {};
+let selectedPalettePiece = null;
+
+function checkPass() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === ADMIN_PASS) {
+    document.getElementById('adminGate').style.display = 'none';
+    document.getElementById('adminDash').style.display = 'block';
+    loadVaultReport();
+    initForge();
+  } else {
+    document.getElementById('passMsg').textContent = 'Incorrect password.';
+    setTimeout(() => { document.getElementById('passMsg').textContent = ''; }, 2000);
+  }
+}
+
+// ── PUZZLE FORGE LOGIC ───────────────────────────────────────────────────
+const PIECE_SYMBOLS = { pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚' };
+const PLAYER_COLORS  = ['red','blue','green','yellow'];
+const PIECE_TYPES    = ['pawn','horse','elephant','rook','king'];
+
+function initForge() {
+  const boardEl = document.getElementById('forgeBoard');
+  boardEl.innerHTML = '';
+  for (let r = 8; r >= 1; r--) {
+    for (let f = 0; f < 8; f++) {
+      const sq = String.fromCharCode(97 + f) + r;
+      const cell = document.createElement('div');
+      cell.className = `pz-sq ${(f + r) % 2 === 0 ? 'light' : 'dark'}`;
+      cell.style.width = '45px'; cell.style.height = '45px';
+      cell.dataset.sq = sq;
+      cell.onclick = () => onForgeCellClick(sq);
+      boardEl.appendChild(cell);
+    }
+  }
+  
+  // Build Palette
+  const palette = document.getElementById('piecePalette');
+  palette.innerHTML = '';
+  // Empty/Eraser
+  const eraser = document.createElement('div');
+  eraser.className = 'palette-item';
+  eraser.innerHTML = '<i class="fa-solid fa-eraser"></i>';
+  eraser.onclick = (e) => selectPalette(null, e.currentTarget);
+  palette.appendChild(eraser);
+
+  PLAYER_COLORS.forEach((color, pIdx) => {
+    PIECE_TYPES.forEach(type => {
+      const p = document.createElement('div');
+      p.className = 'palette-item';
+      p.innerHTML = `<span style="color:${color}">${PIECE_SYMBOLS[type]}</span>`;
+      p.onclick = (e) => selectPalette({pIdx, type, color}, e.currentTarget);
+      palette.appendChild(p);
+    });
+  });
+  selectPalette(null, eraser);
+}
+
+function selectPalette(piece, element) {
+  selectedPalettePiece = piece;
+  document.querySelectorAll('.palette-item').forEach(el => el.classList.remove('palette-active'));
+  if (element) element.classList.add('palette-active');
+}
+
+function onForgeCellClick(sq) {
+  if (selectedPalettePiece) {
+    forgeBoard[sq] = `${selectedPalettePiece.pIdx}:${selectedPalettePiece.type}`;
+  } else {
+    delete forgeBoard[sq];
+  }
+  renderForgeBoard();
+}
+
+function renderForgeBoard() {
+  document.querySelectorAll('#forgeBoard .pz-sq').forEach(cell => {
+    const sq = cell.dataset.sq;
+    cell.innerHTML = '';
+    if (forgeBoard[sq]) {
+      const [pIdx, type] = forgeBoard[sq].split(':');
+      const span = document.createElement('span');
+      span.style.color = PLAYER_COLORS[pIdx];
+      span.style.fontSize = '1.6rem';
+      span.textContent = PIECE_SYMBOLS[type];
+      cell.appendChild(span);
+    }
+  });
+}
+
+function calculateSolution() {
+  if (typeof ChaturangaTieredBot === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'js/bot/tieredBots.js';
+    s.onload = () => {
+      if (typeof ChaturangaRandomBot === 'undefined') {
+        const s2 = document.createElement('script');
+        s2.src = 'js/bot/randomMove.js';
+        s2.onload = runAiCalculation;
+        document.head.appendChild(s2);
+      } else {
+        runAiCalculation();
+      }
+    };
+    document.head.appendChild(s);
+  } else {
+    runAiCalculation();
+  }
+}
+
+// ── FORGE GAME ADAPTER ───────────────────────────────────────────────────────
+// Builds a game object matching ChaturangaTieredBot's expected API without
+// needing game.js. Capture rules and move logic match game.js exactly.
+function buildForgeGame(boardData, turnIndex, forcedPiece) {
+  const squares = new Map();
+  for (const [sq, val] of Object.entries(boardData)) {
+    const [pIdx, type] = val.split(':');
+    squares.set(sq, { type, owner: parseInt(pIdx) });
+  }
+
+  const boardApi = {
+    get(sq) { return squares.get(sq) || null; },
+    set(sq, piece) { if (piece === null) squares.delete(sq); else squares.set(sq, piece); },
+    squares,
+  };
+
+  const players = [
+    { id: 0, eliminated: false, frozen: false, team: 0 },
+    { id: 1, eliminated: false, frozen: false, team: 1 },
+  ];
+
+  function sqToFile(sq) { return sq.charCodeAt(0) - 97; }
+  function sqToRank(sq) { return parseInt(sq[1]); }
+  function toSq(f, r) { return (f >= 0 && f < 8 && r >= 1 && r <= 8) ? String.fromCharCode(97 + f) + r : null; }
+
+  // Capture rules matching game.js canCapture() exactly:
+  // minor (pawn/horse/elephant) can capture other minors but NOT major (rook/king)
+  // kings cannot capture other kings; major can capture anything else
+  const MINOR = new Set(['pawn','horse','elephant']);
+  const MAJOR = new Set(['rook','king']);
+  function canCapture(attackerType, target) {
+    if (!target) return true;
+    if (attackerType === 'king' && target.type === 'king') return false;
+    if (MINOR.has(attackerType) && MAJOR.has(target.type)) return false;
+    return true;
+  }
+
+  function getMovesForPiece(sq, forced) {
+    const piece = squares.get(sq);
+    if (!piece) return [];
+    const { type, owner } = piece;
+    const f = sqToFile(sq), r = sqToRank(sq);
+
+    if (forced && forced !== 'any') {
+      if (forced === 'pawn-king' && type !== 'pawn' && type !== 'king') return [];
+      if (forced !== 'pawn-king' && type !== forced) return [];
+    }
+
+    const result = [];
+    const add = (nf, nr) => {
+      const ns = toSq(nf, nr);
+      if (!ns) return;
+      const t = squares.get(ns);
+      if (t && t.owner === owner) return;
+      if (!canCapture(type, t)) return;
+      result.push(ns);
+    };
+
+    switch (type) {
+      case 'rook':
+        // Rook is major — slides, captures anything except same owner
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([df,dr]) => {
+          for (let i = 1; i < 8; i++) {
+            const ns = toSq(f + df*i, r + dr*i);
+            if (!ns) break;
+            const t = squares.get(ns);
+            if (t) { if (t.owner !== owner) result.push(ns); break; }
+            result.push(ns);
+          }
+        });
+        break;
+      case 'horse':
+        [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[2,-1],[-2,1],[-2,-1]].forEach(([df,dr]) => add(f+df, r+dr));
+        break;
+      case 'elephant':
+        // game.js: Danti leaps 2 squares diagonal OR straight forward/back (not horizontal)
+        [[0,2],[0,-2],[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([df,dr]) => add(f+df, r+dr));
+        break;
+      case 'king':
+        [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([df,dr]) => add(f+df, r+dr));
+        break;
+      case 'pawn': {
+        const dir = owner === 0 ? 1 : -1;
+        const fwd = toSq(f, r + dir);
+        if (fwd && !squares.get(fwd)) result.push(fwd);
+        [[1,dir],[-1,dir]].forEach(([df,dr]) => {
+          const ns = toSq(f+df, r+dr);
+          if (ns) {
+            const t = squares.get(ns);
+            if (t && t.owner !== owner && canCapture(type, t)) result.push(ns);
+          }
+        });
+        break;
+      }
+    }
+    return result;
+  }
+
+  const game = {
+    board: boardApi,
+    players,
+    turnIndex,
+    forcedPiece,
+    gameOver: false,
+    getPlayer() { return this.players[this.turnIndex] || null; },
+    getLegalMoves(sq) { return getMovesForPiece(sq, this.forcedPiece); },
+  };
+  return game;
+}
+
+function runAiCalculation() {
+  const turn   = parseInt(document.getElementById('forgeTurn').value);
+  const rating = parseInt(document.getElementById('forgeRating').value);
+  const level  = Math.max(100, Math.min(600, Math.round(rating / 100) * 100));
+
+  if (!Object.keys(forgeBoard).length) {
+    alert('The board is empty. Place some pieces first.');
+    return;
+  }
+
+  const game = buildForgeGame(forgeBoard, turn, 'any');
+  const move = ChaturangaTieredBot.getMove(game, level);
+
+  if (move) {
+    const sol = [move.from, move.to];
+    document.getElementById('forgeResult').style.display = 'block';
+    document.getElementById('forgeSolutionText').textContent = `${move.from.toUpperCase()} → ${move.to.toUpperCase()}`;
+    document.getElementById('forgeSolutionText').dataset.move = JSON.stringify(sol);
+    document.getElementById('btnDeploy').style.display = 'block';
+  } else {
+    alert("AI couldn't find a valid move. Check that the active player has pieces and it is their turn.");
+  }
+}
+
+async function deployPuzzle() {
+  const title = document.getElementById('forgeTitle').value || 'New Challenge';
+  const rating = parseInt(document.getElementById('forgeRating').value);
+  const turnIndex = parseInt(document.getElementById('forgeTurn').value);
+  const moveData = JSON.parse(document.getElementById('forgeSolutionText').dataset.move);
+  const moral = document.getElementById('forgeMoral').value || 'Wisdom comes with victory.';
+  
+  const puzzle = {
+    id: 'P' + Date.now().toString().slice(-4),
+    title,
+    rating,
+    type: 'admin-deploy',
+    turnIndex,
+    boardState: forgeBoard,
+    solution: [moveData],
+    moralLesson: moral
+  };
+  
+  const btn = document.getElementById('btnDeploy');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deploying...';
+  
+  try {
+    const res = await fetch('/api/admin/puzzle', {
+      method: 'POST',
+      body: JSON.stringify(puzzle)
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Puzzle deployed successfully!');
+      location.reload();
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (err) {
+    alert('Deployment failed: ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Deploy to Game Library';
+  }
+}
+
+function loadVaultReport() {
+  try {
+    const vault = JSON.parse(localStorage.getItem('chaturanga_vault') || '[]');
+    const el = document.getElementById('vaultReport');
+    if (!vault.length) {
+      el.innerHTML = '<p style="color:#888;font-size:.78rem">No games in vault yet.</p>';
+      return;
+    }
+    el.innerHTML = vault.slice(0, 20).map((g, i) =>
+      '<div class="vault-game">' +
+        '<span class="vault-winner">#' + (i+1) + ' ' + (g.winner || '?') + '</span>' +
+        '<span style="color:#888;margin-left:10px">' + new Date(g.date).toLocaleString() + '</span>' +
+        '<span style="color:#888;margin-left:10px">' + g.totalMoves + ' moves · ' + g.captureCount + ' captures</span>' +
+        (g.turningPoint ? '<div style="color:#ccc;font-size:.72rem;margin-top:2px">⚡ ' + g.turningPoint + '</div>' : '') +
+      '</div>'
+    ).join('');
+  } catch(e) {
+    console.error("Vault parsing error:", e);
+    document.getElementById('vaultReport').innerHTML = '<p style="color:#888">Error reading vault.</p>';
+  }
+}
+
+function clearVault() {
+  if (!confirm('Clear all game vault data? This cannot be undone.')) return;
+  localStorage.removeItem('chaturanga_vault');
+  loadVaultReport();
+}
+</script>
+</body>
+</html>
