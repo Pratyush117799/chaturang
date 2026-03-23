@@ -1,6 +1,13 @@
 /**
  * Chaturanga v1.0.5 — Seer Engine (Full Analytics)
  * window.ChaturangaSeer — includes Vault API, estimateELO, QUALITY_LABELS, exportMarkdown
+ *
+ * BUG-010 CLARIFICATION: This is the AUTHORITATIVE seer file for game.html.
+ * ───────────────────────────────────────────────────────────────
+ * - game.html loads: js/seer.js  (this file — v1.0.5 live + vault API)
+ * - seer.html loads:  js/seer-engine.js  (v1.0.4 standalone analytics page)
+ * Do NOT merge or replace one with the other. They serve different pages.
+ * ───────────────────────────────────────────────────────────────
  */
 (function() {
   'use strict';

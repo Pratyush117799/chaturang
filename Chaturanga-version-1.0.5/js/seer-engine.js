@@ -3,6 +3,13 @@
  * Post-game and live analysis: move quality, ELO estimation,
  * turning point detection, position insight, game vault.
  *
+ * BUG-010 CLARIFICATION: This file is used ONLY by seer.html (standalone analytics page).
+ * ───────────────────────────────────────────────────────────────
+ * - game.html loads: js/seer.js  (v1.0.5 — the authoritative live analytics file)
+ * - seer.html loads:  js/seer-engine.js  (this file — v1.0.4 standalone)
+ * Do NOT merge or replace one with the other. They serve different pages.
+ * ───────────────────────────────────────────────────────────────
+ *
  * Usage (in game.js, after each move):
  *   ChaturangaSeer.recordMove(game, move, playerLabel);
  *   ChaturangaSeer.finalizeGame(metadata);   // at game end

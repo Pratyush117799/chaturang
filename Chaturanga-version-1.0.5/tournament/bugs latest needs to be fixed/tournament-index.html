@@ -121,12 +121,13 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <div class="top-nav">
-  <a href="../game.html" class="nav-logo">चतुरंग</a>
+  <!-- BUG-013 FIX: paths use ../../ because this file is 2 folders deep from project root -->
+  <a href="../../game.html" class="nav-logo">चतुरंग</a>
   <span class="nav-ver">Tournament v1.0.5</span>
   <div class="nav-links">
-    <a href="../game.html"    class="nav-link"><i class="fa-solid fa-chess-board fa-sm"></i> Game</a>
-    <a href="../puzzles.html" class="nav-link"><i class="fa-solid fa-puzzle-piece fa-sm"></i> Puzzles</a>
-    <a href="../lessons.html" class="nav-link"><i class="fa-solid fa-graduation-cap fa-sm"></i> Lessons</a>
+    <a href="../../game.html"    class="nav-link"><i class="fa-solid fa-chess-board fa-sm"></i> Game</a>
+    <a href="../../puzzles.html" class="nav-link"><i class="fa-solid fa-puzzle-piece fa-sm"></i> Puzzles</a>
+    <a href="../../lessons.html" class="nav-link"><i class="fa-solid fa-graduation-cap fa-sm"></i> Lessons</a>
   </div>
 </div>
 
@@ -360,12 +361,18 @@ function renderArenaActive() {
 }
 
 function renderArenaTimer() {
-  const el = $('arenaTimer');
+  // BUG-015 FIX: always re-query #arenaTimer — renderArenaActive() replaces
+  // mainCol.innerHTML which destroys old references, causing stale DOM updates.
+  const el = document.getElementById('arenaTimer');
   if (!el || !activeTournament) return;
   const rem = activeTournament.engine.timeRemaining();
   el.textContent = fmtTime(rem);
   el.className = `timer-big ${rem<60?'warning':''}`;
-  if (rem===0) { $('mainCol').innerHTML += `<div class="card" style="text-align:center;padding:24px"><div class="card-title">Arena Over!</div>${renderFinalStandings(activeTournament.engine.getLeaderboard())}</div>`; }
+  if (rem === 0 && !el.dataset.ended) {
+    el.dataset.ended = '1';
+    const main = document.getElementById('mainCol');
+    if (main) main.innerHTML += `<div class="card" style="text-align:center;padding:24px"><div class="card-title">Arena Over!</div>${renderFinalStandings(activeTournament.engine.getLeaderboard())}</div>`;
+  }
 }
 
 function stopArena() {

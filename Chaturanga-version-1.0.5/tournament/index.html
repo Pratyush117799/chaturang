@@ -360,12 +360,18 @@ function renderArenaActive() {
 }
 
 function renderArenaTimer() {
-  const el = $('arenaTimer');
+  // BUG-015 FIX: always re-query #arenaTimer \u2014 renderArenaActive() replaces
+  // mainCol.innerHTML which destroys old references, causing stale DOM updates.
+  const el = document.getElementById('arenaTimer');
   if (!el || !activeTournament) return;
   const rem = activeTournament.engine.timeRemaining();
   el.textContent = fmtTime(rem);
   el.className = `timer-big ${rem<60?'warning':''}`;
-  if (rem===0) { $('mainCol').innerHTML += `<div class="card" style="text-align:center;padding:24px"><div class="card-title">Arena Over!</div>${renderFinalStandings(activeTournament.engine.getLeaderboard())}</div>`; }
+  if (rem === 0 && !el.dataset.ended) {
+    el.dataset.ended = '1';
+    const main = document.getElementById('mainCol');
+    if (main) main.innerHTML += `<div class="card" style="text-align:center;padding:24px"><div class="card-title">Arena Over!</div>${renderFinalStandings(activeTournament.engine.getLeaderboard())}</div>`;
+  }
 }
 
 function stopArena() {

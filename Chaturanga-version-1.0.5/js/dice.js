@@ -4,7 +4,7 @@ globalThis.Dice = {
     if (!element) return null;
     const rollBtn = document.getElementById('rollBtn');
     if (rollBtn) rollBtn.disabled = true;
-    element.classList.add('dice-rolling');
+    element.classList.add('rolling'); // BUG-009 FIX: was 'dice-rolling', CSS defines .rolling
     let rollCount = 0;
     let finalValue = null;
     
@@ -13,8 +13,8 @@ globalThis.Dice = {
       finalValue = game.rollDice();
       element.textContent = finalValue;
       element.style.transform = 'rotateY(0deg)';
-      element.classList.remove('dice-rolling');
-      element.classList.add('dice-rolled');
+      element.classList.remove('rolling');
+      element.classList.add('rolled'); // BUG-009 FIX: was 'dice-rolled'
       const forcedEl = document.getElementById('forcedPiece');
       if (forcedEl) {
         forcedEl.textContent = 'Forced: ' + this.getPieceName(game.forcedPiece);
@@ -29,7 +29,7 @@ globalThis.Dice = {
         }
       }
       if (rollBtn) setTimeout(function() { rollBtn.disabled = false; }, 500);
-      setTimeout(function() { element.classList.remove('dice-rolled'); }, 1000);
+      setTimeout(function() { element.classList.remove('rolled'); }, 1000);
       if (callback) callback();
     };
 

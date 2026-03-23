@@ -339,9 +339,11 @@ class Game {
   }
 
   getElephantMoves(f, r, piece) {
-    // Danti: exactly 2 squares in any direction EXCEPT left/right (no horizontal)
+    // BUG-008 FIX: Danti (Elephant) leaps exactly 2 squares diagonally only.
+    // Removed [0,2] and [0,-2] (vertical jumps) — these break historical rules
+    // and contradict the in-game Quick Rules panel which says "2-diag leap".
     return this.getMovesFromOffsets(f, r, piece, [
-      [0, 2], [0, -2], [2, 2], [2, -2], [-2, 2], [-2, -2]
+      [2, 2], [2, -2], [-2, 2], [-2, -2]
     ]);
   }
 
@@ -385,7 +387,7 @@ class Game {
 
     // Capture
     if (target) {
-      this.handleCapture(player, target, to);
+      this.handleCapture(player, target, to, from); // BUG-005 FIX: pass 'from' so Guptchar removal works
     }
 
     this.board.set(to, piece);
