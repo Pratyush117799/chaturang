@@ -425,12 +425,7 @@ let gameStartTime      = 0;
       const isCapture = !!target;
 
       animateMove(from, to, () => {
-        const oldTurn = game.turnIndex;
         const success = game.makeMove(from, to);
-        if (success && activeClock) {
-            activeClock.endTurn(oldTurn);
-            activeClock.beginTurn(game.turnIndex);
-        }
         if (success) {
           if (globalThis.ChaturangaSeer) {
             const mover = game.moveHistory[game.moveHistory.length - 1];
@@ -629,21 +624,6 @@ let gameStartTime      = 0;
 
     function updateStateModals() {
       if (game.gameOver) {
-        const isVsBot = game.players.some(p => p.isBot);
-        if (isVsBot && typeof ChaturangaELO !== 'undefined' && !game._eloRecorded) {
-            game._eloRecorded = true;
-            const humanPlayerIndex = game.players.findIndex(p => !p.isBot);
-            const winnerIndex = game.winnerPlayerId !== null ? game.winnerPlayerId : (game.winner !== null ? game.winner : null);
-            const botEloValue = botEloEl ? Number.parseInt(botEloEl.value, 10) : 100;
-            const humanWon = (winnerIndex === humanPlayerIndex);
-            // Quick check if anyone actually won
-            if (winnerIndex !== null) {
-                const result = ChaturangaELO.recordGame(botEloValue, humanWon, currentTimeControl);
-                if (typeof ChaturangaClockUI !== 'undefined') ChaturangaClockUI.showELOToast(result);
-            }
-            if (activeClock) { activeClock.destroy(); activeClock = null; }
-        }
-
         let msg = 'Game Over!';
         if (game.gameMode === 'single' && game.winnerPlayerId !== null) { msg = PLAYER_LABELS[game.winnerPlayerId] + ' wins!'; }
         else if (game.winner !== null) { msg = 'Team ' + (game.winner + 1) + ' wins the Ashtāpada!'; }
@@ -750,12 +730,7 @@ let gameStartTime      = 0;
         const move = getBotMove();
         if (move) {
           const botTarget = game.board.get(move.to); // snapshot before makeMove clears the square
-          const oldTurn = game.turnIndex;
           if (game.makeMove(move.from, move.to)) {
-            if (activeClock) {
-                activeClock.endTurn(oldTurn);
-                activeClock.beginTurn(game.turnIndex);
-            }
             if (globalThis.ChaturangaSeer) {
               const mover = game.moveHistory[game.moveHistory.length - 1];
               const elo   = botEloEl ? Number.parseInt(botEloEl.value, 10) : 0;
@@ -847,12 +822,7 @@ let gameStartTime      = 0;
         return;
       }
 
-      const oldTurn = game.turnIndex;
       if (game.forfeitTurn()) {
-        if (activeClock) {
-            activeClock.endTurn(oldTurn);
-            activeClock.beginTurn(game.turnIndex);
-        }
         if (statusEl) { statusEl.textContent = 'Turn forfeited — no legal move for this piece'; }
         selectedSquare = null;
         legalMoves = [];
@@ -866,14 +836,14 @@ let gameStartTime      = 0;
 
 
     // ── Modals ────────────────────────────────────────────────────────────
-    function showKingRespawnModal() { if (activeClock) activeClock.pause();
+    function showKingRespawnModal() {
       if (kingRespawnModal) {
         kingRespawnModal.style.display = 'flex';
         const cb = document.getElementById('cancelRespawn');
         if (cb) cb.onclick = () => { game.pendingKingRespawn = null; render(); };
       }
     }
-    function hideModals() { if (activeClock) activeClock.resume();
+    function hideModals() {
       if (kingRespawnModal) kingRespawnModal.style.display = 'none';
     }
 
@@ -1017,43 +987,8 @@ let gameStartTime      = 0;
       }
     });
 
-
-  // Start Clock
-  if (activeClock) activeClock.destroy();
-  clockUI = null;
-  gameStartTime = Date.now();
-  const playerCount = game.players.filter(p => !p.eliminated).length || 4;
-  if (typeof ChaturangaClock !== 'undefined') {
-      activeClock = ChaturangaClock.create(currentTimeControl, playerCount, {
-        onTick: (playerIndex, snapshot) => {
-          if (clockUI) clockUI.update(snapshot);
-        },
-        onExpire: (playerIndex) => {
-          if (clockUI) clockUI.showFlagfall(playerIndex);
-          console.log(`Player ${playerIndex} flagfell — auto-forfeit their future turns`);
-        },
-        onExpiredTurn: (playerIndex) => {
-          // Auto forfeit logic
-          game.forfeitTurn(playerIndex);
-          if (activeClock) activeClock.endTurn(playerIndex);
-          if (activeClock) activeClock.beginTurn(game.turnIndex);
-          render();
-          tryAutoRoll();
-        },
-      });
-      // Try to find the board container, which is usually a wrapper around #board.
-      // In game.html it's typically <main class="board-wrapper"> or we can inject into 'board' parent.
-      clockUI = ChaturangaClockUI.initClockUI('board', currentTimeControl, playerCount);
-      
-      // Begin first turn
-      if (activeClock) {
-          activeClock.beginTurn(game.turnIndex);
-      }
-  }
-
   render();
 }
-
 
 function getDOMReferences() {
   return {

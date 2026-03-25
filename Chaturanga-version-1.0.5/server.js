@@ -22,6 +22,24 @@ const server = http.createServer((req, res) => {
     if (urlPath === '/') urlPath = '/website/index.html';
     
     // Handle API endpoints
+
+    // GET /api/leaderboard — top 100 players by ELO
+    if (req.method === 'GET' && urlPath === '/api/leaderboard') {
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      res.end(JSON.stringify(getLeaderboard()));
+      return;
+    }
+
+    // GET /api/player/:token — own stats (token is private, used only by that player)
+    if (req.method === 'GET' && urlPath.startsWith('/api/player/')) {
+      const token = decodeURIComponent(urlPath.split('/api/player/')[1] || '');
+      const record = getPlayerRecord(token);
+      if (!record) { res.writeHead(404); res.end(JSON.stringify({ error: 'Not found' })); return; }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ...record, provisional: (record.games||0) < PROVISIONAL_GAMES }));
+      return;
+    }
+
     if (req.method === 'POST' && urlPath === '/api/admin/puzzle') {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
@@ -71,7 +89,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(port, () => {
     console.log('Chaturanga v1.0.5 Web Server running at http://localhost:' + port);
-    console.log('WebSocket Server upgraded to v1.0.5');
     console.log('Backend API and WebSocket Multiplayer active.');
 });
 
@@ -97,6 +114,63 @@ const STARTING_BOARD = {
 const DICE_TO_PIECE = {1:'rook',2:'any',3:'horse',4:'elephant',5:'any',6:'pawn-king'};
 const lobbyWatchers = new Set();
 const K = 32;
+const MIN_ELO = 100;
+const MAX_ELO = 3000;
+const PROVISIONAL_GAMES = 10; // games before rating is considered established
+
+// ── ELO Ledger (flat JSON file, server-authoritative) ─────────────────────────
+// Format: { [token]: { elo, name, wins, losses, draws, games, createdAt, lastSeen } }
+const LEDGER_PATH = path.join(__dirname, 'elo-ledger.json');
+
+function loadLedger() {
+  try {
+    if (fs.existsSync(LEDGER_PATH)) return JSON.parse(fs.readFileSync(LEDGER_PATH, 'utf8'));
+  } catch(e) { console.warn('[ELO] Ledger load failed:', e.message); }
+  return {};
+}
+function saveLedger(ledger) {
+  try { fs.writeFileSync(LEDGER_PATH, JSON.stringify(ledger, null, 2)); }
+  catch(e) { console.warn('[ELO] Ledger save failed:', e.message); }
+}
+function getPlayerRecord(token) {
+  const ledger = loadLedger();
+  return ledger[token] || null;
+}
+function upsertPlayerRecord(token, name, newElo, result) {
+  // result: 'win' | 'loss' | 'draw'
+  const ledger = loadLedger();
+  const existing = ledger[token];
+  const now = Date.now();
+  if (!existing) {
+    ledger[token] = { elo: newElo, name, wins: result==='win'?1:0, losses: result==='loss'?1:0, draws: result==='draw'?1:0, games: 1, createdAt: now, lastSeen: now };
+  } else {
+    existing.elo      = newElo;
+    existing.name     = name; // update display name
+    existing.games    = (existing.games || 0) + 1;
+    existing.wins     = (existing.wins   || 0) + (result==='win'  ? 1 : 0);
+    existing.losses   = (existing.losses || 0) + (result==='loss' ? 1 : 0);
+    existing.draws    = (existing.draws  || 0) + (result==='draw' ? 1 : 0);
+    existing.lastSeen = now;
+  }
+  saveLedger(ledger);
+  return ledger[token];
+}
+// Return server-authoritative ELO for a token; fall back to clientElo if unknown
+function resolveElo(token, clientElo) {
+  if (!token) return Math.max(MIN_ELO, Math.min(MAX_ELO, +clientElo || 1200));
+  const record = getPlayerRecord(token);
+  if (record) return record.elo; // server wins — prevents spoofing
+  return Math.max(MIN_ELO, Math.min(MAX_ELO, +clientElo || 1200));
+}
+// Add GET /api/leaderboard endpoint in HTTP handler
+function getLeaderboard() {
+  const ledger = loadLedger();
+  return Object.entries(ledger)
+    .map(([token, r]) => ({ name: r.name, elo: r.elo, games: r.games||0, wins: r.wins||0, losses: r.losses||0, provisional: (r.games||0) < PROVISIONAL_GAMES }))
+    .filter(r => r.games > 0)
+    .sort((a, b) => b.elo - a.elo)
+    .slice(0, 100); // top 100
+}
 
 // Utility functions
 function makeRoomCode() {
@@ -205,9 +279,13 @@ function getLobbySnapshot() {
     if (room.status === 'waiting') {
       const maxPlayers = room.mode === '4p' ? 4 : 2;
       const filledSeats = room.players.filter(p => p && (p.connected || p.disconnectedAt)).length;
+      const elos = room.players.filter(Boolean).map(p => p.elo);
+      const avgElo = elos.length ? Math.round(elos.reduce((a,b)=>a+b,0)/elos.length) : 1200;
       openRooms.push({
         code, mode: room.mode, players: filledSeats, maxPlayers,
         names: room.players.filter(p=>p).map(p=>p.name),
+        elos:  room.players.filter(p=>p).map(p=>p.elo),
+        avgElo,
         createdAgo: Math.floor((Date.now() - room.createdAt) / 1000),
       });
     }
@@ -278,9 +356,10 @@ wss.on('connection', ws => {
       case 'create-room': {
         const mode = msg.mode === '4p' ? '4p' : '2p';
         const name = String(msg.name || 'Player').slice(0, 20);
-        const elo = Math.max(100, Math.min(3000, +msg.elo || 1200));
-        let code; do { code = makeRoomCode(); } while (rooms.has(code));
+        // resolveElo uses server ledger if token known — prevents spoofing
         const token = makeToken();
+        const elo = resolveElo(msg.token || null, msg.elo || 1200);
+        let code; do { code = makeRoomCode(); } while (rooms.has(code));
         const player = { seat:0, name, token, elo, ws, disconnectedAt:null, connected:true };
         tokens.set(token, { roomCode:code, seat:0 });
         const room = {
@@ -297,7 +376,7 @@ wss.on('connection', ws => {
       case 'join-room': {
         const code = String(msg.code || '').toUpperCase().trim();
         const name = String(msg.name || 'Player').slice(0, 20);
-        const elo = Math.max(100, Math.min(3000, +msg.elo || 1200));
+        const elo = resolveElo(msg.token || null, msg.elo || 1200);
         const room = rooms.get(code);
         if (!room) { send(ws, { type:'error', code:'ROOM_NOT_FOUND', message:`Room ${code} not found.` }); break; }
         if (room.status !== 'waiting') { send(ws, { type:'error', code:'ROOM_FULL', message:'Game already started.' }); break; }
@@ -354,7 +433,18 @@ wss.on('connection', ws => {
         }
         room.currentSeat = gameOver ? -1 : next; room.turn++; room.forcedPiece = null; room.diceFace = null;
         broadcast(room, { type:'move-made', from, to, captured: captured || null, seat: ws._seat, board: room.board, currentSeat: room.currentSeat, turn: room.turn, gameOver, winnerSeat });
-        if (gameOver) broadcast(room, { type:'game-over', winnerSeat, eloChanges: computeEloChanges(room, winnerSeat) });
+        if (gameOver) {
+          const eloChanges = computeEloChanges(room, winnerSeat);
+          broadcast(room, { type:'game-over', winnerSeat, eloChanges });
+          // Persist updated ELOs to server ledger
+          room.players.filter(Boolean).forEach(p => {
+            const change = eloChanges[p.seat];
+            if (change && p.token) {
+              const result = p.seat === winnerSeat ? 'win' : 'loss';
+              upsertPlayerRecord(p.token, p.name, change.newElo, result);
+            }
+          });
+        }
         break;
       }
       case 'forfeit-turn': {
@@ -418,5 +508,5 @@ setInterval(() => {
       }
     });
     if ((room.status === 'finished' || room.players.every(p=>!p||!p.connected)) && (now - room.createdAt > 3600000)) rooms.delete(code);
-  });
-}, 10000);
+  }, 10000);
+});

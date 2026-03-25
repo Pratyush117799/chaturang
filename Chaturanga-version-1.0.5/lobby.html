@@ -258,6 +258,52 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   .game-left,.game-right{width:100%}
   .chat-panel{height:220px}
 }
+/* ── ELO RANK SYSTEM ──────────────────────────────────────────── */
+.rank-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
+  border-radius:12px;font-size:.65rem;font-weight:600;margin-top:5px;letter-spacing:.04em}
+.rank-novice    {background:rgba(156,163,175,.12);color:#9ca3af;border:1px solid rgba(156,163,175,.25)}
+.rank-warrior   {background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
+.rank-charioteer{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.rank-archer    {background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+.rank-master    {background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.25)}
+.rank-brahmastra{background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(245,228,160,.12));
+  color:#f5e4a0;border:1px solid rgba(201,168,76,.4)}
+.prov-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;
+  border-radius:8px;font-size:.6rem;color:var(--muted);border:1px solid var(--border);margin-left:4px}
+
+/* ── ELO SPARKLINE ────────────────────────────────────────────── */
+.elo-sparkline-wrap{margin-top:10px}
+.elo-sparkline-lbl{font-size:.6rem;color:var(--muted);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
+.elo-sparkline{width:100%;height:36px}
+
+/* ── ROOM CARD ELO ────────────────────────────────────────────── */
+.rc-elo-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.rc-avg-elo{font-family:'Cinzel',serif;font-size:.72rem;color:var(--gold);letter-spacing:.04em}
+.rc-elo-pips{display:flex;gap:4px;align-items:center}
+.rc-pip{font-size:.65rem;color:var(--muted)}
+
+/* ── LEADERBOARD PANEL ────────────────────────────────────────── */
+.leaderboard-section{margin-top:20px;margin-bottom:24px}
+.lb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.lb-title{font-family:'Cinzel',serif;font-size:.88rem;color:var(--gold);letter-spacing:.05em}
+.lb-refresh{padding:4px 10px;border-radius:5px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:.72rem;cursor:pointer;transition:all .2s}
+.lb-refresh:hover{border-color:var(--gold);color:var(--gold)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  padding:5px 8px;border-bottom:1px solid var(--border);text-align:left;font-weight:400}
+.lb-table td{padding:7px 8px;font-size:.78rem;border-bottom:1px solid rgba(201,168,76,.06)}
+.lb-table tr:last-child td{border-bottom:none}
+.lb-table tr.lb-me td{background:rgba(201,168,76,.06)}
+.lb-rank{color:var(--muted);font-size:.7rem;width:28px}
+.lb-rank.gold{color:#fbbf24;font-family:'Cinzel',serif}
+.lb-rank.silver{color:#94a3b8;font-family:'Cinzel',serif}
+.lb-rank.bronze{color:#cd7c2f;font-family:'Cinzel',serif}
+.lb-name{flex:1;color:var(--text);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-elo-val{font-family:'Cinzel',serif;color:var(--gold2);text-align:right}
+.lb-games{color:var(--muted);font-size:.68rem;text-align:right}
+.lb-rank-badge{font-size:.6rem;padding:1px 6px;border-radius:8px}
+.lb-empty{text-align:center;padding:24px;color:var(--muted);font-size:.8rem;font-style:italic}
 </style>
 </head>
 <body>
@@ -268,7 +314,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     <i class="fa-solid fa-chess-king" style="color:var(--gold)"></i>
     <span>Chaturanga</span>
   </a>
-  <span class="nav-badge">Multiplayer · v1.0.5</span>
+  <span class="nav-badge">Multiplayer</span>
   <div class="nav-links">
     <a href="game.html"  class="nav-link"><i class="fa-solid fa-chess-board fa-xs"></i> Game</a>
     <a href="puzzles.html" class="nav-link"><i class="fa-solid fa-puzzle-piece fa-xs"></i> Puzzles</a>
@@ -295,8 +341,23 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
         <input class="pc-name-input" id="playerNameInput" placeholder="Enter your name…" maxlength="20"/>
         <button class="pc-save-btn" onclick="saveName()">Save</button>
       </div>
-      <div class="pc-elo" id="playerEloDisplay">1200</div>
-      <div class="pc-elo-lbl">Online ELO</div>
+      <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+        <div class="pc-elo" id="playerEloDisplay">1200</div>
+        <div class="pc-elo-lbl">Online ELO</div>
+        <span class="prov-badge" id="provBadge" style="display:none">
+          <i class="fa-solid fa-flask fa-xs"></i> Provisional
+        </span>
+      </div>
+      <div class="rank-badge rank-novice" id="playerRankBadge">♟ Shishya</div>
+      <div class="elo-sparkline-wrap">
+        <div class="elo-sparkline-lbl">ELO History</div>
+        <svg class="elo-sparkline" id="eloSparkline" viewBox="0 0 200 36" preserveAspectRatio="none">
+          <text x="100" y="22" text-anchor="middle" font-size="9" fill="rgba(201,168,76,.3)" font-family="sans-serif">Play games to build history</text>
+        </svg>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:.7rem;color:var(--muted)" id="eloStats">
+        <span id="statWins">W 0</span><span id="statLosses">L 0</span><span id="statGames">0 games</span>
+      </div>
     </div>
 
     <!-- Quick actions -->
@@ -331,6 +392,26 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     <div class="rooms-grid" id="roomsGrid">
       <div class="rooms-empty">No open rooms — create one above.</div>
     </div>
+  </div>
+
+  <!-- Global Leaderboard -->
+  <div class="leaderboard-section">
+    <div class="lb-header">
+      <div class="lb-title"><i class="fa-solid fa-ranking-star fa-xs"></i> &nbsp;Global Leaderboard</div>
+      <button class="lb-refresh" onclick="loadLeaderboard()">
+        <i class="fa-solid fa-rotate fa-xs"></i> Refresh
+      </button>
+    </div>
+    <table class="lb-table">
+      <thead><tr>
+        <th>#</th><th>Player</th><th>Rank</th>
+        <th style="text-align:right">ELO</th>
+        <th style="text-align:right">Games</th>
+      </tr></thead>
+      <tbody id="lbBody">
+        <tr><td colspan="5" class="lb-empty">Loading leaderboard…</td></tr>
+      </tbody>
+    </table>
   </div>
 
 </div>
@@ -612,7 +693,13 @@ function onLobbyUpdate(rooms) {
     grid.innerHTML = '<div class="rooms-empty">No open rooms — create one to get started.</div>';
     return;
   }
-  grid.innerHTML = rooms.map(r => `
+  grid.innerHTML = rooms.map(r => {
+    const eloRow = r.avgElo ? `
+      <div class="rc-elo-row">
+        <span class="rc-avg-elo">Avg ${r.avgElo} ELO</span>
+        <span class="rc-elo-pips">${(r.elos||[]).map(e=>`<span class="rc-pip">${e}</span>`).join('<span class="rc-pip">·</span>')}</span>
+      </div>` : '';
+    return `
     <div class="room-card" onclick="joinByCode('${r.code}')">
       <div class="rc-code">${r.code}</div>
       <div class="rc-names">${r.names.join(', ') || 'Waiting…'}</div>
@@ -623,8 +710,8 @@ function onLobbyUpdate(rooms) {
         <span>·</span>
         <span>${r.createdAgo < 60 ? r.createdAgo+'s ago' : Math.floor(r.createdAgo/60)+'m ago'}</span>
       </div>
-    </div>
-  `).join('');
+      ${eloRow}
+    </div>`; }).join('');
 }
 
 function onRoomCreated(msg) {
@@ -780,7 +867,10 @@ function onGameOver(msg) {
     }).join('');
     // Save our own ELO
     const myChange = msg.eloChanges[G.mySeat];
-    if (myChange) saveOnlineElo(myChange.newElo);
+    if (myChange) {
+      saveOnlineElo(myChange.newElo);
+      pushEloHistory(myChange.newElo); // add to sparkline history
+    }
     updateEloDisplay();
   }
 
@@ -1094,7 +1184,126 @@ function escapeHTML(str) {
 }
 
 function updateEloDisplay() {
-  document.getElementById('playerEloDisplay').textContent = getOnlineElo();
+  const elo = getOnlineElo();
+  document.getElementById('playerEloDisplay').textContent = elo;
+  updateRankBadge(elo);
+  renderSparkline();
+  fetchPlayerStats();
+}
+
+// ── Rank System ───────────────────────────────────────────────────────────────
+const RANKS = [
+  { min:0,    max:999,  id:'novice',     icon:'♟', label:'Shishya',     cls:'rank-novice'     },
+  { min:1000, max:1199, id:'warrior',    icon:'♞', label:'Yoddha',      cls:'rank-warrior'    },
+  { min:1200, max:1399, id:'charioteer', icon:'♝', label:'Sarathi',     cls:'rank-charioteer' },
+  { min:1400, max:1599, id:'archer',     icon:'♜', label:'Arjuna',      cls:'rank-archer'     },
+  { min:1600, max:1799, id:'master',     icon:'♚', label:'Maharaja',    cls:'rank-master'     },
+  { min:1800, max:9999, id:'brahmastra', icon:'✦', label:'Brahmastra',  cls:'rank-brahmastra' },
+];
+function getRank(elo) {
+  return RANKS.slice().reverse().find(r => elo >= r.min) || RANKS[0];
+}
+function updateRankBadge(elo) {
+  const r = getRank(elo);
+  const el = document.getElementById('playerRankBadge');
+  if (!el) return;
+  el.textContent = r.icon + ' ' + r.label;
+  el.className   = 'rank-badge ' + r.cls;
+}
+
+// ── ELO Sparkline ─────────────────────────────────────────────────────────────
+const LS_ELO_HISTORY = 'chaturanga_elo_history'; // array of {elo, ts}
+function pushEloHistory(elo) {
+  try {
+    const h = JSON.parse(localStorage.getItem(LS_ELO_HISTORY) || '[]');
+    h.push({ elo, ts: Date.now() });
+    if (h.length > 30) h.splice(0, h.length - 30); // keep last 30
+    localStorage.setItem(LS_ELO_HISTORY, JSON.stringify(h));
+  } catch(e) {}
+}
+function renderSparkline() {
+  const svg = document.getElementById('eloSparkline');
+  if (!svg) return;
+  try {
+    const h = JSON.parse(localStorage.getItem(LS_ELO_HISTORY) || '[]');
+    if (h.length < 2) {
+      svg.innerHTML = `<text x="100" y="22" text-anchor="middle" font-size="9" fill="rgba(201,168,76,.3)" font-family="sans-serif">Play games to build history</text>`;
+      return;
+    }
+    const elos = h.map(e => e.elo);
+    const mn = Math.min(...elos) - 20, mx = Math.max(...elos) + 20;
+    const range = mx - mn || 1;
+    const W = 200, H = 36, pad = 4;
+    const pts = elos.map((e, i) => {
+      const x = pad + (i / (elos.length - 1)) * (W - pad * 2);
+      const y = H - pad - ((e - mn) / range) * (H - pad * 2);
+      return `${x},${y}`;
+    }).join(' ');
+    const lastElo = elos[elos.length - 1];
+    const firstElo = elos[0];
+    const color = lastElo >= firstElo ? '#4ade80' : '#f87171';
+    svg.innerHTML = `
+      <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>
+      <circle cx="${pad + (W-pad*2)}" cy="${H - pad - ((lastElo - mn)/range)*(H-pad*2)}" r="2.5" fill="${color}"/>`;
+  } catch(e) {}
+}
+
+// ── Player Stats (from server ledger) ─────────────────────────────────────────
+function fetchPlayerStats() {
+  const token = localStorage.getItem(LS_TOKEN);
+  if (!token) return;
+  fetch(`/api/player/${encodeURIComponent(token)}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data) return;
+      // Sync server ELO (authoritative)
+      if (data.elo && data.elo !== getOnlineElo()) {
+        saveOnlineElo(data.elo);
+        document.getElementById('playerEloDisplay').textContent = data.elo;
+        updateRankBadge(data.elo);
+      }
+      const prov = document.getElementById('provBadge');
+      if (prov) prov.style.display = data.provisional ? 'inline-flex' : 'none';
+      const wins = document.getElementById('statWins');
+      const losses = document.getElementById('statLosses');
+      const games = document.getElementById('statGames');
+      if (wins) wins.textContent = 'W ' + (data.wins || 0);
+      if (losses) losses.textContent = 'L ' + (data.losses || 0);
+      if (games) games.textContent = (data.games || 0) + ' games';
+    }).catch(() => {});
+}
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+function loadLeaderboard() {
+  const tbody = document.getElementById('lbBody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" class="lb-empty">Loading…</td></tr>';
+  fetch('/api/leaderboard')
+    .then(r => r.ok ? r.json() : [])
+    .then(data => {
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="lb-empty">No ranked players yet — play a game to appear here.</td></tr>';
+        return;
+      }
+      const myName = getPlayerName();
+      const rankNums = {1:'gold',2:'silver',3:'bronze'};
+      tbody.innerHTML = data.map((p, i) => {
+        const pos = i + 1;
+        const rnCls = rankNums[pos] || '';
+        const rank = getRank(p.elo);
+        const isMe = p.name === myName;
+        const provTag = p.provisional ? `<span class="prov-badge" style="display:inline-flex"><i class="fa-solid fa-flask" style="font-size:.55rem"></i></span>` : '';
+        return `<tr class="${isMe ? 'lb-me' : ''}">
+          <td class="lb-rank ${rnCls}">${pos <= 3 ? ['🥇','🥈','🥉'][pos-1] : pos}</td>
+          <td class="lb-name">${escapeHTML(p.name)}${isMe ? ' <span style="color:var(--gold);font-size:.6rem">(you)</span>' : ''}${provTag}</td>
+          <td><span class="lb-rank-badge rank-badge ${rank.cls}" style="font-size:.58rem;padding:1px 5px">${rank.icon} ${rank.label}</span></td>
+          <td class="lb-elo-val">${p.elo}</td>
+          <td class="lb-games">${p.games}</td>
+        </tr>`;
+      }).join('');
+    }).catch(() => {
+      tbody.innerHTML = '<tr><td colspan="5" class="lb-empty">Could not load — server may be offline.</td></tr>';
+    });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1117,7 +1326,7 @@ function createRoom() {
   const name = getPlayerName() || document.getElementById('playerNameInput').value.trim() || 'Player';
   if (!name) { alert('Please enter a name first.'); return; }
   if (!wsConnected) { alert('Not connected to server. Please wait or check the server is running.'); return; }
-  send({ type:'create-room', mode:LOBBY_MODE, name, elo:getOnlineElo() });
+  send({ type:'create-room', mode:LOBBY_MODE, name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '' });
 }
 
 function joinRoom() {
@@ -1129,7 +1338,7 @@ function joinRoom() {
 function joinByCode(code) {
   const name = getPlayerName() || 'Player';
   if (!wsConnected) { alert('Not connected to server.'); return; }
-  send({ type:'join-room', code, name, elo:getOnlineElo() });
+  send({ type:'join-room', code, name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '' });
 }
 
 function requestLobby() {
@@ -1144,6 +1353,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const name = getPlayerName();
   if (name) document.getElementById('playerNameInput').value = name;
   updateEloDisplay();
+  loadLeaderboard();
 
   // Auto-join from URL ?room=CODE
   const params = new URLSearchParams(location.search);
