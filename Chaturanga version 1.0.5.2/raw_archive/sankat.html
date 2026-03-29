@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sankat — Crisis Events — Chaturanga Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c96a;--dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;
+  --border:rgba(201,168,76,.18);--text:#f0e4c8;--muted:#8a7050;
+  --red:#e74c3c;--blue:#60a5fa;--sq:54px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
+
+/* ── nav ── */
+.nav{background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 20px;
+  display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;text-decoration:none}
+.nav-badge{font-size:.62rem;background:rgba(248,113,113,.12);color:#f87171;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(248,113,113,.25)}
+.proto-badge{font-size:.6rem;background:rgba(248,113,113,.08);color:#fca5a5;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(248,113,113,.15);margin-left:auto}
+
+/* ── LOBBY SCREEN ── */
+#lobbyScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100vh - 52px);padding:32px 20px;text-align:center}
+.lobby-eyebrow{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(201,168,76,.45);margin-bottom:10px}
+.lobby-title{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold2);font-weight:700;margin-bottom:6px}
+.lobby-sub{font-size:.88rem;color:var(--muted);line-height:1.65;max-width:500px;margin-bottom:28px}
+.sankat-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  width:100%;max-width:500px;margin-bottom:32px}
+.sp-card{background:var(--dark2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 6px;text-align:center}
+.sp-icon{font-size:1.4rem;margin-bottom:4px}
+.sp-name{font-size:.62rem;color:var(--muted);line-height:1.3}
+.lobby-btn{padding:13px 40px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.lobby-btn:hover{background:linear-gradient(135deg,#e8b52a,#c8960c);transform:translateY(-1px)}
+.rules-note{font-size:.72rem;color:rgba(201,168,76,.35);margin-top:14px;max-width:440px;line-height:1.5}
+
+/* ── GAME SCREEN ── */
+#gameScreen{display:none;flex-direction:column;align-items:center;padding:14px 16px 32px;gap:8px}
+
+/* sankat counter bar */
+.sankat-bar{display:flex;align-items:center;gap:10px;
+  width:100%;max-width:calc(var(--sq)*8 + 18px);
+  background:rgba(201,168,76,.05);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px}
+.sb-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.sb-counter{margin-left:auto;display:flex;gap:4px}
+.sb-pip{width:12px;height:12px;border-radius:50%;background:rgba(201,168,76,.15);
+  border:1px solid var(--border);transition:all .3s}
+.sb-pip.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px var(--gold)}
+.sb-pip.imminent{background:#f87171;border-color:#f87171;box-shadow:0 0 6px #f87171;
+  animation:pipPulse .6s ease-in-out infinite alternate}
+@keyframes pipPulse{from{opacity:1}to{opacity:.4}}
+
+/* active sankat banner */
+.active-sankat-banner{
+  width:100%;max-width:calc(var(--sq)*8 + 18px);
+  border-radius:8px;padding:8px 12px;font-size:.75rem;
+  display:flex;align-items:center;gap:8px;
+  border:1px solid;display:none}
+.asb-icon{font-size:1rem}
+.asb-name{font-family:'Cinzel',serif;font-size:.78rem}
+.asb-turns{margin-left:auto;font-size:.65rem;opacity:.7}
+
+/* player turn indicator */
+.turn-row{display:flex;gap:10px;width:100%;max-width:calc(var(--sq)*8 + 18px)}
+.turn-card{flex:1;border-radius:7px;padding:7px 10px;border:1px solid;
+  display:flex;align-items:center;gap:7px;transition:all .3s}
+.tc-p1{border-color:rgba(231,76,60,.2);background:rgba(231,76,60,.05)}
+.tc-p2{border-color:rgba(96,165,250,.2);background:rgba(96,165,250,.05);flex-direction:row-reverse;text-align:right}
+.tc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tc-p1 .tc-dot{background:#e74c3c}
+.tc-p2 .tc-dot{background:#60a5fa}
+.tc-name{font-size:.75rem;font-weight:500}
+.tc-p1 .tc-name{color:#f87171}
+.tc-p2 .tc-name{color:#93c5fd}
+.tc-active{font-size:.6rem;color:rgba(201,168,76,.5)}
+.turn-card.my-turn{box-shadow:0 0 12px -4px currentColor}
+.tc-p1.my-turn{box-shadow:0 0 12px -4px rgba(231,76,60,.5)}
+.tc-p2.my-turn{box-shadow:0 0 12px -4px rgba(96,165,250,.5)}
+
+/* board */
+.board-labels-top{display:flex;width:calc(var(--sq)*8)}
+.blt{width:var(--sq);text-align:center;font-size:.6rem;color:var(--muted);padding-bottom:2px}
+.board-row{display:flex;align-items:center}
+.board-rank{width:18px;display:flex;flex-direction:column}
+.board{display:grid;grid-template-columns:repeat(8,var(--sq));
+  border:2px solid rgba(201,168,76,.3);border-radius:2px}
+.sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background .1s}
+.sq.light{background:#e8d5b0}.sq.dark{background:#a07848}
+.sq.selected{background:rgba(201,168,76,.55)!important;outline:2px solid var(--gold);outline-offset:-2px}
+.sq.legal::after{content:'';width:28%;height:28%;background:rgba(0,0,0,.22);
+  border-radius:50%;display:block;pointer-events:none}
+.sq.legal-capture{outline:2px solid #f87171;outline-offset:-2px}
+.sq.last-from{background:rgba(201,168,76,.28)!important}
+.sq.last-to{background:rgba(201,168,76,.42)!important}
+.sq.sacred{background:rgba(127,119,221,.4)!important;
+  outline:2px solid #a099ee;outline-offset:-2px}
+.sq.fog-hint::after{display:none}
+.piece{font-size:calc(var(--sq)*.56);line-height:1;user-select:none;pointer-events:none;
+  text-shadow:0 1px 4px rgba(0,0,0,.5);transition:transform .12s}
+.sq:hover .piece{transform:scale(1.08)}
+
+.status-bar{font-size:.82rem;color:var(--gold);padding:6px 10px;
+  background:rgba(201,168,76,.07);border-radius:6px;
+  width:calc(var(--sq)*8 + 18px);text-align:center;border:1px solid var(--border);min-height:32px}
+.actions-row{display:flex;gap:8px;width:calc(var(--sq)*8 + 18px)}
+.action-btn{flex:1;padding:9px 12px;border-radius:7px;border:none;
+  font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.roll-btn{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;font-weight:600}
+.roll-btn:hover:not(:disabled){background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.roll-btn:disabled{opacity:.35;cursor:default}
+.forfeit-btn{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.forfeit-btn:hover:not(:disabled){border-color:#f87171;color:#f87171}
+.forfeit-btn:disabled{opacity:.3;cursor:default}
+.dice-row{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted);
+  width:calc(var(--sq)*8 + 18px)}
+.dice-face{font-size:1.5rem}
+.dice-piece{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold)}
+
+/* ── SACRIFICE UI ── */
+.sacrifice-overlay{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(10,7,2,.75);
+  display:none;align-items:center;justify-content:center;padding:16px}
+.sacrifice-overlay.show{display:flex}
+.sacrifice-card{background:var(--dark2);border:1px solid rgba(248,113,113,.3);
+  border-radius:12px;padding:22px 24px;max-width:380px;width:100%;text-align:center}
+.sc-icon{font-size:2rem;margin-bottom:8px}
+.sc-title{font-family:'Cinzel',serif;font-size:1rem;color:#f87171;margin-bottom:6px}
+.sc-sub{font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.sc-hint{font-size:.72rem;color:rgba(201,168,76,.4);margin-top:8px}
+
+/* ── SANKAT OVERLAY ── */
+#sankatOverlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(10,7,2,.88);
+  display:none;align-items:center;justify-content:center;padding:16px}
+#sankatOverlay.show{display:flex}
+.sankat-card{
+  max-width:460px;width:100%;text-align:center;
+  animation:sankatDrop .5s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes sankatDrop{
+  from{opacity:0;transform:scale(.85) translateY(-20px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.sk-seal{font-size:3.5rem;margin-bottom:12px;display:block;
+  animation:sealSpin .6s ease-out}
+@keyframes sealSpin{from{transform:rotate(-180deg) scale(0)}to{transform:rotate(0) scale(1)}}
+.sk-eyebrow{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(201,168,76,.45);margin-bottom:6px}
+.sk-crisis{font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;
+  margin-bottom:4px;line-height:1.2}
+.sk-sanskrit{font-family:'Cormorant Garamond',serif;font-size:.95rem;
+  font-style:italic;color:var(--muted);margin-bottom:16px}
+.sk-divider{width:60px;height:1px;margin:0 auto 16px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.sk-effect{font-size:.88rem;color:var(--text);line-height:1.65;margin-bottom:12px;
+  background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;padding:12px 16px}
+.sk-ref{font-size:.72rem;color:rgba(201,168,76,.35);font-style:italic;margin-bottom:20px;line-height:1.4}
+.sk-duration{display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,168,76,.1);border:1px solid var(--border);
+  border-radius:20px;padding:4px 14px;font-size:.75rem;color:var(--gold);margin-bottom:24px}
+.sk-btn{padding:12px 36px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.03em}
+.sk-btn:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+
+/* ── RESULT SCREEN ── */
+#resultScreen{display:none;flex-direction:column;align-items:center;
+  justify-content:center;min-height:calc(100vh - 52px);padding:40px 24px;text-align:center}
+.result-icon{font-size:3rem;margin-bottom:12px}
+.result-title{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold2);font-weight:700;margin-bottom:6px}
+.result-sub{font-size:.88rem;color:var(--muted);line-height:1.6;max-width:440px;margin-bottom:20px}
+.result-sankats{background:var(--dark2);border:1px solid var(--border);border-radius:10px;
+  padding:16px 20px;max-width:420px;width:100%;margin-bottom:24px;text-align:left}
+.rs-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.rs-event{display:flex;align-items:center;gap:8px;padding:5px 0;
+  border-bottom:1px solid rgba(201,168,76,.07);font-size:.78rem}
+.rs-event:last-child{border-bottom:none}
+.rs-event-icon{font-size:.9rem}
+.rs-event-name{color:var(--gold);font-size:.75rem}
+.rs-event-turn{color:var(--muted);margin-left:auto;font-size:.68rem}
+.result-btns{display:flex;gap:10px}
+.btn-primary{padding:11px 32px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.btn-ghost{padding:11px 24px;background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.85rem;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:520px){:root{--sq:40px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="game.html" class="nav-logo">Chaturanga</a>
+  <span class="nav-badge">⚡ Sankat — Crisis Events</span>
+  <span class="proto-badge">⚗ Prototype</span>
+</nav>
+
+<!-- ══ LOBBY ════════════════════════════════════════════════════ -->
+<div id="lobbyScreen">
+  <div class="lobby-eyebrow">Sankat — Crisis of the Battlefield</div>
+  <div class="lobby-title">The Ashtāpada Lives</div>
+  <div class="lobby-sub">
+    Every 10 turns, the Kurukshetra battlefield sends a Sankat — a crisis drawn from the Mahabharata.
+    The rules bend. For 3 turns, nothing is as it was. Then the next crisis comes.
+  </div>
+
+  <div class="sankat-preview" id="sankatPreview"></div>
+
+  <button class="lobby-btn" onclick="startGame()">
+    ⚔ Begin — 2 Player Hot Seat
+  </button>
+  <div class="rules-note">
+    Standard 2-player Chaturanga with dice. Capture the enemy Raja to win.
+    Sankat events trigger at turns 10, 20, 30… Each crisis lasts 3 turns unless stated otherwise.
+  </div>
+</div>
+
+<!-- ══ GAME ══════════════════════════════════════════════════════ -->
+<div id="gameScreen">
+
+  <!-- Sankat counter -->
+  <div class="sankat-bar">
+    <div>
+      <div class="sb-label">Sankat approaching</div>
+    </div>
+    <div class="sb-counter" id="sankatPips"></div>
+  </div>
+
+  <!-- Active sankat banner -->
+  <div class="active-sankat-banner" id="activeBanner">
+    <div class="asb-icon" id="asbIcon">⚡</div>
+    <div>
+      <div class="asb-name" id="asbName">—</div>
+      <div style="font-size:.65rem;color:var(--muted)" id="asbEffect">—</div>
+    </div>
+    <div class="asb-turns" id="asbTurns">— turns left</div>
+  </div>
+
+  <!-- Turn cards -->
+  <div class="turn-row">
+    <div class="tc-p1 turn-card" id="turnCard1">
+      <div class="tc-dot"></div>
+      <div>
+        <div class="tc-name">Player 1 — Red</div>
+        <div class="tc-active" id="tc1Active"></div>
+      </div>
+    </div>
+    <div class="tc-p2 turn-card" id="turnCard2">
+      <div>
+        <div class="tc-name">Player 2 — Blue</div>
+        <div class="tc-active" id="tc2Active"></div>
+      </div>
+      <div class="tc-dot"></div>
+    </div>
+  </div>
+
+  <div class="dice-row">
+    <span class="dice-face" id="diceFace">🎲</span>
+    <span class="dice-piece" id="dicePiece">Roll to begin</span>
+  </div>
+
+  <div class="board-labels-top" id="boardLabelsTop"></div>
+  <div class="board-row">
+    <div class="board-rank" id="boardRanks" style="display:flex;flex-direction:column"></div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="status-bar" id="statusBar">Roll the Pāśaka to begin.</div>
+  <div class="actions-row">
+    <button class="action-btn roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Pāśaka</button>
+    <button class="action-btn forfeit-btn" id="forfeitBtn" onclick="forfeitTurn()" disabled>🏳 Forfeit</button>
+  </div>
+</div>
+
+<!-- ══ RESULT ═════════════════════════════════════════════════════ -->
+<div id="resultScreen">
+  <div class="result-icon" id="resultIcon">🏆</div>
+  <div class="result-title" id="resultTitle">Victory!</div>
+  <div class="result-sub" id="resultSub">—</div>
+  <div class="result-sankats">
+    <div class="rs-label">Sankat Events This Battle</div>
+    <div id="resultSankatList"><div style="font-size:.75rem;color:var(--muted);padding:6px 0">None triggered.</div></div>
+  </div>
+  <div class="result-btns">
+    <button class="btn-primary" onclick="restartGame()">Play Again</button>
+    <button class="btn-ghost" onclick="goLobby()">Back to Lobby</button>
+  </div>
+</div>
+
+<!-- ══ SANKAT OVERLAY ═══════════════════════════════════════════ -->
+<div id="sankatOverlay">
+  <div class="sankat-card">
+    <span class="sk-seal" id="skSeal">⚡</span>
+    <div class="sk-eyebrow">Sankat — Crisis of the Battlefield</div>
+    <div class="sk-crisis" id="skCrisis">—</div>
+    <div class="sk-sanskrit" id="skSanskrit">—</div>
+    <div class="sk-divider"></div>
+    <div class="sk-effect" id="skEffect">—</div>
+    <div class="sk-ref" id="skRef">—</div>
+    <div class="sk-duration" id="skDuration">—</div>
+    <button class="sk-btn" onclick="dismissSankat()">Understood — Continue Battle</button>
+  </div>
+</div>
+
+<!-- ══ SACRIFICE OVERLAY ════════════════════════════════════════ -->
+<div class="sacrifice-overlay" id="sacrificeOverlay">
+  <div class="sacrifice-card">
+    <div class="sc-icon">⚖</div>
+    <div class="sc-title">Dharma Debt</div>
+    <div class="sc-sub">
+      Player <span id="sacrificePlayer">1</span> has more pieces on the board.<br>
+      Click one of your <strong>Naras (pawns)</strong> to remove it from the battlefield.
+    </div>
+    <div class="sc-hint">This is the cost of imbalance. Dharma demands equality.</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// SANKAT CARDS — 8 crisis events from the Mahabharata
+// ═══════════════════════════════════════════════════════════════
+const SANKAT_CARDS = [
+  {
+    id:'fog', name:'Fog of War', sanskrit:'युद्धरहस्य',
+    icon:'🌫', color:'rgba(150,150,150,.25)', borderColor:'rgba(150,150,150,.35)',
+    textColor:'#d1d5db',
+    effect:'Legal move indicators are hidden for 3 turns. You must calculate your own positions.',
+    ref:'On the night of Day 14, Krishna hid the sun itself to give Arjuna cover — vision became a weapon.',
+    duration:3,
+    applyEffect(state) { state.fogOfWar=true; },
+    removeEffect(state) { state.fogOfWar=false; }
+  },
+  {
+    id:'ratha_confined', name:'Ratha Breakdown', sanskrit:'रथभंग',
+    icon:'⚙', color:'rgba(248,113,113,.12)', borderColor:'rgba(248,113,113,.3)',
+    textColor:'#f87171',
+    effect:"Rathas (chariots) may move a maximum of 3 squares for 3 turns — their wheels are damaged.",
+    ref:"Karna's chariot wheel sank into the earth on Day 17, limiting his mobility at the worst possible moment.",
+    duration:3,
+    applyEffect(state) { state.rathaMaxRange=3; },
+    removeEffect(state) { delete state.rathaMaxRange; }
+  },
+  {
+    id:'nara_surge', name:'Infantry Surge', sanskrit:'पदातिधावन',
+    icon:'💨', color:'rgba(74,222,128,.1)', borderColor:'rgba(74,222,128,.3)',
+    textColor:'#4ade80',
+    effect:'Naras (pawns) may advance 2 squares forward instead of 1 for 3 turns.',
+    ref:'Bhima led the infantry at a full charge on Day 5, covering double the normal ground in a single surge.',
+    duration:3,
+    applyEffect(state) { state.naraSurge=true; },
+    removeEffect(state) { state.naraSurge=false; }
+  },
+  {
+    id:'danti_unleashed', name:'Elephant Rampage', sanskrit:'गजोद्धत',
+    icon:'🐘', color:'rgba(251,191,36,.1)', borderColor:'rgba(251,191,36,.3)',
+    textColor:'#fbbf24',
+    effect:'Dantis (elephants) may slide any number of diagonal squares for 3 turns — not just 2.',
+    ref:'Ashvatthama unleashed maddened war elephants on Day 15. They trampled everything in their path.',
+    duration:3,
+    applyEffect(state) { state.dantiUnleashed=true; },
+    removeEffect(state) { state.dantiUnleashed=false; }
+  },
+  {
+    id:'sacred_square', name:'Sacred Ground', sanskrit:'पवित्रभूमि',
+    icon:'✦', color:'rgba(127,119,221,.12)', borderColor:'rgba(127,119,221,.35)',
+    textColor:'#a099ee',
+    effect:'A random central square becomes sacred — no piece may land on it for 3 turns.',
+    ref:'Certain squares at Kurukshetra were sacred to the Devas. To defile them was to invite divine wrath.',
+    duration:3,
+    applyEffect(state, board) {
+      const candidates=['d4','e4','d5','e5','c4','f4','c5','f5','c3','f3','c6','f6'];
+      const empty=candidates.filter(sq=>!board.get(sq));
+      state.sacredSquare=empty.length?empty[Math.floor(Math.random()*empty.length)]:'d4';
+    },
+    removeEffect(state) { delete state.sacredSquare; }
+  },
+  {
+    id:'raja_council', name:'Raja in Council', sanskrit:'राजसभा',
+    icon:'👑', color:'rgba(201,168,76,.12)', borderColor:'rgba(201,168,76,.3)',
+    textColor:'#e8c96a',
+    effect:"The current player's Raja cannot move this turn. They are consulting the war council.",
+    ref:"Yudhishthira called a war council before each major engagement. During deliberation, the Raja cannot act.",
+    duration:1,
+    applyEffect(state, board, currentPlayer) { state.rajaImmobile=currentPlayer; },
+    removeEffect(state) { delete state.rajaImmobile; }
+  },
+  {
+    id:'cavalry_charge', name:'Cavalry Charge', sanskrit:'अश्वधावन',
+    icon:'🐴', color:'rgba(96,165,250,.1)', borderColor:'rgba(96,165,250,.3)',
+    textColor:'#93c5fd',
+    effect:'Ashwas (horses) may also move 1 step in any direction for 3 turns — cavalry in full charge.',
+    ref:"Satyaki's legendary cavalry charge on Day 14 broke through six defensive lines in a single charge.",
+    duration:3,
+    applyEffect(state) { state.cavalryCharge=true; },
+    removeEffect(state) { state.cavalryCharge=false; }
+  },
+  {
+    id:'dharma_debt', name:'Dharma Debt', sanskrit:'धर्मऋण',
+    icon:'⚖', color:'rgba(248,113,113,.1)', borderColor:'rgba(248,113,113,.25)',
+    textColor:'#fca5a5',
+    effect:'The player with more pieces must sacrifice one Nara (pawn) from the battlefield.',
+    ref:'When Yudhishthira wagered everything at dice, Dharma exacted its price. Balance must be restored.',
+    duration:0, // instant
+    applyEffect(state, board, currentPlayer) { state.dharmaDebt=true; },
+    removeEffect(state) { delete state.dharmaDebt; }
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD ENGINE
+// ═══════════════════════════════════════════════════════════════
+class Board {
+  constructor() { this.squares = new Map(); }
+  get(sq)        { return this.squares.get(sq) || null; }
+  set(sq, piece) { piece ? this.squares.set(sq,piece) : this.squares.delete(sq); }
+  delete(sq)     { this.squares.delete(sq); }
+  forEach(fn)    { this.squares.forEach(fn); }
+  static standard() {
+    const b = new Board();
+    const s = {
+      'a1':'0:rook','b1':'0:horse','c1':'0:elephant','d1':'0:king','f1':'0:elephant','g1':'0:horse','h1':'0:rook',
+      'a2':'0:pawn','b2':'0:pawn','c2':'0:pawn','d2':'0:pawn','e2':'0:pawn','f2':'0:pawn','g2':'0:pawn','h2':'0:pawn',
+      'a8':'1:rook','b8':'1:horse','c8':'1:elephant','d8':'1:king','f8':'1:elephant','g8':'1:horse','h8':'1:rook',
+      'a7':'1:pawn','b7':'1:pawn','c7':'1:pawn','d7':'1:pawn','e7':'1:pawn','f7':'1:pawn','g7':'1:pawn','h7':'1:pawn',
+    };
+    Object.entries(s).forEach(([sq,v])=>{const[o,t]=v.split(':');b.set(sq,{owner:+o,type:t});});
+    return b;
+  }
+}
+
+// getLegalMoves with sankat modifiers
+function getLegalMoves(board, from, forcedPiece, sankatState) {
+  const sk = sankatState || {};
+  const piece = board.get(from);
+  if (!piece) return [];
+  const f=from.charCodeAt(0)-97, r=parseInt(from[1]);
+  let moves=[];
+  const addSq=(nf,nr)=>{
+    if(nf<0||nf>7||nr<1||nr>8) return false;
+    const ns=String.fromCharCode(97+nf)+nr;
+    if(ns===sk.sacredSquare) return false; // sacred square blocked
+    const t=board.get(ns);
+    if(t&&t.owner===piece.owner) return false;
+    moves.push(ns); return !t;
+  };
+  const fp=forcedPiece;
+  if(fp&&fp!=='any'){
+    if(fp==='pawn-king'&&piece.type!=='pawn'&&piece.type!=='king') return [];
+    if(fp!=='pawn-king'&&piece.type!==fp) return [];
+  }
+  // Raja immobility check
+  if(piece.type==='king' && sk.rajaImmobile===piece.owner) return [];
+
+  switch(piece.type) {
+    case 'rook': {
+      const maxRange = sk.rathaMaxRange || 7;
+      [[0,1],[0,-1],[1,0],[-1,0]].forEach(([df,dr])=>{
+        for(let i=1;i<=maxRange;i++){
+          const nf=f+df*i,nr=r+dr*i;
+          if(nf<0||nf>7||nr<1||nr>8) break;
+          const ns=String.fromCharCode(97+nf)+nr;
+          if(ns===sk.sacredSquare) break;
+          const t=board.get(ns);
+          if(t){if(t.owner!==piece.owner)moves.push(ns);break;}
+          moves.push(ns);
+        }
+      });
+      break;
+    }
+    case 'horse': {
+      [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[2,-1],[-2,1],[-2,-1]].forEach(([df,dr])=>addSq(f+df,r+dr));
+      // Cavalry charge: also move 1 step any direction
+      if(sk.cavalryCharge)
+        [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([df,dr])=>addSq(f+df,r+dr));
+      break;
+    }
+    case 'elephant': {
+      if(sk.dantiUnleashed) {
+        // Bishop-like: any number of diagonal squares
+        [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([df,dr])=>{
+          for(let i=1;i<8;i++){
+            const nf=f+df*i,nr=r+dr*i;
+            if(nf<0||nf>7||nr<1||nr>8) break;
+            const ns=String.fromCharCode(97+nf)+nr;
+            if(ns===sk.sacredSquare) break;
+            const t=board.get(ns);
+            if(t){if(t.owner!==piece.owner)moves.push(ns);break;}
+            moves.push(ns);
+          }
+        });
+      } else {
+        [[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([df,dr])=>addSq(f+df,r+dr));
+      }
+      break;
+    }
+    case 'king':
+      [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([df,dr])=>addSq(f+df,r+dr));
+      break;
+    case 'pawn': {
+      const dir=piece.owner===0?1:-1;
+      const step=sk.naraSurge?2:1;
+      // Forward moves
+      for(let s=1;s<=step;s++){
+        const nr=r+dir*s;
+        if(nr<1||nr>8) break;
+        const ns=String.fromCharCode(97+f)+nr;
+        if(ns===sk.sacredSquare||board.get(ns)) break;
+        moves.push(ns);
+      }
+      // Diagonal captures
+      [[1,dir],[-1,dir]].forEach(([df,dr])=>{
+        const ns=String.fromCharCode(97+f+df)+(r+dr);
+        if(f+df>=0&&f+df<=7&&r+dr>=1&&r+dr<=8&&ns!==sk.sacredSquare){
+          const t=board.get(ns);if(t&&t.owner!==piece.owner)moves.push(ns);
+        }
+      });
+      break;
+    }
+  }
+  // Deduplicate
+  return [...new Set(moves)];
+}
+
+function getAllMoves(board, owner, fp, sk) {
+  const moves=[];
+  board.forEach((p,sq)=>{ if(p.owner===owner) getLegalMoves(board,sq,fp,sk).forEach(to=>moves.push({from:sq,to})); });
+  return moves;
+}
+
+const PV={pawn:1,horse:3,elephant:3,rook:5,king:100};
+function botGetMove(board, owner, fp, sk) {
+  const moves=getAllMoves(board,owner,fp,sk);
+  if(!moves.length) return null;
+  const scored=moves.map(m=>{
+    const t=board.get(m.to);
+    let s=t?PV[t.type]*10:0;
+    const tf=m.to.charCodeAt(0)-97, tr=parseInt(m.to[1]);
+    s+=Math.max(0,3-Math.abs(tf-3.5))+Math.max(0,3-Math.abs(tr-4.5));
+    board.forEach((p,sq)=>{
+      if(p.owner!==owner){const{f,r}={f:sq.charCodeAt(0)-97,r:parseInt(sq[1])};
+        s+=Math.max(0,6-Math.abs(tf-f)-Math.abs(tr-r))*0.3;}
+    });
+    return{...m,s};
+  });
+  scored.sort((a,b)=>b.s-a.s);
+  return scored.slice(0,Math.min(3,scored.length))[Math.floor(Math.random()*Math.min(3,scored.length))];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════════════
+const DICE_TO_PIECE={1:'rook',2:'any',3:'horse',4:'elephant',5:'any',6:'pawn-king'};
+const DICE_FACES=['—','⚀','⚁','⚂','⚃','⚄','⚅'];
+const PSYMBOLS={pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PNAMES={pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja'};
+const PCOLORS=['#e74c3c','#60a5fa'];
+const SANKAT_EVERY = 10; // every N human half-turns
+
+let G={};
+
+function initGame() {
+  G={
+    board: Board.standard(),
+    currentPlayer:0,
+    phase:'roll',
+    selectedSq:null, legalMoves:[], forcedPiece:null,
+    lastFrom:null, lastTo:null,
+    gameOver:false,
+    humanTurnCount:0,    // counts only human moves (both players)
+    turnCount:0,
+    sankatState:{},       // active sankat modifiers
+    activeSankat:null,    // current sankat card
+    sankatTurnsLeft:0,   // turns remaining for current effect
+    sankatHistory:[],     // for result screen
+    pendingSankat:null,   // card waiting to be shown
+    sacrificePending:false,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOBBY
+// ═══════════════════════════════════════════════════════════════
+function buildSankatPreview() {
+  const preview=document.getElementById('sankatPreview');
+  preview.innerHTML='';
+  SANKAT_CARDS.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='sp-card';
+    div.innerHTML=`<div class="sp-icon">${c.icon}</div><div class="sp-name">${c.name}</div>`;
+    preview.appendChild(div);
+  });
+}
+
+function startGame() {
+  initGame();
+  document.getElementById('lobbyScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='flex';
+  renderBoard();
+  updateTurnCards();
+  updateSankatBar();
+  enableRoll();
+}
+
+function restartGame() {
+  document.getElementById('resultScreen').style.display='none';
+  startGame();
+}
+
+function goLobby() {
+  document.getElementById('resultScreen').style.display='none';
+  document.getElementById('lobbyScreen').style.display='flex';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SANKAT SYSTEM
+// ═══════════════════════════════════════════════════════════════
+function pickNextSankat() {
+  // Pick a random card (not the same as the last one)
+  const last = G.activeSankat?.id;
+  const pool = SANKAT_CARDS.filter(c=>c.id!==last);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function triggerSankat() {
+  // Remove previous effect
+  if(G.activeSankat) {
+    G.activeSankat.removeEffect(G.sankatState);
+    G.activeSankat=null;
+  }
+
+  const card = pickNextSankat();
+  G.pendingSankat = card;
+
+  // Show overlay
+  document.getElementById('skSeal').textContent=card.icon;
+  document.getElementById('skCrisis').textContent=card.name;
+  document.getElementById('skCrisis').style.color=card.textColor;
+  document.getElementById('skSanskrit').textContent=card.sanskrit;
+  document.getElementById('skEffect').textContent=card.effect;
+  document.getElementById('skRef').textContent=card.ref;
+  document.getElementById('skDuration').textContent=
+    card.duration===0?'⚡ Instant effect':
+    card.duration===1?'⏱ This turn only':`⏱ Lasts ${card.duration} turns`;
+
+  const overlay=document.getElementById('sankatOverlay');
+  overlay.style.background=`radial-gradient(ellipse at center, ${card.color} 0%, rgba(10,7,2,.92) 70%)`;
+  overlay.style.borderColor=card.borderColor;
+  overlay.classList.add('show');
+}
+
+function dismissSankat() {
+  document.getElementById('sankatOverlay').classList.remove('show');
+  const card=G.pendingSankat;
+  if(!card) return;
+
+  // Apply effect
+  card.applyEffect(G.sankatState, G.board, G.currentPlayer);
+  G.activeSankat=card;
+  G.sankatTurnsLeft=card.duration;
+  G.sankatHistory.push({card, turn:G.turnCount});
+  G.pendingSankat=null;
+
+  // Instant effects (duration 0): handle special cases
+  if(card.id==='dharma_debt') {
+    handleDharmaDebt();
+    return;
+  }
+  if(card.duration===0) {
+    card.removeEffect(G.sankatState);
+    G.activeSankat=null;
+    G.sankatTurnsLeft=0;
+  }
+
+  updateActiveBanner();
+  updateSankatBar();
+  renderBoard();
+  // Re-check if current player can move after effect applied
+  if(G.phase==='move') {
+    const allMoves=getAllMoves(G.board,G.currentPlayer,G.forcedPiece,G.sankatState);
+    if(allMoves.length===0) setStatus('No moves available after the Sankat! Forfeit your turn.');
+  }
+}
+
+function handleDharmaDebt() {
+  // Count material for each player
+  let m0=0,m1=0;
+  G.board.forEach((p,sq)=>{ if(p.type!=='king'){p.owner===0?m0+=PV[p.type]:m1+=PV[p.type];} });
+  if(m0===m1) {
+    // Equal — no debt
+    G.activeSankat=null;
+    setStatus('Dharma is balanced — no sacrifice required.');
+    updateSankatBar();
+    return;
+  }
+  const richer=m0>m1?0:1;
+  G.sankatState.dharmaDebt=true;
+  G.sankatState.sacrificePlayer=richer;
+  G.sacrificePending=true;
+  document.getElementById('sacrificePlayer').textContent=richer+1;
+  document.getElementById('sacrificeOverlay').classList.add('show');
+  setStatus(`Player ${richer+1} must click one of their Naras to remove it.`);
+  renderBoard();
+}
+
+function updateSankatBar() {
+  const pips=document.getElementById('sankatPips');
+  pips.innerHTML='';
+  const turnsToNext=SANKAT_EVERY-(G.humanTurnCount%SANKAT_EVERY||SANKAT_EVERY);
+  const total=SANKAT_EVERY;
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='sb-pip';
+    const turnsAway=total-i;
+    if(turnsAway>turnsToNext) pip.classList.add('filled');
+    if(turnsToNext<=3&&turnsAway<=turnsToNext) pip.classList.add('imminent');
+    pips.appendChild(pip);
+  }
+}
+
+function updateActiveBanner() {
+  const banner=document.getElementById('activeBanner');
+  if(!G.activeSankat||G.sankatTurnsLeft<=0) {
+    banner.style.display='none';
+    return;
+  }
+  banner.style.display='flex';
+  banner.style.background=G.activeSankat.color;
+  banner.style.borderColor=G.activeSankat.borderColor;
+  document.getElementById('asbIcon').textContent=G.activeSankat.icon;
+  document.getElementById('asbName').textContent=G.activeSankat.name;
+  document.getElementById('asbEffect').textContent=G.activeSankat.effect.slice(0,80)+'…';
+  document.getElementById('asbTurns').textContent=
+    `${G.sankatTurnsLeft} turn${G.sankatTurnsLeft!==1?'s':''} left`;
+}
+
+function tickSankat() {
+  if(!G.activeSankat||G.sankatTurnsLeft<=0) return;
+  G.sankatTurnsLeft--;
+  if(G.sankatTurnsLeft<=0) {
+    G.activeSankat.removeEffect(G.sankatState);
+    G.activeSankat=null;
+    setStatus('The Sankat has passed. The Ashtāpada returns to normal — for now.');
+  }
+  updateActiveBanner();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderBoard() {
+  document.getElementById('boardLabelsTop').innerHTML=
+    ['a','b','c','d','e','f','g','h'].map(l=>`<div class="blt">${l}</div>`).join('');
+  document.getElementById('boardRanks').innerHTML=
+    Array.from({length:8},(_,i)=>`<div style="height:var(--sq);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--muted)">${8-i}</div>`).join('');
+
+  const boardEl=document.getElementById('board');
+  boardEl.innerHTML='';
+  const showLegal=!G.sankatState.fogOfWar;
+
+  for(let r=8;r>=1;r--) {
+    for(let fi=0;fi<8;fi++) {
+      const sq=String.fromCharCode(97+fi)+r;
+      const piece=G.board.get(sq);
+      const isLight=(fi+r)%2===0;
+      let cls=`sq ${isLight?'light':'dark'}`;
+      if(sq===G.selectedSq) cls+=' selected';
+      if(showLegal&&G.legalMoves.includes(sq)) cls+=piece?' legal-capture':' legal';
+      if(sq===G.lastFrom) cls+=' last-from';
+      if(sq===G.lastTo)   cls+=' last-to';
+      if(sq===G.sankatState.sacredSquare) cls+=' sacred';
+
+      const cell=document.createElement('div');
+      cell.className=cls;
+      if(piece) {
+        const span=document.createElement('span');
+        span.className='piece';
+        span.textContent=PSYMBOLS[piece.type];
+        span.style.color=PCOLORS[piece.owner];
+        cell.appendChild(span);
+      }
+      cell.addEventListener('click',()=>onSquareClick(sq));
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLICK & MOVE
+// ═══════════════════════════════════════════════════════════════
+function onSquareClick(sq) {
+  // Sacrifice mode: player must remove one of their pawns
+  if(G.sacrificePending) {
+    const piece=G.board.get(sq);
+    if(piece&&piece.type==='pawn'&&piece.owner===G.sankatState.sacrificePlayer) {
+      G.board.delete(sq);
+      G.sacrificePending=false;
+      delete G.sankatState.dharmaDebt;
+      delete G.sankatState.sacrificePlayer;
+      if(G.activeSankat&&G.activeSankat.id==='dharma_debt') {
+        G.activeSankat=null;
+      }
+      document.getElementById('sacrificeOverlay').classList.remove('show');
+      setStatus('Dharma restored. Continue the battle.');
+      updateActiveBanner();
+      renderBoard();
+    } else {
+      setStatus('Click one of YOUR Naras (pawns) to sacrifice.');
+    }
+    return;
+  }
+
+  if(G.phase!=='move'||G.gameOver) return;
+  const piece=G.board.get(sq);
+  if(G.selectedSq) {
+    if(G.legalMoves.includes(sq)) { executeMove(G.selectedSq,sq); return; }
+    if(piece&&piece.owner===G.currentPlayer) {
+      G.selectedSq=sq;
+      G.legalMoves=getLegalMoves(G.board,sq,G.forcedPiece,G.sankatState);
+    } else { G.selectedSq=null; G.legalMoves=[]; }
+  } else {
+    if(piece&&piece.owner===G.currentPlayer) {
+      const moves=getLegalMoves(G.board,sq,G.forcedPiece,G.sankatState);
+      if(moves.length){G.selectedSq=sq;G.legalMoves=moves;}
+      else setStatus(`No legal moves for this ${PNAMES[piece.type]} right now.`);
+    }
+  }
+  renderBoard();
+}
+
+function executeMove(from, to) {
+  const piece=G.board.get(from);
+  const target=G.board.get(to);
+  G.lastFrom=from; G.lastTo=to;
+  G.board.set(to,piece); G.board.delete(from);
+  G.selectedSq=null; G.legalMoves=[]; G.forcedPiece=null;
+
+  // Pawn promotion
+  if(piece.type==='pawn'){
+    const ri=parseInt(to[1]);
+    if((piece.owner===0&&ri===8)||(piece.owner===1&&ri===1))
+      G.board.set(to,{owner:piece.owner,type:'rook'});
+  }
+
+  if(target&&target.type==='king'){
+    renderBoard();
+    setTimeout(()=>endGame(G.currentPlayer),400);
+    return;
+  }
+
+  // Count human move + check sankat trigger + tick
+  G.humanTurnCount++;
+  G.turnCount++;
+
+  if(G.humanTurnCount%SANKAT_EVERY===0) {
+    // Trigger new sankat after current move renders
+    G.phase='sankat';
+    renderBoard();
+    updateSankatBar();
+    setTimeout(triggerSankat, 600);
+    return;
+  }
+
+  tickSankat();
+
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  G.phase='roll';
+  renderBoard();
+  updateTurnCards();
+  updateSankatBar();
+  enableRoll();
+  setStatus(`Player ${G.currentPlayer+1} (${G.currentPlayer===0?'Red':'Blue'}) — roll the Pāśaka.`);
+}
+
+// Called after dismissing sankat to resume game
+function resumeAfterSankat() {
+  G.humanTurnCount++;   // sankat turn counts too  
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  G.phase='roll';
+  renderBoard();
+  updateTurnCards();
+  updateSankatBar();
+  enableRoll();
+  setStatus(`Sankat resolved. Player ${G.currentPlayer+1} — roll the Pāśaka.`);
+}
+
+// ── Patch dismissSankat to handle flow correctly ──────────────
+const _origDismiss = dismissSankat;
+// Override: after instant-resolve or non-sacrifice events, resume game
+function dismissSankat() {
+  document.getElementById('sankatOverlay').classList.remove('show');
+  const card=G.pendingSankat;
+  if(!card) return;
+
+  card.applyEffect(G.sankatState, G.board, G.currentPlayer);
+  G.activeSankat=card;
+  G.sankatTurnsLeft=card.duration;
+  G.sankatHistory.push({card, turn:G.turnCount+1});
+  G.pendingSankat=null;
+
+  if(card.id==='dharma_debt') {
+    handleDharmaDebt();
+    // After sacrifice, player continues their turn (resume is called after sacrifice)
+    // But actually, Dharma Debt interrupts BEFORE the turn switch — so we need to resume properly
+    // We'll handle this: after sacrifice resolved, call resumeAfterSankat
+    const origSacrificeClick = onSquareClick;
+    return;
+  }
+
+  if(card.duration===0) {
+    card.removeEffect(G.sankatState);
+    G.activeSankat=null;
+    G.sankatTurnsLeft=0;
+  }
+
+  updateActiveBanner();
+  resumeAfterSankat();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DICE & FORFEIT
+// ═══════════════════════════════════════════════════════════════
+function rollDice() {
+  if(G.gameOver||G.phase!=='roll') return;
+  const face=Math.ceil(Math.random()*6);
+  G.forcedPiece=DICE_TO_PIECE[face];
+  document.getElementById('diceFace').textContent=DICE_FACES[face];
+  document.getElementById('dicePiece').textContent=
+    G.forcedPiece==='any'?'Any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece];
+
+  const allMoves=getAllMoves(G.board,G.currentPlayer,G.forcedPiece,G.sankatState);
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('forfeitBtn').disabled=false;
+  G.phase='move';
+
+  const sk=G.activeSankat;
+  const skNote=sk?` [${sk.name} active]`:'';
+  if(allMoves.length===0) setStatus(`No ${PNAMES[G.forcedPiece]||'pieces'} can move — forfeit.${skNote}`);
+  else {
+    const pName=G.forcedPiece==='any'?'Any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece];
+    setStatus(`Player ${G.currentPlayer+1}: ${pName}${skNote} — select a piece.`);
+  }
+  if(G.sankatState.fogOfWar) setStatus(document.getElementById('statusBar').textContent+' (Fog of War — no hints)');
+}
+
+function forfeitTurn() {
+  if(G.gameOver) return;
+  G.forcedPiece=null; G.selectedSq=null; G.legalMoves=[];
+  G.humanTurnCount++;
+  G.turnCount++;
+
+  if(G.humanTurnCount%SANKAT_EVERY===0) {
+    G.phase='sankat';
+    updateSankatBar();
+    setTimeout(triggerSankat, 300);
+    return;
+  }
+
+  tickSankat();
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  G.phase='roll';
+  renderBoard();
+  updateTurnCards();
+  updateSankatBar();
+  enableRoll();
+  setStatus(`Turn forfeited. Player ${G.currentPlayer+1} — roll the Pāśaka.`);
+}
+
+function enableRoll() {
+  document.getElementById('rollBtn').disabled=false;
+  document.getElementById('forfeitBtn').disabled=true;
+  document.getElementById('diceFace').textContent='🎲';
+  document.getElementById('dicePiece').textContent='Roll to continue';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════════════
+function setStatus(t){ document.getElementById('statusBar').textContent=t; }
+
+function updateTurnCards() {
+  document.getElementById('turnCard1').classList.toggle('my-turn',G.currentPlayer===0);
+  document.getElementById('turnCard2').classList.toggle('my-turn',G.currentPlayer===1);
+  document.getElementById('tc1Active').textContent=G.currentPlayer===0?'← Your turn':'';
+  document.getElementById('tc2Active').textContent=G.currentPlayer===1?'Your turn →':'';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// END GAME
+// ═══════════════════════════════════════════════════════════════
+function endGame(winner) {
+  G.gameOver=true;
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('resultScreen').style.display='flex';
+  document.getElementById('resultIcon').textContent=winner===0?'🔴':'🔵';
+  document.getElementById('resultTitle').textContent=`Player ${winner+1} Wins the Battle!`;
+  document.getElementById('resultSub').textContent=
+    `${G.turnCount} turns played. ${G.sankatHistory.length} Sankat${G.sankatHistory.length!==1?'s':''} unleashed upon the Ashtāpada.`;
+
+  const listEl=document.getElementById('resultSankatList');
+  if(G.sankatHistory.length) {
+    listEl.innerHTML=G.sankatHistory.map(h=>`
+      <div class="rs-event">
+        <div class="rs-event-icon">${h.card.icon}</div>
+        <div class="rs-event-name">${h.card.name}</div>
+        <div class="rs-event-turn">Turn ${h.turn}</div>
+      </div>`).join('');
+  } else {
+    listEl.innerHTML='<div style="font-size:.75rem;color:var(--muted);padding:6px 0">No crisis events triggered.</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+buildSankatPreview();
+
+// After sacrifice is resolved, resume the game
+// We patch the sacrifice click handler to call resumeAfterSankat
+const _origOnSquareClick = onSquareClick;
+function onSquareClick(sq) {
+  if(G.sacrificePending) {
+    const piece=G.board.get(sq);
+    if(piece&&piece.type==='pawn'&&piece.owner===G.sankatState.sacrificePlayer) {
+      G.board.delete(sq);
+      G.sacrificePending=false;
+      delete G.sankatState.dharmaDebt;
+      delete G.sankatState.sacrificePlayer;
+      if(G.activeSankat&&G.activeSankat.id==='dharma_debt') {
+        G.activeSankat=null;
+      }
+      document.getElementById('sacrificeOverlay').classList.remove('show');
+      updateActiveBanner();
+      renderBoard();
+      resumeAfterSankat();
+    } else {
+      setStatus(`Click one of YOUR Naras (pawns) to sacrifice. Player ${(G.sankatState.sacrificePlayer||0)+1}'s turn.`);
+    }
+    return;
+  }
+
+  if(G.phase!=='move'||G.gameOver) return;
+  const piece=G.board.get(sq);
+  if(G.selectedSq) {
+    if(G.legalMoves.includes(sq)) { executeMove(G.selectedSq,sq); return; }
+    if(piece&&piece.owner===G.currentPlayer) {
+      G.selectedSq=sq;
+      G.legalMoves=getLegalMoves(G.board,sq,G.forcedPiece,G.sankatState);
+    } else { G.selectedSq=null; G.legalMoves=[]; }
+  } else {
+    if(piece&&piece.owner===G.currentPlayer) {
+      const moves=getLegalMoves(G.board,sq,G.forcedPiece,G.sankatState);
+      if(moves.length){G.selectedSq=sq;G.legalMoves=moves;setStatus(`${PNAMES[piece.type]} selected — ${moves.length} legal move${moves.length!==1?'s':''}`);}
+      else setStatus(`No legal moves for this ${PNAMES[piece.type]} right now.`);
+    }
+  }
+  renderBoard();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sena — Chaturanga Clans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--gold:#c9a84c;--gold-dim:#8a6830;--bg:#0a0800;--bg-card:#0f0c00;--bg-mid:#1a1200;
+  --border:#2a2200;--text:#ccc;--dim:#777;--red:#e84040;--blue:#4da6ff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Outfit,sans-serif;min-height:100vh}
+nav{background:#0d0a00;border-bottom:1px solid var(--border);padding:0 20px;
+  display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:Cinzel,serif;color:var(--gold);font-size:16px;font-weight:700;text-decoration:none}
+.nav-links a{color:var(--dim);font-size:13px;text-decoration:none;margin-left:18px;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.page{max-width:960px;margin:0 auto;padding:32px 20px 60px}
+h1{font-family:Cinzel,serif;color:var(--gold);font-size:26px;font-weight:700;margin-bottom:4px}
+.sub{color:var(--dim);font-size:13px;margin-bottom:28px}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px}
+.tab{padding:10px 22px;font-size:13px;color:var(--dim);cursor:pointer;background:none;
+  border:none;border-bottom:2px solid transparent;transition:all .2s;font-family:Outfit,sans-serif}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover:not(.active){color:var(--text)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card-title{font-family:Cinzel,serif;color:var(--gold);font-size:15px;margin-bottom:16px}
+.sena-hero{background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));
+  border:1px solid var(--gold-dim);border-radius:14px;padding:28px;margin-bottom:24px;text-align:center}
+.sena-emblem{font-size:56px;margin-bottom:10px;filter:drop-shadow(0 0 14px #c9a84c44)}
+.sena-name{font-family:Cinzel,serif;color:var(--gold);font-size:22px;font-weight:700;margin-bottom:3px}
+.sena-vyuha{color:var(--dim);font-size:12px;letter-spacing:.08em;margin-bottom:14px}
+.sena-stats{display:flex;justify-content:center;gap:32px;margin-top:14px;flex-wrap:wrap}
+.stat-val{font-family:Cinzel,serif;color:var(--gold);font-size:22px;font-weight:700;text-align:center}
+.stat-lbl{color:var(--dim);font-size:11px;margin-top:2px;text-align:center}
+.invite-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;display:flex;align-items:center;gap:10px;margin-top:14px}
+.invite-code{font-family:monospace;color:var(--gold);font-size:16px;letter-spacing:.14em;flex:1}
+.copy-btn{padding:6px 14px;font-size:12px;background:var(--bg-mid);border:1px solid var(--border);
+  color:var(--dim);border-radius:6px;cursor:pointer;font-family:Outfit,sans-serif;white-space:nowrap;transition:all .2s}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold)}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:14px}
+.member-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;gap:12px}
+.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;font-family:Cinzel,serif;flex-shrink:0}
+.member-name{font-size:13px;color:var(--text);font-weight:500}
+.member-meta{font-size:11px;color:var(--dim);margin-top:2px}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;margin-top:4px;display:inline-block}
+.badge-s{background:#c9a84c22;color:var(--gold);border:1px solid #c9a84c44}
+.badge-y{background:#4da6ff22;color:var(--blue);border:1px solid #4da6ff44}
+.granth-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.g-chip{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--bg-mid);border:1px solid var(--border);color:#999}
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;color:var(--dim);margin-bottom:6px;display:block;letter-spacing:.06em;text-transform:uppercase}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;color:var(--text);font-size:14px;font-family:Outfit,sans-serif;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--gold-dim)}
+.form-input::placeholder{color:#444}
+.emblem-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.emblem-opt{width:44px;height:44px;border-radius:8px;border:2px solid var(--border);background:var(--bg);
+  cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.emblem-opt:hover,.emblem-opt.selected{border-color:var(--gold);background:var(--bg-mid)}
+.btn{padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+  border:none;font-family:Outfit,sans-serif;transition:all .2s;letter-spacing:.02em}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#a07830);color:#0a0800}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.btn-danger{background:transparent;border:1px solid var(--red);color:var(--red);font-size:13px;padding:8px 16px}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-size:11px;color:var(--dim);text-align:left;padding:6px 12px;
+  border-bottom:1px solid var(--border);letter-spacing:.06em;text-transform:uppercase}
+.lb-table td{padding:10px 12px;border-bottom:1px solid #111;font-size:13px}
+.lb-table tr:last-child td{border-bottom:none}
+.lb-table tr:hover td{background:var(--bg-card)}
+.empty{text-align:center;padding:48px 20px;color:var(--dim)}
+.empty i{font-size:32px;color:var(--border);margin-bottom:14px;display:block}
+.empty p{margin-bottom:20px;font-size:14px}
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--bg-mid);
+  border:1px solid var(--gold);color:var(--gold);padding:9px 22px;border-radius:20px;
+  font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;font-family:Outfit,sans-serif}
+@media(max-width:600px){.sena-stats{gap:16px}.member-grid{grid-template-columns:1fr 1fr}
+  #joinGrid{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="../../">⚔ Chaturanga</a>
+  <div class="nav-links">
+    <a href="../../">Game</a>
+    <a href="../../">Lobby</a>
+    <a href="granth.html">Granth</a>
+    <a href="sena.html" class="active">Sena</a>
+  </div>
+</nav>
+
+<div class="page">
+  <h1>🏴 Sena</h1>
+  <p class="sub">Form a war clan of up to 6 warriors. Carry your banner into every battle.</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('mine',this)">My Sena</button>
+    <button class="tab" onclick="switchTab('join',this)">Join / Create</button>
+    <button class="tab" onclick="switchTab('lb',this)">Leaderboard</button>
+  </div>
+
+  <div id="panel-mine" class="panel active"><div id="mySenaContent"></div></div>
+
+  <div id="panel-join" class="panel">
+    <div id="joinGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-plus-circle" style="margin-right:8px"></i>Create Sena</div>
+        <div class="form-group">
+          <label class="form-label">Sena Name</label>
+          <input class="form-input" id="createName" placeholder="Garuda Sena…" maxlength="28">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Warrior Name</label>
+          <input class="form-input" id="createPlayer" placeholder="Name in battle" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Emblem</label>
+          <div class="emblem-grid" id="emblemPicker"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vyuha (Formation)</label>
+          <select class="form-input" id="createVyuha">
+            <option value="Garuda">Garuda — Eagle</option>
+            <option value="Chakra">Chakra — Wheel</option>
+            <option value="Makara">Makara — Crocodile</option>
+            <option value="Vajra">Vajra — Diamond</option>
+            <option value="Kurma">Kurma — Turtle</option>
+            <option value="Sarpa">Sarpa — Serpent</option>
+          </select>
+        </div>
+        <button class="btn btn-gold" onclick="createSena()" style="width:100%">
+          <i class="fas fa-flag"></i> Raise the Banner
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-door-open" style="margin-right:8px"></i>Join Sena</div>
+        <div class="form-group">
+          <label class="form-label">Invite Code</label>
+          <input class="form-input" id="joinCode" placeholder="XXXX-XXXX" maxlength="9"
+            style="letter-spacing:.1em;font-size:16px;text-transform:uppercase">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Warrior Name</label>
+          <input class="form-input" id="joinPlayer" placeholder="Name in battle" maxlength="20">
+        </div>
+        <button class="btn btn-outline" onclick="joinSena()" style="width:100%">
+          <i class="fas fa-shield-halved"></i> Join the Clan
+        </button>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--border)">
+          <p style="font-size:12px;color:var(--dim);line-height:1.7">
+            Get an invite code from your Senapati.<br>
+            Each Sena holds up to <strong style="color:var(--text)">6 warriors</strong>.<br>
+            Your ELO and Granth achievements are visible to all members.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-lb" class="panel">
+    <div class="card">
+      <div class="card-title">⚔️ Sena Leaderboard — This Week</div>
+      <div id="lbContent"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+const KEY_SENA='chaturanga_sena', KEY_REG='chaturanga_sena_registry';
+const KEY_GRANTH='chaturanga_granth_unlocked', KEY_ELO='chaturanga_online_elo';
+const KEY_PNAME='chaturanga_player_name';
+const COLORS=['#e84040','#4da6ff','#ffd700','#7be07b'];
+const EMBLEMS=['🦅','🐉','⚡','🌙','🔱','🏹','🗡️','🛡️','🌸','🦁','🐯','⚔️'];
+const MAX_MEMBERS=6;
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+let _tt;
+function toast(msg,dur=2800){const e=document.getElementById('toast');e.textContent=msg;e.style.opacity='1';clearTimeout(_tt);_tt=setTimeout(()=>e.style.opacity='0',dur);}
+function randCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const r=()=>c[Math.floor(Math.random()*c.length)];return`${r()}${r()}${r()}${r()}-${r()}${r()}${r()}${r()}`;}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+const loadSena=()=>{try{return JSON.parse(localStorage.getItem(KEY_SENA));}catch{return null;}};
+const saveSena=s=>localStorage.setItem(KEY_SENA,JSON.stringify(s));
+const loadReg=()=>{try{return JSON.parse(localStorage.getItem(KEY_REG))||{};}catch{return{};}};
+const saveReg=r=>localStorage.setItem(KEY_REG,JSON.stringify(r));
+const loadGranth=()=>{try{return JSON.parse(localStorage.getItem(KEY_GRANTH))||{};}catch{return{};}};
+const myElo=()=>parseInt(localStorage.getItem(KEY_ELO))||1000;
+const myName=()=>localStorage.getItem(KEY_PNAME)||'Warrior';
+
+// ── EMBLEM PICKER ─────────────────────────────────────────────────────────────
+let _emblem=EMBLEMS[0];
+(function initPicker(){
+  const grid=document.getElementById('emblemPicker');
+  EMBLEMS.forEach((e,i)=>{
+    const d=document.createElement('div');
+    d.className='emblem-opt'+(i===0?' selected':'');
+    d.textContent=e;
+    d.onclick=()=>{document.querySelectorAll('.emblem-opt').forEach(x=>x.classList.remove('selected'));d.classList.add('selected');_emblem=e;};
+    grid.appendChild(d);
+  });
+})();
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='lb')renderLeaderboard();
+}
+
+// ── CREATE ────────────────────────────────────────────────────────────────────
+function createSena(){
+  const name=document.getElementById('createName').value.trim();
+  const player=document.getElementById('createPlayer').value.trim()||myName();
+  const vyuha=document.getElementById('createVyuha').value;
+  if(!name){toast('⚠ Enter a Sena name');return;}
+  if(loadSena()){toast('Leave your current Sena first.');return;}
+  const code=randCode();
+  const sena={id:'sena_'+Date.now(),name,emblem:_emblem,vyuha,code,createdAt:Date.now(),
+    members:[{name:player,role:'Senapati',elo:myElo(),joinedAt:Date.now(),granth:loadGranth(),weekWins:0,weekLosses:0}]};
+  saveSena(sena);
+  const reg=loadReg();
+  reg[code]={name,emblem:_emblem,vyuha,id:sena.id,memberCount:1,weekWins:0};
+  saveReg(reg);
+  localStorage.setItem(KEY_PNAME,player);
+  toast('🏴 Sena raised! Share your invite code with allies.');
+  renderMySena();
+  switchTab('mine',document.querySelector('.tab'));
+}
+
+// ── JOIN ──────────────────────────────────────────────────────────────────────
+function joinSena(){
+  const code=document.getElementById('joinCode').value.trim().toUpperCase();
+  const player=document.getElementById('joinPlayer').value.trim()||myName();
+  if(!code){toast('⚠ Enter an invite code');return;}
+  if(loadSena()){toast('Leave your current Sena first.');return;}
+  const reg=loadReg();
+  if(!reg[code]){toast('❌ Invalid code. Ask your Senapati for the correct code.');return;}
+  if((reg[code].memberCount||1)>=MAX_MEMBERS){toast('❌ This Sena is full (6 warriors max).');return;}
+  const sena={id:reg[code].id,name:reg[code].name,emblem:reg[code].emblem,vyuha:reg[code].vyuha,code,
+    createdAt:Date.now(),members:[{name:player,role:'Yoddha',elo:myElo(),joinedAt:Date.now(),granth:loadGranth(),weekWins:0,weekLosses:0}]};
+  saveSena(sena);
+  reg[code].memberCount=(reg[code].memberCount||1)+1;
+  saveReg(reg);
+  localStorage.setItem(KEY_PNAME,player);
+  toast('⚔️ Joined '+sena.name+'!');
+  renderMySena();
+  switchTab('mine',document.querySelector('.tab'));
+}
+
+// ── LEAVE ──────────────────────────────────────────────────────────────────────
+function leaveSena(){
+  if(!confirm('Leave your Sena? This cannot be undone.'))return;
+  const sena=loadSena();
+  if(sena){const reg=loadReg();if(reg[sena.code]){reg[sena.code].memberCount=Math.max(0,(reg[sena.code].memberCount||1)-1);saveReg(reg);}}
+  localStorage.removeItem(KEY_SENA);
+  toast('You have left the Sena.');
+  renderMySena();
+}
+
+// ── RECORD GAME ───────────────────────────────────────────────────────────────
+function recordSenaGame(won){
+  const sena=loadSena();if(!sena)return;
+  const me=sena.members[0];if(!me)return;
+  if(won)me.weekWins=(me.weekWins||0)+1;else me.weekLosses=(me.weekLosses||0)+1;
+  me.elo=myElo();me.granth=loadGranth();
+  saveSena(sena);
+  const reg=loadReg();
+  if(reg[sena.code]){if(won)reg[sena.code].weekWins=(reg[sena.code].weekWins||0)+1;saveReg(reg);}
+}
+
+// ── RENDER MY SENA ────────────────────────────────────────────────────────────
+function renderMySena(){
+  const el=document.getElementById('mySenaContent');
+  const sena=loadSena();
+  if(!sena){
+    el.innerHTML=`<div class="empty"><i class="fas fa-shield-halved"></i><p>You don't belong to a Sena yet.</p>
+      <button class="btn btn-gold" onclick="switchTab('join',document.querySelectorAll('.tab')[1])">Join or Create a Sena</button></div>`;
+    return;
+  }
+  const totalWins=sena.members.reduce((a,m)=>a+(m.weekWins||0),0);
+  const totalGames=sena.members.reduce((a,m)=>a+(m.weekWins||0)+(m.weekLosses||0),0);
+  const avgElo=Math.round(sena.members.reduce((a,m)=>a+(m.elo||1000),0)/sena.members.length);
+  const granthCount=Object.keys(loadGranth()).length;
+
+  const memberCards=sena.members.map((m,i)=>{
+    const col=COLORS[i%4];
+    const initials=m.name.slice(0,2).toUpperCase();
+    const gKeys=Object.keys(m.granth||{}).slice(0,3);
+    return`<div class="member-card">
+      <div class="avatar" style="background:${col}22;color:${col};border:1px solid ${col}44">${initials}</div>
+      <div>
+        <div class="member-name">${esc(m.name)}</div>
+        <div class="member-meta">ELO ${m.elo} · ${m.weekWins||0}W ${m.weekLosses||0}L</div>
+        <span class="badge ${m.role==='Senapati'?'badge-s':'badge-y'}">${m.role}</span>
+        ${gKeys.length?`<div class="granth-chips">${gKeys.map(k=>`<span class="g-chip">${esc(k.replace(/_/g,' '))}</span>`).join('')}</div>`:''}
+      </div></div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div class="sena-hero">
+      <div class="sena-emblem">${sena.emblem}</div>
+      <div class="sena-name">${esc(sena.name)}</div>
+      <div class="sena-vyuha">${sena.vyuha} Vyuha · ${sena.members.length}/${MAX_MEMBERS} warriors</div>
+      <div class="sena-stats">
+        <div><div class="stat-val">${totalWins}</div><div class="stat-lbl">Wins this week</div></div>
+        <div><div class="stat-val">${totalGames}</div><div class="stat-lbl">Battles</div></div>
+        <div><div class="stat-val">${avgElo}</div><div class="stat-lbl">Avg ELO</div></div>
+        <div><div class="stat-val">${granthCount}</div><div class="stat-lbl">Granth entries</div></div>
+      </div>
+      <div class="invite-box">
+        <span style="font-size:11px;color:var(--dim);white-space:nowrap">INVITE CODE</span>
+        <span class="invite-code">${sena.code}</span>
+        <button class="copy-btn" onclick="navigator.clipboard?.writeText('${sena.code}').then(()=>toast('✓ Copied!')).catch(()=>toast('Code: ${sena.code}'))">
+          <i class="fas fa-copy"></i> Copy</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-users" style="margin-right:8px"></i>Warriors (${sena.members.length}/${MAX_MEMBERS})</div>
+      <div class="member-grid">${memberCards}</div>
+    </div>
+    <button class="btn btn-danger" onclick="leaveSena()"><i class="fas fa-door-open"></i> Leave Sena</button>`;
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
+function renderLeaderboard(){
+  const el=document.getElementById('lbContent');
+  const entries=Object.values(loadReg()).filter(s=>s.name).sort((a,b)=>(b.weekWins||0)-(a.weekWins||0));
+  if(!entries.length){
+    el.innerHTML='<div class="empty" style="padding:24px"><i class="fas fa-trophy"></i><p>No Senas have battled this week yet.</p></div>';return;
+  }
+  const medals=['🥇','🥈','🥉'];
+  const rows=entries.slice(0,20).map((s,i)=>`<tr>
+    <td style="width:40px;text-align:center;font-size:16px">${medals[i]||`<span style="color:var(--dim)">${i+1}</span>`}</td>
+    <td style="font-size:22px;width:40px">${s.emblem||'🏴'}</td>
+    <td><span style="font-family:Cinzel,serif;color:var(--gold);font-size:13px">${esc(s.name)}</span>
+        <span style="font-size:11px;color:var(--dim);margin-left:8px">${s.vyuha||''}</span></td>
+    <td style="color:var(--blue);font-weight:600">${s.weekWins||0} W</td>
+    <td style="color:var(--dim);font-size:12px">${s.memberCount||1} warriors</td>
+  </tr>`).join('');
+  el.innerHTML=`<table class="lb-table"><thead><tr><th></th><th></th><th>Sena</th><th>Wins</th><th>Size</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ── HOOKS ────────────────────────────────────────────────────────────────────
+const _prev=window.onBotGameEnd;
+window.onBotGameEnd=function(won){recordSenaGame(won);if(typeof _prev==='function')_prev(won);};
+document.addEventListener('DOMContentLoaded',()=>{
+  const prev=window.onEloUpdate;
+  window.onEloUpdate=function(name,delta){recordSenaGame(delta>0);if(typeof prev==='function')prev(name,delta);};
+});
+window.SenaSystem={recordSenaGame,loadSena};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderMySena();
+</script>
+</body>
+</html>

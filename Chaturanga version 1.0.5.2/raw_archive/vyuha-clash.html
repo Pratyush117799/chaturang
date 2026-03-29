@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vyuha Clash — Chaturanga Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c96a;--dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;
+  --border:rgba(201,168,76,.18);--text:#f0e4c8;--muted:#8a7050;
+  --red:#e74c3c;--blue:#60a5fa;--sq:54px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
+
+/* ── nav ── */
+.nav{background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 20px;
+  display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;text-decoration:none}
+.nav-badge{font-size:.62rem;background:rgba(201,168,76,.12);color:var(--muted);
+  padding:2px 8px;border-radius:10px;border:1px solid var(--border)}
+.proto-badge{font-size:.6rem;background:rgba(248,113,113,.12);color:#f87171;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(248,113,113,.25);margin-left:auto}
+
+/* ── screens ── */
+.screen{display:none;min-height:calc(100vh - 52px)}
+.screen.active{display:flex}
+
+/* ── PICK SCREEN ── */
+#pickScreen,#pick2Screen{flex-direction:column;align-items:center;padding:28px 16px 40px}
+.pick-header{text-align:center;margin-bottom:24px}
+.pick-eyebrow{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(201,168,76,.45);margin-bottom:8px}
+.pick-title{font-family:'Cinzel',serif;font-size:1.6rem;color:var(--gold2);font-weight:700;margin-bottom:4px}
+.pick-sub{font-size:.82rem;color:var(--muted);line-height:1.5}
+.pick-player-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;
+  border-radius:20px;font-size:.75rem;font-weight:600;margin-bottom:16px;
+  font-family:'Cinzel',serif}
+.badge-p1{background:rgba(231,76,60,.12);color:#f87171;border:1px solid rgba(231,76,60,.25)}
+.badge-p2{background:rgba(96,165,250,.12);color:#93c5fd;border:1px solid rgba(96,165,250,.25)}
+
+.formation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  width:100%;max-width:780px;margin-bottom:24px}
+@media(max-width:600px){.formation-grid{grid-template-columns:1fr 1fr}}
+
+.f-card{background:var(--dark2);border:1px solid var(--border);border-radius:10px;
+  padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.f-card:hover{border-color:var(--gold);background:var(--dark3);transform:translateY(-2px)}
+.f-card.selected{border-color:var(--gold2);background:var(--dark3);
+  box-shadow:0 0 20px rgba(201,168,76,.15)}
+.f-icon{font-size:1.4rem;margin-bottom:6px}
+.f-name{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);margin-bottom:2px}
+.f-sanskrit{font-size:.62rem;color:var(--muted);margin-bottom:8px;font-style:italic}
+.f-style{font-size:.6rem;padding:2px 7px;border-radius:8px;font-weight:500;margin-bottom:8px;display:inline-block}
+.style-aggressive{background:rgba(231,76,60,.12);color:#f87171;border:1px solid rgba(231,76,60,.2)}
+.style-defensive{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.style-pincer{background:rgba(96,165,250,.12);color:#93c5fd;border:1px solid rgba(96,165,250,.2)}
+.style-escort{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+.style-piercing{background:rgba(127,119,221,.12);color:#a099ee;border:1px solid rgba(127,119,221,.2)}
+.style-enveloping{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+
+/* mini board preview */
+.mini-board{display:grid;grid-template-columns:repeat(8,1fr);
+  border:1px solid rgba(201,168,76,.2);border-radius:2px;margin-bottom:8px;
+  width:100%;aspect-ratio:1}
+.mini-sq{display:flex;align-items:center;justify-content:center;font-size:.55rem;line-height:1}
+.mini-sq.light{background:#2a2015}
+.mini-sq.dark{background:#1a150d}
+.mini-sq.p0{color:var(--red)}
+.mini-sq.p1{color:var(--blue)}
+
+.f-desc{font-size:.68rem;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.f-counter{font-size:.6rem;color:rgba(201,168,76,.4);font-style:italic}
+.f-check{position:absolute;top:8px;right:8px;font-size:1rem;color:var(--gold2);display:none}
+.f-card.selected .f-check{display:block}
+
+.confirm-btn{padding:12px 40px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;
+  opacity:.4;pointer-events:none}
+.confirm-btn.ready{opacity:1;pointer-events:auto}
+.confirm-btn.ready:hover{background:linear-gradient(135deg,#e8b52a,#c8960c);transform:translateY(-1px)}
+
+/* ── PRIVACY SCREEN ── */
+#privacyScreen{flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center}
+.privacy-icon{font-size:4rem;margin-bottom:16px}
+.privacy-title{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold2);margin-bottom:8px}
+.privacy-sub{font-size:.88rem;color:var(--muted);line-height:1.6;max-width:400px;margin-bottom:32px}
+.privacy-formation{background:rgba(201,168,76,.07);border:1px solid var(--border);
+  border-radius:10px;padding:14px 20px;margin-bottom:28px;display:inline-block}
+.pf-locked{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(201,168,76,.4);margin-bottom:4px}
+.pf-name{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold)}
+
+/* ── GAME SCREEN ── */
+#gameScreen{flex-direction:column;align-items:center;padding:16px;gap:10px}
+.formation-banners{display:flex;gap:12px;width:100%;max-width:calc(var(--sq)*8 + 24px);
+  margin-bottom:4px}
+.fb{flex:1;border-radius:8px;padding:8px 12px;border:1px solid;display:flex;align-items:center;gap:8px}
+.fb-p1{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.25)}
+.fb-p2{background:rgba(96,165,250,.08);border-color:rgba(96,165,250,.25);flex-direction:row-reverse;text-align:right}
+.fb-icon{font-size:1.2rem}
+.fb-name{font-family:'Cinzel',serif;font-size:.8rem}
+.fb-p1 .fb-name{color:#f87171}
+.fb-p2 .fb-name{color:#93c5fd}
+.fb-sanskrit{font-size:.62rem;color:var(--muted)}
+.fb-turn-dot{width:8px;height:8px;border-radius:50%;margin-left:auto;flex-shrink:0;
+  transition:background .3s,box-shadow .3s}
+.fb-turn-dot.active{box-shadow:0 0 8px currentColor}
+
+/* board */
+.board-labels-top{display:flex;width:calc(var(--sq)*8)}
+.blt{width:var(--sq);text-align:center;font-size:.6rem;color:var(--muted);padding-bottom:2px}
+.board-row{display:flex;align-items:center}
+.board-rank{width:18px;font-size:.6rem;color:var(--muted);text-align:center}
+.board{display:grid;grid-template-columns:repeat(8,var(--sq));
+  border:2px solid rgba(201,168,76,.3);border-radius:2px}
+.sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background .1s}
+.sq.light{background:#e8d5b0}.sq.dark{background:#a07848}
+.sq.selected{background:rgba(201,168,76,.55)!important;outline:2px solid var(--gold);outline-offset:-2px}
+.sq.legal::after{content:'';width:28%;height:28%;background:rgba(0,0,0,.22);
+  border-radius:50%;display:block;pointer-events:none}
+.sq.legal-capture{outline:2px solid #f87171;outline-offset:-2px}
+.sq.last-from{background:rgba(201,168,76,.28)!important}
+.sq.last-to{background:rgba(201,168,76,.42)!important}
+.piece{font-size:calc(var(--sq)*.56);line-height:1;user-select:none;pointer-events:none;
+  text-shadow:0 1px 4px rgba(0,0,0,.5);transition:transform .12s}
+.sq:hover .piece{transform:scale(1.08)}
+
+.status-bar{font-size:.82rem;color:var(--gold);padding:6px 10px;
+  background:rgba(201,168,76,.07);border-radius:6px;
+  width:calc(var(--sq)*8 + 18px);text-align:center;border:1px solid var(--border);min-height:32px}
+.actions-row{display:flex;gap:8px;width:calc(var(--sq)*8 + 18px)}
+.action-btn{flex:1;padding:9px 12px;border-radius:7px;border:none;
+  font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.roll-btn{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;font-weight:600}
+.roll-btn:hover:not(:disabled){background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.roll-btn:disabled{opacity:.35;cursor:default}
+.forfeit-btn{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.forfeit-btn:hover:not(:disabled){border-color:#f87171;color:#f87171}
+.forfeit-btn:disabled{opacity:.3;cursor:default}
+.dice-row{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted);
+  width:calc(var(--sq)*8 + 18px)}
+.dice-face{font-size:1.5rem}
+.dice-piece{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold)}
+
+/* ── RESULT SCREEN ── */
+#resultScreen{flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.result-icon{font-size:3rem;margin-bottom:12px}
+.result-title{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold2);font-weight:700;margin-bottom:6px}
+.result-sub{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.result-clash{display:flex;align-items:center;gap:16px;margin-bottom:24px;
+  background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:10px;padding:16px 24px}
+.rc-formation{text-align:center}
+.rc-icon{font-size:2rem}
+.rc-name{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold);margin-top:4px}
+.rc-label{font-size:.65rem;color:var(--muted);margin-top:2px}
+.rc-vs{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--muted)}
+.result-btns{display:flex;gap:10px}
+.btn-primary{padding:11px 32px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.btn-ghost{padding:11px 24px;background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.85rem;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:520px){
+  :root{--sq:40px}
+  .result-clash{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="game.html" class="nav-logo">Chaturanga</a>
+  <span class="nav-badge">Vyuha Clash</span>
+  <span class="proto-badge">⚗ Prototype</span>
+</nav>
+
+<!-- ══ PICK P1 ═══════════════════════════════════════════════ -->
+<div id="pickScreen" class="screen active">
+  <div class="pick-header">
+    <div class="pick-eyebrow">Vyuha Clash — Formation Battle</div>
+    <div class="pick-title">Choose Your Formation</div>
+    <div class="pick-sub">Select the Vyuha you will deploy on the Ashtāpada.<br>Your choice remains secret from your opponent.</div>
+  </div>
+  <div class="pick-player-badge badge-p1">⚔ Player 1 — Red Army</div>
+  <div class="formation-grid" id="pickGrid1"></div>
+  <button class="confirm-btn" id="confirmBtn1" onclick="lockP1()">
+    Lock Formation — Pass to Player 2 →
+  </button>
+</div>
+
+<!-- ══ PRIVACY SCREEN ════════════════════════════════════════ -->
+<div id="privacyScreen" class="screen">
+  <div class="privacy-icon">🙈</div>
+  <div class="privacy-title">Formation Locked</div>
+  <div class="privacy-sub">Player 1 has chosen their formation. Pass the device to Player 2 without showing the screen.</div>
+  <div class="privacy-formation">
+    <div class="pf-locked">Player 1 has chosen</div>
+    <div class="pf-name" id="privacyLocked">— Locked —</div>
+  </div>
+  <button class="btn-primary" onclick="showPick2()">
+    Player 2 Ready → Choose Formation
+  </button>
+</div>
+
+<!-- ══ PICK P2 ════════════════════════════════════════════════ -->
+<div id="pick2Screen" class="screen">
+  <div class="pick-header">
+    <div class="pick-eyebrow">Vyuha Clash — Formation Battle</div>
+    <div class="pick-title">Choose Your Formation</div>
+    <div class="pick-sub">Select the Vyuha you will deploy. Player 1's choice is sealed — you cannot see it.</div>
+  </div>
+  <div class="pick-player-badge badge-p2">⚔ Player 2 — Blue Army</div>
+  <div class="formation-grid" id="pickGrid2"></div>
+  <button class="confirm-btn" id="confirmBtn2" onclick="startBattle()">
+    Begin the Clash ⚔
+  </button>
+</div>
+
+<!-- ══ GAME SCREEN ════════════════════════════════════════════ -->
+<div id="gameScreen" class="screen">
+  <div class="formation-banners">
+    <div class="fb fb-p1">
+      <div class="fb-icon" id="fb1Icon">🦅</div>
+      <div>
+        <div class="fb-name" id="fb1Name">—</div>
+        <div class="fb-sanskrit" id="fb1Sanskrit">—</div>
+      </div>
+      <div class="fb-turn-dot" id="dot1" style="background:#e74c3c"></div>
+    </div>
+    <div class="fb fb-p2">
+      <div class="fb-turn-dot" id="dot2" style="background:#60a5fa"></div>
+      <div>
+        <div class="fb-name" id="fb2Name">—</div>
+        <div class="fb-sanskrit" id="fb2Sanskrit">—</div>
+      </div>
+      <div class="fb-icon" id="fb2Icon">🐢</div>
+    </div>
+  </div>
+
+  <div class="dice-row">
+    <span class="dice-face" id="diceFace">🎲</span>
+    <span class="dice-piece" id="dicePiece">Roll to begin</span>
+  </div>
+
+  <div class="board-labels-top" id="boardLabelsTop"></div>
+  <div class="board-row">
+    <div class="board-rank" id="boardRanks" style="display:flex;flex-direction:column"></div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="status-bar" id="statusBar">Roll the Pāśaka to begin.</div>
+  <div class="actions-row">
+    <button class="action-btn roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Pāśaka</button>
+    <button class="action-btn forfeit-btn" id="forfeitBtn" onclick="forfeitTurn()" disabled>🏳 Forfeit</button>
+  </div>
+</div>
+
+<!-- ══ RESULT SCREEN ══════════════════════════════════════════ -->
+<div id="resultScreen" class="screen">
+  <div class="result-icon" id="resultIcon">🏆</div>
+  <div class="result-title" id="resultTitle">Victory!</div>
+  <div class="result-sub" id="resultSub">—</div>
+  <div class="result-clash">
+    <div class="rc-formation">
+      <div class="rc-icon" id="rcIcon1">—</div>
+      <div class="rc-name" id="rcName1">—</div>
+      <div class="rc-label" id="rcLabel1">Player 1</div>
+    </div>
+    <div class="rc-vs">vs</div>
+    <div class="rc-formation">
+      <div class="rc-icon" id="rcIcon2">—</div>
+      <div class="rc-name" id="rcName2">—</div>
+      <div class="rc-label" id="rcLabel2">Player 2</div>
+    </div>
+  </div>
+  <div class="result-btns">
+    <button class="btn-primary" onclick="resetGame()">Play Again</button>
+    <button class="btn-ghost" onclick="showScreen('pickScreen')">Change Formations</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// FORMATION DATA
+// 6 classical Vyuhas adapted to 8×8 Chaturanga
+// p0 defines Player 1 (Red, bottom). Player 2 (Blue, top) is auto-mirrored.
+// ═══════════════════════════════════════════════════════════════
+const FORMATIONS = [
+  {
+    id:'garuda', name:'Garuda Vyuha', sanskrit:'गरुड व्यूह',
+    icon:'🦅', style:'Aggressive', styleClass:'style-aggressive',
+    desc:'Eagle formation. Cavalry wings sweep outward while the centre wedge drives deep.',
+    counter:'Krauncha (Heron)',
+    strength:'Flanking power', weakness:'Open centre file',
+    // Rank 1: rook-horse-elephant-[gap]-king-elephant-horse-rook
+    p0rank1: { a:'rook',b:'horse',c:'elephant',e:'king',f:'elephant',g:'horse',h:'rook' },
+    p0pawns: ['a','b','c','d','e','f','g','h'], // all rank 2
+  },
+  {
+    id:'kurma', name:'Kurma Vyuha', sanskrit:'कूर्म व्यूह',
+    icon:'🐢', style:'Defensive', styleClass:'style-defensive',
+    desc:'Tortoise shell. Rathas pulled inward to shield the Raja, horses guard the flanks.',
+    counter:'Garuda (Eagle)',
+    strength:'Near-impenetrable shell', weakness:'Slow to attack',
+    // Rank 1: horse-rook-elephant-king-elephant-rook-horse-[gap]
+    p0rank1: { a:'horse',b:'rook',c:'elephant',d:'king',f:'elephant',g:'rook',h:'horse' },
+    p0pawns: ['a','b','c','d','e','f','g','h'],
+  },
+  {
+    id:'makara', name:'Makara Vyuha', sanskrit:'मकर व्यूह',
+    icon:'🐊', style:'Pincer', styleClass:'style-pincer',
+    desc:'Crocodile mouth. Wide flanks draw the enemy in, then snap shut with Ratha strikes.',
+    counter:'Shakata (Cart)',
+    strength:'Powerful flank attacks', weakness:'Weak centre',
+    // Rank 1: rook-elephant-horse-[gap]-king-horse-elephant-rook
+    p0rank1: { a:'rook',b:'elephant',c:'horse',e:'king',f:'horse',g:'elephant',h:'rook' },
+    p0pawns: ['a','b','c','d','e','f','g','h'],
+  },
+  {
+    id:'shakata', name:'Shakata Vyuha', sanskrit:'शकट व्यूह',
+    icon:'🛡', style:'Escort', styleClass:'style-escort',
+    desc:'Cart formation. Elephants guard the corners, Rathas flank the Raja closely.',
+    counter:'Padma (Lotus)',
+    strength:'Protecting the Raja', weakness:'Predictable pattern',
+    // Rank 1: elephant-horse-rook-[gap]-king-rook-horse-elephant
+    p0rank1: { a:'elephant',b:'horse',c:'rook',e:'king',f:'rook',g:'horse',h:'elephant' },
+    p0pawns: ['a','b','c','d','e','f','g','h'],
+  },
+  {
+    id:'krauncha', name:'Krauncha Vyuha', sanskrit:'क्रौञ्च व्यूह',
+    icon:'🦢', style:'Piercing', styleClass:'style-piercing',
+    desc:'Heron spear. Narrow formation with advanced centre pawns forming a deadly tip.',
+    counter:'Garuda (Eagle)',
+    strength:'Deep central penetration', weakness:'Exposed flanks',
+    // Rank 1: rook-[gap]-horse-elephant-king-elephant-horse-rook
+    p0rank1: { a:'rook',c:'horse',d:'elephant',e:'king',f:'elephant',g:'horse',h:'rook' },
+    // Centre pawns advanced to rank 3, flank pawns stay rank 2
+    p0pawns: ['a','b','g','h'],      // rank 2
+    p0advancedPawns: ['c','d','e','f'], // rank 3
+  },
+  {
+    id:'padma', name:'Padma Vyuha', sanskrit:'पद्म व्यूह',
+    icon:'🌸', style:'Enveloping', styleClass:'style-enveloping',
+    desc:'Lotus petals. A-file left open to draw the enemy in, then the formation closes around them.',
+    counter:'Krauncha (Heron)',
+    strength:'Enveloping trap', weakness:'Open a-file',
+    // Rank 1: [gap]-rook-horse-elephant-king-elephant-horse-rook
+    p0rank1: { b:'rook',c:'horse',d:'elephant',e:'king',f:'elephant',g:'horse',h:'rook' },
+    p0pawns: ['a','b','c','d','e','f','g','h'],
+  },
+];
+
+// Build boardState for a formation — owner 0 = P1 (bottom), owner 1 = P2 (top)
+function buildBoardState(f1, f2) {
+  const state = {};
+  // P1 (owner 0): rank 1 pieces, rank 2/3 pawns
+  Object.entries(f1.p0rank1).forEach(([file, type]) => {
+    state[file + '1'] = '0:' + type;
+  });
+  (f1.p0pawns || []).forEach(file => { state[file + '2'] = '0:pawn'; });
+  (f1.p0advancedPawns || []).forEach(file => { state[file + '3'] = '0:pawn'; });
+
+  // P2 (owner 1): mirror — rank 1→8, rank 2→7, rank 3→6
+  Object.entries(f2.p0rank1).forEach(([file, type]) => {
+    state[file + '8'] = '1:' + type;
+  });
+  (f2.p0pawns || []).forEach(file => { state[file + '7'] = '1:pawn'; });
+  (f2.p0advancedPawns || []).forEach(file => { state[file + '6'] = '1:pawn'; });
+
+  return state;
+}
+
+// Build mini-board squares for formation card preview (P1 only, ranks 1-3)
+function buildMiniPreview(f) {
+  const cells = Array(64).fill(null); // index = (7-rank)*8 + file
+  const SYMBOLS = { king:'♚', rook:'♜', horse:'♞', elephant:'♝', pawn:'♟' };
+  Object.entries(f.p0rank1).forEach(([file, type]) => {
+    const fi = file.charCodeAt(0)-97;
+    const ri = 0; // rank 1 = bottom row
+    cells[(7-ri)*8 + fi] = { type, owner:0 };
+  });
+  (f.p0pawns||[]).forEach(file => {
+    const fi = file.charCodeAt(0)-97;
+    cells[(7-1)*8 + fi] = { type:'pawn', owner:0 };
+  });
+  (f.p0advancedPawns||[]).forEach(file => {
+    const fi = file.charCodeAt(0)-97;
+    cells[(7-2)*8 + fi] = { type:'pawn', owner:0 };
+  });
+  return cells;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD ENGINE
+// ═══════════════════════════════════════════════════════════════
+class Board {
+  constructor() { this.squares = new Map(); }
+  get(sq)        { return this.squares.get(sq) || null; }
+  set(sq, piece) { piece ? this.squares.set(sq, piece) : this.squares.delete(sq); }
+  delete(sq)     { this.squares.delete(sq); }
+  forEach(fn)    { this.squares.forEach(fn); }
+  static from(obj) {
+    const b = new Board();
+    Object.entries(obj).forEach(([sq,v]) => {
+      const[o,t]=v.split(':'); b.set(sq,{owner:+o,type:t});
+    });
+    return b;
+  }
+}
+
+function getLegalMoves(board, from, forcedPiece) {
+  const piece = board.get(from);
+  if (!piece) return [];
+  const f = from.charCodeAt(0)-97, r = parseInt(from[1]);
+  const moves = [];
+  const addSq = (nf,nr) => {
+    if(nf<0||nf>7||nr<1||nr>8) return false;
+    const ns=String.fromCharCode(97+nf)+nr;
+    const t=board.get(ns);
+    if(t&&t.owner===piece.owner) return false;
+    moves.push(ns); return !t;
+  };
+  const fp = forcedPiece;
+  if (fp && fp!=='any') {
+    if (fp==='pawn-king'&&piece.type!=='pawn'&&piece.type!=='king') return [];
+    if (fp!=='pawn-king'&&piece.type!==fp) return [];
+  }
+  switch(piece.type) {
+    case 'rook':
+      [[0,1],[0,-1],[1,0],[-1,0]].forEach(([df,dr])=>{
+        for(let i=1;i<8;i++){
+          const nf=f+df*i,nr=r+dr*i;
+          if(nf<0||nf>7||nr<1||nr>8) break;
+          const ns=String.fromCharCode(97+nf)+nr;
+          const t=board.get(ns);
+          if(t){if(t.owner!==piece.owner)moves.push(ns);break;}
+          moves.push(ns);
+        }
+      }); break;
+    case 'horse':
+      [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[2,-1],[-2,1],[-2,-1]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'elephant':
+      [[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'king':
+      [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'pawn':
+      const dir=piece.owner===0?1:-1;
+      const fwd=String.fromCharCode(97+f)+(r+dir);
+      if(r+dir>=1&&r+dir<=8&&!board.get(fwd)) moves.push(fwd);
+      [[1,dir],[-1,dir]].forEach(([df,dr])=>{
+        const ns=String.fromCharCode(97+f+df)+(r+dr);
+        if(f+df>=0&&f+df<=7&&r+dr>=1&&r+dr<=8){const t=board.get(ns);if(t&&t.owner!==piece.owner)moves.push(ns);}
+      }); break;
+  }
+  return moves;
+}
+
+function getAllMoves(board, owner, fp) {
+  const moves=[];
+  board.forEach((p,sq)=>{ if(p.owner===owner) getLegalMoves(board,sq,fp).forEach(to=>moves.push({from:sq,to})); });
+  return moves;
+}
+
+const PV={pawn:1,horse:3,elephant:3,rook:5,king:100};
+function botGetMove(board, owner, fp) {
+  const moves=getAllMoves(board,owner,fp);
+  if(!moves.length) return null;
+  const scored=moves.map(m=>{
+    const t=board.get(m.to);
+    let s=t?PV[t.type]*10:0;
+    const{f:tf,r:tr}={f:m.to.charCodeAt(0)-97,r:parseInt(m.to[1])};
+    s+=Math.max(0,3-Math.abs(tf-3.5))+Math.max(0,3-Math.abs(tr-4.5)); // centrality
+    board.forEach((p,sq)=>{
+      if(p.owner!==owner){const{f,r}={f:sq.charCodeAt(0)-97,r:parseInt(sq[1])};
+        s+=Math.max(0,6-Math.abs(tf-f)-Math.abs(tr-r))*0.3;}
+    });
+    return{...m,s};
+  });
+  scored.sort((a,b)=>b.s-a.s);
+  const top=scored.slice(0,Math.min(3,scored.length));
+  return top[Math.floor(Math.random()*top.length)];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════════════
+const DICE_TO_PIECE={1:'rook',2:'any',3:'horse',4:'elephant',5:'any',6:'pawn-king'};
+const DICE_FACES=['—','⚀','⚁','⚂','⚃','⚄','⚅'];
+const PSYMBOLS={pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PNAMES={pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja'};
+const PCOLORS=['#e74c3c','#60a5fa'];
+
+let G={};
+let chosen1=null, chosen2=null;
+
+function gameReset() {
+  G={
+    board:null, currentPlayer:0, phase:'roll',
+    selectedSq:null, legalMoves:[], forcedPiece:null,
+    lastFrom:null, lastTo:null, gameOver:false,
+    turnCount:0, captures:0
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCREENS
+// ═══════════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function resetGame() {
+  chosen1=null; chosen2=null;
+  document.querySelectorAll('.f-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('confirmBtn1').classList.remove('ready');
+  document.getElementById('confirmBtn2').classList.remove('ready');
+  showScreen('pickScreen');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FORMATION PICKER
+// ═══════════════════════════════════════════════════════════════
+function buildGrid(gridId, confirmId, player) {
+  const grid=document.getElementById(gridId);
+  grid.innerHTML='';
+  FORMATIONS.forEach(f=>{
+    const cells=buildMiniPreview(f);
+    const SYMS={king:'♚',rook:'♜',horse:'♞',elephant:'♝',pawn:'♟'};
+    let miniHTML='';
+    cells.forEach((cell,i)=>{
+      const fi=i%8, ri=Math.floor(i/8);
+      const isLight=(fi+(7-ri))%2===0;
+      if(cell) {
+        miniHTML+=`<div class="mini-sq ${isLight?'light':'dark'} ${cell.owner===0?'p0':'p1'}">${SYMS[cell.type]||''}</div>`;
+      } else {
+        miniHTML+=`<div class="mini-sq ${isLight?'light':'dark'}"></div>`;
+      }
+    });
+
+    const div=document.createElement('div');
+    div.className='f-card';
+    div.id=`fc-${player}-${f.id}`;
+    div.innerHTML=`
+      <div class="f-check">✓</div>
+      <div class="f-icon">${f.icon}</div>
+      <div class="f-name">${f.name}</div>
+      <div class="f-sanskrit">${f.sanskrit}</div>
+      <div class="f-style ${f.styleClass}">${f.style}</div>
+      <div class="mini-board">${miniHTML}</div>
+      <div class="f-desc">${f.desc}</div>
+      <div class="f-counter">Countered by: ${f.counter}</div>
+    `;
+    div.onclick=()=>selectFormation(f.id, player, confirmId);
+    grid.appendChild(div);
+  });
+}
+
+function selectFormation(id, player, confirmId) {
+  const prefix=`fc-${player}-`;
+  document.querySelectorAll(`[id^="${prefix}"]`).forEach(c=>c.classList.remove('selected'));
+  document.getElementById(prefix+id).classList.add('selected');
+  if(player===1) chosen1=id; else chosen2=id;
+  document.getElementById(confirmId).classList.add('ready');
+}
+
+function lockP1() {
+  if(!chosen1) return;
+  const f=FORMATIONS.find(x=>x.id===chosen1);
+  document.getElementById('privacyLocked').textContent=f.name;
+  showScreen('privacyScreen');
+}
+
+function showPick2() {
+  buildGrid('pickGrid2','confirmBtn2',2);
+  showScreen('pick2Screen');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// START BATTLE
+// ═══════════════════════════════════════════════════════════════
+function startBattle() {
+  if(!chosen2) return;
+  const f1=FORMATIONS.find(x=>x.id===chosen1);
+  const f2=FORMATIONS.find(x=>x.id===chosen2);
+
+  // Formation banners
+  document.getElementById('fb1Icon').textContent=f1.icon;
+  document.getElementById('fb1Name').textContent=f1.name;
+  document.getElementById('fb1Sanskrit').textContent=f1.sanskrit;
+  document.getElementById('fb2Icon').textContent=f2.icon;
+  document.getElementById('fb2Name').textContent=f2.name;
+  document.getElementById('fb2Sanskrit').textContent=f2.sanskrit;
+
+  gameReset();
+  G.board=Board.from(buildBoardState(f1, f2));
+  showScreen('gameScreen');
+  renderBoard();
+  updateTurnDots();
+  enableRoll();
+  setStatus('Player 1 (Red) begins — roll the Pāśaka.');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderBoard() {
+  document.getElementById('boardLabelsTop').innerHTML=
+    ['a','b','c','d','e','f','g','h'].map(l=>`<div class="blt">${l}</div>`).join('');
+  document.getElementById('boardRanks').innerHTML=
+    Array.from({length:8},(_,i)=>`<div style="height:var(--sq);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--muted)">${8-i}</div>`).join('');
+
+  const boardEl=document.getElementById('board');
+  boardEl.innerHTML='';
+  for(let r=8;r>=1;r--) {
+    for(let fi=0;fi<8;fi++) {
+      const sq=String.fromCharCode(97+fi)+r;
+      const piece=G.board.get(sq);
+      const isLight=(fi+r)%2===0;
+      let cls=`sq ${isLight?'light':'dark'}`;
+      if(sq===G.selectedSq) cls+=' selected';
+      if(G.legalMoves.includes(sq)) cls+=piece?' legal-capture':' legal';
+      if(sq===G.lastFrom) cls+=' last-from';
+      if(sq===G.lastTo)   cls+=' last-to';
+      const cell=document.createElement('div');
+      cell.className=cls;
+      if(piece) {
+        const span=document.createElement('span');
+        span.className='piece';
+        span.textContent=PSYMBOLS[piece.type];
+        span.style.color=PCOLORS[piece.owner];
+        cell.appendChild(span);
+      }
+      cell.addEventListener('click',()=>onSquareClick(sq));
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLICK & MOVE
+// ═══════════════════════════════════════════════════════════════
+function onSquareClick(sq) {
+  if(G.phase!=='move'||G.gameOver) return;
+  const piece=G.board.get(sq);
+  if(G.selectedSq) {
+    if(G.legalMoves.includes(sq)) { executeMove(G.selectedSq,sq); return; }
+    if(piece&&piece.owner===G.currentPlayer) {
+      G.selectedSq=sq; G.legalMoves=getLegalMoves(G.board,sq,G.forcedPiece);
+    } else { G.selectedSq=null; G.legalMoves=[]; }
+  } else {
+    if(piece&&piece.owner===G.currentPlayer) {
+      const moves=getLegalMoves(G.board,sq,G.forcedPiece);
+      if(moves.length){G.selectedSq=sq;G.legalMoves=moves;setStatus(`${PNAMES[piece.type]} selected — ${moves.length} move${moves.length!==1?'s':''} available.`);}
+      else setStatus(`No legal moves for this ${PNAMES[piece.type]} with this dice.`);
+    }
+  }
+  renderBoard();
+}
+
+function executeMove(from, to) {
+  const piece=G.board.get(from);
+  const target=G.board.get(to);
+  G.lastFrom=from; G.lastTo=to;
+  G.board.set(to,piece); G.board.delete(from);
+  G.selectedSq=null; G.legalMoves=[]; G.forcedPiece=null;
+
+  // Pawn promotion
+  if(piece.type==='pawn'){
+    const ri=parseInt(to[1]);
+    if((piece.owner===0&&ri===8)||(piece.owner===1&&ri===1))
+      G.board.set(to,{owner:piece.owner,type:'rook'});
+  }
+
+  if(target){
+    G.captures++;
+    if(target.type==='king'){
+      renderBoard();
+      setTimeout(()=>endGame(G.currentPlayer),400);
+      return;
+    }
+  }
+
+  G.turnCount++;
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  renderBoard();
+  updateTurnDots();
+  G.phase='roll';
+  enableRoll();
+  setStatus(`Player ${G.currentPlayer+1} (${G.currentPlayer===0?'Red':'Blue'}) — roll the Pāśaka.`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DICE
+// ═══════════════════════════════════════════════════════════════
+function rollDice() {
+  if(G.gameOver||G.phase!=='roll') return;
+  const face=Math.ceil(Math.random()*6);
+  G.forcedPiece=DICE_TO_PIECE[face];
+  document.getElementById('diceFace').textContent=DICE_FACES[face];
+  document.getElementById('dicePiece').textContent=
+    G.forcedPiece==='any'?'Any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece];
+
+  const allMoves=getAllMoves(G.board,G.currentPlayer,G.forcedPiece);
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('forfeitBtn').disabled=false;
+  G.phase='move';
+  if(allMoves.length===0) setStatus(`No ${PNAMES[G.forcedPiece]||'pieces'} can move — forfeit.`);
+  else setStatus(`Player ${G.currentPlayer+1}: ${G.forcedPiece==='any'?'any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece]} — select a piece.`);
+}
+
+function forfeitTurn() {
+  if(G.gameOver) return;
+  G.forcedPiece=null; G.selectedSq=null; G.legalMoves=[];
+  G.turnCount++;
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  renderBoard();
+  updateTurnDots();
+  G.phase='roll';
+  enableRoll();
+  setStatus(`Turn forfeited. Player ${G.currentPlayer+1} — roll the Pāśaka.`);
+}
+
+function enableRoll() {
+  document.getElementById('rollBtn').disabled=false;
+  document.getElementById('forfeitBtn').disabled=true;
+  document.getElementById('diceFace').textContent='🎲';
+  document.getElementById('dicePiece').textContent='Roll to continue';
+}
+
+function updateTurnDots() {
+  const d1=document.getElementById('dot1');
+  const d2=document.getElementById('dot2');
+  d1.classList.toggle('active',G.currentPlayer===0);
+  d2.classList.toggle('active',G.currentPlayer===1);
+  d1.style.boxShadow=G.currentPlayer===0?'0 0 10px #e74c3c':'none';
+  d2.style.boxShadow=G.currentPlayer===1?'0 0 10px #60a5fa':'none';
+}
+
+function setStatus(t){ document.getElementById('statusBar').textContent=t; }
+
+// ═══════════════════════════════════════════════════════════════
+// END GAME
+// ═══════════════════════════════════════════════════════════════
+function endGame(winner) {
+  G.gameOver=true;
+  const f1=FORMATIONS.find(x=>x.id===chosen1);
+  const f2=FORMATIONS.find(x=>x.id===chosen2);
+  const loser=winner===0?1:0;
+
+  document.getElementById('resultIcon').textContent=winner===0?'🔴':'🔵';
+  document.getElementById('resultTitle').textContent=`Player ${winner+1} Wins!`;
+  document.getElementById('resultSub').textContent=
+    `The ${winner===0?f1.name:f2.name} formation defeated the ${loser===0?f1.name:f2.name}. `+
+    `Battle lasted ${G.turnCount} turns with ${G.captures} captures.`;
+  document.getElementById('rcIcon1').textContent=f1.icon;
+  document.getElementById('rcName1').textContent=f1.name;
+  document.getElementById('rcLabel1').textContent=winner===0?'🏆 VICTOR':'Defeated';
+  document.getElementById('rcIcon2').textContent=f2.icon;
+  document.getElementById('rcName2').textContent=f2.name;
+  document.getElementById('rcLabel2').textContent=winner===1?'🏆 VICTOR':'Defeated';
+  showScreen('resultScreen');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+buildGrid('pickGrid1','confirmBtn1',1);
+</script>
+</body>
+</html>

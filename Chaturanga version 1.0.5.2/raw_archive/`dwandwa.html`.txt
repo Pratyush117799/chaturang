@@ -1,0 +1,19 @@
+`dwandwa.html` — one standalone file, no dependencies beyond the optional `ChaturangaELO` and `ChaturangaClockUI` (it works without them too). Here's what's inside:
+
+**The Granth reader** — on the intro screen, Drona lists every inscription type you've earned and how many times. If any inscription appears 2+ times, he flags it as a pattern he'll counter, and tells you in plain language what he'll do about it. The intro screen only shows after reading your actual `chaturanga_granth_vault`.
+
+**The counter engine** — 7 active counters, each a scoring modifier in the move-picker. Ashwa Mudra → Drona penalises moves that land on squares your knights can reach. Nara Uttarayan → he hunts advanced pawns. Ratha Yatra → he keeps his pieces off open files. Danti Chakra → he avoids diagonal exposure. Back-rank pattern → his Raja stays centralised. Each counter fires only if you've earned that inscription at least twice.
+
+**The dialogue system** — 8 pools (opening, mid-game, capture, promotion, counter, win, loss) with 3–4 lines each. The counter pools fire randomly at 25% probability on Drona's turns when an active counter is in play. His final speech at game-over references whether his counter strategy worked or failed.
+
+**Three-column layout** — left panel has Drona's portrait SVG, live dialogue, and the Granth intel list showing which of your patterns he's countering. Right panel shows battle stats and his counter strategy in plain text. Centre has the board, dice, nameplates. Fully playable with standard Chaturanga dice rules.
+
+**Integration** — drop at project root, add `<a href="dwandwa.html">Dwandwa</a>` to nav. It hooks into `ChaturangaELO.recordGame()` automatically if that script is loaded.
+
+
+
+
+POSSIBLE ISSUES:
+1. Integration with the entire game is not done yet.
+2. All the rules of the chaturanga do not imply strictly.
+3. Relevance still lacks.

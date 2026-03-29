@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chaturanga — The Ancient Indian War Game</title>
+  <meta name="description"
+    content="Chaturanga, the ancient Indian board game — ancestor of Chess. Play online, study authentic research, and explore the origins of modern chess." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Yatra+One&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Noto+Sans+Devanagari:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/chatbot.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">
+        <span class="logo-devanagari">चतुरंग</span>
+        <span class="logo-divider">·</span>
+        <span class="logo-latin">Chaturanga</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#play" class="nav-link">Play</a></li>
+        <li><a href="#docs" class="nav-link">Documentation</a></li>
+        <li><a href="#contribute" class="nav-link">Contribute</a></li>
+      </ul>
+      <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
+        <i class="fa-solid fa-chess-king"></i> Play Now
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="hero-section">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+
+    <!-- Animated army silhouettes -->
+    <div class="army-band army-left">
+      <div class="soldier s1">🏹</div>
+      <div class="soldier s2">⚔️</div>
+      <div class="soldier s3">🐘</div>
+      <div class="soldier s4">🏇</div>
+      <div class="soldier s5">🪖</div>
+      <div class="soldier s6">⚔️</div>
+    </div>
+    <div class="army-band army-right">
+      <div class="soldier s1">⚔️</div>
+      <div class="soldier s2">🐘</div>
+      <div class="soldier s3">🏹</div>
+      <div class="soldier s4">🪖</div>
+      <div class="soldier s5">🏇</div>
+      <div class="soldier s6">⚔️</div>
+    </div>
+
+    <!-- Floating ember particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span> Ancient India · 6th Century CE
+      </div>
+      <h1 class="hero-title">
+        <span class="title-devanagari">चतुरंग</span>
+        <span class="title-latin">CHATURANGA</span>
+      </h1>
+      <p class="hero-subtitle">
+        The Probabilistic Game of Kings — where Elephant, Horse, Chariot &amp; Foot Soldier command the battlefield.
+        <br />The ancient ancestor of all chess — reborn.
+      </p>
+      <div class="hero-army-icons">
+        <div class="hero-piece" data-name="Raja · King">
+          <img src="images/raja.png" alt="Raja" />
+        </div>
+        <div class="hero-piece" data-name="Hathi · Elephant">
+          <img src="images/elephant.png" alt="Hathi" />
+        </div>
+        <div class="hero-piece" data-name="Ashva · Horse">
+          <img src="images/horse.png" alt="Ashva" />
+        </div>
+        <div class="hero-piece" data-name="Ratha · Chariot">
+          <img src="images/chariot.png" alt="Ratha" />
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="#play" class="btn-primary"
+          onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'}); return false;">
+          <i class="fa-solid fa-swords"></i> Enter the Battlefield
+        </a>
+        <a href="#about" class="btn-secondary"
+          onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'}); return false;">
+          <i class="fa-solid fa-scroll"></i> The Legend
+        </a>
+      </div>
+      <div class="hero-scroll-hint">
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section about-section">
+    <div class="section-ornament top"></div>
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">The Legend</span>
+        <h2 class="section-title">चतुरंग — The Game of Four Divisions</h2>
+        <p class="section-subtitle">Born in ancient India, this probabilistic war game commanded kings and scholars
+          alike for over 1,500 years.</p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card reveal" data-delay="0">
+          <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
+          <h3>Ancient Origins</h3>
+          <p>Chaturanga — Sanskrit for "four divisions" — represents the four branches of the Gupta Empire's military:
+            <strong>Hastī</strong> (elephant), <strong>Ashva</strong> (horse), <strong>Ratha</strong> (chariot), and
+            <strong>Padāti</strong> (infantry). First documented in the 6th century CE, it is the oldest known ancestor
+            of modern Chess, Xiangqi, and Shogi.</p>
+        </div>
+        <div class="about-card reveal" data-delay="100">
+          <div class="card-icon"><i class="fa-solid fa-dice"></i></div>
+          <h3>The Uncertainty Element</h3>
+          <p>Unlike Chess, Chaturanga includes a <strong>die (pāśaka)</strong> — you must move the piece whose number
+            appears on the roll. A roll of 1 forces the Ratha, 3 forces the Ashwa, 4 forces the Danti, and 6 allows the
+            Nara or Raja. This <em>uncertainty of fate</em> reflects ancient Indian philosophy of dharma and destiny.
+          </p>
+        </div>
+        <div class="about-card reveal" data-delay="200">
+          <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+          <h3>Four Kingdoms at War</h3>
+          <p>The classic form is a <strong>4-player alliance game</strong> on the Ashtāpada (8×8 board). Red &amp; Green
+            form one alliance; Blue &amp; Yellow another. You play for your team — if your king falls, your ally can
+            revive you. The last alliance standing wins the Ashtāpada.</p>
+        </div>
+        <div class="about-card reveal" data-delay="300">
+          <div class="card-icon"><i class="fa-solid fa-chess-king"></i></div>
+          <h3>Distinct from Chess</h3>
+          <p>There is <strong>no Queen</strong> — only the Raja (King) and his four forces. Minor pieces (Nara, Ashva,
+            Hathi) <strong>cannot capture Major pieces</strong> (Ratha, Raja). A slain king can return — if your
+            teammate captures an enemy king, your Raja respawns anywhere on the board. Stalemate means <em>the one who
+              stalemates wins</em>.</p>
+        </div>
+      </div>
+
+      <!-- Army Showcase -->
+      <div class="army-showcase reveal">
+        <h3 class="showcase-title">The Chaturanga Army</h3>
+        <div class="army-units">
+          <div class="unit-card">
+            <img src="images/raja.png" alt="Raja" class="unit-img" />
+            <div class="unit-info">
+              <span class="unit-name">राजा · Raja</span>
+              <span class="unit-role">King · Moves one step any direction · ∞ pts</span>
+              <span class="unit-die">Dice: 6</span>
+            </div>
+          </div>
+          <div class="unit-card">
+            <img src="images/chariot.png" alt="Ratha" class="unit-img" />
+            <div class="unit-info">
+              <span class="unit-name">रथ · Ratha</span>
+              <span class="unit-role">Chariot · Moves like Rook · 5 pts</span>
+              <span class="unit-die">Dice: 1</span>
+            </div>
+          </div>
+          <div class="unit-card">
+            <img src="images/horse.png" alt="Ashva" class="unit-img" />
+            <div class="unit-info">
+              <span class="unit-name">अश्व · Ashva</span>
+              <span class="unit-role">Horse · L-shape like Knight · 3 pts</span>
+              <span class="unit-die">Dice: 3</span>
+            </div>
+          </div>
+          <div class="unit-card">
+            <img src="images/elephant.png" alt="Danti" class="unit-img" />
+            <div class="unit-info">
+              <span class="unit-name">हाथी · Danti</span>
+              <span class="unit-role">Elephant · 2 diagonals, leaps · 2 pts</span>
+              <span class="unit-die">Dice: 4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-ornament bottom"></div>
+  </section>
+
+  <!-- PLAY -->
+  <section id="play" class="section play-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Battlefield</span>
+        <h2 class="section-title">Enter the Ashtāpada</h2>
+        <p class="section-subtitle">Choose your campaign. Command your forces on the ancient 8×8 war board.</p>
+      </div>
+
+      <!-- Play vs Bot -->
+      <div class="play-category reveal">
+        <h3 class="play-cat-title"><i class="fa-solid fa-robot"></i> Play vs Bot</h3>
+        <p class="play-cat-desc">Face the ancient war machines. Select how many of the four armies are controlled by
+          bots.</p>
+        <div class="play-cards">
+
+          <div class="play-card bot-1" id="playBot1">
+            <div class="play-card-glow"></div>
+            <div class="play-card-inner">
+              <div class="play-card-icon">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div class="play-card-bot-badge">1 Bot</div>
+              <h4>Blue is the Machine</h4>
+              <p>You (Red) vs Blue (Bot). Green &amp; Yellow are allied human players. The simplest challenge.</p>
+              <div class="play-card-armies">
+                <span class="army-dot red-dot" title="Red — You"></span>
+                <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
+                <span class="army-dot green-dot" title="Green — Ally"></span>
+                <span class="army-dot yellow-dot" title="Yellow — Ally"></span>
+              </div>
+              <a href="../game/game.html?botCount=1" class="play-card-btn">
+                <i class="fa-solid fa-play"></i> Begin Campaign
+              </a>
+            </div>
+          </div>
+
+          <div class="play-card bot-2 featured" id="playBot2">
+            <div class="play-card-glow"></div>
+            <div class="featured-badge"><i class="fa-solid fa-star"></i> Most Popular</div>
+            <div class="play-card-inner">
+              <div class="play-card-icon">
+                <i class="fa-solid fa-robot"></i>
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div class="play-card-bot-badge">2 Bots</div>
+              <h4>Team Battle</h4>
+              <p>You &amp; Red vs Blue &amp; Yellow (both Bots). A true 2v2 alliance war — human intuition against
+                machine strategy.</p>
+              <div class="play-card-armies">
+                <span class="army-dot red-dot" title="Red — You"></span>
+                <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
+                <span class="army-dot green-dot" title="Green — Ally"></span>
+                <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
+                    class="fa-solid fa-microchip"></i></span>
+              </div>
+              <a href="../game/game.html?botCount=2" class="play-card-btn">
+                <i class="fa-solid fa-play"></i> Begin Campaign
+              </a>
+            </div>
+          </div>
+
+          <div class="play-card bot-3" id="playBot3">
+            <div class="play-card-glow"></div>
+            <div class="play-card-inner">
+              <div class="play-card-icon">
+                <i class="fa-solid fa-robot"></i>
+                <i class="fa-solid fa-robot"></i>
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div class="play-card-bot-badge">3 Bots</div>
+              <h4>Lone Warrior</h4>
+              <p>You (Red) alone vs three bot kingdoms. The ultimate test — outwit three ancient war machines
+                simultaneously.</p>
+              <div class="play-card-armies">
+                <span class="army-dot red-dot" title="Red — You"></span>
+                <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
+                <span class="army-dot green-dot bot-dot" title="Green — Bot"><i
+                    class="fa-solid fa-microchip"></i></span>
+                <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
+                    class="fa-solid fa-microchip"></i></span>
+              </div>
+              <a href="../game/game.html?botCount=3" class="play-card-btn">
+                <i class="fa-solid fa-play"></i> Begin Campaign
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Play Online -->
+      <div class="play-category reveal">
+        <h3 class="play-cat-title"><i class="fa-solid fa-globe"></i> Play Online</h3>
+        <div class="coming-soon-card">
+          <div class="cs-bg-pattern"></div>
+          <div class="cs-content">
+            <div class="cs-icon"><i class="fa-solid fa-globe"></i></div>
+            <h3>Online Multiplayer</h3>
+            <p>Challenge warriors from across the realm. Form alliances with friends or meet new opponents in the global
+              Ashtāpada.</p>
+            <div class="coming-soon-banner">
+              <span class="cs-lotus">🪷</span>
+              <span class="cs-text">Coming Soon</span>
+              <span class="cs-lotus">🪷</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Your Own Battalion (compact) -->
+      <div class="play-category reveal">
+        <h3 class="play-cat-title"><i class="fa-solid fa-chess"></i> Create Your Battalion</h3>
+        <div class="coming-soon-card battalion-card">
+          <div class="cs-bg-pattern"></div>
+          <div class="cs-content">
+            <div class="cs-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3>Custom Armies &amp; Extended Boards</h3>
+            <p>Build your own formation on 10×10 Dashapada or 12×12 Vrihadpad battlefields.</p>
+            <div class="coming-soon-banner">
+              <span class="cs-lotus">🪷</span>
+              <span class="cs-text">Available Now in game!</span>
+              <span class="cs-lotus">🪷</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+  </section>
+
+  <!-- DOCUMENTATION -->
+  <section id="docs" class="section docs-section">
+    <div class="section-ornament top"></div>
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Scholars' Hall</span>
+        <h2 class="section-title">Documentation &amp; Research</h2>
+        <p class="section-subtitle">Authentic historical sources, algorithmic designs, and the living academic record of
+          Chaturanga.</p>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="docs-tabs reveal">
+        <button class="docs-tab active" data-tab="research"><i class="fa-solid fa-landmark"></i> Authentic
+          Research</button>
+        <button class="docs-tab" data-tab="algorithms"><i class="fa-solid fa-code"></i> Algorithm &amp; Bot
+          Engine</button>
+        <button class="docs-tab" data-tab="rules"><i class="fa-solid fa-scroll"></i> Rules &amp; Moves</button>
+        <button class="docs-tab" data-tab="versions"><i class="fa-solid fa-code-branch"></i> Version History</button>
+      </div>
+
+      <!-- Tab: Authentic Research -->
+      <div class="docs-content active" id="tab-research">
+        <div class="research-grid">
+          <article class="research-card reveal">
+            <div class="research-meta">
+              <span class="research-era">~6th Century CE</span>
+              <span class="research-type">Primary Source</span>
+            </div>
+            <h4>The Harshacharita Reference</h4>
+            <p>Bāṇabhaṭṭa's biographical work on King Harsha (7th century CE) contains one of the earliest literary
+              references to chaturanga as a game played by the nobility. The text describes the four-division formation
+              as both a military reality and a game of intellectual strategy.</p>
+            <div class="research-citation">
+              <i class="fa-solid fa-quote-left"></i>
+              "The game reflects the order of the cosmos — four forces, four directions, one sovereign dharma."
+            </div>
+          </article>
+
+          <article class="research-card reveal" data-delay="100">
+            <div class="research-meta">
+              <span class="research-era">~1030 CE</span>
+              <span class="research-type">Islamic Scholarship</span>
+            </div>
+            <h4>Al-Bīrūnī — Kitāb al-Hind</h4>
+            <p>Persian scholar Abū Rayhān Al-Bīrūnī documented Chaturanga in his monumental work on India. He noted
+              similarities to chess and described the four-player variant with dice, confirming the ancient Indian
+              origin of the game. His accounts are among the most reliable cross-cultural records.</p>
+            <blockquote class="research-quote">
+              "The Hindus have a game like chess for four persons, played according to the throw of dice. The pieces are
+              elephant, horse, ship, and foot soldier..."
+              <cite>— Al-Bīrūnī, Kitāb al-Hind (c. 1030 CE)</cite>
+            </blockquote>
+          </article>
+
+          <article class="research-card reveal" data-delay="200">
+            <div class="research-meta">
+              <span class="research-era">1913</span>
+              <span class="research-type">Foundational Research</span>
+            </div>
+            <h4>H.J.R. Murray — A History of Chess</h4>
+            <p>Harold James Ruthven Murray's landmark study <em>A History of Chess</em> (1913, Oxford) remains a
+              definitive academic reference. Murray traced the evolution from Chaturanga through Chatrang (Persia) to
+              Shatranj (Arabic world) to modern chess, establishing the Indian origin theory as scholarly consensus.</p>
+            <div class="research-citation">
+              <i class="fa-solid fa-book"></i>
+              Murray, H.J.R. (1913). <em>A History of Chess.</em> Oxford: Clarendon Press. Chapter II: The Indian Game.
+            </div>
+          </article>
+
+          <article class="research-card reveal" data-delay="300">
+            <div class="research-meta">
+              <span class="research-era">Digital Age</span>
+              <span class="research-type">Project Research</span>
+            </div>
+            <h4>Authentic Rules &amp; Variant Analysis</h4>
+            <p>The Chaturanga project founders conducted a comprehensive analysis of rule variants across historical
+              sources — Maṅgalagiri version, Abul-fazl's version (Ain-i-Akbari), and regional South/North Indian
+              variants. Key distinctions catalogued:</p>
+            <ul class="research-list">
+              <li>Elephant movement — 3 documented variants (2-diagonal, 2-orthogonal, or Thai-inspired)</li>
+              <li>Minor vs Major capture hierarchy (unique to this project's 1.0.3.2 rules)</li>
+              <li>King respawn mechanic — sourced from Maṅgalagiri MS</li>
+              <li>Dice assignment: 1=Ratha, 3=Ashwa, 4=Danti, 6=Nara/Raja</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="researchers-section reveal">
+          <h3>Founders &amp; Researchers</h3>
+          <div class="researchers-grid">
+            <div class="researcher-card">
+              <div class="researcher-avatar"><i class="fa-solid fa-user-graduate"></i></div>
+              <div class="researcher-info">
+                <h5>Project Founders</h5>
+                <p>The Chaturanga project was initiated by a team of researchers passionate about reviving ancient
+                  Indian board games. Their handwritten notes, rule analysis, and algorithm designs form the foundation
+                  of this digital implementation.</p>
+              </div>
+            </div>
+            <div class="researcher-card">
+              <div class="researcher-avatar"><i class="fa-solid fa-brain"></i></div>
+              <div class="researcher-info">
+                <h5>Bot Engine Team</h5>
+                <p>The bot algorithm uses a probabilistic decision tree with minimax + alpha-beta pruning adapted for
+                  Chaturanga's dice uncertainty. The engine accounts for forced pieces, minor/major capture rules, and
+                  team alliance logic.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Algorithms -->
+      <div class="docs-content" id="tab-algorithms">
+        <div class="algo-section">
+          <div class="algo-card reveal">
+            <div class="algo-icon"><i class="fa-solid fa-sitemap"></i></div>
+            <h4>Probabilistic Decision Tree</h4>
+            <p>Chaturanga is a probabilistic game — unlike deterministic Chess, the bot must reason about all possible
+              dice outcomes before choosing a move. The engine builds a decision tree where each node represents a game
+              state, and branches are weighted by dice probability.</p>
+            <div class="algo-spec">
+              <span><i class="fa-solid fa-dice"></i> Dice faces: 4 (1, 3, 4, 6)</span>
+              <span><i class="fa-solid fa-code-branch"></i> Branching factor: ~15-40 moves/state</span>
+              <span><i class="fa-solid fa-layer-group"></i> Search depth: 2-3 plies (configurable)</span>
+            </div>
+          </div>
+          <div class="algo-card reveal" data-delay="100">
+            <div class="algo-icon"><i class="fa-solid fa-chess-board"></i></div>
+            <h4>Random Move Generator (v1.0.3.2)</h4>
+            <p>The current bot (v1.0.3) uses an enhanced random move generator — it picks legal moves for the forced
+              piece, with preference scoring based on captures, board center control, and king safety. The engine
+              respects minor/major capture constraints.</p>
+            <pre class="code-snippet"><code>// Piece priority weights
+const weights = {
+  king:     { capture_major: 100, center: 5 },
+  rook:     { capture_any:   80,  center: 8 },
+  horse:    { capture_minor: 30,  center: 6 },
+  elephant: { capture_minor: 20,  center: 4 },
+  pawn:     { advance:       10,  capture: 15 }
+};</code></pre>
+          </div>
+          <div class="algo-card reveal" data-delay="200">
+            <div class="algo-icon"><i class="fa-solid fa-microchip"></i></div>
+            <h4>Planned: Minimax + Alpha-Beta Pruning</h4>
+            <p>The roadmap includes a full minimax implementation adapted for 4-player alliance games. Standard minimax
+              assumes two adversaries; the alliance variant requires a coalition utility function that balances
+              individual piece values against team win conditions.</p>
+            <div class="algo-spec">
+              <span><i class="fa-solid fa-users"></i> 4-player coalition minimax</span>
+              <span><i class="fa-solid fa-scissors"></i> Alpha-beta pruning for speed</span>
+              <span><i class="fa-solid fa-chart-bar"></i> Piece value: P=1, H=3, E=2, R=5, K=∞</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Rules -->
+      <div class="docs-content" id="tab-rules">
+        <div class="rules-section">
+          <div class="rules-block reveal">
+            <h4><i class="fa-solid fa-dice"></i> The Dice (Pāśaka)</h4>
+            <div class="dice-table">
+              <div class="dice-row header">
+                <span>Roll</span><span>Piece Forced</span><span>Sanskrit</span>
+              </div>
+              <div class="dice-row"><span class="die-val">1</span><span>Ratha (Chariot/Rook)</span><span>रथ</span></div>
+              <div class="dice-row"><span class="die-val">3</span><span>Ashwa (Horse/Knight)</span><span>अश्व</span>
+              </div>
+              <div class="dice-row"><span class="die-val">4</span><span>Danti (Elephant)</span><span>दन्ती</span></div>
+              <div class="dice-row"><span class="die-val">6</span><span>Nara (Pawn) or Raja (King)</span><span>नर /
+                  राजा</span></div>
+            </div>
+          </div>
+
+          <div class="rules-block reveal" data-delay="100">
+            <h4><i class="fa-solid fa-chess"></i> Piece Movements</h4>
+            <div class="move-grid">
+              <div class="move-card">
+                <strong>Raja (King)</strong>
+                <p>One step in any direction (8-directional). Can be captured, but ally can revive it.</p>
+              </div>
+              <div class="move-card">
+                <strong>Ratha (Chariot)</strong>
+                <p>Any number of squares along ranks or files — like the chess Rook. Cannot jump.</p>
+              </div>
+              <div class="move-card">
+                <strong>Ashva (Horse)</strong>
+                <p>L-shape: 2 squares in one direction + 1 perpendicular. Jumps over pieces like the Knight.</p>
+              </div>
+              <div class="move-card">
+                <strong>Danti (Elephant)</strong>
+                <p>Exactly 2 squares diagonally, leaping over any piece. 4 possible target squares.</p>
+              </div>
+              <div class="move-card">
+                <strong>Nara (Pawn)</strong>
+                <p>One step forward. Captures diagonally. No double-move on first step. No en passant.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="rules-block reveal" data-delay="200">
+            <h4><i class="fa-solid fa-shield"></i> Key Rules (v1.0.3.2)</h4>
+            <ul class="rules-list">
+              <li><strong>Minor cannot capture Major.</strong> Nara, Ashva, Danti cannot capture Ratha or Raja.</li>
+              <li><strong>Major captures any.</strong> Ratha and Raja can capture any piece.</li>
+              <li><strong>King Respawn.</strong> If your teammate captures an enemy Raja, your own Raja may be placed on
+                any empty square.</li>
+              <li><strong>Max 3 manual forfeits</strong> per player—then you must always use your forced piece.</li>
+              <li><strong>Stalemate = Win.</strong> If you can't move your forced piece, you win (not lose as in Chess).
+              </li>
+              <li><strong>No castling, no en passant, no Queen.</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Version History -->
+      <div class="docs-content" id="tab-versions">
+        <div class="version-timeline">
+          <div class="version-item current reveal">
+            <div class="ver-dot"></div>
+            <div class="ver-info">
+              <div class="ver-header">
+                <span class="ver-num">v1.0.5</span>
+                <span class="ver-badge current-badge">Current</span>
+              </div>
+              <h4>Premium UI · New Piece Artwork · Seer Engine</h4>
+              <ul>
+                <li>High-resolution authentic Indian piece artwork (Raja, Ashwa, Danti, Ratha, Nara)</li>
+                <li>Chess.com-style 3-panel desktop layout · full mobile viewport</li>
+                <li>Drag-and-drop pieces · smooth CSS move animations</li>
+                <li>Sound effects (capture, dice roll) via Web Audio API</li>
+                <li>Seer Engine analytics stub (move count, captures, insights)</li>
+                <li>Integrated AI Chatbot on website homepage</li>
+              </ul>
+            </div>
+          </div>
+          <div class="version-item reveal">
+            <div class="ver-dot"></div>
+            <div class="ver-info">
+              <div class="ver-header"><span class="ver-num">v1.0.3.2</span></div>
+              <h4>Refined Rules &amp; Bot Engine</h4>
+              <ul>
+                <li>Minor/Major capture hierarchy fully enforced</li>
+                <li>Max 3 manual forfeits · Bot engine with heuristic stubs</li>
+                <li>Focus mode, resizable board (70%–130%)</li>
+                <li>King respawn modal on teammate capture</li>
+              </ul>
+            </div>
+          </div>
+          <div class="version-item reveal" data-delay="100">
+            <div class="ver-dot"></div>
+            <div class="ver-info">
+              <div class="ver-header"><span class="ver-num">v1.0.2</span></div>
+              <h4>Alliance Mode &amp; CSS Polish</h4>
+              <ul>
+                <li>Team mode (Red+Green vs Blue+Yellow)</li>
+                <li>Game state persistence via localStorage</li>
+                <li>Improved dice animation</li>
+                <li>History panel with download</li>
+              </ul>
+            </div>
+          </div>
+          <div class="version-item reveal" data-delay="200">
+            <div class="ver-dot"></div>
+            <div class="ver-info">
+              <div class="ver-header"><span class="ver-num">v1.0.1</span></div>
+              <h4>4-Player Foundation</h4>
+              <ul>
+                <li>4-player Chaturaji (four-handed chess) board</li>
+                <li>Dice-forced movement implemented</li>
+                <li>Basic piece movement rules</li>
+                <li>Elimination and forfeit mechanics</li>
+              </ul>
+            </div>
+          </div>
+          <div class="version-item reveal" data-delay="300">
+            <div class="ver-dot"></div>
+            <div class="ver-info">
+              <div class="ver-header"><span class="ver-num">v1.0.0</span></div>
+              <h4>Initial Release</h4>
+              <ul>
+                <li>Proof-of-concept Chaturanga implementation</li>
+                <li>Core board rendering and piece placement</li>
+                <li>Basic click-to-move interface</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-ornament bottom"></div>
+  </section>
+
+  <!-- CONTRIBUTE -->
+  <section id="contribute" class="section contribute-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Join the Order</span>
+        <h2 class="section-title">Contribute to Chaturanga</h2>
+        <p class="section-subtitle">Help revive this ancient game. Every contribution — code, research, or art — adds a
+          piece to the Ashtāpada.</p>
+      </div>
+
+      <div class="contribute-grid">
+        <div class="contribute-card reveal">
+          <div class="contrib-icon"><i class="fa-solid fa-code"></i></div>
+          <h4>Code</h4>
+          <p>Help improve the bot engine, add new features, fix bugs, or port the game to new platforms.</p>
+          <ul class="contrib-list">
+            <li>Implement Minimax + Alpha-Beta bot</li>
+            <li>Add online multiplayer with WebSockets</li>
+            <li>Build the Custom Battalion editor</li>
+            <li>Improve mobile responsiveness</li>
+          </ul>
+        </div>
+
+        <div class="contribute-card reveal" data-delay="100">
+          <div class="contrib-icon"><i class="fa-solid fa-book"></i></div>
+          <h4>Research</h4>
+          <p>Locate and document primary sources, rule variants, or regional traditions of Chaturanga.</p>
+          <ul class="contrib-list">
+            <li>Sanskrit manuscript analysis</li>
+            <li>Regional variant documentation</li>
+            <li>Comparison with Xiangqi / Shogi</li>
+            <li>Historical artwork and board archaeology</li>
+          </ul>
+        </div>
+
+        <div class="contribute-card reveal" data-delay="200">
+          <div class="contrib-icon"><i class="fa-solid fa-palette"></i></div>
+          <h4>Art &amp; Design</h4>
+          <p>Create authentic artwork, piece designs, board skins, or animations inspired by ancient Indian art.</p>
+          <ul class="contrib-list">
+            <li>Piece sprite design (Pala art style)</li>
+            <li>Board texture art</li>
+            <li>Animated battle sequences</li>
+            <li>UI/UX for new game modes</li>
+          </ul>
+        </div>
+
+        <div class="contribute-card reveal" data-delay="300">
+          <div class="contrib-icon"><i class="fa-solid fa-comments"></i></div>
+          <h4>Community</h4>
+          <p>Spread the word, test the game, report bugs, or teach Chaturanga to your community.</p>
+          <ul class="contrib-list">
+            <li>Beta testing &amp; bug reports</li>
+            <li>Write tutorials or guides</li>
+            <li>Translate documentation</li>
+            <li>Organize local tournaments</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="contribute-cta reveal">
+        <div class="contribute-cta-inner">
+          <h3>How to Get Started</h3>
+          <ol class="contrib-steps">
+            <li>
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <strong>Explore the repository</strong>
+                <p>Download or clone the <code>chaturang</code> project folder. Study the structure under
+                  <code>Chaturanga-version-1.0.3.2/</code>.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <strong>Run the game locally</strong>
+                <p>Open <code>index.html</code> or <code>game.html</code> directly in your browser. For the server
+                  backend: <code>cd server &amp;&amp; npm install &amp;&amp; npm start</code>.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <strong>Pick a task</strong>
+                <p>Check the <code>planning/</code> folder for the roadmap, bot engine spec, and rules matrix. Choose
+                  what interests you.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <strong>Submit your work</strong>
+                <p>Create a pull request or share your changes with the project maintainers. All contributions are
+                  welcome.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-ornament"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="logo-devanagari">चतुरंग</span>
+            <span class="logo-divider">·</span>
+            <span class="logo-latin">Chaturanga</span>
+          </div>
+          <p>The ancient Indian 4-player war game &amp; ancestor of Chess. Revived for the digital age.</p>
+          <div class="footer-version">
+            <span class="version-pill">v1.0.5</span>
+            <a href="../game/game.html" class="version-link">Play now →</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h5>Navigate</h5>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#play">Play vs Bot</a></li>
+            <li><a href="#docs">Documentation</a></li>
+            <li><a href="#contribute">Contribute</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Game Files</h5>
+          <ul>
+            <li><a href="../game/game.html">Game (v1.0.5)</a></li>
+            <li><a href="../game/game.html?botCount=1">1 Bot Mode</a></li>
+            <li><a href="../game/game.html?botCount=3">3 Bots Mode</a></li>
+            <li><a href="../Chaturanga-version-1.0.3.2/game.html">v1.0.3.2 (Legacy)</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="../Chaturanga-version-1.0.3.2/planning/RULES_AND_MATRIX.md" target="_blank">Rules Matrix</a>
+            </li>
+            <li><a href="../Chaturanga-version-1.0.3.2/planning/BOT_ENGINE.md" target="_blank">Bot Engine Spec</a></li>
+            <li><a href="../rules.txt" target="_blank">Original Rules</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-quote">
+          <i class="fa-solid fa-quote-left"></i>
+          "The draw by stalemate is absent — the player who stalemates wins."
+          <i class="fa-solid fa-quote-right"></i>
+        </p>
+        <p class="footer-credits">
+          Chaturanga Project · Ancient Indian Game Revival · Built with ♟ by the Chaturanga team
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chatbot Floating Button -->
+  <button class="chatbot-fab" id="chatbotFab" title="Ask Chaturang AI" aria-label="Open Chatbot">
+    <i class="fa-solid fa-comments"></i>
+    <span class="chatbot-fab-label">Ask AI</span>
+  </button>
+
+  <!-- Chatbot Panel -->
+  <div class="chatbot-panel" id="chatbotPanel" role="dialog" aria-label="Chaturanga AI Chatbot">
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <div class="chatbot-avatar"><i class="fa-solid fa-chess-king"></i></div>
+        <div>
+          <div class="chatbot-name">Chaturang AI</div>
+          <div class="chatbot-status"><span class="chatbot-online-dot"></span> Online</div>
+        </div>
+      </div>
+      <button class="chatbot-close" id="chatbotClose" aria-label="Close chatbot"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="bot-msg">
+        <span class="bot-bubble">Namaste! I am the Chaturang AI — your guide to the ancient war game. Ask me about rules, pieces, strategy, or the history of Chaturanga! 🪷</span>
+      </div>
+      <div class="chatbot-quick-replies" id="quickReplies">
+        <button class="quick-reply" data-q="How do I play?">How do I play?</button>
+        <button class="quick-reply" data-q="What are the pieces?">What are the pieces?</button>
+        <button class="quick-reply" data-q="What is v1.0.4?">What's in v1.0.4?</button>
+        <button class="quick-reply" data-q="How does the dice work?">How does dice work?</button>
+      </div>
+    </div>
+    <div class="chatbot-input-row">
+      <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Ask about Chaturanga…" autocomplete="off" />
+      <button class="chatbot-send" id="chatbotSend" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
+</body>
+
+</html>

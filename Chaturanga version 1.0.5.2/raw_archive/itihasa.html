@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Itihasa — The Battle Chronicle · Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c96a;--dark:#07050300;--bg:#0a0802;--dark2:#14100a;--dark3:#1c1508;
+  --border:rgba(201,168,76,.15);--text:#f0e4c8;--muted:#8a7050;
+  --excellent:#4ade80;--good:#60a5fa;--inaccuracy:#fbbf24;--blunder:#f87171;
+  --sq-light:#f0d9b5;--sq-dark:#b58863;
+  --p0:#e74c3c;--p1:#3498db;--p2:#27ae60;--p3:#f39c12;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow:hidden}
+
+/* ── LAYOUT ───────────────────────────────────────────────────────── */
+.theater{height:100vh;display:grid;grid-template-rows:52px 1fr 96px;grid-template-columns:260px 1fr 280px}
+.t-nav    {grid-column:1/-1;grid-row:1}
+.t-vault  {grid-column:1;grid-row:2;overflow-y:auto;border-right:1px solid var(--border)}
+.t-stage  {grid-column:2;grid-row:2;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.t-annot  {grid-column:3;grid-row:2;overflow-y:auto;border-left:1px solid var(--border)}
+.t-scrub  {grid-column:1/-1;grid-row:3;border-top:1px solid var(--border)}
+
+@media(max-width:900px){
+  .theater{grid-template-columns:1fr;grid-template-rows:52px 1fr auto 90px}
+  .t-vault,.t-annot{display:none}
+  .t-stage{grid-column:1;grid-row:2}
+  .t-scrub{grid-column:1;grid-row:4}
+}
+
+/* ── NAV ──────────────────────────────────────────────────────────── */
+.t-nav{background:var(--dark2);border-bottom:1px solid var(--border);
+  padding:0 20px;display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;text-decoration:none}
+.nav-badge{font-size:.62rem;background:rgba(201,168,76,.1);color:var(--muted);
+  padding:2px 8px;border-radius:10px;border:1px solid var(--border)}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:.95rem;color:rgba(201,168,76,.5);
+  font-style:italic;margin-left:4px}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-link{padding:5px 10px;border-radius:6px;font-size:.8rem;color:var(--muted);
+  transition:all .2s;text-decoration:none;display:flex;align-items:center;gap:5px}
+.nav-link:hover{background:rgba(201,168,76,.08);color:var(--gold)}
+
+/* ── VAULT PANEL ──────────────────────────────────────────────────── */
+.t-vault{background:var(--dark2);padding:14px}
+.panel-label{font-family:'Cinzel',serif;font-size:.72rem;color:var(--gold);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.vault-item{padding:10px 12px;border-radius:7px;border:1px solid var(--border);
+  margin-bottom:6px;cursor:pointer;transition:all .2s}
+.vault-item:hover{border-color:var(--gold);background:rgba(201,168,76,.05)}
+.vault-item.active{border-color:var(--gold);background:rgba(201,168,76,.1)}
+.vi-winner{font-size:.8rem;color:var(--gold);font-weight:500;margin-bottom:2px;
+  display:flex;align-items:center;gap:5px}
+.vi-meta{font-size:.68rem;color:var(--muted)}
+.vi-inscriptions{display:flex;gap:3px;margin-top:5px;flex-wrap:wrap}
+.vi-ins-tag{font-size:.6rem;padding:1px 6px;border-radius:3px;
+  background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+.vault-empty{text-align:center;padding:30px 10px;color:var(--muted);font-size:.8rem;line-height:1.7}
+
+/* ── BOARD STAGE ──────────────────────────────────────────────────── */
+.t-stage{background:radial-gradient(ellipse 80% 70% at 50% 40%, rgba(201,168,76,.03) 0%, transparent 70%)}
+.board-wrap{position:relative}
+.board-grid{display:grid;grid-template-columns:repeat(8,52px)}
+.bsq{width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+  position:relative;font-size:1.5rem;transition:background .25s}
+.bsq.light{background:var(--sq-light)}
+.bsq.dark{background:var(--sq-dark)}
+.bsq.from-sq{outline:3px solid var(--gold);outline-offset:-3px;z-index:2}
+.bsq.to-sq{background:rgba(201,168,76,.55)!important}
+.bsq.tp-sq{background:rgba(248,113,113,.45)!important}
+.bsq.ins-sq{background:rgba(201,168,76,.6)!important;animation:insFlash .8s ease}
+@keyframes insFlash{0%{background:rgba(201,168,76,.9)!important}100%{background:rgba(201,168,76,.6)!important}}
+.piece-sym{text-shadow:0 1px 4px rgba(0,0,0,.7);pointer-events:none;
+  transition:transform .25s;display:block}
+
+/* Move arrow SVG overlay */
+.arrow-svg{position:absolute;inset:0;pointer-events:none;z-index:5}
+
+/* ── ANNOTATION PANEL ─────────────────────────────────────────────── */
+.t-annot{background:var(--dark2);padding:16px;display:flex;flex-direction:column;gap:12px}
+.move-detail{background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px}
+.md-move{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold2);margin-bottom:2px}
+.md-player{font-size:.75rem;color:var(--muted);margin-bottom:8px}
+.md-quality{display:inline-block;padding:2px 9px;border-radius:4px;font-size:.73rem;font-weight:600;margin-bottom:8px}
+.mq-excellent{background:rgba(74,222,128,.15);color:var(--excellent)}
+.mq-good{background:rgba(96,165,250,.15);color:var(--good)}
+.mq-inaccuracy{background:rgba(251,191,36,.15);color:var(--inaccuracy)}
+.mq-blunder{background:rgba(248,113,113,.15);color:var(--blunder)}
+.mq-move{background:rgba(201,168,76,.12);color:var(--gold)}
+
+.drona-voice{font-family:'Cormorant Garamond',serif;font-size:.9rem;
+  color:#c4a97a;font-style:italic;line-height:1.7;padding:8px 0;
+  border-top:1px solid var(--border)}
+
+/* INSCRIPTION CARD */
+.ins-card{border-radius:10px;border:1px solid rgba(201,168,76,.3);overflow:hidden;
+  animation:insCardIn .5s ease;position:relative}
+@keyframes insCardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.ins-header{padding:10px 14px;background:rgba(201,168,76,.1);
+  display:flex;align-items:center;gap:8px}
+.ins-icon{font-size:.9rem;color:var(--gold)}
+.ins-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.ins-sanskrit{font-family:'Cormorant Garamond',serif;font-size:.95rem;
+  color:var(--gold2);font-style:italic}
+.ins-body{padding:10px 14px;font-size:.78rem;color:#c4a97a;line-height:1.6}
+
+/* Move log mini */
+.move-log-mini{flex:1;overflow-y:auto}
+.mlm-row{display:flex;gap:6px;align-items:center;padding:5px 8px;border-radius:5px;
+  cursor:pointer;transition:background .15s;font-size:.75rem}
+.mlm-row:hover{background:rgba(201,168,76,.06)}
+.mlm-row.active{background:rgba(201,168,76,.1)}
+.mlm-num{color:var(--muted);width:22px;flex-shrink:0}
+.mlm-sq{font-family:'Cinzel',serif;color:var(--gold2);font-size:.78rem}
+.mlm-q{width:14px;height:14px;border-radius:2px;flex-shrink:0}
+.mlm-ins{font-size:.62rem;color:var(--gold);margin-left:auto}
+
+/* ── SCRUBBER ─────────────────────────────────────────────────────── */
+.t-scrub{background:var(--dark2);padding:12px 20px;display:flex;flex-direction:column;gap:8px}
+.scrub-row{display:flex;align-items:center;gap:12px}
+.scrub-bar-wrap{flex:1;position:relative;height:28px;display:flex;align-items:center;cursor:pointer}
+.scrub-track{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;position:relative}
+.scrub-fill{height:100%;border-radius:2px;background:var(--gold);transition:width .2s}
+.scrub-ins-dots{position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none}
+.scrub-dot{position:absolute;width:8px;height:8px;border-radius:50%;
+  background:var(--gold2);top:-2px;transform:translateX(-50%);border:1px solid var(--dark2)}
+.scrub-thumb{position:absolute;width:14px;height:14px;border-radius:50%;
+  background:var(--gold);top:-5px;transform:translateX(-50%);
+  box-shadow:0 0 0 3px rgba(201,168,76,.2);transition:left .2s}
+.scrub-pos{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);
+  min-width:70px;text-align:center}
+.ctrl-btn{width:34px;height:34px;border-radius:6px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.ctrl-btn:hover{border-color:var(--gold);color:var(--gold)}
+.ctrl-btn.play-btn{width:42px;height:42px;border-radius:50%;background:var(--gold);
+  color:#1a0e00;border-color:var(--gold);font-size:1rem}
+.ctrl-btn.play-btn:hover{background:var(--gold2)}
+.speed-sel{background:var(--dark3);border:1px solid var(--border);color:var(--text);
+  padding:4px 8px;border-radius:6px;font-size:.75rem;font-family:'Outfit',sans-serif}
+
+/* Phase label */
+.phase-label{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.phase-badge{padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:500}
+
+/* Empty state */
+.empty-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;color:var(--muted)}
+.empty-stage i{font-size:3rem;color:rgba(201,168,76,.2)}
+.empty-stage h2{font-family:'Cinzel',serif;font-size:1.1rem;color:rgba(201,168,76,.4)}
+.demo-btn{padding:10px 28px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--gold);font-family:'Cinzel',serif;font-size:.82rem;
+  cursor:pointer;transition:all .2s}
+.demo-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
+</style>
+</head>
+<body>
+<div class="theater">
+
+  <!-- NAV -->
+  <nav class="t-nav">
+    <a href="index.html" class="nav-logo">चतुरंग</a>
+    <span class="nav-badge">इतिहास</span>
+    <span class="nav-title">Itihasa — The Battle Chronicle</span>
+    <div class="nav-links">
+      <a href="game.html"   class="nav-link"><i class="fa-solid fa-chess-board fa-xs"></i> Play</a>
+      <a href="seer.html"   class="nav-link"><i class="fa-solid fa-eye fa-xs"></i> Seer</a>
+      <a href="granth.html" class="nav-link"><i class="fa-solid fa-book fa-xs"></i> Granth</a>
+    </div>
+  </nav>
+
+  <!-- VAULT LIST -->
+  <div class="t-vault">
+    <div class="panel-label"><i class="fa-solid fa-scroll fa-xs"></i> Battle Chronicles</div>
+    <div id="vaultList"></div>
+  </div>
+
+  <!-- BOARD STAGE -->
+  <div class="t-stage" id="stage">
+    <div class="empty-stage" id="emptyStage">
+      <i class="fa-solid fa-film"></i>
+      <h2>Select a chronicle to replay</h2>
+      <p style="font-size:.82rem;max-width:260px;text-align:center;line-height:1.6">
+        Every completed game is preserved here. Watch it unfold move by move, with inscriptions appearing as they were earned.
+      </p>
+      <button class="demo-btn" onclick="loadDemo()">
+        <i class="fa-solid fa-flask fa-xs"></i> Load Demo Battle
+      </button>
+    </div>
+    <div id="boardStage" style="display:none">
+      <div class="board-wrap" id="boardWrap">
+        <div class="board-grid" id="boardGrid"></div>
+        <svg class="arrow-svg" id="arrowSvg" viewBox="0 0 416 416">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+          <line id="arrowLine" x1="0" y1="0" x2="0" y2="0" stroke="#c9a84c" stroke-width="2"
+            opacity=".7" marker-end="url(#ah)" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANNOTATION PANEL -->
+  <div class="t-annot">
+    <div class="panel-label"><i class="fa-solid fa-quill fa-xs"></i> Move Chronicle</div>
+    <div id="moveDetail">
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Select a game to begin the chronicle.</div>
+    </div>
+    <div class="panel-label" style="margin-top:4px"><i class="fa-solid fa-list-ol fa-xs"></i> Moves</div>
+    <div class="move-log-mini" id="moveLogMini"></div>
+  </div>
+
+  <!-- SCRUBBER -->
+  <div class="t-scrub">
+    <div class="scrub-row">
+      <button class="ctrl-btn" onclick="stepTo(0)" title="Start"><i class="fa-solid fa-backward-step"></i></button>
+      <button class="ctrl-btn" onclick="stepBy(-1)" title="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()" title="Play/Pause">
+        <i class="fa-solid fa-play" id="playIcon"></i>
+      </button>
+      <button class="ctrl-btn" onclick="stepBy(1)" title="Next"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="ctrl-btn" onclick="stepTo(999)" title="End"><i class="fa-solid fa-forward-step"></i></button>
+      <div class="scrub-bar-wrap" id="scrubWrap" onclick="scrubClick(event)">
+        <div class="scrub-track">
+          <div class="scrub-fill" id="scrubFill" style="width:0%"></div>
+          <div class="scrub-ins-dots" id="scrubDots"></div>
+          <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+        </div>
+      </div>
+      <span class="scrub-pos" id="scrubPos">—</span>
+      <select class="speed-sel" id="speedSel" onchange="setSpeed(this.value)">
+        <option value="2000">0.5×</option>
+        <option value="1200" selected>1×</option>
+        <option value="600">2×</option>
+        <option value="300">4×</option>
+        <option value="100">8×</option>
+      </select>
+    </div>
+    <div class="phase-label" id="phaseLabel">
+      <span class="phase-badge" id="phaseBadge" style="background:rgba(201,168,76,.1);color:var(--gold)">Opening</span>
+      <span id="phaseText">Battle has not yet begun</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══ State ══════════════════════════════════════════════════════════════════
+const GRANTH_KEY = 'chaturanga_granth_vault';
+const SEER_KEY   = 'chaturanga_seer_vault';
+const PIECE_SYMBOLS = {pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PLAYER_COLORS = ['var(--p0)','var(--p1)','var(--p2)','var(--p3)'];
+const PLAYER_LABELS = ['Red','Blue','Green','Yellow'];
+const Q_COLORS = {excellent:'var(--excellent)',good:'var(--good)',inaccuracy:'var(--inaccuracy)',blunder:'var(--blunder)'};
+
+let currentGame  = null;  // full game record
+let currentMoves = [];    // processed move array
+let stepIdx      = -1;    // current position (-1 = start)
+let boardState   = {};    // sq → {type, owner}
+let playTimer    = null;
+let playSpeed    = 1200;
+let inscriptionMap = {};  // moveIdx → inscription data
+
+// ══ Vault loading ══════════════════════════════════════════════════════════
+function loadVaults() {
+  const granth = tryParse(localStorage.getItem(GRANTH_KEY)) || [];
+  const seer   = tryParse(localStorage.getItem(SEER_KEY))   || [];
+  const all = [];
+
+  granth.forEach(g => {
+    all.push({ source:'granth', id:'g_'+g.id,
+      date: g.date, winner: g.winner, turns: g.turns,
+      inscriptions: g.inscriptions||[],
+      moves: (g.gameData?.moveHistory||[]).map(normaliseMove),
+      seerMoves: null });
+  });
+
+  seer.forEach(s => {
+    all.push({ source:'seer', id:'s_'+s.id,
+      date: s.meta?.date, winner: s.meta?.winner,
+      turns: (s.moves||[]).length, inscriptions:[],
+      moves: (s.moves||[]).map(normaliseSeerMove),
+      seerMoves: s.moves||[] });
+  });
+
+  return all;
+}
+
+function tryParse(s) { try { return JSON.parse(s||'null'); } catch { return null; } }
+
+function normaliseMove(m) {
+  return { from: m.from||null, to: m.to||null,
+    type: m.piece?.type||m.pieceType||null, owner: m.playerId??m.piece?.owner??0,
+    cap: m.cap?.type||null, capOwner: m.cap?.owner??null,
+    forfeit: !!m.forfeit, forfeitPiece: m.forfeitPiece||null,
+    diceValue: m.diceValue||null, quality: null, inscription: null };
+}
+
+function normaliseSeerMove(m) {
+  return { from: m.from, to: m.to, type: null, owner: 0,
+    cap: null, capOwner: null, forfeit: false, forfeitPiece: null,
+    diceValue: m.dice||null, quality: m.quality||null,
+    player: m.player||null, inscription: null };
+}
+
+// ══ Vault render ══════════════════════════════════════════════════════════
+function renderVaultList() {
+  const games = loadVaults();
+  const el = document.getElementById('vaultList');
+  if (!games.length) {
+    el.innerHTML = `<div class="vault-empty">
+      <i class="fa-solid fa-ghost" style="font-size:1.4rem;display:block;margin-bottom:8px;opacity:.3"></i>
+      No battles saved yet.<br>Complete a game and it will appear here as a chronicle.
+      <br><br><button class="demo-btn" onclick="loadDemo()" style="font-size:.72rem;padding:6px 14px">Load Demo</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML = games.map((g,i) => `
+    <div class="vault-item ${currentGame?.id===g.id?'active':''}" onclick="openGame(${i})">
+      <div class="vi-winner"><i class="fa-solid fa-crown fa-xs"></i>${g.winner||'Unknown'}</div>
+      <div class="vi-meta">${g.date||'—'} · ${g.turns||0} moves · ${g.source==='granth'?'Granth':'Seer'}</div>
+      ${g.inscriptions?.length ? `<div class="vi-inscriptions">${g.inscriptions.slice(0,3).map(ins=>`<span class="vi-ins-tag">${ins.sanskrit||ins.id}</span>`).join('')}</div>` : ''}
+    </div>`).join('');
+  return games;
+}
+
+// ══ Open a game ══════════════════════════════════════════════════════════
+function openGame(idx) {
+  const games = loadVaults();
+  if (!games[idx]) return;
+  currentGame  = games[idx];
+  currentMoves = currentGame.moves;
+  stepIdx = -1;
+  inscriptionMap = {};
+
+  // Build inscription map if this is a Granth game
+  if (currentGame.source === 'granth' && currentGame.inscriptions?.length) {
+    currentGame.inscriptions.forEach((ins, i) => {
+      const approxMove = Math.floor(currentMoves.length * (i+1) / (currentGame.inscriptions.length+1));
+      inscriptionMap[approxMove] = ins;
+    });
+  }
+
+  // Show board
+  document.getElementById('emptyStage').style.display = 'none';
+  document.getElementById('boardStage').style.display = '';
+
+  buildStartBoard();
+  renderBoardGrid();
+  renderMoveLog();
+  renderScrubDots();
+  updateScrub();
+  renderAnnotation();
+  renderVaultList();
+}
+
+// ══ Board state ══════════════════════════════════════════════════════════
+const START_BOARD = {
+  'a1':{type:'rook',owner:0},'b1':{type:'horse',owner:0},'c1':{type:'elephant',owner:0},
+  'd1':{type:'king',owner:0},'e1':{type:'elephant',owner:0},'f1':{type:'horse',owner:0},'g1':{type:'rook',owner:0},
+  'a2':{type:'pawn',owner:0},'b2':{type:'pawn',owner:0},'c2':{type:'pawn',owner:0},'d2':{type:'pawn',owner:0},
+  'e2':{type:'pawn',owner:0},'f2':{type:'pawn',owner:0},'g2':{type:'pawn',owner:0},'h2':{type:'pawn',owner:0},
+  'h8':{type:'rook',owner:1},'g8':{type:'horse',owner:1},'f8':{type:'elephant',owner:1},
+  'e8':{type:'king',owner:1},'d8':{type:'elephant',owner:1},'c8':{type:'horse',owner:1},'b8':{type:'rook',owner:1},
+  'h7':{type:'pawn',owner:1},'g7':{type:'pawn',owner:1},'f7':{type:'pawn',owner:1},'d7':{type:'pawn',owner:1},
+  'e7':{type:'pawn',owner:1},'c7':{type:'pawn',owner:1},'b7':{type:'pawn',owner:1},'a7':{type:'pawn',owner:1},
+  'h1':{type:'rook',owner:3},'h2':{type:'horse',owner:3},'h3':{type:'elephant',owner:3},
+  'h4':{type:'king',owner:3},'h5':{type:'elephant',owner:3},'h6':{type:'horse',owner:3},'h7':{type:'rook',owner:3},
+  'g1':{type:'pawn',owner:3},'g2':{type:'pawn',owner:3},'g3':{type:'pawn',owner:3},'g4':{type:'pawn',owner:3},
+  'g5':{type:'pawn',owner:3},'g6':{type:'pawn',owner:3},'g7':{type:'pawn',owner:3},'g8':{type:'pawn',owner:3},
+  'a8':{type:'rook',owner:2},'b8':{type:'horse',owner:2},'c8':{type:'elephant',owner:2},
+  'd8':{type:'king',owner:2},'e8':{type:'elephant',owner:2},'f8':{type:'horse',owner:2},'g8':{type:'rook',owner:2},
+  'a7':{type:'pawn',owner:2},'b7':{type:'pawn',owner:2},'c7':{type:'pawn',owner:2},'d7':{type:'pawn',owner:2},
+  'e7':{type:'pawn',owner:2},'f7':{type:'pawn',owner:2},'g7':{type:'pawn',owner:2},'h7':{type:'pawn',owner:2},
+};
+
+function buildStartBoard() {
+  boardState = {};
+  Object.entries(START_BOARD).forEach(([sq,p]) => { boardState[sq] = {...p}; });
+}
+
+function applyMovesToIdx(targetIdx) {
+  buildStartBoard();
+  for (let i = 0; i <= targetIdx && i < currentMoves.length; i++) {
+    const m = currentMoves[i];
+    if (m.from && m.to && boardState[m.from]) {
+      const piece = boardState[m.from];
+      // Infer type from board if move has no type
+      if (!m.type) m.type = piece.type;
+      if (!m.owner && m.owner !== 0) m.owner = piece.owner;
+      boardState[m.to] = {...piece};
+      delete boardState[m.from];
+    }
+  }
+}
+
+// ══ Board render ══════════════════════════════════════════════════════════
+function renderBoardGrid() {
+  const grid = document.getElementById('boardGrid');
+  grid.innerHTML = '';
+  const m = stepIdx >= 0 ? currentMoves[stepIdx] : null;
+  const tp = getTurningPoint();
+
+  for (let r = 8; r >= 1; r--) {
+    for (let fi = 0; fi < 8; fi++) {
+      const sq = String.fromCharCode(97+fi)+r;
+      const isLight = (fi+r)%2===0;
+      const piece   = boardState[sq];
+      const isFrom  = m?.from===sq;
+      const isTo    = m?.to===sq;
+      const isTp    = tp && m && tp===stepIdx && isTo;
+      const isIns   = inscriptionMap[stepIdx] && isTo;
+
+      const div = document.createElement('div');
+      div.className = `bsq ${isLight?'light':'dark'} ${isFrom?'from-sq':''} ${isTp?'tp-sq':isIns?'ins-sq':isTo?'to-sq':''}`;
+
+      if (piece) {
+        const span = document.createElement('span');
+        span.className = 'piece-sym';
+        span.style.color = PLAYER_COLORS[piece.owner]||'#fff';
+        span.textContent = PIECE_SYMBOLS[piece.type]||'?';
+        div.appendChild(span);
+      }
+      grid.appendChild(div);
+    }
+  }
+  renderArrow(m);
+}
+
+function renderArrow(m) {
+  const line = document.getElementById('arrowLine');
+  if (!m || !m.from || !m.to || m.forfeit) { line.setAttribute('x1',0); line.setAttribute('y1',0); line.setAttribute('x2',0); line.setAttribute('y2',0); return; }
+  const sqCoord = sq => {
+    const fi = sq.charCodeAt(0)-97;
+    const r  = parseInt(sq[1]);
+    return { x: (fi+.5)*52, y: (8.5-r)*52 };
+  };
+  const from = sqCoord(m.from), to = sqCoord(m.to);
+  line.setAttribute('x1', from.x); line.setAttribute('y1', from.y);
+  line.setAttribute('x2', to.x);   line.setAttribute('y2', to.y);
+}
+
+// ══ Annotation panel ══════════════════════════════════════════════════════
+const DRONA_COMMENTARY = {
+  opening: [
+    'The armies deploy. Each advance is a declaration.',
+    'Development precedes destruction. Establish your ground.',
+    'The opening is the question the player asks the board.',
+    'Kautilya wrote: position your strongest forces where they command the widest ground.',
+  ],
+  midgame: [
+    'The middle game — where plans collide and tactics decide.',
+    'Combinations emerge from positions patiently built.',
+    'The Ashwa seeks the fork. The Ratha seeks the open file.',
+    'Every capture is a choice between safety and greed.',
+    'Patience is the weapon the impatient cannot understand.',
+  ],
+  endgame: [
+    'The endgame strips away all pretence. What remains is truth.',
+    'In the endgame, the Raja must lead from the front.',
+    'Methodical pressure wins more battles than brilliance.',
+    'The last pieces hold more power than a crowded board suggests.',
+  ],
+  capture: [
+    'A piece falls. The balance shifts.',
+    'Material speaks, but position whispers louder.',
+    'Every capture redraws the map of the battle.',
+  ],
+  sacrifice: [
+    'The Bhagavad Gita 3.25: act for the welfare of the team, not for personal gain.',
+    'A sacrifice that saves an ally is worth ten captures.',
+    'Nishkama Karma: the warrior who gives without counting.',
+  ],
+  fork: [
+    'The fork — the oldest trap on the Ashtāpada.',
+    'Two targets, one piece, one impossible choice for the enemy.',
+    'The Jackal who divided the Lions. The Ashwa who divides armies.',
+  ],
+  blunder: [
+    'A costly mistake. The board remembers everything.',
+    'From this position, the stronger player would have found another path.',
+    'Errors are the tuition fees of mastery.',
+  ]
+};
+
+function getDronaLine(m, idx) {
+  const total = currentMoves.length;
+  const phase = idx < total*0.25 ? 'opening' : idx < total*0.65 ? 'midgame' : 'endgame';
+  let pool = DRONA_COMMENTARY[phase];
+  if (m?.quality === 'blunder') pool = DRONA_COMMENTARY.blunder;
+  else if (m?.cap) pool = [...pool, ...DRONA_COMMENTARY.capture];
+  return pool[idx % pool.length];
+}
+
+function getPhase(idx) {
+  if (!currentMoves.length) return { label:'Opening', color:'rgba(201,168,76,.1)', text:'Battle has not yet begun' };
+  const pct = idx / currentMoves.length;
+  if (pct < 0.25) return { label:'Opening', color:'rgba(96,165,250,.1)', text:`Move ${idx+1} — armies deploying` };
+  if (pct < 0.65) return { label:'Middle Game', color:'rgba(251,191,36,.1)', text:`Move ${idx+1} — battle at full intensity` };
+  return { label:'Endgame', color:'rgba(248,113,113,.1)', text:`Move ${idx+1} — the final reckoning` };
+}
+
+function getTurningPoint() {
+  if (!currentMoves.length) return null;
+  // Find largest material delta
+  let maxDelta = 0, tpIdx = -1;
+  currentMoves.forEach((m, i) => {
+    const delta = Math.abs(m.materialDelta || (m.cap ? 3 : 0));
+    if (delta > maxDelta) { maxDelta = delta; tpIdx = i; }
+  });
+  return tpIdx >= 0 ? tpIdx : null;
+}
+
+function renderAnnotation() {
+  const panel = document.getElementById('moveDetail');
+  if (stepIdx < 0 || !currentMoves[stepIdx]) {
+    panel.innerHTML = `
+      <div style="font-family:'Cormorant Garamond',serif;font-size:.88rem;color:#c4a97a;font-style:italic;line-height:1.7">
+        The battle record waits. Press play or advance one move at a time.
+      </div>`;
+    return;
+  }
+
+  const m   = currentMoves[stepIdx];
+  const ins = inscriptionMap[stepIdx];
+  const dronaLine = getDronaLine(m, stepIdx);
+  const q = m.quality || 'move';
+  const playerLabel = m.player || (m.owner !== undefined ? PLAYER_LABELS[m.owner] : `Player ${m.owner}`);
+
+  let moveDesc;
+  if (m.forfeit) {
+    moveDesc = `Forfeit — no ${m.forfeitPiece||'piece'} move`;
+  } else if (m.from && m.to) {
+    const capStr = m.cap ? ` × ${m.cap}` : '';
+    moveDesc = `${m.from} → ${m.to}${capStr}`;
+  } else {
+    moveDesc = '—';
+  }
+
+  panel.innerHTML = `
+    <div class="move-detail">
+      <div class="md-move">${moveDesc}</div>
+      <div class="md-player" style="color:${PLAYER_COLORS[m.owner]||'var(--gold)'}">
+        ${playerLabel}${m.diceValue ? ' · Dice ' + m.diceValue : ''}
+      </div>
+      ${q !== 'move' ? `<span class="md-quality mq-${q}">${
+        q==='excellent'?'★ Excellent':q==='good'?'· Good':q==='inaccuracy'?'? Inaccuracy':'!! Blunder'
+      }</span>` : ''}
+      <div class="drona-voice">"${dronaLine}"</div>
+    </div>
+    ${ins ? `
+    <div class="ins-card">
+      <div class="ins-header">
+        <i class="fa-solid fa-award ins-icon"></i>
+        <div>
+          <div class="ins-label">Inscription Earned</div>
+          <div class="ins-sanskrit">${ins.sanskrit||ins.id}</div>
+        </div>
+      </div>
+      <div class="ins-body">${ins.desc || 'A tactical truth recorded in the Granth.'}</div>
+    </div>` : ''}`;
+
+  // Phase update
+  const phase = getPhase(stepIdx);
+  document.getElementById('phaseBadge').textContent = phase.label;
+  document.getElementById('phaseBadge').style.background = phase.color;
+  document.getElementById('phaseText').textContent = phase.text;
+}
+
+function renderMoveLog() {
+  const el = document.getElementById('moveLogMini');
+  el.innerHTML = currentMoves.map((m, i) => {
+    const q = m.quality;
+    const ins = inscriptionMap[i];
+    const sqLabel = m.forfeit ? `Forfeit` : m.from && m.to ? `${m.from}→${m.to}` : '—';
+    return `
+    <div class="mlm-row ${i===stepIdx?'active':''}" onclick="stepTo(${i})">
+      <span class="mlm-num">${i+1}</span>
+      <span class="mlm-sq">${sqLabel}</span>
+      ${q ? `<span class="mlm-q" style="background:${Q_COLORS[q]||'transparent'}" title="${q}"></span>` : '<span class="mlm-q"></span>'}
+      ${ins ? `<span class="mlm-ins" title="${ins.sanskrit}">✦</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ══ Step controls ══════════════════════════════════════════════════════════
+function stepTo(idx) {
+  if (!currentMoves.length) return;
+  stepIdx = Math.max(-1, Math.min(idx, currentMoves.length-1));
+  applyMovesToIdx(stepIdx);
+  renderBoardGrid();
+  renderAnnotation();
+  updateScrub();
+  syncMoveLog();
+}
+
+function stepBy(delta) { stepTo(stepIdx + delta); }
+
+function syncMoveLog() {
+  document.querySelectorAll('.mlm-row').forEach((r,i) => r.classList.toggle('active', i===stepIdx));
+  const active = document.querySelector('.mlm-row.active');
+  if (active) active.scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+
+// ══ Playback ══════════════════════════════════════════════════════════════
+let isPlaying = false;
+
+function togglePlay() {
+  if (!currentMoves.length) return;
+  isPlaying = !isPlaying;
+  document.getElementById('playIcon').className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+  if (isPlaying) {
+    if (stepIdx >= currentMoves.length-1) stepTo(-1);
+    scheduleNext();
+  } else {
+    clearTimeout(playTimer);
+  }
+}
+
+function scheduleNext() {
+  if (!isPlaying) return;
+  playTimer = setTimeout(() => {
+    if (stepIdx >= currentMoves.length-1) {
+      isPlaying = false;
+      document.getElementById('playIcon').className = 'fa-solid fa-play';
+      return;
+    }
+    stepBy(1);
+    scheduleNext();
+  }, playSpeed);
+}
+
+function setSpeed(val) { playSpeed = parseInt(val); }
+
+// ══ Scrubber ══════════════════════════════════════════════════════════════
+function updateScrub() {
+  if (!currentMoves.length) return;
+  const pct = stepIdx < 0 ? 0 : ((stepIdx+1) / currentMoves.length) * 100;
+  document.getElementById('scrubFill').style.width  = pct + '%';
+  document.getElementById('scrubThumb').style.left  = pct + '%';
+  document.getElementById('scrubPos').textContent   = stepIdx < 0 ? 'Start' : `${stepIdx+1} / ${currentMoves.length}`;
+}
+
+function renderScrubDots() {
+  const dotsEl = document.getElementById('scrubDots');
+  dotsEl.innerHTML = '';
+  Object.keys(inscriptionMap).forEach(idx => {
+    const pct = ((parseInt(idx)+1) / currentMoves.length) * 100;
+    const dot = document.createElement('div');
+    dot.className = 'scrub-dot';
+    dot.style.left = pct + '%';
+    dot.title = inscriptionMap[idx]?.sanskrit || 'Inscription';
+    dotsEl.appendChild(dot);
+  });
+}
+
+function scrubClick(e) {
+  if (!currentMoves.length) return;
+  const rect = document.getElementById('scrubWrap').getBoundingClientRect();
+  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const idx  = Math.round(pct * (currentMoves.length-1));
+  stepTo(idx);
+}
+
+// ══ Keyboard navigation ════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'ArrowRight') stepBy(1);
+  if (e.key === 'ArrowLeft')  stepBy(-1);
+  if (e.key === 'Home')       stepTo(-1);
+  if (e.key === 'End')        stepTo(999);
+  if (e.key === ' ')          { e.preventDefault(); togglePlay(); }
+});
+
+// ══ Demo game ══════════════════════════════════════════════════════════════
+function loadDemo() {
+  const DEMO_MOVES = [
+    {from:'e2',to:'e4',type:'pawn',owner:0,cap:null,diceValue:6,quality:'good'},
+    {from:'e7',to:'e5',type:'pawn',owner:1,cap:null,diceValue:6,quality:'good'},
+    {from:'g1',to:'f3',type:'horse',owner:0,cap:null,diceValue:3,quality:'excellent'},
+    {from:'b8',to:'c6',type:'horse',owner:1,cap:null,diceValue:3,quality:'good'},
+    {from:'f1',to:'c4',type:'elephant',owner:0,cap:null,diceValue:4,quality:'excellent'},
+    {from:'c6',to:'d4',type:'horse',owner:1,cap:{type:'pawn',owner:0},diceValue:3,quality:'good'},
+    {from:'f3',to:'d4',type:'horse',owner:0,cap:{type:'horse',owner:1},diceValue:3,quality:'excellent'},
+    {from:'d8',to:'h4',type:'rook',owner:1,cap:null,diceValue:1,quality:'good'},
+    {from:'c4',to:'f7',type:'elephant',owner:0,cap:{type:'pawn',owner:1},diceValue:4,quality:'excellent'},
+    {from:'e8',to:'f7',type:'king',owner:1,cap:{type:'elephant',owner:0},diceValue:6,quality:'inaccuracy'},
+    {from:'d4',to:'e6',type:'horse',owner:0,cap:null,diceValue:3,quality:'excellent'},
+    {from:'h4',to:'h1',type:'rook',owner:1,cap:{type:'rook',owner:0},diceValue:1,quality:'good'},
+    {from:'e6',to:'c7',type:'horse',owner:0,cap:{type:'horse',owner:1},diceValue:3,quality:'good'},
+    {from:'f7',to:'g6',type:'king',owner:1,cap:null,diceValue:6,quality:'blunder'},
+    {from:'c7',to:'a8',type:'horse',owner:0,cap:{type:'rook',owner:1},diceValue:3,quality:'excellent'},
+    {from:'g6',to:'h5',type:'king',owner:1,cap:null,diceValue:6,quality:'inaccuracy'},
+    {from:'d1',to:'d8',type:'rook',owner:0,cap:null,diceValue:1,quality:'excellent'},
+    {from:'h5',to:'g4',type:'king',owner:1,cap:null,diceValue:6,quality:'good'},
+  ];
+
+  const demoIns = {
+    6:  { id:'ashwa-fork', sanskrit:'अश्व मुद्रा', desc:'The Ashwa on f3 leaped to d4, simultaneously threatening two enemy pieces. The fork — the oldest trap on the Ashtāpada.' },
+    8:  { id:'elephant-sacrifice', sanskrit:'दन्ति बलिदान', desc:'The Danti sacrificed itself on f7, drawing the enemy Raja out of safety. A piece offered, a king exposed.' },
+    14: { id:'ratha-final', sanskrit:'रथ विजय', desc:'The Ratha drove to d8 — an unstoppable march along the open file. The game\'s decisive moment.' },
+  };
+
+  currentGame = {
+    id: 'demo', source:'granth', date: new Date().toLocaleDateString(),
+    winner:'Red (Human)', turns: DEMO_MOVES.length,
+    inscriptions: Object.values(demoIns),
+    moves: DEMO_MOVES
+  };
+  currentMoves  = DEMO_MOVES;
+  inscriptionMap = demoIns;
+  stepIdx = -1;
+
+  document.getElementById('emptyStage').style.display = 'none';
+  document.getElementById('boardStage').style.display = '';
+
+  buildStartBoard();
+  renderBoardGrid();
+  renderMoveLog();
+  renderScrubDots();
+  updateScrub();
+  renderAnnotation();
+  renderVaultList();
+}
+
+// ══ Init ══════════════════════════════════════════════════════════════════
+renderVaultList();
+// Auto-open most recent game if vault has entries
+const games = loadVaults();
+if (games.length) {
+  const urlParams = new URLSearchParams(location.search);
+  const idx = urlParams.get('idx') ? parseInt(urlParams.get('idx')) : 0;
+  openGame(idx);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+Got it — so the plan is: **Critical Moment Detection first**, then roll straight into **Session 3** (Board Themes → Sangram Dharma Bar → Samara Shastra). Let me build the analysis worker and Seer additions now.Building the two files now — `js/analysis-worker.js` and `js/seer-critical.js` (drop-in Seer patch with zero modifications to existing code).Now copy both to outputs and build the Session 3 features. Let me move to Board Themes next.Now Session 3 — Board Themes first:Now the Sangram Live Dharma Bar:Now the crown jewel of Session 3 — Samara Shastra:Five files delivered. Here's the full breakdown of what was built:
+
+---
+
+**Critical Moment Detection (the session 1 finish)**
+
+`analysis-worker.js` — a pure Web Worker with its own mini move generator. It rebuilds piece positions from saved board state, runs capture analysis for each position, and flags any move where the player missed a capture worth 3+ material points (Ashwa threshold). Returns `{ moveIndex, playerIdx, betterFromSq, betterToSq, deltaGap }` per blunder.
+
+`seer-critical.js` — drops into seer.html with one `<script>` tag. Auto-detects the Seer DOM, injects a "Turning Points" section above the move log with animated progress bar, renders expandable blunder cards with Drona quotes, badges the move log rows with ⚡ icons, and draws a gold SVG arrow on the replay board pointing to the missed square. Hook: `SeerCritical.init(game)` after loading any game.
+
+---
+
+**Session 3**
+
+`board-themes.js` — 5 base themes (always unlocked) + 5 locked achievement themes. Applies via CSS variables (`--board-light`, `--board-dark`, `--board-border`). Each locked theme has its exact unlock condition wired to localStorage keys the project already uses. On unlock: gold shimmer sweeps the board for 1.5s. `ChaturangaThemes.buildSelector(el)` injects a visual picker grid anywhere.
+
+`sangram-dharma.js` — a 6px animated 4-segment bar that mounts automatically below the board. Calls `SangramDharma.update(moveHistory)` after every move. Sacrifice, promotion, forfeit, consecutive-piece greed, and Raja capture all trigger score changes and annotated text flashes above the bar. Raja capture triggers a full-width gold pulse animation.
+
+`samara.html` — standalone pre-battle briefing page. Pulls today's live Panchanga (tithi, nakshatra, vara, yoga), reads the last 3 Granth inscriptions, and reads the active formation. The typewriter delivers a six-line personalised briefing combining all three — the sentence about your tactical pattern and formation and nakshatra together is unique to that player, on that day, at that moment. Every player gets a different sentence every day.

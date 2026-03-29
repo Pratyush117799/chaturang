@@ -1,0 +1,35 @@
+
+/* =========================================
+   Website Integration CSS
+   Extracted from website/css/style.css
+   ========================================= */
+
+/* Ensure the navbar respects z-index and doesn't conflict */
+
+/* Overrides for Game Layout to accommodate the 70px header */
+.top-nav {
+  top: 70px !important;
+}
+.game-layout {
+  padding-top: calc(var(--nav-h) + 70px) !important;
+}
+.settings-drawer {
+  top: calc(var(--nav-h) + 70px) !important;
+  height: calc(100vh - var(--nav-h) - 70px) !important;
+}
+.nav { /* kurukshetra/shubh top nav */
+  top: 70px !important;
+}
+#gameScreen {
+  padding-top: calc(60px + 70px) !important; 
+}
+#app { /* board-forge */
+  padding-top: calc(60px + 70px) !important;
+}
+.bf-nav {
+  top: 70px !important;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}

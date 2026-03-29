@@ -1,0 +1,121 @@
+CHATURANGA v1.0.5.2 — FEATURE IDEAS BRAINSTORM
+===============================================
+
+RETENTION ENGINE (Highest Impact)
+-----------------------------------
+
+1. ELO RATING SYSTEM — Live, Persistent, Cross-Session
+Every multiplayer game records no persistent outcome. Build server-side (or localStorage-first) rating: start 1000, ±25 on win/loss. Display in lobby next to name. Show rating history graph in profile. Show opponent ratings in room card before joining.
+Technical: server.js flat JSON ledger. Room join sends player ELO; server calculates delta on game-over; broadcasts updated ELOs. localStorage fallback for local games. chaturanga_online_elo key already defined in lobby.html.
+Files: server.js, lobby.html, profile panel
+
+2. GAME CLOCK — Per-Player Countdown (Chirantan / Tez / Atichitr)
+Already named in prototype plan. Not yet built. Three time controls: Chirantan (no clock), Tez (5 min total), Atichitr (1 min + 3s increment). Each player has own clock ticking only on their turn. Clock depletes → player forfeits remaining moves → game continues without them.
+Technical: one setInterval in ui.js, paused/resumed on turn change. Two timer divs above the board. Server sends turn timestamps for synchronised multiplayer. WS message type clock-update broadcasts remaining time.
+Files: ui.js, game.html, server-ws.js
+
+3. MOVE NOTATION EXPORT / SHARE URL
+Every game played vanishes. Build Chaturanga Notation (CN) format compact enough for a URL. Format: R:e1-e5 B:e8-e5x A:d4-f5 Y:pass | ... (player initial, from-to, x=capture, p=promotion, f=forfeit). Encode full game as base64 in URL. Share link → anyone opening it sees replay in Seer automatically.
+Technical: CN encoder/decoder, base64 URL param, Seer auto-load from ?game= param, share button in game-over overlay. Board-forge URL encoding pattern already exists — extend it.
+Files: ui.js, seer.html, game.html
+
+
+COMPETITIVE INFRASTRUCTURE (High Impact)
+-----------------------------------------
+
+4. LIVE SPECTATOR MODE
+WebSocket server already has rooms. Public rooms show Watch button in lobby alongside Join. Spectators connect as read-only — receive all game-state broadcasts, cannot send moves. Board renders normally, move arrows show, Seer quality bar updates live, chat sidebar for spectator comments. X watching count in room card creates social proof.
+Technical: Add spectators: Set to each room. game-state broadcast goes to players AND spectators. New WS message join-spectate. Server never forwards move inputs from spectator sockets.
+Files: server-ws.js, lobby.html, game.html
+
+5. WEEKLY YUDDHA — Ranked 7-day tournament resetting every Sunday
+Shubh has a daily loop but nothing creates week-long tension. Every week (Sunday midnight IST reset), all online ELO gains from ranked games contribute to Weekly Yuddha leaderboard. Top 3 earn Granth achievements: Saptaha Vijeta (Champion), Agrani (Runner-up), Yoddha Shrestha (3rd). Visible in lobby.
+Technical: Weekly delta-ELO ledger separate from main ELO. Scheduled reset task in server.js. Lobby leaderboard panel. Granth achievement grant on reset.
+Files: server.js, lobby.html, granth.html
+
+6. REMATCH + REVENGE — Instant re-queue after game with head-to-head history
+Strongest retention moment is immediately after losing. Game-over overlay gets two buttons: Rematch (same players, sides swap) and Revenge (same opponent, you pick colour). Show head-to-head record ("You: 3 wins · Opponent: 5 wins"). WS server already has rematch-vote message type in ws-client.js — just needs server handler and UI wiring.
+Technical: rematch-vote handler in server-ws.js, side-swap logic, head-to-head localStorage per opponent ID, two buttons in game-over overlay.
+Files: server-ws.js, ws-client.js, ui.js
+
+
+INTELLIGENCE LAYER (Medium Impact)
+------------------------------------
+
+7. CRITICAL MOMENT DETECTION — "You had a winning move here" in Seer
+Seer already detects turning points. After game, run bot engine at ELO 400 against each blunder position. If significantly better move existed (captures major piece, delivers check, avoids material loss), show it: "Move 17 — you moved Ashwa to f5. Bot found Ratha to d7 capturing enemy Raja in 2." Highlight missed move in replay board with gold arrow.
+Technical: Post-game Web Worker feeds each blunder position through ChaturangaTieredBot.getMove(game, 400). Compare material delta of bot move vs actual move. If delta difference ≥ 3, mark as missed win. Display in Seer move log with lightning icon.
+Files: seer.html, seer.js, new analysis-worker.js
+
+8. OPENING LIBRARY — Name openings as you play them
+Build library of ~20 named Chaturanga openings based on first 4 half-moves. Examples: Bhishma's Wall (Rathas to centre files), Arjuna's Surge (Ashwa double-advance), Karna's Gambit (Nara sacrifice for open file). When player's first moves match known opening, flash small banner. Show in Seer analysis. Granth achievement for first-time use of each named opening.
+Technical: Opening data object mapping move sequences to names. Pattern matcher checks moveHistory after move 4. In-game banner, Seer label, Acharya chatbot entries for all 20.
+Files: new openings-data.js, ui.js, seer.html, chatbot-data.js, granth.html
+
+9. DICE PROBABILITY HEATMAP — Expected vs actual dice distribution after game
+The Pāśaka dice is most complained-about mechanic. In Seer post-game, add Dice Chronicle section: bar chart showing how many times each face (1–6) was rolled per player. Overlay expected distribution (each face ~16.7%). Players with bad distributions get Auspicious Misfortune annotation. Validates frustration or exposes confirmation bias.
+Technical: Dice frequency counter already in moveHistory. Seer bar chart section using SVG. Expected vs actual overlay. No new data collection needed.
+Files: seer.html, seer.js
+
+
+COMMUNITY AND SOCIAL (Growth Impact)
+--------------------------------------
+
+10. CLAN SYSTEM — Sena of up to 6 players with persistent identity
+Players form a Sena (army) — named group of 2–6 with chosen Vyuha as emblem (Garuda Sena, Chakra Sena). Members see each other's ELO, recent games, Granth achievements in shared panel. Sena leaderboard tracks inter-clan weekly wins. Clan name appears in lobby next to player name. In team games, same-Sena players get visual indicator.
+Technical: Clan creation stored in localStorage (JSON). Clan ID shared via invite code. Lobby displays Sena badge. Server-side clan ledger for weekly rankings.
+Files: new sena.html, lobby.html, server.js, granth.html
+
+11. PUZZLE OF THE MOMENT — AI-generated positions from real games last 24 hours
+Puzzles from abstract databases feel arbitrary. When game ends with blunder detected (from idea 7), position 2 moves before blunder auto-submitted to Community Puzzle Pool in localStorage. Shubh daily puzzle draws from this pool. Display: "This position arose in a game played 3 hours ago." Players whose positions become Daily Shubh puzzles earn Guru Dakshina Granth achievement.
+Technical: Blunder-to-puzzle extractor writes to chaturanga_puzzle_pool. Shubh selectPuzzle() checks pool before built-in bank. 24-hour expiry on community positions.
+Files: ui.js (extractor), shubh.html, granth.html
+
+12. BOARD THEMES AS ACHIEVEMENTS — Unlock visual rewards through play milestones
+5 locked board themes unlocked by specific Granth achievements: Kurukshetra at Sunset (complete Campaign Day 13), Indraprastha Marble (reach Arjuna rank in Akhara), Ashoka's Pillar (30-day Shubh streak), Shakuni's Court (use Pāśa in 10 games), Midnight Ashtāpada (play 5 games between midnight and 3am IST). Opponents in online play see your board theme.
+Technical: Extend board-theme selector with lock/unlock state keyed to Granth achievement IDs. Zero new infrastructure. Theme unlock celebration animation.
+Files: game.html, ui.js, granth.html
+
+
+TECHNICAL WINS (Small Changes, Large Feel)
+--------------------------------------------
+
+13. PRE-MOVE SYSTEM — Queue move before your turn resolves
+In fast time controls, waiting for animation wastes seconds. While opponent moves, click piece and destination — shown as translucent ghost on board. If legal when your turn starts, executes instantly. If no longer legal, cancels silently. Pre-moves shown with blue tint. Chess.com, Lichess, every serious client has this. Transforms feel of bullet mode.
+Technical: preMove state in GameState sealed class. Ghost piece render in ui.js. Legality recheck on turn start. Blue tint CSS class. Cancel if piece captured or destination occupied.
+Files: game.js, ui.js, styles.css
+
+14. SOUND DESIGN OVERHAUL — Positional audio feedback per piece type
+Current Web Audio API tones are functional. Proper sounds: Ratha = deep slide, Ashwa = hollow clip-clop, Danti = heavy thud, Nara = light tap, Raja = resonant tone. Captures are louder and lower. Check is tense rising pulse. Dice roll is percussive tumble resolving to face value frequency. Game end plays 3-note Carnatic-inspired resolution chord. Entirely Web Audio API, no external files, ~100 lines.
+Technical: AudioContext oscillator bank, per-piece-type frequency table, dice tumble sequence generator, Carnatic chord (Sa-Ga-Pa).
+Files: dice.js, ui.js (sound module)
+
+15. OFFLINE PWA WITH BACKGROUND SYNC
+India has patchy 4G. Service worker already exists and caches files. Missing: (1) proper offline fallback page showing "You're offline — play vs AI or study puzzles", (2) Background Sync API so Shubh solve events queue and sync when online, (3) connectivity indicator in nav bar (green = online, amber = reconnecting, grey = offline). Game vs AI already works offline — just doesn't tell players. Communicating "offline mode active" turns failure into feature.
+Technical: offline.html fallback, Background Sync registration in sw.js, connectivity dot in nav, queued Shubh sync via SyncManager.
+Files: sw.js, game.html, shubh.html, new offline.html
+
+16. ADAPTIVE BOT DIFFICULTY — Bot tracks win rate and adjusts automatically
+Track last 10 bot games in localStorage. Win rate > 70% → bump bot ELO by 100 next game. Win rate < 30% → drop by 100. Show subtle "Difficulty adjusted ↑" toast after game start. Bot already has 6 ELO levels (100–1000). ~20 lines of code. Keeps game permanently engaging from day 1 to year 2. Flow state: players should lose ~40% of the time.
+Technical: Rolling 10-game win rate in chaturanga_bot_history. Auto ELO adjustment before setBotConfig(). Transparency toast in ui.js.
+Files: ui.js
+
+
+BUILD ORDER RECOMMENDATION
+----------------------------
+1. Game Clock (#2) — 50 lines, transforms every online mode immediately
+2. ELO Rating (#1) — biggest single retention driver, key already defined in lobby.html
+3. Share URL (#3) — viral distribution, board-forge URL pattern already exists
+4. Critical Moment Detection (#7) — closes play-to-learn loop like Chess.com
+5. Adaptive Bot (#16) — 20 lines, permanent engagement for all skill levels
+6. Pre-move System (#13) — QoL for fast modes, makes bullet feel professional
+7. Sound Design (#14) — emotional memory, no external files needed
+8. Board Themes as Achievements (#12) — zero new infrastructure, immediate visual reward
+9. Dice Heatmap (#9) — validates most common player complaint
+10. Opening Library (#8) — vocabulary + discovery + chatbot integration
+11. Spectator Mode (#4) — social proof, community feel
+12. Rematch + Revenge (#6) — strongest retention moment (post-loss)
+13. Weekly Yuddha (#5) — week-long tension loop
+14. Puzzle of the Moment (#11) — virtuous content loop
+15. Offline PWA (#15) — India market resilience
+16. Clan System (#10) — largest effort, highest long-term social stickiness

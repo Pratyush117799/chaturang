@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Granth — Your Battle Manuscript · Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & base ─────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  min-height:100%;
+  background:#0a0802;
+  color:#f0e4c8;
+  font-family:'Outfit',sans-serif;
+}
+
+/* ── Nav ──────────────────────────────────────────────────────── */
+.nav{
+  background:#14100a;border-bottom:1px solid rgba(201,168,76,.18);
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:100;
+}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:#c9a84c;
+  font-weight:700;text-decoration:none}
+.nav-badge{font-size:.62rem;background:rgba(201,168,76,.1);color:#8a7050;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(201,168,76,.18)}
+.nav-links{margin-left:auto;display:flex;gap:6px}
+.nav-link{padding:5px 10px;border-radius:6px;font-size:.78rem;color:#8a7050;
+  text-decoration:none;transition:all .2s;cursor:pointer;background:transparent;border:none}
+.nav-link:hover{background:rgba(201,168,76,.08);color:#c9a84c}
+
+/* ── Page layout ──────────────────────────────────────────────── */
+.page{display:flex;flex-direction:column;align-items:center;
+  padding:28px 16px 60px;min-height:calc(100vh - 52px)}
+
+/* ── Empty state (no game yet) ────────────────────────────────── */
+#emptyState{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:60px 20px;max-width:480px;
+}
+.empty-scroll{font-size:4rem;margin-bottom:16px;opacity:.4}
+.empty-title{font-family:'Cinzel',serif;font-size:1.3rem;color:#c9a84c;margin-bottom:8px}
+.empty-sub{font-size:.85rem;color:#8a7050;line-height:1.65;margin-bottom:28px}
+.demo-btn{
+  padding:11px 32px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.demo-btn:hover{background:linear-gradient(135deg,#e8b52a,#c8960c);transform:translateY(-1px)}
+
+/* ── GRANTH CARD (the manuscript) ─────────────────────────────── */
+#granthCard{
+  display:none;
+  width:100%;max-width:640px;
+}
+
+/* Outer parchment border */
+.granth-outer{
+  background:linear-gradient(160deg,#1e1508 0%,#150f06 50%,#1a1208 100%);
+  border:2px solid rgba(201,168,76,.35);
+  border-radius:4px;
+  padding:3px;
+  box-shadow:0 0 40px rgba(201,168,76,.08),0 20px 60px rgba(0,0,0,.7);
+  position:relative;
+}
+/* Corner ornaments */
+.granth-outer::before,.granth-outer::after{
+  content:'✦';
+  position:absolute;
+  font-size:.7rem;
+  color:rgba(201,168,76,.4);
+}
+.granth-outer::before{top:8px;left:12px}
+.granth-outer::after{top:8px;right:12px}
+
+.granth-inner{
+  background:linear-gradient(160deg,#18110a 0%,#120d06 100%);
+  border:1px solid rgba(201,168,76,.15);
+  border-radius:2px;
+  padding:28px 30px;
+}
+
+/* Header seal area */
+.granth-seal-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:14px;margin-bottom:6px;
+}
+.granth-seal-line{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);
+}
+.granth-seal{
+  font-size:1.1rem;color:rgba(201,168,76,.5);
+  font-family:'Cinzel',serif;letter-spacing:.15em;font-size:.62rem;
+  text-transform:uppercase;white-space:nowrap;
+}
+
+/* Title block */
+.granth-title-block{text-align:center;margin-bottom:20px}
+.granth-eyebrow{
+  font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(201,168,76,.35);margin-bottom:6px;
+}
+.granth-title{
+  font-family:'Cinzel',serif;font-size:1.6rem;color:#e8c96a;
+  font-weight:700;line-height:1.15;margin-bottom:4px;
+}
+.granth-subtitle{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.95rem;color:rgba(201,168,76,.5);
+}
+.granth-date{font-size:.7rem;color:rgba(201,168,76,.3);margin-top:6px}
+
+/* Divider */
+.granth-divider{
+  display:flex;align-items:center;gap:10px;margin:16px 0;
+}
+.gd-line{flex:1;height:1px;background:rgba(201,168,76,.12)}
+.gd-diamond{color:rgba(201,168,76,.3);font-size:.6rem}
+
+/* Battle summary strip */
+.battle-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  margin-bottom:20px;
+}
+.bs-cell{
+  background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.1);
+  border-radius:6px;padding:8px 6px;text-align:center;
+}
+.bs-val{
+  font-family:'Cinzel',serif;font-size:1.2rem;color:#e8c96a;
+  line-height:1;margin-bottom:3px;
+}
+.bs-lbl{font-size:.58rem;color:rgba(201,168,76,.4);text-transform:uppercase;letter-spacing:.07em}
+
+/* ── INSCRIPTIONS ─────────────────────────────────────────────── */
+.inscriptions-title{
+  font-family:'Cinzel',serif;font-size:.72rem;color:rgba(201,168,76,.5);
+  text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.inscriptions-title::after{
+  content:'';flex:1;height:1px;background:rgba(201,168,76,.1);
+}
+
+.inscription{
+  display:flex;gap:14px;margin-bottom:14px;
+  background:rgba(201,168,76,.03);
+  border:1px solid rgba(201,168,76,.08);
+  border-radius:6px;padding:12px 14px;
+  transition:border-color .3s;
+}
+.inscription.new-inscription{
+  border-color:rgba(201,168,76,.35);
+  background:rgba(201,168,76,.06);
+  animation:inscribeGlow .8s ease;
+}
+@keyframes inscribeGlow{
+  0%{box-shadow:0 0 0 0 rgba(201,168,76,.4)}
+  50%{box-shadow:0 0 20px 4px rgba(201,168,76,.2)}
+  100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}
+}
+
+/* SVG illustration panel */
+.inscription-art{
+  flex-shrink:0;width:64px;height:64px;
+  background:rgba(201,168,76,.06);
+  border:1px solid rgba(201,168,76,.15);
+  border-radius:4px;overflow:hidden;
+}
+.inscription-art svg{width:100%;height:100%}
+
+.inscription-text{flex:1;min-width:0}
+.inscription-sanskrit{
+  font-family:'Cinzel',serif;font-size:.82rem;color:#e8c96a;
+  margin-bottom:1px;
+}
+.inscription-english{
+  font-size:.65rem;color:rgba(201,168,76,.45);
+  margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;
+}
+.inscription-desc{
+  font-family:'Cormorant Garamond',serif;font-size:.88rem;
+  color:#c4a97a;line-height:1.55;
+}
+.inscription-move{
+  font-size:.62rem;color:rgba(201,168,76,.35);margin-top:5px;
+  font-family:'Outfit',monospace;
+}
+
+/* No inscriptions yet */
+.no-inscriptions{
+  text-align:center;padding:24px;
+  font-size:.8rem;color:rgba(201,168,76,.25);
+  font-style:italic;border:1px dashed rgba(201,168,76,.1);border-radius:6px;
+}
+
+/* ── Drona colophon ───────────────────────────────────────────── */
+.granth-colophon{
+  margin-top:20px;
+  background:rgba(201,168,76,.04);
+  border-left:2px solid rgba(201,168,76,.25);
+  border-radius:0 6px 6px 0;
+  padding:12px 16px;
+}
+.gc-label{
+  font-size:.58rem;text-transform:uppercase;letter-spacing:.15em;
+  color:rgba(201,168,76,.4);margin-bottom:6px;
+}
+.gc-quote{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.95rem;color:#d4b87a;line-height:1.7;
+}
+.gc-verse{
+  font-size:.65rem;color:rgba(201,168,76,.3);
+  margin-top:6px;text-align:right;
+}
+
+/* ── Bottom seal ──────────────────────────────────────────────── */
+.granth-bottom-seal{
+  display:flex;align-items:center;justify-content:center;
+  margin-top:18px;gap:12px;
+}
+.gbs-text{
+  font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(201,168,76,.2);
+}
+.gbs-diamond{color:rgba(201,168,76,.2);font-size:.5rem}
+
+/* ── Action buttons ───────────────────────────────────────────── */
+.granth-actions{
+  display:flex;gap:10px;margin-top:20px;
+  width:100%;max-width:640px;
+}
+.ga-btn{
+  flex:1;padding:10px 16px;border-radius:7px;font-family:'Cinzel',serif;
+  font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  border:none;
+}
+.ga-primary{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00}
+.ga-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.ga-ghost{background:transparent;color:rgba(201,168,76,.6);
+  border:1px solid rgba(201,168,76,.2)!important}
+.ga-ghost:hover{border-color:rgba(201,168,76,.5)!important;color:#c9a84c}
+
+/* ── Vault (past games) ───────────────────────────────────────── */
+#vaultSection{
+  width:100%;max-width:640px;margin-top:32px;display:none;
+}
+.vault-title{
+  font-family:'Cinzel',serif;font-size:.85rem;color:rgba(201,168,76,.5);
+  text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.vault-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,.1)}
+.vault-entry{
+  background:#14100a;border:1px solid rgba(201,168,76,.1);border-radius:8px;
+  padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:12px;
+}
+.vault-entry:hover{border-color:rgba(201,168,76,.3);background:#1a1408}
+.ve-date{font-size:.7rem;color:rgba(201,168,76,.4);min-width:80px}
+.ve-inscriptions{
+  display:flex;gap:4px;flex-wrap:wrap;flex:1;
+}
+.ve-insc-chip{
+  font-size:.58rem;background:rgba(201,168,76,.08);color:rgba(201,168,76,.6);
+  padding:1px 6px;border-radius:8px;border:1px solid rgba(201,168,76,.12);
+}
+.ve-turns{font-size:.68rem;color:rgba(201,168,76,.3)}
+.vault-empty{font-size:.78rem;color:rgba(201,168,76,.25);text-align:center;
+  padding:20px;font-style:italic}
+
+@media(max-width:500px){
+  .granth-inner{padding:18px 14px}
+  .battle-strip{grid-template-columns:repeat(2,1fr)}
+  .inscription-art{width:48px;height:48px}
+  .granth-title{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="game.html" class="nav-logo">Chaturanga</a>
+  <span class="nav-badge">Granth — Battle Manuscript</span>
+  <div class="nav-links">
+    <button class="nav-link" onclick="toggleVault()">📚 Vault</button>
+    <a href="game.html" class="nav-link">← Game</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Empty state -->
+  <div id="emptyState">
+    <div class="empty-scroll">📜</div>
+    <div class="empty-title">The Granth Awaits</div>
+    <div class="empty-sub">
+      Your personal manuscript is empty. Every tactical theme you execute in a real game
+      becomes an inscription — named in Sanskrit, illustrated in gold on parchment.
+      <br><br>
+      Complete a game to see your first inscription. Or load a demo battle.
+    </div>
+    <button class="demo-btn" onclick="loadDemo()">Load Demo Battle</button>
+  </div>
+
+  <!-- Granth Card -->
+  <div id="granthCard">
+    <!-- Manuscript -->
+    <div class="granth-outer">
+      <div class="granth-inner">
+
+        <div class="granth-seal-row">
+          <div class="granth-seal-line"></div>
+          <div class="granth-seal">✦ &nbsp; ग्रन्थ · Granth &nbsp; ✦</div>
+          <div class="granth-seal-line"></div>
+        </div>
+
+        <div class="granth-title-block">
+          <div class="granth-eyebrow">Personal Battle Manuscript</div>
+          <div class="granth-title" id="gTitle">—</div>
+          <div class="granth-subtitle" id="gSubtitle">—</div>
+          <div class="granth-date" id="gDate">—</div>
+        </div>
+
+        <div class="battle-strip" id="battleStrip"></div>
+
+        <div class="granth-divider">
+          <div class="gd-line"></div>
+          <div class="gd-diamond">◆</div>
+          <div class="gd-line"></div>
+        </div>
+
+        <div class="inscriptions-title">Tactical Inscriptions</div>
+        <div id="inscriptionsList"></div>
+
+        <div class="granth-divider">
+          <div class="gd-line"></div>
+          <div class="gd-diamond">◆</div>
+          <div class="gd-line"></div>
+        </div>
+
+        <div class="granth-colophon">
+          <div class="gc-label">☸ Drona's Colophon</div>
+          <div class="gc-quote" id="gColophon">—</div>
+          <div class="gc-verse" id="gVerse">—</div>
+        </div>
+
+        <div class="granth-bottom-seal">
+          <div class="gbs-diamond">◆</div>
+          <div class="gbs-text">Chaturanga · Ancient Indian 4-Player Chess</div>
+          <div class="gbs-diamond">◆</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="granth-actions">
+      <button class="ga-btn ga-primary" onclick="shareGranth()">
+        📤 Share Manuscript
+      </button>
+      <button class="ga-btn ga-ghost" onclick="saveToVault()">
+        💾 Save to Vault
+      </button>
+      <button class="ga-btn ga-ghost" onclick="loadDemo()">
+        ⚔ New Demo
+      </button>
+    </div>
+  </div>
+
+  <!-- Vault -->
+  <div id="vaultSection">
+    <div class="vault-title">Vault — Past Battles</div>
+    <div id="vaultList"></div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// TACTICAL INSCRIPTIONS LIBRARY
+// Each inscription has:
+//   id          — unique key stored in vault
+//   sanskrit    — Sanskrit tactical name
+//   english     — literal translation
+//   desc(move)  — function returning flavour text for the specific move
+//   detect(history) — function returning the triggering move or null
+//   drawArt(svg)    — function that draws the SVG illustration
+// ═══════════════════════════════════════════════════════════════
+const INSCRIPTIONS = [
+
+  {
+    id: 'ashwa_mudra',
+    sanskrit: 'अश्व मुद्र',
+    english: 'Horse Seal',
+    desc: (m) => `The Ashwa on ${m.from} carved an L-path to ${m.to}, striking two enemy pieces at once. The fork — the oldest trap on the Ashtāpada.`,
+    detect(history) {
+      // Horse move that attacked at least 2 enemy pieces (simple: horse capture + there was a fork setup)
+      for (const m of history) {
+        if (m.piece?.type === 'horse' && m.cap) return m;
+      }
+      return null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#120e07"/>
+        <!-- Board grid hint -->
+        <line x1="21" y1="0" x2="21" y2="64" stroke="rgba(201,168,76,.1)" stroke-width=".5"/>
+        <line x1="43" y1="0" x2="43" y2="64" stroke="rgba(201,168,76,.1)" stroke-width=".5"/>
+        <line x1="0" y1="21" x2="64" y2="21" stroke="rgba(201,168,76,.1)" stroke-width=".5"/>
+        <line x1="0" y1="43" x2="64" y2="43" stroke="rgba(201,168,76,.1)" stroke-width=".5"/>
+        <!-- L-path arrows -->
+        <path d="M32,50 L32,28" stroke="rgba(201,168,76,.35)" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+        <path d="M32,28 L48,28" stroke="rgba(201,168,76,.35)" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+        <polygon points="48,25 54,28 48,31" fill="rgba(201,168,76,.5)"/>
+        <!-- Horse symbol -->
+        <text x="32" y="55" text-anchor="middle" font-size="18" fill="#e8c96a" opacity=".9">♞</text>
+        <!-- Target dots -->
+        <circle cx="50" cy="14" r="4" fill="rgba(248,113,113,.6)" stroke="rgba(248,113,113,.9)" stroke-width="1"/>
+        <circle cx="14" cy="28" r="4" fill="rgba(248,113,113,.6)" stroke="rgba(248,113,113,.9)" stroke-width="1"/>
+      `;
+    }
+  },
+
+  {
+    id: 'avyakta_astra',
+    sanskrit: 'अव्यक्त अस्त्र',
+    english: 'Hidden Weapon',
+    desc: (m) => `A piece moved aside on ${m.from}, uncovering the Ratha behind it. The discovered attack — the invisible arrow already in flight before the move was made.`,
+    detect(history) {
+      // A non-rook move that resulted in a check situation — approximated by: piece moved, then next move by same player is rook capturing
+      for (let i=0; i<history.length-1; i++) {
+        const m=history[i], next=history[i+1];
+        if (m.piece?.type !== 'rook' && m.piece?.type !== 'king' &&
+            next.playerId === m.playerId && next.cap && next.piece?.type === 'rook') {
+          return m;
+        }
+      }
+      return null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#12100a"/>
+        <!-- Hidden arrow lines -->
+        <line x1="8" y1="32" x2="56" y2="32" stroke="rgba(201,168,76,.15)" stroke-width="4"/>
+        <line x1="8" y1="32" x2="56" y2="32" stroke="rgba(201,168,76,.6)" stroke-width="1.5"
+          stroke-dasharray="4,3"/>
+        <polygon points="56,29 64,32 56,35" fill="#e8c96a" opacity=".7"/>
+        <!-- Moving piece (horse) -->
+        <text x="20" y="46" text-anchor="middle" font-size="16" fill="#c9a84c" opacity=".8">♞</text>
+        <!-- Revealed rook -->
+        <text x="10" y="36" text-anchor="middle" font-size="13" fill="#e8c96a" opacity=".9">♜</text>
+        <!-- Target -->
+        <circle cx="56" cy="32" r="5" fill="none" stroke="rgba(248,113,113,.7)" stroke-width="1.5"
+          stroke-dasharray="2,2"/>
+        <!-- Glow -->
+        <circle cx="56" cy="32" r="3" fill="rgba(248,113,113,.4)"/>
+      `;
+    }
+  },
+
+  {
+    id: 'nara_uttarayan',
+    sanskrit: 'नर उत्तरायण',
+    english: "Pawn's Ascent",
+    desc: (m) => `The Nara on ${m.from} crossed the final rank and was reborn as a Ratha — the most profound transformation on the Ashtāpada. The humble foot soldier becomes the chariot.`,
+    detect(history) {
+      return history.find(m => m.promoted) || null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#0e0c08"/>
+        <!-- Ascending path -->
+        <line x1="32" y1="60" x2="32" y2="12" stroke="rgba(201,168,76,.2)" stroke-width="10"
+          stroke-linecap="round"/>
+        <!-- Pawn at bottom -->
+        <text x="32" y="60" text-anchor="middle" font-size="16" fill="#8a7050" opacity=".8">♟</text>
+        <!-- Transformation glow -->
+        <circle cx="32" cy="14" r="12" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.35)" stroke-width="1"/>
+        <!-- Rook at top -->
+        <text x="32" y="20" text-anchor="middle" font-size="18" fill="#e8c96a">♜</text>
+        <!-- Stars -->
+        <text x="12" y="20" font-size="8" fill="rgba(201,168,76,.5)">✦</text>
+        <text x="48" y="16" font-size="6" fill="rgba(201,168,76,.4)">✦</text>
+        <text x="52" y="30" font-size="5" fill="rgba(201,168,76,.3)">✦</text>
+      `;
+    }
+  },
+
+  {
+    id: 'prithvi_vijaya',
+    sanskrit: 'पृथ्वी विजय',
+    english: 'Earth Conquest',
+    desc: (m) => `The Ratha swept along the back rank, capturing the enemy Raja on ${m.to} in their own home row. The back-rank strike — swift, total, irreversible.`,
+    detect(history) {
+      return history.find(m =>
+        m.cap?.type === 'king' &&
+        (parseInt(m.to[1]) === 8 || parseInt(m.to[1]) === 1)
+      ) || null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#0d0a06"/>
+        <!-- Back rank highlight -->
+        <rect x="0" y="0" width="64" height="10" fill="rgba(248,113,113,.08)"
+          stroke="rgba(248,113,113,.2)" stroke-width=".5"/>
+        <!-- Horizontal sweep -->
+        <line x1="4" y1="5" x2="58" y2="5" stroke="rgba(201,168,76,.5)" stroke-width="1.5"
+          stroke-dasharray="5,2"/>
+        <polygon points="58,2 64,5 58,8" fill="#e8c96a"/>
+        <!-- Rook -->
+        <text x="8" y="9" text-anchor="middle" font-size="12" fill="#e8c96a">♜</text>
+        <!-- Fallen king -->
+        <text x="56" y="52" text-anchor="middle" font-size="18" fill="rgba(248,113,113,.6)">♚</text>
+        <!-- X mark -->
+        <line x1="48" y1="44" x2="60" y2="56" stroke="rgba(248,113,113,.7)" stroke-width="2"/>
+        <line x1="60" y1="44" x2="48" y2="56" stroke="rgba(248,113,113,.7)" stroke-width="2"/>
+        <!-- Vertical connecting line -->
+        <line x1="56" y1="9" x2="56" y2="42" stroke="rgba(201,168,76,.25)" stroke-width="1"
+          stroke-dasharray="3,2"/>
+      `;
+    }
+  },
+
+  {
+    id: 'ratha_yatra',
+    sanskrit: 'रथ यात्र',
+    english: 'Chariot Procession',
+    desc: (m) => `Both Rathas advanced on the same file — the battery formation. The first opened the line; the second delivered the fatal blow. Coordinated chariots are unstoppable.`,
+    detect(history) {
+      // Two consecutive rook captures by the same player
+      for (let i=0; i<history.length-1; i++) {
+        const m=history[i], next=history[i+1];
+        if (m.piece?.type==='rook' && m.cap &&
+            next.piece?.type==='rook' && next.cap &&
+            next.playerId === m.playerId) {
+          return m;
+        }
+      }
+      return null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#0f0d08"/>
+        <!-- File column -->
+        <rect x="28" y="0" width="8" height="64" fill="rgba(201,168,76,.06)"/>
+        <!-- Two rooks on same file -->
+        <text x="32" y="58" text-anchor="middle" font-size="15" fill="#e8c96a" opacity=".9">♜</text>
+        <text x="32" y="38" text-anchor="middle" font-size="15" fill="#e8c96a" opacity=".7">♜</text>
+        <!-- Arrows -->
+        <path d="M32,34 L32,10" stroke="rgba(201,168,76,.4)" stroke-width="1.5"
+          fill="none" stroke-dasharray="3,2"/>
+        <polygon points="29,10 32,4 35,10" fill="rgba(201,168,76,.6)"/>
+        <!-- Target at top -->
+        <circle cx="32" cy="6" r="4" fill="rgba(248,113,113,.3)" stroke="rgba(248,113,113,.7)" stroke-width="1"/>
+      `;
+    }
+  },
+
+  {
+    id: 'raja_suraksha',
+    sanskrit: 'राज सुरक्षा',
+    english: 'King Shield',
+    desc: (m) => `Your Raja was threatened on ${m.from}, and moved to safety on ${m.to}. In the face of danger, the king who retreats to fight another day is wiser than the king who stands and falls.`,
+    detect(history) {
+      // King moved away from a threatened square (simple: king moved and it was not a capture)
+      return history.find(m =>
+        m.piece?.type === 'king' && !m.cap && !m.forfeit
+      ) || null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#100c08"/>
+        <!-- Threat arrows (red) -->
+        <path d="M10,54 L36,28" stroke="rgba(248,113,113,.35)" stroke-width="1.5"
+          fill="none" stroke-dasharray="3,2"/>
+        <path d="M54,50 L36,28" stroke="rgba(248,113,113,.35)" stroke-width="1.5"
+          fill="none" stroke-dasharray="3,2"/>
+        <!-- King escape path -->
+        <path d="M36,28 L16,12" stroke="rgba(74,222,128,.4)" stroke-width="1.5"
+          fill="none"/>
+        <polygon points="13,9 16,16 20,11" fill="rgba(74,222,128,.6)"/>
+        <!-- King symbol -->
+        <text x="36" y="32" text-anchor="middle" font-size="18" fill="#e8c96a">♚</text>
+        <!-- Shield -->
+        <path d="M16,12 C12,8 12,16 16,20 C20,16 20,8 16,12Z"
+          fill="rgba(74,222,128,.2)" stroke="rgba(74,222,128,.4)" stroke-width="1"/>
+      `;
+    }
+  },
+
+  {
+    id: 'tribhuja_vyuha',
+    sanskrit: 'त्रिभुज व्यूह',
+    english: 'Triangle Array',
+    desc: (m) => `Three pieces converged on a single square in sequence — the triangle combination. Each step of the attack created a new threat that forced the enemy to respond, until there was nothing left to respond to.`,
+    detect(history) {
+      // Three consecutive captures by the same player
+      let streak=0;
+      for (let i=0; i<history.length; i++) {
+        if (history[i].cap && !history[i].forfeit) {
+          streak++;
+          if (streak >= 3) return history[i-2];
+          // Check all same player
+          if (i>=2 && history[i].playerId===history[i-1].playerId &&
+              history[i-1].playerId===history[i-2].playerId) {
+            return history[i-2];
+          }
+        } else streak=0;
+      }
+      return null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#0e0c07"/>
+        <!-- Triangle -->
+        <polygon points="32,8 10,52 54,52"
+          fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.3)" stroke-width="1.5"/>
+        <!-- Vertices: pieces -->
+        <text x="32" y="14" text-anchor="middle" font-size="13" fill="#e8c96a">♜</text>
+        <text x="10" y="56" text-anchor="middle" font-size="13" fill="#e8c96a">♞</text>
+        <text x="54" y="56" text-anchor="middle" font-size="13" fill="#e8c96a">♝</text>
+        <!-- Centre target -->
+        <circle cx="32" cy="36" r="5" fill="rgba(248,113,113,.2)" stroke="rgba(248,113,113,.5)" stroke-width="1"/>
+        <text x="32" y="40" text-anchor="middle" font-size="11" fill="rgba(248,113,113,.7)">♚</text>
+        <!-- Arrows from each vertex to centre -->
+        <line x1="32" y1="16" x2="32" y2="30" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
+        <line x1="14" y1="50" x2="26" y2="38" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
+        <line x1="50" y1="50" x2="38" y2="38" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
+      `;
+    }
+  },
+
+  {
+    id: 'akshaya_sena',
+    sanskrit: 'अक्षय सेना',
+    english: 'Indestructible Army',
+    desc: (m) => `You captured the enemy Raja without losing a single Ratha. The indestructible army — victory through control, not sacrifice. The most disciplined form of triumph on the Ashtāpada.`,
+    detect(history, stats) {
+      // Winner lost no rooks — check if winning player has all their rooks in final board
+      if (!stats) return null;
+      const winnerStats = stats.find(s => s.rajaCaptures > 0);
+      if (!winnerStats) return null;
+      // Check no rooks were captured from winner's pieces
+      const rooksLost = history.filter(m =>
+        m.cap?.type === 'rook' && m.cap.owner !== m.playerId &&
+        m.cap.owner === winnerStats.id
+      ).length;
+      if (rooksLost === 0) {
+        return history.find(m => m.cap?.type === 'king' && m.playerId === winnerStats.id);
+      }
+      return null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#0b0e09"/>
+        <!-- Laurel wreath suggestion -->
+        <circle cx="32" cy="32" r="22" fill="none" stroke="rgba(74,222,128,.2)" stroke-width="1.5"
+          stroke-dasharray="4,2"/>
+        <circle cx="32" cy="32" r="16" fill="rgba(74,222,128,.04)" stroke="rgba(74,222,128,.15)" stroke-width="1"/>
+        <!-- Crown -->
+        <text x="32" y="38" text-anchor="middle" font-size="22" fill="#e8c96a">♜</text>
+        <!-- Stars -->
+        <text x="10" y="14" font-size="8" fill="rgba(74,222,128,.5)">✦</text>
+        <text x="52" y="14" font-size="8" fill="rgba(74,222,128,.5)">✦</text>
+        <text x="8" y="54" font-size="6" fill="rgba(74,222,128,.4)">✦</text>
+        <text x="54" y="54" font-size="6" fill="rgba(74,222,128,.4)">✦</text>
+        <text x="32" y="12" text-anchor="middle" font-size="7" fill="rgba(74,222,128,.4)">✦</text>
+        <!-- Checkmark -->
+        <path d="M20,32 L28,40 L44,24" fill="none" stroke="rgba(74,222,128,.4)" stroke-width="1.5"
+          stroke-linecap="round"/>
+      `;
+    }
+  },
+
+  {
+    id: 'danti_chakra',
+    sanskrit: 'दन्ती चक्र',
+    english: 'Elephant Wheel',
+    desc: (m) => `The Danti leaped from ${m.from} to ${m.to} — two diagonal squares, vaulting over every piece in its path. The elephant alone among all pieces leaps the intervening ranks without touching the ground.`,
+    detect(history) {
+      return history.find(m => m.piece?.type === 'elephant' && m.cap) || null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#100e07"/>
+        <!-- Diagonal path -->
+        <path d="M14,50 L50,14" stroke="rgba(201,168,76,.35)" stroke-width="1.5"
+          fill="none" stroke-dasharray="4,2"/>
+        <polygon points="47,11 54,14 50,18" fill="rgba(201,168,76,.6)"/>
+        <!-- Elephant symbol (origin) -->
+        <text x="14" y="54" text-anchor="middle" font-size="15" fill="#c9a84c" opacity=".7">♝</text>
+        <!-- Elephant symbol (destination) -->
+        <text x="50" y="18" text-anchor="middle" font-size="15" fill="#e8c96a">♝</text>
+        <!-- Leap arc -->
+        <path d="M14,50 Q32,20 50,14" fill="none" stroke="rgba(201,168,76,.2)" stroke-width="3"
+          stroke-dasharray="6,3"/>
+        <!-- Target pieces jumped over (ghost) -->
+        <text x="26" y="40" text-anchor="middle" font-size="9" fill="rgba(201,168,76,.2)">♟</text>
+        <text x="38" y="28" text-anchor="middle" font-size="9" fill="rgba(201,168,76,.2)">♟</text>
+      `;
+    }
+  },
+
+  {
+    id: 'brahmastra_prapti',
+    sanskrit: 'ब्रह्मास्त्र प्राप्ति',
+    english: 'Divine Weapon Earned',
+    desc: (m) => `The enemy Raja has fallen. The battle is won. Whatever path was taken to reach this moment — every calculation, every sacrifice, every waiting move — it was correct. The Ashtāpada has given its verdict.`,
+    detect(history) {
+      return history.find(m => m.cap?.type === 'king') || null;
+    },
+    drawArt(svg) {
+      svg.innerHTML = `
+        <rect width="64" height="64" fill="#100e06"/>
+        <!-- Radiant beams -->
+        ${Array.from({length:8},(_,i)=>{
+          const a=i*(Math.PI/4), x1=32+10*Math.cos(a), y1=32+10*Math.sin(a),
+                x2=32+28*Math.cos(a), y2=32+28*Math.sin(a);
+          return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+            stroke="rgba(201,168,76,${.15+.1*(i%2)})" stroke-width="1"/>`;
+        }).join('')}
+        <!-- Centre glow -->
+        <circle cx="32" cy="32" r="14" fill="rgba(201,168,76,.1)"
+          stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+        <circle cx="32" cy="32" r="8" fill="rgba(201,168,76,.15)"/>
+        <!-- Chakra / wheel -->
+        <text x="32" y="38" text-anchor="middle" font-size="20" fill="#e8c96a">☸</text>
+      `;
+    }
+  },
+
+];
+
+// ═══════════════════════════════════════════════════════════════
+// COLOPHON QUOTES — Drona's closing verse based on inscription count
+// ═══════════════════════════════════════════════════════════════
+const COLOPHONS = [
+  {
+    min:5,
+    quote:"Five inscriptions in a single battle — this manuscript will be studied long after the pieces are returned to their box. You played as one who has studied the ancient texts and found their truth.",
+    verse:'— Dronacharya, Drona Parva'
+  },
+  {
+    min:3,
+    quote:"Three tactical truths in a single battle. The Ashtāpada remembers everything. Each inscription is a principle learned not from a book, but from the board itself.",
+    verse:'— Arthashastra, Book IX, Kautilya'
+  },
+  {
+    min:2,
+    quote:"Two inscriptions. Every master began with two. The Granth grows one battle at a time. Return to the Ashtāpada and earn the next page.",
+    verse:'— Panchatantra, Book I'
+  },
+  {
+    min:1,
+    quote:"One inscription. The first is the hardest — it proves the board can teach you something. Come back for the second. Then the third. The Granth has no last page.",
+    verse:'— Bhagavad Gita 2.47'
+  },
+  {
+    min:0,
+    quote:"No inscriptions yet. A battle without a turning point, a sacrifice, or a combination is a battle that passed without leaving its mark. Return with sharper eyes.",
+    verse:'— Kautilya, Arthashastra Book X'
+  },
+];
+
+function getColophon(count) {
+  return COLOPHONS.find(c => count >= c.min) || COLOPHONS[COLOPHONS.length-1];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DEMO GAME DATA — realistic move history to showcase the system
+// ═══════════════════════════════════════════════════════════════
+const DEMO_GAMES = [
+  {
+    meta:{ winner:'Red', format:'2-Player Duel', date: new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) },
+    totalMoves:38, captures:11, forfeits:2, promotions:1,
+    stats:[
+      {id:0,label:'Red',  color:'#e74c3c',moves:19,accuracy:81,materialGained:14,rajaCaptures:1,promotions:1},
+      {id:1,label:'Blue', color:'#60a5fa',moves:19,accuracy:62,materialGained:8,rajaCaptures:0,promotions:0},
+    ],
+    moveHistory:[
+      {from:'e2',to:'e4',piece:{type:'pawn',owner:0},playerId:0},
+      {from:'e7',to:'e5',piece:{type:'pawn',owner:1},playerId:1},
+      {from:'g1',to:'f3',piece:{type:'horse',owner:0},playerId:0},
+      {from:'b8',to:'c6',piece:{type:'horse',owner:1},playerId:1},
+      {from:'f1',to:'c4',piece:{type:'elephant',owner:0},playerId:0},
+      {from:'c6',to:'d4',piece:{type:'horse',owner:1},playerId:1,cap:{type:'pawn',owner:0}},
+      // Fork: horse captures pawn and now threatens rook
+      {from:'f3',to:'d4',piece:{type:'horse',owner:0},playerId:0,cap:{type:'horse',owner:1}},
+      {from:'d8',to:'h4',piece:{type:'rook',owner:1},playerId:1},
+      // Discovered attack: elephant moves, rook now attacks king
+      {from:'c4',to:'f7',piece:{type:'elephant',owner:0},playerId:0,cap:{type:'pawn',owner:1}},
+      {from:'e8',to:'d7',piece:{type:'king',owner:1},playerId:1},
+      // King moves to safety — inscription
+      {from:'d4',to:'f5',piece:{type:'horse',owner:0},playerId:0},
+      {from:'h4',to:'f2',piece:{type:'rook',owner:1},playerId:1,cap:{type:'pawn',owner:0}},
+      // Ratha battery setup
+      {from:'h1',to:'f1',piece:{type:'rook',owner:0},playerId:0},
+      {from:'f2',to:'f1',piece:{type:'rook',owner:1},playerId:1,cap:{type:'rook',owner:0}},
+      {from:'d1',to:'f1',piece:{type:'rook',owner:0},playerId:0,cap:{type:'rook',owner:1}},
+      // Pawn advancing toward promotion
+      {from:'a2',to:'a4',piece:{type:'pawn',owner:0},playerId:0},
+      {from:'a7',to:'a5',piece:{type:'pawn',owner:1},playerId:1},
+      {from:'a4',to:'a5',piece:{type:'pawn',owner:0},playerId:0,cap:{type:'pawn',owner:1}},
+      {from:'b7',to:'b5',piece:{type:'pawn',owner:1},playerId:1},
+      {from:'a5',to:'a6',piece:{type:'pawn',owner:0},playerId:0},
+      {from:'c7',to:'c6',piece:{type:'pawn',owner:1},playerId:1},
+      {from:'a6',to:'a7',piece:{type:'pawn',owner:0},playerId:0},
+      {from:'d7',to:'c7',piece:{type:'king',owner:1},playerId:1},
+      // Pawn promotes
+      {from:'a7',to:'a8',piece:{type:'pawn',owner:0},playerId:0,promoted:true},
+      // Two rooks now attack
+      {from:'c7',to:'b6',piece:{type:'king',owner:1},playerId:1},
+      {from:'f1',to:'f8',piece:{type:'rook',owner:0},playerId:0,cap:{type:'rook',owner:1}},
+      {from:'b6',to:'a6',piece:{type:'king',owner:1},playerId:1},
+      // Back rank sweep — rook captures king on rank 8
+      {from:'a8',to:'a7',piece:{type:'rook',owner:0},playerId:0},
+      {from:'a6',to:'b6',piece:{type:'king',owner:1},playerId:1},
+      {from:'a7',to:'a6',piece:{type:'rook',owner:0},playerId:0},
+      {from:'b6',to:'c6',piece:{type:'king',owner:1},playerId:1},
+      {from:'f8',to:'c8',piece:{type:'rook',owner:0},playerId:0,cap:{type:'pawn',owner:1}},
+      // Consecutive rook captures (battery)
+      {from:'a6',to:'b6',piece:{type:'rook',owner:0},playerId:0},
+      {from:'c6',to:'d6',piece:{type:'king',owner:1},playerId:1},
+      {from:'c8',to:'d8',piece:{type:'rook',owner:0},playerId:0,cap:{type:'pawn',owner:1}},
+      {from:'d6',to:'e6',piece:{type:'king',owner:1},playerId:1},
+      // Final back-rank capture: king chased to rank 8 line — symbolic final move
+      {from:'d8',to:'e8',piece:{type:'rook',owner:0},playerId:0,cap:{type:'king',owner:1}},
+    ]
+  },
+  {
+    meta:{ winner:'Blue', format:'2-Player Duel', date: new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) },
+    totalMoves:44, captures:15, forfeits:1, promotions:0,
+    stats:[
+      {id:0,label:'Red',  color:'#e74c3c',moves:22,accuracy:58,materialGained:10,rajaCaptures:0,promotions:0},
+      {id:1,label:'Blue', color:'#60a5fa',moves:22,accuracy:79,materialGained:16,rajaCaptures:1,promotions:0},
+    ],
+    moveHistory:[
+      {from:'d2',to:'d4',piece:{type:'pawn',owner:0},playerId:0},
+      {from:'d7',to:'d5',piece:{type:'pawn',owner:1},playerId:1},
+      {from:'c1',to:'f4',piece:{type:'elephant',owner:0},playerId:0},
+      {from:'c8',to:'g4',piece:{type:'elephant',owner:1},playerId:1},
+      {from:'e1',to:'d2',piece:{type:'king',owner:0},playerId:0},
+      {from:'d8',to:'d6',piece:{type:'rook',owner:1},playerId:1},
+      {from:'b1',to:'c3',piece:{type:'horse',owner:0},playerId:0},
+      // Horse fork
+      {from:'g8',to:'f6',piece:{type:'horse',owner:1},playerId:1},
+      {from:'c3',to:'d5',piece:{type:'horse',owner:0},playerId:0,cap:{type:'pawn',owner:1}},
+      {from:'f6',to:'d5',piece:{type:'horse',owner:1},playerId:1,cap:{type:'horse',owner:0}},
+      {from:'f4',to:'d6',piece:{type:'elephant',owner:0},playerId:0,cap:{type:'rook',owner:1}},
+      {from:'g4',to:'d1',piece:{type:'elephant',owner:1},playerId:1,cap:{type:'king',owner:0}},
+      // Blue elephant captures king on back rank
+      {from:'d1',to:'a1',piece:{type:'elephant',owner:1},playerId:1},
+      {from:'a1',to:'c3',piece:{type:'rook',owner:0},playerId:0},
+      {from:'d5',to:'c3',piece:{type:'horse',owner:1},playerId:1,cap:{type:'rook',owner:0}},
+      {from:'h1',to:'f1',piece:{type:'rook',owner:0},playerId:0},
+      // Three consecutive captures by blue
+      {from:'c3',to:'e2',piece:{type:'horse',owner:1},playerId:1,cap:{type:'pawn',owner:0}},
+      {from:'d6',to:'e5',piece:{type:'elephant',owner:0},playerId:0},
+      {from:'e2',to:'f4',piece:{type:'horse',owner:1},playerId:1,cap:{type:'pawn',owner:0}},
+      {from:'e5',to:'c3',piece:{type:'elephant',owner:0},playerId:0},
+      {from:'f4',to:'h3',piece:{type:'horse',owner:1},playerId:1,cap:{type:'pawn',owner:0}},
+      // Raja capture to end
+      {from:'f1',to:'f8',piece:{type:'rook',owner:0},playerId:0,cap:{type:'rook',owner:1}},
+      {from:'e8',to:'d8',piece:{type:'king',owner:1},playerId:1},
+      {from:'f8',to:'d8',piece:{type:'rook',owner:0},playerId:0,cap:{type:'king',owner:1}},
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// PATTERN DETECTION — runs all inscriptions against move history
+// ═══════════════════════════════════════════════════════════════
+function detectInscriptions(moveHistory, stats) {
+  const found = [];
+  const seen  = new Set();
+
+  for (const insc of INSCRIPTIONS) {
+    if (seen.has(insc.id)) continue;
+    const move = insc.detect(moveHistory, stats);
+    if (move) {
+      found.push({ inscription: insc, move });
+      seen.add(insc.id);
+    }
+  }
+
+  return found;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER GRANTH CARD
+// ═══════════════════════════════════════════════════════════════
+let currentGame = null;
+
+function renderGranth(gameData) {
+  currentGame = gameData;
+  const { meta, totalMoves, captures, forfeits, promotions, moveHistory, stats } = gameData;
+
+  document.getElementById('emptyState').style.display  = 'none';
+  document.getElementById('granthCard').style.display  = 'block';
+
+  // Title
+  document.getElementById('gTitle').textContent  = `${meta.winner} Triumphs`;
+  document.getElementById('gSubtitle').textContent = meta.format + ' · Ashtāpada';
+  document.getElementById('gDate').textContent    = meta.date;
+
+  // Battle strip
+  const s0 = stats[0], s1 = stats[1];
+  document.getElementById('battleStrip').innerHTML = `
+    <div class="bs-cell">
+      <div class="bs-val">${totalMoves}</div>
+      <div class="bs-lbl">Moves</div>
+    </div>
+    <div class="bs-cell">
+      <div class="bs-val">${captures}</div>
+      <div class="bs-lbl">Captures</div>
+    </div>
+    <div class="bs-cell">
+      <div class="bs-val">${s0.accuracy}%</div>
+      <div class="bs-lbl" style="color:${s0.color}">${s0.label} Acc.</div>
+    </div>
+    <div class="bs-cell">
+      <div class="bs-val">${s1.accuracy}%</div>
+      <div class="bs-lbl" style="color:${s1.color}">${s1.label} Acc.</div>
+    </div>
+  `;
+
+  // Detect inscriptions
+  const found = detectInscriptions(moveHistory, stats);
+
+  // Render inscriptions
+  const listEl = document.getElementById('inscriptionsList');
+  if (found.length === 0) {
+    listEl.innerHTML = '<div class="no-inscriptions">No tactical inscriptions detected in this battle.</div>';
+  } else {
+    listEl.innerHTML = '';
+    found.forEach((f, i) => {
+      const { inscription: insc, move } = f;
+      const div = document.createElement('div');
+      div.className = 'inscription';
+      setTimeout(() => div.classList.add('new-inscription'), i * 180);
+
+      // Art container
+      const artDiv = document.createElement('div');
+      artDiv.className = 'inscription-art';
+      const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svgEl.setAttribute('viewBox','0 0 64 64');
+      artDiv.appendChild(svgEl);
+      insc.drawArt(svgEl);
+
+      // Text
+      const textDiv = document.createElement('div');
+      textDiv.className = 'inscription-text';
+      textDiv.innerHTML = `
+        <div class="inscription-sanskrit">${insc.sanskrit}</div>
+        <div class="inscription-english">${insc.english}</div>
+        <div class="inscription-desc">${insc.desc(move)}</div>
+        <div class="inscription-move">${move.from} → ${move.to} · ${
+          move.cap ? 'captured ' + (move.cap.type) : move.promoted ? 'promoted' : 'moved'
+        }</div>
+      `;
+
+      div.appendChild(artDiv);
+      div.appendChild(textDiv);
+      listEl.appendChild(div);
+    });
+  }
+
+  // Colophon
+  const colophon = getColophon(found.length);
+  document.getElementById('gColophon').textContent = `"${colophon.quote}"`;
+  document.getElementById('gVerse').textContent    = colophon.verse;
+
+  // Animate inscriptions in sequentially
+  listEl.querySelectorAll('.inscription').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(8px)';
+    el.style.transition = 'opacity .4s ease, transform .4s ease';
+    setTimeout(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 300 + i * 200);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DEMO LOADER
+// ═══════════════════════════════════════════════════════════════
+let demoIndex = 0;
+function loadDemo() {
+  const game = DEMO_GAMES[demoIndex % DEMO_GAMES.length];
+  demoIndex++;
+  renderGranth(game);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHARE
+// ═══════════════════════════════════════════════════════════════
+function shareGranth() {
+  if (!currentGame) return;
+  const { meta, moveHistory, stats } = currentGame;
+  const found = detectInscriptions(moveHistory, stats);
+  const inscNames = found.map(f => f.inscription.sanskrit).join(' · ') || 'No inscriptions';
+  const text =
+    `📜 My Chaturanga Granth\n` +
+    `${meta.winner} wins · ${meta.format}\n` +
+    `${currentGame.totalMoves} moves · ${currentGame.captures} captures\n` +
+    `Inscriptions: ${inscNames}\n` +
+    `chaturanga.app`;
+
+  if (navigator.share) {
+    navigator.share({ text, title: 'My Chaturanga Battle Manuscript' }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(() => alert('Manuscript copied to clipboard!'))
+      .catch(() => alert('Share text:\n\n' + text));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VAULT — save / load past manuscripts
+// ═══════════════════════════════════════════════════════════════
+const VAULT_KEY = 'chaturanga_granth_vault';
+
+function loadVault() {
+  try { return JSON.parse(localStorage.getItem(VAULT_KEY) || '[]'); } catch { return []; }
+}
+
+function saveToVault() {
+  if (!currentGame) return;
+  const { meta, totalMoves, moveHistory, stats } = currentGame;
+  const found = detectInscriptions(moveHistory, stats);
+  const vault = loadVault();
+  vault.unshift({
+    id:    Date.now(),
+    date:  meta.date,
+    winner:meta.winner,
+    turns: totalMoves,
+    inscriptions: found.map(f => ({ id: f.inscription.id, sanskrit: f.inscription.sanskrit })),
+    gameData: currentGame,
+  });
+  if (vault.length > 20) vault.length = 20;
+  try { localStorage.setItem(VAULT_KEY, JSON.stringify(vault)); } catch {}
+  renderVault();
+  alert('Saved to Vault.');
+}
+
+function renderVault() {
+  const vault = loadVault();
+  const el    = document.getElementById('vaultList');
+  if (!vault.length) {
+    el.innerHTML = '<div class="vault-empty">No battles saved yet.</div>';
+    return;
+  }
+  el.innerHTML = vault.map(entry => `
+    <div class="vault-entry" onclick="loadVaultEntry(${entry.id})">
+      <div class="ve-date">${entry.date}</div>
+      <div class="ve-inscriptions">
+        ${entry.inscriptions.length
+          ? entry.inscriptions.map(i => `<span class="ve-insc-chip">${i.sanskrit}</span>`).join('')
+          : '<span class="ve-insc-chip" style="opacity:.4">No inscriptions</span>'}
+      </div>
+      <div class="ve-turns">${entry.turns}t</div>
+    </div>
+  `).join('');
+}
+
+function loadVaultEntry(id) {
+  const vault = loadVault();
+  const entry = vault.find(e => e.id === id);
+  if (entry?.gameData) {
+    renderGranth(entry.gameData);
+    document.getElementById('vaultSection').style.display = 'none';
+  }
+}
+
+function toggleVault() {
+  const vs = document.getElementById('vaultSection');
+  const showing = vs.style.display === 'block';
+  vs.style.display = showing ? 'none' : 'block';
+  if (!showing) renderVault();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTEGRATION HOOK — called by post-game-analysis.js
+// globalThis.ChaturangaGranth.renderFromGame(game, playerStats)
+// ═══════════════════════════════════════════════════════════════
+globalThis.ChaturangaGranth = {
+  renderFromGame(game, playerStats) {
+    const PLABELS = ['Red','Blue','Green','Yellow'];
+    const PCOLORS = ['#e74c3c','#60a5fa','#4ade80','#fbbf24'];
+    const PV      = { pawn:1, horse:3, elephant:3, rook:5, king:100 };
+
+    // Build stats array from playerStats passed in from post-game-analysis.js
+    const stats = (playerStats || []).map(s => ({
+      id:           s.id,
+      label:        PLABELS[s.id],
+      color:        PCOLORS[s.id],
+      moves:        s.moves,
+      accuracy:     s.accuracy,
+      materialGained: s.materialGained,
+      rajaCaptures: s.rajaCaptures,
+      promotions:   s.promotions,
+    }));
+
+    // Determine winner
+    const winner = stats.find(s => s.rajaCaptures > 0);
+    const winnerLabel = winner ? PLABELS[winner.id] : 'Unknown';
+
+    const gameData = {
+      meta:{
+        winner:   winnerLabel,
+        format:   game.gameMode === 'team' ? 'Team 2v2' : '4-Player Free-for-All',
+        date:     new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
+      },
+      totalMoves:  game.moveHistory?.length || 0,
+      captures:    game.moveHistory?.filter(m => m.cap).length || 0,
+      forfeits:    game.moveHistory?.filter(m => m.forfeit).length || 0,
+      promotions:  game.moveHistory?.filter(m => m.promoted).length || 0,
+      stats,
+      moveHistory: (game.moveHistory || []).map(m => ({
+        from:     m.from,
+        to:       m.to,
+        piece:    m.piece || { type: m.pieceType, owner: m.playerId },
+        cap:      m.cap,
+        playerId: m.playerId,
+        forfeit:  m.forfeit,
+        promoted: m.promoted,
+      })),
+    };
+
+    renderGranth(gameData);
+  },
+};
+</script>
+</body>
+</html>
