@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const WebSocket = require('ws');
-const port = 8765;
+const port = process.env.PORT || 8765;
 const root = path.join(__dirname, '..');
 
 const mimeTypes = {

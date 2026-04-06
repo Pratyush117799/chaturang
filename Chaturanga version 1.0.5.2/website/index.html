@@ -37,11 +37,52 @@
       <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
         <i class="fa-solid fa-chess-king"></i> Play Now
       </button>
+      <button class="features-btn" id="featuresToggle" aria-label="Open Features">
+        <i class="fa-solid fa-bars"></i>
+        <span>Features</span>
+      </button>
       <button class="hamburger" id="hamburger" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
+
+  <!-- FEATURES SIDEBAR -->
+  <div class="features-sidebar-overlay" id="featuresOverlay"></div>
+  <aside class="features-sidebar" id="featuresSidebar">
+    <div class="features-sidebar-header">
+      <h3><i class="fa-solid fa-fort-awesome"></i> Game Features</h3>
+      <button class="close-features" id="closeFeatures" aria-label="Close features">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="features-sidebar-content">
+      <ul class="features-list">
+        <li><a href="../game/features/acharya/acharya.html"><i class="fa-solid fa-chalkboard-user"></i> Acharya</a></li>
+        <li><a href="../game/features/akhara/akhara.html"><i class="fa-solid fa-dumbbell"></i> Akhara</a></li>
+        <li><a href="../game/features/analysis/seer.html"><i class="fa-solid fa-magnifying-glass-chart"></i> Analysis</a></li>
+        <li><a href="../game/features/army_builder/army_builder.html"><i class="fa-solid fa-shield-halved"></i> Army Builder</a></li>
+        <li><a href="../game/features/benchmark/benchmark.html"><i class="fa-solid fa-tachometer-alt"></i> Benchmark</a></li>
+        <li><a href="../game/features/board_forge/board-forge.html"><i class="fa-solid fa-hammer"></i> Board Forge</a></li>
+        <li><a href="../game/features/campaigns/panchanga.html"><i class="fa-solid fa-map-location-dot"></i> Campaigns</a></li>
+        <li><a href="../game/features/documentation/shastra-kosh.html"><i class="fa-solid fa-book"></i> Documentation</a></li>
+        <li><a href="../game/features/elo_profile/elo-profile.html"><i class="fa-solid fa-chart-line"></i> Elo Profile</a></li>
+        <li><a href="../game/features/granth/granth.html"><i class="fa-solid fa-scroll"></i> Granth</a></li>
+        <li><a href="../game/features/itihasa/itihasa.html"><i class="fa-solid fa-landmark"></i> Itihasa</a></li>
+        <li><a href="../game/features/kurukshetra/kurukshetra.html"><i class="fa-solid fa-fort-awesome"></i> Kurukshetra</a></li>
+        <li><a href="../game/features/lessons/lessons.html"><i class="fa-solid fa-person-chalkboard"></i> Lessons</a></li>
+        <li><a href="../game/features/navagraha/navagraha.html"><i class="fa-solid fa-star"></i> Navagraha</a></li>
+        <li><a href="../game/features/offline/offline.html"><i class="fa-solid fa-wifi"></i> Offline</a></li>
+        <li><a href="../game/features/oracle/oracle.html"><i class="fa-solid fa-eye"></i> Oracle</a></li>
+        <li><a href="../game/features/pasha/pasha.html"><i class="fa-solid fa-dice"></i> Pasha</a></li>
+        <li><a href="../game/features/puzzles/puzzles.html"><i class="fa-solid fa-puzzle-piece"></i> Puzzles</a></li>
+        <li><a href="../game/features/samara/samara.html"><i class="fa-solid fa-khanda"></i> Samara</a></li>
+        <li><a href="../game/features/sankat/sankat.html"><i class="fa-solid fa-triangle-exclamation"></i> Sankat</a></li>
+        <li><a href="../game/features/sena/sena.html"><i class="fa-solid fa-users-viewfinder"></i> Sena</a></li>
+        <li><a href="../game/features/vyuha_clash/vyuha-clash.html"><i class="fa-solid fa-chess-board"></i> Vyuha Clash</a></li>
+    </ul>
+    </div>
+  </aside>
 
   <!-- HERO -->
   <section id="hero" class="hero-section">

@@ -30,6 +30,28 @@
     link.addEventListener('click', () => navLinks.classList.remove('open'));
   });
 
+  /* ---- FEATURES SIDEBAR ---- */
+  const featuresToggle = document.getElementById('featuresToggle');
+  const featuresSidebar = document.getElementById('featuresSidebar');
+  const featuresOverlay = document.getElementById('featuresOverlay');
+  const closeFeatures = document.getElementById('closeFeatures');
+
+  function openFeaturesSidebar() {
+    featuresSidebar.classList.add('open');
+    featuresOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFeaturesSidebar() {
+    featuresSidebar.classList.remove('open');
+    featuresOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  featuresToggle && featuresToggle.addEventListener('click', openFeaturesSidebar);
+  closeFeatures && closeFeatures.addEventListener('click', closeFeaturesSidebar);
+  featuresOverlay && featuresOverlay.addEventListener('click', closeFeaturesSidebar);
+
   /* ---- SMOOTH SCROLL for anchor links ---- */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -215,7 +237,10 @@
 
   /* ---- ACCESSIBILITY: escape closes menu ---- */
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') navLinks.classList.remove('open');
+    if (e.key === 'Escape') {
+      navLinks.classList.remove('open');
+      if (typeof closeFeaturesSidebar === 'function') closeFeaturesSidebar();
+    }
   });
 
   /* ---- PAGE INIT scroll check ---- */
