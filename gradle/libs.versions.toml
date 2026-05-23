@@ -1,0 +1,87 @@
+[versions]
+agp                 = "8.5.2"
+kotlin              = "2.0.21"
+ksp                 = "2.0.21-1.0.25"
+compose-bom         = "2024.09.03"
+activity-compose    = "1.9.2"
+navigation-compose  = "2.8.2"
+hilt                = "2.51.1"
+hilt-navigation     = "1.2.0"
+lifecycle           = "2.8.6"
+datastore           = "1.1.1"
+okhttp              = "4.12.0"
+java-websocket      = "1.5.7"
+nanohttpd           = "2.3.1"
+zxing-core          = "3.5.3"
+coil                = "2.7.0"
+kotlinx-json        = "1.7.3"
+coroutines          = "1.9.0"
+core-ktx            = "1.13.1"
+splashscreen        = "1.0.1"
+camera-x            = "1.3.4"
+mlkit-barcode       = "17.3.0"
+
+[libraries]
+# AndroidX Core & Activity
+core-ktx                     = { module = "androidx.core:core-ktx",              version.ref = "core-ktx" }
+splashscreen                 = { module = "androidx.core:core-splashscreen",      version.ref = "splashscreen" }
+activity-compose             = { module = "androidx.activity:activity-compose",   version.ref = "activity-compose" }
+
+# Compose BOM & UI Components
+compose-bom                  = { module = "androidx.compose:compose-bom",         version.ref = "compose-bom" }
+compose-ui                   = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling           = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview   = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material3            = { module = "androidx.compose.material3:material3" }
+compose-animation            = { module = "androidx.compose.animation:animation" }
+compose-foundation           = { module = "androidx.compose.foundation:foundation" }
+
+# Jetpack Navigation (Modern Type-Safe)
+navigation-compose           = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
+
+# Hilt Dependency Injection
+hilt-android                 = { module = "com.google.dagger:hilt-android",       version.ref = "hilt" }
+hilt-compiler                = { module = "com.google.dagger:hilt-compiler",      version.ref = "hilt" }
+hilt-navigation-compose      = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
+
+# Jetpack Lifecycle & ViewModel
+lifecycle-viewmodel-compose  = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+lifecycle-runtime-compose    = { module = "androidx.lifecycle:lifecycle-runtime-compose",   version.ref = "lifecycle" }
+
+# Jetpack Preferences DataStore
+datastore-preferences        = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+# Networking (LAN WebSocket Client)
+okhttp                       = { module = "com.squareup.okhttp3:okhttp",          version.ref = "okhttp" }
+okhttp-logging               = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+
+# Local LAN Servers (WebSocket Server & NanoHTTPD Daemon)
+java-websocket               = { module = "org.java-websocket:Java-WebSocket",    version.ref = "java-websocket" }
+nanohttpd                    = { module = "org.nanohttpd:nanohttpd",              version.ref = "nanohttpd" }
+
+# Camera & QR Scan (CameraX Preview + Google ML Kit Barcode Analyzer)
+camerax-core                 = { module = "androidx.camera:camera-core",          version.ref = "camera-x" }
+camerax-camera2              = { module = "androidx.camera:camera-camera2",       version.ref = "camera-x" }
+camerax-lifecycle            = { module = "androidx.camera:camera-lifecycle",     version.ref = "camera-x" }
+camerax-view                 = { module = "androidx.camera:camera-view",          version.ref = "camera-x" }
+mlkit-barcode                = { module = "com.google.mlkit:barcode-scanning",    version.ref = "mlkit-barcode" }
+
+# QR Bitmap Generation (Core ZXing, extremely lightweight)
+zxing-core                   = { module = "com.google.zxing:core",               version.ref = "zxing-core" }
+
+# JSON Serialization
+kotlinx-serialization-json   = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-json" }
+
+# Coroutines
+coroutines-android           = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Image Loading (For avatars / pieces if rendered via Coil)
+coil                         = { module = "io.coil-kt:coil-compose",             version.ref = "coil" }
+
+[plugins]
+android-application          = { id = "com.android.application",                 version.ref = "agp" }
+kotlin-android               = { id = "org.jetbrains.kotlin.android",            version.ref = "kotlin" }
+kotlin-serialization         = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-compose               = { id = "org.jetbrains.kotlin.plugin.compose",     version.ref = "kotlin" }
+hilt                         = { id = "com.google.dagger.hilt.android",          version.ref = "hilt" }
+ksp                          = { id = "com.google.devtools.ksp",                 version.ref = "ksp" }

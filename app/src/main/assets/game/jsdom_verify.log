@@ -1,0 +1,123 @@
+JSDOM ERROR: Error: Uncaught [SecurityError: localStorage is not available for opaque origins]
+    at reportException (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at processJavaScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:233:7)
+    at HTMLScriptElementImpl._innerEval (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:166:5)
+    at C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:107:12
+    at ResourceQueue.push (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\resource-queue.js:53:16)
+    at HTMLScriptElementImpl._fetchInternalScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:106:21)
+    at HTMLScriptElementImpl._eval (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:160:12)
+    at HTMLScriptElementImpl._poppedOffStackOfOpenElements (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:123:10)
+    at JSDOMParse5Adapter.onItemPop (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\parser\html.js:175:43)
+    at Parser.onItemPop (file:///C:/Users/Pratyush/Downloads/version%201.0.5.2/game/node_modules/parse5/dist/parser/index.js:179:90)
+JSDOM ERROR: Error: Uncaught [SecurityError: localStorage is not available for opaque origins]
+    at reportException (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at processJavaScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:233:7)
+    at HTMLScriptElementImpl._innerEval (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:166:5)
+    at C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:107:12
+    at ResourceQueue.push (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\resource-queue.js:53:16)
+    at HTMLScriptElementImpl._fetchInternalScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:106:21)
+    at HTMLScriptElementImpl._eval (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:160:12)
+    at HTMLScriptElementImpl._poppedOffStackOfOpenElements (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:123:10)
+    at JSDOMParse5Adapter.onItemPop (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\parser\html.js:175:43)
+    at Parser.onItemPop (file:///C:/Users/Pratyush/Downloads/version%201.0.5.2/game/node_modules/parse5/dist/parser/index.js:179:90)
+JSDOM ERROR: Error: Uncaught [SecurityError: localStorage is not available for opaque origins]
+    at reportException (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at processJavaScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:233:7)
+    at HTMLScriptElementImpl._innerEval (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:166:5)
+    at onLoadExternalScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:90:12)
+    at onLoadWrapped (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\per-document-resource-loader.js:81:33)
+    at Object.check (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\resource-queue.js:76:23)
+    at C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\resource-queue.js:83:27
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+JSDOM ERROR: Error: Uncaught [SecurityError: localStorage is not available for opaque origins]
+    at reportException (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\helpers\runtime-script-errors.js:66:24)
+    at processJavaScript (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:233:7)
+    at HTMLScriptElementImpl._innerEval (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:166:5)
+    at C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\living\nodes\HTMLScriptElement-impl.js:107:12
+    at Object.check (C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\resource-queue.js:76:23)
+    at C:\Users\Pratyush\Downloads\version 1.0.5.2\game\node_modules\jsdom\lib\jsdom\browser\resources\resource-queue.js:83:27
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+LOG: Chaturanga: initUI starting...
+LOG: Chaturanga: DOM references obtained:
+LOG: Chaturanga: Destructuring successful. settingsToggle:
+LOG: Chaturanga: Sound engine setup...
+LOG: Chaturanga: pieceImageUrl helper setup...
+LOG: Chaturanga: Main render preparation...
+LOG: Chaturanga: Finalizing initUI - Starting Clock... Mode:
+LOG: Chaturanga: playerCount:
+LOG: Chaturanga: Creating Clock instance...
+LOG: Chaturanga: Initializing Clock UI...
+LOG: ChaturangaClockUI: initClockUI starting... anchorId:
+LOG: ChaturangaClockUI: mode identified:
+LOG: ChaturangaClockUI: injecting into DOM...
+LOG: ChaturangaClockUI: anchor found:
+LOG: ChaturangaClockUI: inserting before anchor:
+LOG: Chaturanga: Clock beginTurn...
+LOG: Chaturanga: Clock setup COMPLETE.
+LOG: Chaturanga: Triggering first synchronous render...
+LOG: Chaturanga: performRender START
+Board children count: 64
+  Child 0: DIV class="square light" text="8"
+  Child 1: DIV class="square dark" text=""
+  Child 2: DIV class="square light" text=""
+  Child 3: DIV class="square dark" text=""
+  Child 4: DIV class="square light" text=""
+  Child 5: DIV class="square dark" text=""
+  Child 6: DIV class="square light" text=""
+  Child 7: DIV class="square dark" text=""
+  Child 8: DIV class="square dark" text="7"
+  Child 9: DIV class="square light" text=""
+  Child 10: DIV class="square dark" text=""
+  Child 11: DIV class="square light" text=""
+  Child 12: DIV class="square dark" text=""
+  Child 13: DIV class="square light" text=""
+  Child 14: DIV class="square dark" text=""
+  Child 15: DIV class="square light" text=""
+  Child 16: DIV class="square light" text="6"
+  Child 17: DIV class="square dark" text=""
+  Child 18: DIV class="square light" text=""
+  Child 19: DIV class="square dark" text=""
+  Child 20: DIV class="square light" text=""
+  Child 21: DIV class="square dark" text=""
+  Child 22: DIV class="square light" text=""
+  Child 23: DIV class="square dark" text=""
+  Child 24: DIV class="square dark" text="5"
+  Child 25: DIV class="square light" text=""
+  Child 26: DIV class="square dark" text=""
+  Child 27: DIV class="square light lotus" text=""
+  Child 28: DIV class="square dark lotus" text=""
+  Child 29: DIV class="square light" text=""
+  Child 30: DIV class="square dark" text=""
+  Child 31: DIV class="square light" text=""
+  Child 32: DIV class="square light" text="4"
+  Child 33: DIV class="square dark" text=""
+  Child 34: DIV class="square light" text=""
+  Child 35: DIV class="square dark lotus" text=""
+  Child 36: DIV class="square light lotus" text=""
+  Child 37: DIV class="square dark" text=""
+  Child 38: DIV class="square light" text=""
+  Child 39: DIV class="square dark" text=""
+  Child 40: DIV class="square dark" text="3"
+  Child 41: DIV class="square light" text=""
+  Child 42: DIV class="square dark" text=""
+  Child 43: DIV class="square light" text=""
+  Child 44: DIV class="square dark" text=""
+  Child 45: DIV class="square light" text=""
+  Child 46: DIV class="square dark" text=""
+  Child 47: DIV class="square light" text=""
+  Child 48: DIV class="square light" text="2"
+  Child 49: DIV class="square dark" text=""
+  Child 50: DIV class="square light" text=""
+  Child 51: DIV class="square dark" text=""
+  Child 52: DIV class="square light" text=""
+  Child 53: DIV class="square dark" text=""
+  Child 54: DIV class="square light" text=""
+  Child 55: DIV class="square dark" text=""
+  Child 56: DIV class="square dark" text="1a"
+  Child 57: DIV class="square light" text="b"
+  Child 58: DIV class="square dark" text="c"
+  Child 59: DIV class="square light" text="d"
+  Child 60: DIV class="square dark" text="e"
+  Child 61: DIV class="square light" text="f"
+  Child 62: DIV class="square dark" text="g"
+  Child 63: DIV class="square light" text="h"
