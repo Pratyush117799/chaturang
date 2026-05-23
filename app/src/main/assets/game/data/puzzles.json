@@ -1,0 +1,1673 @@
+[
+  {
+    "id": "p01",
+    "sourceId": "P001",
+    "title": "Ratha",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "win-in-2",
+    "description": "Like Arjuna",
+    "boardState": {
+      "a1": "0:rook",
+      "h1": "1:king",
+      "d4": "1:rook",
+      "e5": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "Move the Ratha along rank 1",
+    "maxMoves": 5,
+    "rating": 350,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "h1"
+      },
+      {
+        "from": "a1",
+        "to": "a8"
+      }
+    ]
+  },
+  {
+    "id": "p02",
+    "sourceId": "P002",
+    "title": "Mounted Assault",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "win-in-2",
+    "description": "The warrior who controls the centre controls the war. — Chanakya Niti",
+    "boardState": {
+      "e4": "0:horse",
+      "g5": "1:king",
+      "f7": "1:rook",
+      "b2": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "The Ashwa threatens from f6",
+    "maxMoves": 5,
+    "rating": 420,
+    "forcedDice": [
+      3,
+      6
+    ],
+    "solution": [
+      {
+        "from": "e4",
+        "to": "f6"
+      },
+      {
+        "from": "b2",
+        "to": "c3"
+      }
+    ]
+  },
+  {
+    "id": "p03",
+    "sourceId": "P007",
+    "title": "The Cornered Raja",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "save-the-raja",
+    "description": "Use your allies as shields. — Mahabharata, Kurukshetra",
+    "boardState": {
+      "a1": "0:king",
+      "c2": "1:horse",
+      "b3": "1:rook",
+      "d1": "1:elephant",
+      "a4": "0:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Save The Raja",
+    "hintText": "Block with the Ratha first",
+    "maxMoves": 5,
+    "rating": 380,
+    "forcedDice": [
+      6,
+      1
+    ],
+    "solution": [
+      {
+        "from": "a4",
+        "to": "b4"
+      },
+      {
+        "from": "a1",
+        "to": "a2"
+      }
+    ]
+  },
+  {
+    "id": "p04",
+    "sourceId": "P010",
+    "title": "The Fleeing Ratha",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "ratha-hunt",
+    "description": "Do not let the enemy regroup. — Chanakya Niti",
+    "boardState": {
+      "a3": "0:rook",
+      "e3": "1:rook",
+      "g4": "0:horse",
+      "h8": "1:king",
+      "e1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ratha Hunt",
+    "hintText": "Take the rook first",
+    "maxMoves": 5,
+    "rating": 300,
+    "forcedDice": [
+      1,
+      3
+    ],
+    "solution": [
+      {
+        "from": "a3",
+        "to": "e3"
+      },
+      {
+        "from": "g4",
+        "to": "f2"
+      }
+    ]
+  },
+  {
+    "id": "p05",
+    "sourceId": "P011",
+    "title": "Ratha Sacrifice Trap",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "ratha-hunt",
+    "description": "A sacrifice that gains more is wisdom. — Bhagavad Gita",
+    "boardState": {
+      "f6": "0:rook",
+      "f1": "1:rook",
+      "c3": "0:elephant",
+      "h6": "1:king",
+      "a8": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ratha Hunt",
+    "hintText": "Capture the rook on f1",
+    "maxMoves": 5,
+    "rating": 450,
+    "forcedDice": [
+      1,
+      4
+    ],
+    "solution": [
+      {
+        "from": "f6",
+        "to": "f1"
+      },
+      {
+        "from": "c3",
+        "to": "e5"
+      }
+    ]
+  },
+  {
+    "id": "p06",
+    "sourceId": "P014",
+    "title": "Diagonal Devastation",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "danti-fork",
+    "description": "Land the first blow where it hurts most. — Chanakya Niti",
+    "boardState": {
+      "b2": "0:elephant",
+      "d4": "1:king",
+      "f4": "1:rook",
+      "a1": "0:rook",
+      "g7": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Danti Fork",
+    "hintText": "Danti hits the enemy king",
+    "maxMoves": 5,
+    "rating": 400,
+    "forcedDice": [
+      4,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b2",
+        "to": "d4"
+      },
+      {
+        "from": "a1",
+        "to": "f1"
+      }
+    ]
+  },
+  {
+    "id": "p07",
+    "sourceId": "P016",
+    "title": "The Frozen King",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "stalemate-trap",
+    "description": "Surround before you strike. — Kautilya",
+    "boardState": {
+      "h8": "1:king",
+      "g7": "0:rook",
+      "f6": "0:king",
+      "g8": "0:pawn"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "Rook cuts off escape squares",
+    "maxMoves": 5,
+    "rating": 350,
+    "forcedDice": [
+      6,
+      1
+    ],
+    "solution": [
+      {
+        "from": "g7",
+        "to": "g6"
+      },
+      {
+        "from": "f6",
+        "to": "g6"
+      }
+    ]
+  },
+  {
+    "id": "p08",
+    "sourceId": "P019",
+    "title": "Brothers in Arms",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "alliance-combo",
+    "description": "United we stand — the Pandava brothers of Mahabharata were strongest together.",
+    "boardState": {
+      "a1": "0:rook",
+      "e5": "2:horse",
+      "h5": "1:king",
+      "h8": "1:rook",
+      "d1": "0:king",
+      "e8": "2:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Alliance Combo",
+    "hintText": "Ally Ratha controls the h-file",
+    "maxMoves": 5,
+    "rating": 430,
+    "forcedDice": [
+      1,
+      3
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "h1"
+      },
+      {
+        "from": "e5",
+        "to": "g6"
+      }
+    ]
+  },
+  {
+    "id": "p09",
+    "sourceId": "P023",
+    "title": "March to Glory",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "nara-march",
+    "description": "The humble Nara, when promoted, equals the Raja himself. — Chaturanga Lore",
+    "boardState": {
+      "b6": "0:pawn",
+      "b7": "0:pawn",
+      "h7": "1:king",
+      "b8": "1:rook",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Nara March",
+    "hintText": "Promote the pawn immediately on b8",
+    "maxMoves": 5,
+    "rating": 310,
+    "forcedDice": [
+      6,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b7",
+        "to": "b8"
+      },
+      {
+        "from": "a1",
+        "to": "b1"
+      }
+    ]
+  },
+  {
+    "id": "p10",
+    "sourceId": "P024",
+    "title": "The Unstoppable Nara",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "nara-march",
+    "description": "Threaten on two fronts and force a mistake. — Chanakya Niti",
+    "boardState": {
+      "e6": "0:pawn",
+      "g6": "1:horse",
+      "e8": "1:king",
+      "d5": "0:king",
+      "c3": "0:elephant"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Nara March",
+    "hintText": "Nara advances to e7 — nearly promoted",
+    "maxMoves": 5,
+    "rating": 430,
+    "forcedDice": [
+      6,
+      4
+    ],
+    "solution": [
+      {
+        "from": "e6",
+        "to": "e7"
+      },
+      {
+        "from": "c3",
+        "to": "e5"
+      }
+    ]
+  },
+  {
+    "id": "p11",
+    "sourceId": "P027",
+    "title": "The Dual Strike",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "ashwa-fork",
+    "description": "Victory belongs to those who control two diagonals at once. — Kautilya",
+    "boardState": {
+      "b1": "0:horse",
+      "d2": "1:rook",
+      "a3": "1:king",
+      "c5": "0:king",
+      "h8": "1:elephant"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ashwa Fork",
+    "hintText": "Horse leaps to c3 — forking Ratha and Raja squares",
+    "maxMoves": 5,
+    "rating": 370,
+    "forcedDice": [
+      3,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b1",
+        "to": "c3"
+      },
+      {
+        "from": "c5",
+        "to": "d4"
+      }
+    ]
+  },
+  {
+    "id": "p12",
+    "sourceId": "P031",
+    "title": "The Trap Closes",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "king-hunt",
+    "description": "Sacrifice that captures the king is the greatest. — Mahabharata",
+    "boardState": {
+      "c3": "0:elephant",
+      "e5": "1:king",
+      "e2": "0:rook",
+      "a1": "0:king",
+      "h8": "1:horse"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "King Hunt",
+    "hintText": "Danti strikes the enemy Raja",
+    "maxMoves": 5,
+    "rating": 390,
+    "forcedDice": [
+      4,
+      1
+    ],
+    "solution": [
+      {
+        "from": "c3",
+        "to": "e5"
+      },
+      {
+        "from": "e2",
+        "to": "e5"
+      }
+    ]
+  },
+  {
+    "id": "p13",
+    "sourceId": "P035",
+    "title": "Skewer and Win",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "material-gain",
+    "description": "Pierce through the leader to wound the army behind. — Arthashastra IX",
+    "boardState": {
+      "c4": "0:rook",
+      "c8": "1:king",
+      "c6": "1:rook",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Material Gain",
+    "hintText": "Rook attacks the king on c8",
+    "maxMoves": 5,
+    "rating": 360,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "c4",
+        "to": "c8"
+      },
+      {
+        "from": "c8",
+        "to": "c6"
+      }
+    ]
+  },
+  {
+    "id": "p14",
+    "sourceId": "P040",
+    "title": "The Last Stand",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "win-in-1",
+    "description": "The war ends where the Raja falls. — Ancient Chaturanga Tradition",
+    "boardState": {
+      "d1": "0:rook",
+      "d8": "1:king",
+      "e4": "0:king",
+      "h4": "1:rook",
+      "g7": "1:horse"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 1",
+    "hintText": "The Ratha delivers the winning strike on d8",
+    "maxMoves": 5,
+    "rating": 300,
+    "forcedDice": [
+      1
+    ],
+    "solution": [
+      {
+        "from": "d1",
+        "to": "d8"
+      }
+    ]
+  },
+  {
+    "id": "p15",
+    "sourceId": "P041",
+    "title": "Ratha Breaks Through",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "win-in-2",
+    "description": "Remove every obstacle before delivering the final blow. — Arthashastra VI",
+    "boardState": {
+      "a1": "0:rook",
+      "a5": "1:rook",
+      "a8": "1:king",
+      "e4": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "Capture the blocking Ratha on a5",
+    "maxMoves": 5,
+    "rating": 360,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "a5"
+      },
+      {
+        "from": "a5",
+        "to": "a8"
+      }
+    ]
+  },
+  {
+    "id": "p16",
+    "sourceId": "P042",
+    "title": "The Vertical Assault",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "win-in-2",
+    "description": "Conquer the guardian first, then the throne falls. — Panchatantra II",
+    "boardState": {
+      "g1": "0:rook",
+      "g4": "1:rook",
+      "g7": "1:king",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "Sweep out the defender on g4",
+    "maxMoves": 5,
+    "rating": 380,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "g1",
+        "to": "g4"
+      },
+      {
+        "from": "g4",
+        "to": "g7"
+      }
+    ]
+  },
+  {
+    "id": "p17",
+    "sourceId": "P043",
+    "title": "Ashwa Clears the Path",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "win-in-2",
+    "description": "Swift cavalry opens the road for the chariot. — Mahabharata, Drona Parva",
+    "boardState": {
+      "b5": "0:horse",
+      "c7": "1:rook",
+      "d7": "1:king",
+      "a7": "0:rook",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "Horse leaps to capture the Ratha on c7",
+    "maxMoves": 5,
+    "rating": 450,
+    "forcedDice": [
+      3,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b5",
+        "to": "c7"
+      },
+      {
+        "from": "a7",
+        "to": "d7"
+      }
+    ]
+  },
+  {
+    "id": "p18",
+    "sourceId": "P044",
+    "title": "Down the Open File",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "win-in-2",
+    "description": "Control the central file and victory follows. — Chanakya Niti",
+    "boardState": {
+      "d1": "0:rook",
+      "d4": "1:rook",
+      "d8": "1:king",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "Take the Ratha on d4",
+    "maxMoves": 5,
+    "rating": 400,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "d1",
+        "to": "d4"
+      },
+      {
+        "from": "d4",
+        "to": "d8"
+      }
+    ]
+  },
+  {
+    "id": "p19",
+    "sourceId": "P045",
+    "title": "The Long March",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "win-in-2",
+    "description": "Patience in approach delivers decisiveness in execution. — Bhagavad Gita 2.50",
+    "boardState": {
+      "e1": "0:rook",
+      "e5": "1:rook",
+      "e8": "1:king",
+      "a3": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Win In 2",
+    "hintText": "Capture the Ratha on e5 first",
+    "maxMoves": 5,
+    "rating": 420,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "e1",
+        "to": "e5"
+      },
+      {
+        "from": "e5",
+        "to": "e8"
+      }
+    ]
+  },
+  {
+    "id": "p20",
+    "sourceId": "P053",
+    "title": "Block and Escape",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "save-the-raja",
+    "description": "Shield the king first; then lead him to safety. — Mahabharata, Shanti Parva",
+    "boardState": {
+      "a1": "0:king",
+      "h1": "1:rook",
+      "a8": "1:rook",
+      "d4": "0:rook",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Save The Raja",
+    "hintText": "Interpose the Ratha on the first rank",
+    "maxMoves": 5,
+    "rating": 370,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "d4",
+        "to": "d1"
+      },
+      {
+        "from": "a1",
+        "to": "b2"
+      }
+    ]
+  },
+  {
+    "id": "p21",
+    "sourceId": "P055",
+    "title": "The Interposing Ratha",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "save-the-raja",
+    "description": "A loyal general stands between his king and destruction. — Ramayana",
+    "boardState": {
+      "e1": "0:king",
+      "e8": "1:rook",
+      "a5": "0:rook",
+      "h8": "1:king",
+      "c3": "1:horse"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Save The Raja",
+    "hintText": "Place your Ratha on the e-file between the Raja and the threat",
+    "maxMoves": 5,
+    "rating": 340,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "a5",
+        "to": "e5"
+      },
+      {
+        "from": "e1",
+        "to": "d1"
+      }
+    ]
+  },
+  {
+    "id": "p22",
+    "sourceId": "P057",
+    "title": "The Blocking Ratha",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "save-the-raja",
+    "description": "A single warrior placed well protects the entire army. — Arthashastra",
+    "boardState": {
+      "a1": "0:king",
+      "h1": "1:rook",
+      "g7": "0:rook",
+      "e8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Save The Raja",
+    "hintText": "Bring the Ratha to g1 to shield the Raja on the first rank",
+    "maxMoves": 5,
+    "rating": 320,
+    "forcedDice": [
+      1
+    ],
+    "solution": [
+      {
+        "from": "g7",
+        "to": "g1"
+      }
+    ]
+  },
+  {
+    "id": "p23",
+    "sourceId": "P065",
+    "title": "Double Ratha Hunt",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "ratha-hunt",
+    "description": "Greed in battle is wisdom when the prize is certain. — Chanakya Niti",
+    "boardState": {
+      "a1": "0:rook",
+      "a4": "1:rook",
+      "h4": "1:rook",
+      "e1": "0:king",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ratha Hunt",
+    "hintText": "Take the first Ratha on a4",
+    "maxMoves": 5,
+    "rating": 400,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "a4"
+      },
+      {
+        "from": "a4",
+        "to": "h4"
+      }
+    ]
+  },
+  {
+    "id": "p24",
+    "sourceId": "P066",
+    "title": "Twin Captures",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "ratha-hunt",
+    "description": "Strike in two directions and the enemy bleeds twice. — Arthashastra IX",
+    "boardState": {
+      "a5": "0:rook",
+      "f5": "1:rook",
+      "c3": "0:horse",
+      "b1": "1:rook",
+      "a1": "0:king",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ratha Hunt",
+    "hintText": "Ratha claims the Ratha on f5",
+    "maxMoves": 5,
+    "rating": 350,
+    "forcedDice": [
+      1,
+      3
+    ],
+    "solution": [
+      {
+        "from": "a5",
+        "to": "f5"
+      },
+      {
+        "from": "c3",
+        "to": "b1"
+      }
+    ]
+  },
+  {
+    "id": "p25",
+    "sourceId": "P070",
+    "title": "Diagonal Double Threat",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "danti-fork",
+    "description": "Attack two corners at once and the enemy cannot protect both. — Arthashastra",
+    "boardState": {
+      "g1": "0:elephant",
+      "c5": "1:rook",
+      "g5": "1:king",
+      "a8": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Danti Fork",
+    "hintText": "Danti lands on e3 — it forks the Ratha on c5 and the Raja on g5",
+    "maxMoves": 5,
+    "rating": 310,
+    "forcedDice": [
+      4
+    ],
+    "solution": [
+      {
+        "from": "g1",
+        "to": "e3"
+      }
+    ]
+  },
+  {
+    "id": "p26",
+    "sourceId": "P071",
+    "title": "The Elephant Wedge",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "danti-fork",
+    "description": "Place the elephant where it threatens in all four directions. — Chaturanga Lore",
+    "boardState": {
+      "a3": "0:elephant",
+      "e3": "1:rook",
+      "a7": "1:king",
+      "h1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Danti Fork",
+    "hintText": "Danti advances to c5 — simultaneously threatening Ratha on e3 and Raja on a7",
+    "maxMoves": 5,
+    "rating": 360,
+    "forcedDice": [
+      4
+    ],
+    "solution": [
+      {
+        "from": "a3",
+        "to": "c5"
+      }
+    ]
+  },
+  {
+    "id": "p27",
+    "sourceId": "P073",
+    "title": "The Two-Diagonal Fork",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "danti-fork",
+    "description": "The elephant\\",
+    "boardState": {
+      "c1": "0:elephant",
+      "g1": "1:rook",
+      "c5": "1:horse",
+      "a8": "0:king",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Danti Fork",
+    "hintText": "Danti lands on e3 — threatening Ratha on g1 and Ashwa on c5 simultaneously",
+    "maxMoves": 5,
+    "rating": 300,
+    "forcedDice": [
+      4
+    ],
+    "solution": [
+      {
+        "from": "c1",
+        "to": "e3"
+      }
+    ]
+  },
+  {
+    "id": "p28",
+    "sourceId": "P074",
+    "title": "Corner Fork",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "danti-fork",
+    "description": "Strike at the crown and its guardians at once. — Panchatantra III",
+    "boardState": {
+      "h2": "0:elephant",
+      "d6": "1:king",
+      "h6": "1:rook",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Danti Fork",
+    "hintText": "Danti leaps to f4 — forking the Raja on d6 and the Ratha on h6",
+    "maxMoves": 5,
+    "rating": 420,
+    "forcedDice": [
+      4
+    ],
+    "solution": [
+      {
+        "from": "h2",
+        "to": "f4"
+      }
+    ]
+  },
+  {
+    "id": "p29",
+    "sourceId": "P078",
+    "title": "The Back-Rank Fork",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "ashwa-fork",
+    "description": "Swift cavalry on the flank creates chaos in the enemy rear. — Mahabharata",
+    "boardState": {
+      "a5": "0:horse",
+      "d6": "1:rook",
+      "d8": "1:king",
+      "h1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ashwa Fork",
+    "hintText": "Horse leaps to b7 — forking the Ratha on d6 and Raja on d8",
+    "maxMoves": 5,
+    "rating": 340,
+    "forcedDice": [
+      3
+    ],
+    "solution": [
+      {
+        "from": "a5",
+        "to": "b7"
+      }
+    ]
+  },
+  {
+    "id": "p30",
+    "sourceId": "P082",
+    "title": "Diagonal Ambush",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "ashwa-fork",
+    "description": "Spring from obscurity; strike at both flanks. — Chanakya Niti",
+    "boardState": {
+      "f2": "0:horse",
+      "c3": "1:rook",
+      "g5": "1:king",
+      "a8": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ashwa Fork",
+    "hintText": "Horse springs to e4 — forking Ratha on c3 and Raja on g5",
+    "maxMoves": 5,
+    "rating": 380,
+    "forcedDice": [
+      3
+    ],
+    "solution": [
+      {
+        "from": "f2",
+        "to": "e4"
+      }
+    ]
+  },
+  {
+    "id": "p31",
+    "sourceId": "P083",
+    "title": "The Flanking Fork",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "ashwa-fork",
+    "description": "The flank attack is the general\\",
+    "boardState": {
+      "h6": "0:horse",
+      "d4": "1:rook",
+      "g7": "1:king",
+      "a1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Ashwa Fork",
+    "hintText": "Horse to f5 — it threatens Ratha on d4 and Raja on g7 simultaneously",
+    "maxMoves": 5,
+    "rating": 430,
+    "forcedDice": [
+      3
+    ],
+    "solution": [
+      {
+        "from": "h6",
+        "to": "f5"
+      }
+    ]
+  },
+  {
+    "id": "p32",
+    "sourceId": "P086",
+    "title": "The H-File Hunt",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "king-hunt",
+    "description": "Change direction with purpose — the right file opens all doors. — Chanakya Niti",
+    "boardState": {
+      "a1": "0:rook",
+      "h5": "1:king",
+      "h8": "1:rook",
+      "d4": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "King Hunt",
+    "hintText": "Swing the Ratha to the h-file first",
+    "maxMoves": 5,
+    "rating": 310,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "h1"
+      },
+      {
+        "from": "h1",
+        "to": "h5"
+      }
+    ]
+  },
+  {
+    "id": "p33",
+    "sourceId": "P088",
+    "title": "Back-Rank Sweep",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "king-hunt",
+    "description": "Every move must serve a purpose on the path to victory. — Bhagavad Gita",
+    "boardState": {
+      "b7": "0:rook",
+      "g8": "1:king",
+      "a1": "0:king",
+      "e5": "1:horse"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "King Hunt",
+    "hintText": "Step the Ratha to rank 8",
+    "maxMoves": 5,
+    "rating": 340,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b7",
+        "to": "b8"
+      },
+      {
+        "from": "b8",
+        "to": "g8"
+      }
+    ]
+  },
+  {
+    "id": "p34",
+    "sourceId": "P090",
+    "title": "The Two-Rook Finish",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "king-hunt",
+    "description": "Two chariots on one file are an unstoppable force. — Arthashastra X",
+    "boardState": {
+      "a8": "0:rook",
+      "f1": "0:rook",
+      "e5": "1:king",
+      "a1": "0:king",
+      "h8": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "King Hunt",
+    "hintText": "Bring the Ratha to the e-file",
+    "maxMoves": 5,
+    "rating": 420,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "a8",
+        "to": "e8"
+      },
+      {
+        "from": "e8",
+        "to": "e5"
+      }
+    ]
+  },
+  {
+    "id": "p35",
+    "sourceId": "P095",
+    "title": "Clear the Pawn, Win the Ratha",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "material-gain",
+    "description": "Remove smaller obstacles to reach greater prizes. — Kautilya",
+    "boardState": {
+      "c1": "0:rook",
+      "c5": "1:pawn",
+      "c7": "1:rook",
+      "a8": "1:king",
+      "g1": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Material Gain",
+    "hintText": "Remove the pawn blocking the file",
+    "maxMoves": 5,
+    "rating": 360,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "c1",
+        "to": "c5"
+      },
+      {
+        "from": "c5",
+        "to": "c7"
+      }
+    ]
+  },
+  {
+    "id": "p36",
+    "sourceId": "P096",
+    "title": "Twin Material Strike",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "material-gain",
+    "description": "Two captures in one turn shifts the balance decisively. — Chanakya Niti",
+    "boardState": {
+      "b1": "0:elephant",
+      "d3": "1:horse",
+      "h5": "1:rook",
+      "a5": "0:rook",
+      "a1": "0:king",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Material Gain",
+    "hintText": "Danti captures the Ashwa",
+    "maxMoves": 5,
+    "rating": 450,
+    "forcedDice": [
+      4,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b1",
+        "to": "d3"
+      },
+      {
+        "from": "a5",
+        "to": "h5"
+      }
+    ]
+  },
+  {
+    "id": "p37",
+    "sourceId": "P110",
+    "title": "Double Promotion March",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "nara-march",
+    "description": "Two advancing pawns are stronger than one. — Arthashastra",
+    "boardState": {
+      "e7": "0:pawn",
+      "f6": "0:pawn",
+      "e1": "0:king",
+      "h8": "1:king",
+      "a8": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Nara March",
+    "hintText": "Promote the leading Nara immediately",
+    "maxMoves": 5,
+    "rating": 300,
+    "forcedDice": [
+      6,
+      6
+    ],
+    "solution": [
+      {
+        "from": "e7",
+        "to": "e8"
+      },
+      {
+        "from": "f6",
+        "to": "f7"
+      }
+    ]
+  },
+  {
+    "id": "p38",
+    "sourceId": "P111",
+    "title": "Promotion Through Capture",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "nara-march",
+    "description": "The pawn that captures on promotion earns double glory. — Chaturanga Lore",
+    "boardState": {
+      "d7": "0:pawn",
+      "e8": "1:rook",
+      "e1": "0:king",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Nara March",
+    "hintText": "The Nara captures diagonally and promotes in one stroke — removing a Ratha",
+    "maxMoves": 5,
+    "rating": 390,
+    "forcedDice": [
+      6
+    ],
+    "solution": [
+      {
+        "from": "d7",
+        "to": "e8"
+      }
+    ]
+  },
+  {
+    "id": "p39",
+    "sourceId": "P112",
+    "title": "Promote and Strike",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "nara-march",
+    "description": "Advance the pawn to change the position; then strike with the chariot. — Chanakya",
+    "boardState": {
+      "b7": "0:pawn",
+      "h1": "0:rook",
+      "h8": "1:rook",
+      "e1": "0:king",
+      "a8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Nara March",
+    "hintText": "Promote the Nara on b8",
+    "maxMoves": 5,
+    "rating": 440,
+    "forcedDice": [
+      6,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b7",
+        "to": "b8"
+      },
+      {
+        "from": "h1",
+        "to": "h8"
+      }
+    ]
+  },
+  {
+    "id": "p40",
+    "sourceId": "P113",
+    "title": "Nara Takes the Threat",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "nara-march",
+    "description": "The brave pawn that charges forward earns what the others cannot. — Arthashastra",
+    "boardState": {
+      "f7": "0:pawn",
+      "e8": "1:rook",
+      "d1": "0:king",
+      "h8": "1:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Nara March",
+    "hintText": "The Nara captures the threatening Ratha diagonally and earns promotion",
+    "maxMoves": 5,
+    "rating": 420,
+    "forcedDice": [
+      6
+    ],
+    "solution": [
+      {
+        "from": "f7",
+        "to": "e8"
+      }
+    ]
+  },
+  {
+    "id": "p41",
+    "sourceId": "P116",
+    "title": "Cornering the Corner King",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "stalemate-trap",
+    "description": "Cut off every escape before you tighten the noose. — Arthashastra",
+    "boardState": {
+      "h8": "1:king",
+      "h1": "0:rook",
+      "f7": "0:king",
+      "c1": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "Ratha cuts off the h7 escape square",
+    "maxMoves": 5,
+    "rating": 370,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "h1",
+        "to": "h7"
+      },
+      {
+        "from": "f7",
+        "to": "g7"
+      }
+    ]
+  },
+  {
+    "id": "p42",
+    "sourceId": "P117",
+    "title": "The a-File Prison",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "stalemate-trap",
+    "description": "Box the enemy king inch by inch. — Kautilya, Arthashastra X",
+    "boardState": {
+      "a8": "1:king",
+      "b6": "0:king",
+      "a1": "0:rook",
+      "f3": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "Ratha advances to a7 just beneath the trapped king",
+    "maxMoves": 5,
+    "rating": 420,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "a7"
+      },
+      {
+        "from": "b6",
+        "to": "b7"
+      }
+    ]
+  },
+  {
+    "id": "p43",
+    "sourceId": "P118",
+    "title": "Trap on the g-File",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "stalemate-trap",
+    "description": "A king cornered is a king captured. — Mahabharata",
+    "boardState": {
+      "h8": "1:king",
+      "e7": "0:king",
+      "g1": "0:rook",
+      "c4": "1:horse"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "Ratha cuts off the g-file on rank 8",
+    "maxMoves": 5,
+    "rating": 390,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "g1",
+        "to": "g8"
+      },
+      {
+        "from": "e7",
+        "to": "f7"
+      }
+    ]
+  },
+  {
+    "id": "p44",
+    "sourceId": "P120",
+    "title": "h1 Corner Squeeze",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "stalemate-trap",
+    "description": "Leave the enemy king one square, then take that too. — Chanakya Niti",
+    "boardState": {
+      "h1": "1:king",
+      "f3": "0:king",
+      "a1": "0:rook",
+      "e8": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "Ratha advances to g1 cutting off the g-file",
+    "maxMoves": 5,
+    "rating": 410,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "g1"
+      },
+      {
+        "from": "f3",
+        "to": "g2"
+      }
+    ]
+  },
+  {
+    "id": "p45",
+    "sourceId": "P122",
+    "title": "The Squeezing Ratha",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "stalemate-trap",
+    "description": "Compress the enemy until no space remains. — Panchatantra",
+    "boardState": {
+      "a8": "1:king",
+      "c7": "0:king",
+      "c8": "0:rook",
+      "h1": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "Ratha advances to b8 on the back rank",
+    "maxMoves": 5,
+    "rating": 350,
+    "forcedDice": [
+      1,
+      6
+    ],
+    "solution": [
+      {
+        "from": "c8",
+        "to": "b8"
+      },
+      {
+        "from": "c7",
+        "to": "b7"
+      }
+    ]
+  },
+  {
+    "id": "p46",
+    "sourceId": "P124",
+    "title": "The a1 Corner Trap",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "stalemate-trap",
+    "description": "The cage is built one bar at a time. — Kautilya",
+    "boardState": {
+      "a1": "1:king",
+      "c2": "0:king",
+      "h1": "0:rook",
+      "h8": "1:rook"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Stalemate Trap",
+    "hintText": "King steps to b2 to control escape squares",
+    "maxMoves": 5,
+    "rating": 440,
+    "forcedDice": [
+      6,
+      1
+    ],
+    "solution": [
+      {
+        "from": "c2",
+        "to": "b2"
+      },
+      {
+        "from": "h1",
+        "to": "b1"
+      }
+    ]
+  },
+  {
+    "id": "p47",
+    "sourceId": "P126",
+    "title": "Chariot and Cavalry United",
+    "titleSanskrit": "",
+    "difficulty": "intermediate",
+    "category": "alliance-combo",
+    "description": "United we stand — the Pandava brothers were strongest together. — Mahabharata",
+    "boardState": {
+      "a1": "0:rook",
+      "e5": "2:horse",
+      "h5": "1:king",
+      "d5": "1:rook",
+      "d1": "0:king",
+      "e8": "2:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Alliance Combo",
+    "hintText": "Our Ratha controls the h-file from h1",
+    "maxMoves": 5,
+    "rating": 410,
+    "forcedDice": [
+      1,
+      3
+    ],
+    "solution": [
+      {
+        "from": "a1",
+        "to": "h1"
+      },
+      {
+        "from": "e5",
+        "to": "f3"
+      }
+    ]
+  },
+  {
+    "id": "p48",
+    "sourceId": "P133",
+    "title": "Clear the c-File",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "back-rank",
+    "description": "Remove every obstacle between you and the throne. — Arthashastra VI",
+    "boardState": {
+      "c1": "0:rook",
+      "c6": "1:rook",
+      "c8": "1:king",
+      "a4": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Back Rank",
+    "hintText": "Take the blocking Ratha on c6",
+    "maxMoves": 5,
+    "rating": 340,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "c1",
+        "to": "c6"
+      },
+      {
+        "from": "c6",
+        "to": "c8"
+      }
+    ]
+  },
+  {
+    "id": "p49",
+    "sourceId": "P135",
+    "title": "b-File Breakthrough",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "back-rank",
+    "description": "Two steps on one file decides the battle. — Ancient Chaturanga Lore",
+    "boardState": {
+      "b1": "0:rook",
+      "b5": "1:rook",
+      "b8": "1:king",
+      "f4": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Back Rank",
+    "hintText": "Capture the blocking Ratha on b5",
+    "maxMoves": 5,
+    "rating": 360,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "b1",
+        "to": "b5"
+      },
+      {
+        "from": "b5",
+        "to": "b8"
+      }
+    ]
+  },
+  {
+    "id": "p50",
+    "sourceId": "P137",
+    "title": "e-File Back Rank Clear",
+    "titleSanskrit": "",
+    "difficulty": "beginner",
+    "category": "back-rank",
+    "description": "Persistence up the central file breaks any defence. — Arthashastra",
+    "boardState": {
+      "e1": "0:rook",
+      "e4": "1:rook",
+      "e8": "1:king",
+      "b2": "0:king"
+    },
+    "currentPlayer": 0,
+    "goalDescription": "Back Rank",
+    "hintText": "Eliminate the e4 Ratha blocking the file",
+    "maxMoves": 5,
+    "rating": 370,
+    "forcedDice": [
+      1,
+      1
+    ],
+    "solution": [
+      {
+        "from": "e1",
+        "to": "e4"
+      },
+      {
+        "from": "e4",
+        "to": "e8"
+      }
+    ]
+  }
+]
