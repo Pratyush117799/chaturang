@@ -11,15 +11,15 @@
 ### Piece Categories & Points Per Piece (PPP)
 * *Minor Pieces:*
   * *Nar* (Pawn): 1 Point
-  * *Danti* (Elephant): 2 - 2.5 Points
+  * *Danti* (Elephant): 2.5 Points
+  *Ashva* (Knight): 3.5 Points
 * *Major Pieces:*
-  * *Ashva* (Knight): 3 - 3.5 Points
   * *Ratha* (Chariot): 5 Points
   * *Rajan* (King): ∞ Points
 
 ### Major / Minor Combat Rule
-* *Minor Pieces (Nar, Danti)* CANNOT capture any *Major Piece (Ratha, Ashva, Rajan)*.
-* *Major Pieces (Ratha, Ashva, Rajan)* CAN capture any piece on the board.
+* *Minor Pieces (Nar,Ashva, Danti)* CANNOT capture any *Major Piece (Ratha, Rajan)*.
+* *Major Pieces (Ratha, Rajan)* CAN capture any piece on the board.
 
 ---
 
