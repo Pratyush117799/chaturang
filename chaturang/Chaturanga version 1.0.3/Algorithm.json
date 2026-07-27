@@ -1,0 +1,92 @@
+{
+    "file": "Algorithms.docx",
+    "domain": "Game AI / Search Algorithms",
+    "sections": [
+      {
+        "title": "Minimax with Alpha-Beta Pruning",
+        "type": "pseudocode",
+        "algorithm": "minimax",
+        "features": ["alpha-beta pruning", "max node", "min node"],
+        "pseudocode": "function minimax(node, depth, isMax, alpha, beta)...",
+        "complexity": {
+          "time": "O(b^d)",
+          "space": "O(bd)"
+        }
+      },
+      {
+        "title": "Alpha-Beta Pruning Visualization",
+        "type": "python_implementation",
+        "libraries": ["networkx", "matplotlib", "pydot"],
+        "components": [
+          "Node class",
+          "evaluate()",
+          "is_terminal()",
+          "get_children()",
+          "alpha_beta_pruning()",
+          "build_graph()"
+        ],
+        "output": "Graph showing visited edges (green) and pruned edges (red)"
+      },
+      {
+        "title": "Max-n Algorithm",
+        "type": "multi_player_search",
+        "players_supported": ">=3",
+        "properties": [
+          "all players maximize their own score",
+          "non-zero-sum supported",
+          "shallow pruning only"
+        ],
+        "function": "max_n_4_player(state, depth, player_to_move)"
+      },
+      {
+        "title": "Expectimax-N (Max-n + Dice)",
+        "type": "stochastic_search",
+        "concept": "Chance nodes using expected values",
+        "function": "max_n_with_dice(state, depth, player_index)"
+      },
+      {
+        "title": "Heuristic Functions",
+        "type": "evaluation",
+        "examples": [
+          "Manhattan Distance",
+          "Tic-Tac-Toe Evaluator"
+        ]
+      },
+      {
+        "title": "Monte Carlo Methods",
+        "type": "probabilistic_algorithm",
+        "example": "Pi Estimation",
+        "applications": ["Finance", "Engineering", "AI Games", "Physics"]
+      },
+      {
+        "title": "Decision Tree Algorithms",
+        "type": "machine_learning",
+        "algorithms": ["ID3", "C4.5", "CART"],
+        "splitting_metrics": ["Entropy", "Information Gain", "Gini Impurity"],
+        "overfitting_controls": ["Pruning", "Depth Limit", "Random Forest"]
+      },
+      {
+        "title": "Chaturaji Heuristic",
+        "type": "game_specific_heuristic",
+        "piece_values": {
+          "Raja": 60,
+          "Elephant": 20,
+          "Horse": 15,
+          "Boat": 10,
+          "Pawn": 2
+        }
+      },
+      {
+        "title": "Monte Carlo Tree Search for Chaturaji",
+        "type": "search_algorithm",
+        "steps": [
+          "Selection (UCT)",
+          "Expansion",
+          "Simulation",
+          "Backpropagation"
+        ],
+        "node_class": "ChaturajiMCTSNode"
+      }
+    ]
+  }
+  

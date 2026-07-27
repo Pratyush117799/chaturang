@@ -1,0 +1,48 @@
+{
+    "file": "New Features.docx",
+    "project": "Chaturanga Version 1.0.3",
+    "ui_features": [
+        "Login/Signup Page",
+        "Remember Me Option",
+        "Homepage with side login section",
+        "Play without signup",
+        "Focus Mode",
+        "Resizable Board"
+    ],
+    "gameplay_features": [
+        "Play Online vs Play Computer",
+        "Max 3 manual forfeits",
+        "Auto forfeit when no legal move",
+        "Minor pieces cannot capture minor pieces",
+        "Major pieces can capture any piece"
+    ],
+    "data_management": {
+        "player_database": true,
+        "store_move_history": true,
+        "winner_folder_storage": true
+    },
+    "bot_support": {
+        "1_bot": "3 humans",
+        "2_bots": "2 bots team",
+        "3_bots": "2 bots team + 1 bot with human",
+        "4_bots": "admin-only data generation"
+    },
+    "algorithms_for_bots": [
+        "Multiplayer Minimax",
+        "Alpha Beta Pruning",
+        "Monte Carlo Tree Search",
+        "Expectiminimax",
+        "Q-Learning",
+        "Deep Q-Learning",
+        "Policy Gradient",
+        "Actor Critic"
+    ],
+    "development_constraints": [
+        "Do not modify v1.0.2 files",
+        "Copy structure from v1.0.2",
+        "Create separate folder for v1.0.3",
+        "Backend must not crash",
+        "Frontend + Backend changes allowed"
+    ],
+    "dependency_note": "Use guidance from Random Move Generator doc"
+}

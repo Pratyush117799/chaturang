@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline — Chaturanga</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0d0b08;color:#e8dfc8;
+  font-family:Georgia,'Times New Roman',serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(201,168,76,0.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.icon{font-size:48px;margin-bottom:20px;opacity:0.7}
+h1{
+  font-family:Georgia,serif;font-size:clamp(22px,5vw,34px);
+  color:#c9a84c;font-weight:normal;letter-spacing:.04em;margin-bottom:10px;
+}
+p{color:#9a8e78;font-size:15px;line-height:1.7;max-width:340px;margin:0 auto 32px}
+.btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px}
+.btn{
+  display:block;padding:14px;border-radius:10px;text-decoration:none;
+  font-family:Georgia,serif;font-size:15px;letter-spacing:.04em;
+  transition:background .2s,border-color .2s;
+}
+.btn-primary{
+  background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);color:#c9a84c;
+}
+.btn-primary:hover{background:rgba(201,168,76,0.2);border-color:rgba(201,168,76,0.7)}
+.btn-secondary{
+  background:transparent;border:1px solid rgba(255,255,255,0.08);color:#9a8e78;
+}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.2);color:#c8bfa8}
+.divider{
+  width:100%;max-width:280px;height:1px;
+  background:linear-gradient(to right,transparent,rgba(201,168,76,0.2),transparent);
+  margin:8px 0;
+}
+.status{
+  margin-top:36px;font-size:12px;color:#4a4438;letter-spacing:.06em;
+}
+</style>
+</head>
+<body>
+<div class="icon">⚔️</div>
+<h1>You are offline</h1>
+<p>The battlefield awaits — even without a connection. Practice your strategy and return when the signal is restored.</p>
+<div class="btns">
+  <a class="btn btn-primary" href="../../">Play vs AI</a>
+  <div class="divider"></div>
+  <a class="btn btn-secondary" href="shubh.html">Daily Shubh Puzzle</a>
+  <a class="btn btn-secondary" href="akhara.html">Akhara Training</a>
+  <a class="btn btn-secondary" href="itihasa.html">Review Past Battles</a>
+</div>
+<div class="status" id="statusLine">Waiting for connection…</div>
+<script>
+// Auto-redirect when connection restores
+window.addEventListener('online', () => {
+  document.getElementById('statusLine').textContent = 'Connection restored — redirecting…';
+  setTimeout(() => { window.location.href = 'game.html'; }, 1200);
+});
+document.getElementById('statusLine').textContent = navigator.onLine
+  ? 'Connection restored — tap Play to continue'
+  : 'No connection detected';
+</script>
+</body>
+</html>

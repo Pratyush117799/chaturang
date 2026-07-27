@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chaturanga 1.0.3.3 — Ancient 4-Player War Game</title>
+  <meta name="description" content="Play Chaturanga v1.0.3.3 — the ancient Indian 4-player strategy game with beautiful piece artwork and premium chess.com-style interface." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- ═══ TOP NAVIGATION BAR ═══ -->
+  <nav class="top-nav" id="topNav">
+    <div class="nav-left">
+      <a href="../../website/index.html" class="nav-logo" title="Back to Website">
+        <i class="fa-solid fa-chess-king"></i>
+        <span class="nav-logo-text">चतुरंग</span>
+        <span class="nav-logo-sub">Chaturanga</span>
+      </a>
+      <span class="nav-version">v1.0.3.3</span>
+    </div>
+    <div class="nav-center" id="turnBanner">
+      <span class="turn-color-dot" id="turnDot"></span>
+      <span id="turnIndicator" class="turn-label">—</span>
+    </div>
+    <div class="nav-right">
+      <button id="rollBtn" class="nav-roll-btn" title="Roll the Pāśaka dice">
+        <i class="fa-solid fa-dice-d6"></i>
+        <span>Roll Dice</span>
+      </button>
+      <button id="forfeitBtn" class="nav-forfeit-btn" title="Forfeit Turn" disabled>
+        <i class="fa-solid fa-flag"></i>
+      </button>
+      <button class="nav-icon-btn" id="settingsToggleBtn" title="Settings">
+        <i class="fa-solid fa-sliders"></i>
+      </button>
+      <button class="nav-icon-btn" id="fullscreenBtn" title="Fullscreen">
+        <i class="fa-solid fa-expand"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN LAYOUT: left | board | right ═══ -->
+  <div class="game-layout" id="gameLayout">
+
+    <!-- ═══ LEFT PANEL ═══ -->
+    <aside class="panel panel-left" id="panelLeft" aria-label="Player Status">
+
+      <!-- Player Cards -->
+      <div class="player-cards">
+        <div class="player-card" id="pcard0" data-player="0">
+          <div class="pcard-color red-swatch"></div>
+          <div class="pcard-body">
+            <span class="pcard-name">Red · Team 1</span>
+            <span class="pcard-kings" id="player0-kings">♚ ×1</span>
+          </div>
+          <span class="pcard-forfeits" id="player0-forfeits">0/3</span>
+          <span class="pcard-badge" id="pcard0-badge"></span>
+        </div>
+        <div class="player-card" id="pcard1" data-player="1">
+          <div class="pcard-color blue-swatch"></div>
+          <div class="pcard-body">
+            <span class="pcard-name">Blue · Team 2</span>
+            <span class="pcard-kings" id="player1-kings">♚ ×1</span>
+          </div>
+          <span class="pcard-forfeits" id="player1-forfeits">0/3</span>
+          <span class="pcard-badge" id="pcard1-badge"></span>
+        </div>
+        <div class="player-card" id="pcard2" data-player="2">
+          <div class="pcard-color green-swatch"></div>
+          <div class="pcard-body">
+            <span class="pcard-name">Green · Team 1</span>
+            <span class="pcard-kings" id="player2-kings">♚ ×1</span>
+          </div>
+          <span class="pcard-forfeits" id="player2-forfeits">0/3</span>
+          <span class="pcard-badge" id="pcard2-badge"></span>
+        </div>
+        <div class="player-card" id="pcard3" data-player="3">
+          <div class="pcard-color yellow-swatch"></div>
+          <div class="pcard-body">
+            <span class="pcard-name">Yellow · Team 2</span>
+            <span class="pcard-kings" id="player3-kings">♚ ×1</span>
+          </div>
+          <span class="pcard-forfeits" id="player3-forfeits">0/3</span>
+          <span class="pcard-badge" id="pcard3-badge"></span>
+        </div>
+      </div>
+
+      <!-- Dice Panel -->
+      <div class="dice-panel">
+        <div class="dice-face-wrap">
+          <div id="diceFace" class="dice-face-large">
+            <i class="fa-solid fa-question"></i>
+          </div>
+          <div id="forcedPiece" class="forced-label">Roll the Pāśaka</div>
+        </div>
+        <div class="dice-strip">
+          <div class="dice-cell" id="diceCell0"><span class="dc-label">R</span><span class="dc-val dc-face">—</span></div>
+          <div class="dice-cell" id="diceCell1"><span class="dc-label">B</span><span class="dc-val dc-face">—</span></div>
+          <div class="dice-cell" id="diceCell2"><span class="dc-label">G</span><span class="dc-val dc-face">—</span></div>
+          <div class="dice-cell" id="diceCell3"><span class="dc-label">Y</span><span class="dc-val dc-face">—</span></div>
+        </div>
+      </div>
+
+      <!-- Captured Pieces -->
+      <div class="panel-section">
+        <h4 class="section-label"><i class="fa-solid fa-skull-crossbones"></i> Fallen Pieces</h4>
+        <div id="captured" class="captured-box">None yet</div>
+      </div>
+
+      <!-- Game Status -->
+      <div class="panel-section">
+        <div id="gameState" class="game-state-badge"></div>
+        <div id="status" class="status-msg">Ready to roll — it's Red's turn</div>
+      </div>
+
+    </aside>
+
+    <!-- ═══ BOARD CENTER ═══ -->
+    <main class="board-center">
+
+      <!-- Board wrapper with background -->
+      <div class="board-wrap" id="boardWrap">
+        <div class="board-labels-top">
+          <span>a</span><span>b</span><span>c</span><span>d</span>
+          <span>e</span><span>f</span><span>g</span><span>h</span>
+        </div>
+        <div class="board-row-wrap">
+          <div class="board-labels-side" id="rankLabels"></div>
+          <div id="board" class="board"></div>
+        </div>
+      </div>
+
+      <!-- Mobile-only quick controls -->
+      <div class="mobile-controls">
+        <button id="rollBtnMobile" class="mob-btn mob-roll">
+          <i class="fa-solid fa-dice-d6"></i> Roll Pāśaka
+        </button>
+        <button id="forfeitBtnMobile" class="mob-btn mob-forfeit" disabled>
+          <i class="fa-solid fa-flag"></i> Forfeit
+        </button>
+        <div class="mob-forced" id="mobForced">—</div>
+      </div>
+
+    </main>
+
+    <!-- ═══ RIGHT PANEL ═══ -->
+    <aside class="panel panel-right" id="panelRight" aria-label="Game Analytics">
+
+      <!-- Move History -->
+      <div class="panel-section panel-section-grow">
+        <h4 class="section-label">
+          <i class="fa-solid fa-clock-rotate-left"></i> Move Log
+          <button id="downloadHistoryBtn" class="dl-btn" title="Save game log">
+            <i class="fa-solid fa-download"></i>
+          </button>
+        </h4>
+        <div id="history" class="history-scroll">No moves yet</div>
+      </div>
+
+      <!-- Seer Engine (Game Data Analyser stub) -->
+      <div class="panel-section seer-panel">
+        <h4 class="section-label"><i class="fa-solid fa-eye"></i> Battle Intel</h4>
+        <div class="seer-stats">
+          <div class="seer-stat">
+            <span class="seer-key">Moves played</span>
+            <span class="seer-val" id="seerMoves">0</span>
+          </div>
+          <div class="seer-stat">
+            <span class="seer-key">Pieces taken</span>
+            <span class="seer-val" id="seerCaptures">0</span>
+          </div>
+          <div class="seer-stat">
+            <span class="seer-key">Most hunted</span>
+            <span class="seer-val" id="seerTopPiece">—</span>
+          </div>
+        </div>
+        <div class="seer-insight" id="seerInsight">Waiting for the first move…</div>
+        <div class="seer-coming-soon">
+          <i class="fa-solid fa-flask"></i>
+          ELO analysis &amp; deep insights coming in v1.0.4
+        </div>
+      </div>
+
+      <!-- Quick Rules -->
+      <div class="panel-section">
+        <h4 class="section-label"><i class="fa-solid fa-scroll"></i> Dice Guide</h4>
+        <div class="quick-rules">
+          <div class="qr-row"><span class="qr-die">1</span><span class="qr-piece">Ratha — Rook moves</span></div>
+          <div class="qr-row"><span class="qr-die">3</span><span class="qr-piece">Ashwa — Knight jump</span></div>
+          <div class="qr-row"><span class="qr-die">4</span><span class="qr-piece">Danti — 2-diag leap</span></div>
+          <div class="qr-row"><span class="qr-die">6</span><span class="qr-piece">Nara or Raja</span></div>
+          <p class="qr-note">⚔ Minor pieces can't capture Ratha or Raja</p>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- ═══ SETTINGS DRAWER ═══ -->
+  <div class="settings-drawer" id="settingsDrawer">
+    <div class="settings-panel">
+      <h3><i class="fa-solid fa-sliders"></i> Settings</h3>
+      <button class="settings-close" id="settingsCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="setting-row">
+        <span><i class="fa-solid fa-users"></i> Game Mode</span>
+        <div class="mode-btns">
+          <button id="modeTeam" class="mode-btn active">Team 2v2</button>
+          <button id="modeSingle" class="mode-btn">Free for All</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span><i class="fa-solid fa-robot"></i> Bot Players</span>
+        <select id="botCount" class="settings-select">
+          <option value="0">0 — PvP</option>
+          <option value="1">1 — Blue is Bot</option>
+          <option value="2" selected>2 — Team 2 are Bots</option>
+          <option value="3">3 — vs Red only</option>
+          <option value="4">4 — Full Auto</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <span><i class="fa-solid fa-brain"></i> Bot ELO</span>
+        <select id="botElo" class="settings-select">
+          <option value="100">100 — Random</option>
+          <option value="200">200 — Greedy</option>
+          <option value="300" selected>300 — Tactical</option>
+          <option value="400">400 — Strategic</option>
+          <option value="500">500 — Deep Tactical</option>
+          <option value="600">600 — Paranoid</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label for="autoRollDice"><span><i class="fa-solid fa-dice"></i> Auto-roll Dice</span></label>
+        <label class="toggle-switch" for="autoRollDice" aria-label="Toggle auto roll">
+          <input type="checkbox" id="autoRollDice" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label for="autoDownloadOnEnd"><span><i class="fa-solid fa-save"></i> Auto-save on End</span></label>
+        <label class="toggle-switch" for="autoDownloadOnEnd" aria-label="Toggle auto save">
+          <input type="checkbox" id="autoDownloadOnEnd" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span><i class="fa-solid fa-chess-board"></i> Board Theme</span>
+        <select id="boardTheme" class="settings-select">
+          <option value="standard" selected>Standard (Clean)</option>
+          <option value="traditional">Traditional (Image)</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <span><i class="fa-solid fa-maximize"></i> Board Size</span>
+        <div class="slider-row">
+          <input type="range" id="boardSize" min="70" max="130" value="110" class="settings-slider" />
+          <span id="boardSizeLabel">110%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ KING RESPAWN MODAL ═══ -->
+  <div id="kingRespawnModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon"><i class="fa-solid fa-crown"></i></div>
+      <h3>Raja Respawn</h3>
+      <p>Your teammate captured an enemy Raja! Your King may return to the battlefield.</p>
+      <p class="modal-hint">Click any empty square to place your Raja.</p>
+      <button id="cancelRespawn" class="modal-cancel-btn">Decline Respawn</button>
+    </div>
+  </div>
+
+  <!-- ═══ GAME OVER OVERLAY ═══ -->
+  <div id="gameOverOverlay" class="modal-overlay" style="display:none">
+    <div class="modal-card gameover-card">
+      <div class="modal-icon"><i class="fa-solid fa-trophy"></i></div>
+      <h3 id="gameOverTitle">Game Over</h3>
+      <p id="gameOverMsg"></p>
+      <button onclick="location.reload()" class="play-again-btn">
+        <i class="fa-solid fa-rotate-right"></i> Play Again
+      </button>
+      <a href="../../website/index.html" class="back-btn">
+        <i class="fa-solid fa-home"></i> Home
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ FOCUS DICE OVERLAY ═══ -->
+  <div id="focusDiceOverlay" class="focus-overlay">
+    <div id="focusDiceFace" class="focus-dice">?</div>
+    <div id="focusForced" class="focus-forced">Roll</div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/game.js"></script>
+  <script src="js/dice.js"></script>
+  <script src="engine/randomMoveGenerator.js"></script>
+  <script src="js/bot/randomMove.js"></script>
+  <script src="js/bot/tieredBots.js"></script>
+  <script src="js/ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+CHATURANGA v1.0.5 — SESSION BUILD REPORT
+Generated: March 2026
+=========================================
+
+
+OVERVIEW
+--------
+This session extended Chaturanga from v1.0.4 to v1.0.5. The work covered
+completion of the original roadmap features, fixes to existing limitations,
+and four new prototype features not on the original roadmap.
+
+Total files produced: 11 new files, 2 major upgrades to existing files.
+
+
+=========================================
+PART 1 — CAMPAIGN COMPLETION (kurukshetra.html)
+=========================================
+
+The Kurukshetra Campaign previously had only 3 playable days (1, 13, 18).
+All 15 remaining days were written and integrated.
+
+Days 2 through 12 (kurukshetra_days2to12.js)
+---------------------------------------------
+Each day is a self-contained scenario with a board state, cutscene dialogue,
+live Drona commentary, win condition, and result screen. Seven new win
+condition types were introduced across these days:
+
+- capture-both-rooks: win by capturing both enemy Rathas (Day 2)
+- survival-rook: survive without losing your own Ratha (Day 3)
+- capture-n-pieces: hunt and capture a specific number of a piece type (Day 4)
+- material-threshold: capture enough total material within a move limit (Day 5)
+- combination-forks: execute Horse fork plus Ratha capture combinations (Day 7)
+- escape-king: move your Raja to any edge square within a move limit (Day 12)
+- survival (reused): survive a set number of moves (Days 3 and 8)
+
+ELO difficulty scales from 200 on Day 2 to 800 on Day 12. A progressive
+unlock system was added: completing Day N unlocks Day N+1.
+
+Days 14 through 17 (kurukshetra_days14to17.js)
+-----------------------------------------------
+Day 14 (Arjuna's Fury): A countdown-capture type. 10 moves to capture
+Jayadratha's Raja before sunset. Missing the window is a loss regardless
+of position.
+
+Day 15 (Drona's Death): The human plays as the Kauravas commanding from
+the bottom in blue, against the Pandava bot at ELO-900. The only scenario
+in the campaign where you play the enemy side.
+
+Day 16 (Karna Commands): Standard capture-king at ELO-900 in open battle.
+
+Day 17 (Karna's Wheel Sinks): The bot plays at ELO-950 but drops to
+passive for exactly 3 bot turns at a fixed midpoint. Players must position
+for the decisive strike before the window opens.
+
+
+=========================================
+PART 2 — DAILY SHUBH CHALLENGE (shubh.html)
+=========================================
+
+A complete daily puzzle page with the following systems:
+
+Puzzle selection: 30 puzzles seeded by IST date so every player gets the
+same puzzle each day.
+
+Hindu calendar integration: Ekadashi days serve only hard puzzles and
+disable hints. Purnima serves combination puzzles. Amavasya serves endgame
+puzzles. Five festivals override the pool with thematically matched puzzles.
+
+Goal-state solver: Rebuilt to check board position after each move rather
+than comparing against a fixed sequence. Any path to the goal is accepted.
+An inferWinGoals() function auto-assigns a win condition to each puzzle
+based on board analysis.
+
+Leaderboard: Deterministic seeded competitors per day. Server-aware: writes
+locally first, then fires a background POST to /api/leaderboard. Silent
+fallback to localStorage if the server is unreachable.
+
+Player name modal: First-time users prompted for a warrior name.
+
+Streak and statistics, share button, hint system, and countdown timer to
+next puzzle at 6:00 AM IST are all included.
+
+
+=========================================
+PART 3 — SERVER UPGRADES (server-ws.js)
+=========================================
+
+Protocol alignment: All message types updated from underscore to hyphen
+format matching the updated ws-client.js.
+
+Single port: WebSocket now runs on port 8765 alongside HTTP, not on a
+separate 8766.
+
+Token-based reconnection: Each player gets a reconnect token on join.
+Disconnect and reconnect within 2 minutes restores the same seat.
+
+Turn enforcement: Server rejects moves from the wrong player with a
+NOT_YOUR_TURN error.
+
+Keep-alive pings every 30 seconds. Empty room cleanup on timeout.
+
+Leaderboard REST API added to the same HTTP server:
+- GET /api/leaderboard?date=YYYY-MM-DD returns top 50 entries for that day
+- POST /api/leaderboard submits a solve, only updates if score improves
+- GET /api/leaderboard/stats returns daily solve counts for debugging
+
+Entries persist to leaderboard.json on disk. Entries older than 90 days
+are purged on each new submission.
+
+
+=========================================
+PART 4 — VYUHA CLASH PROTOTYPE (vyuha-clash.html)
+=========================================
+
+A 2-player hot-seat game built around secret formation selection.
+
+Players pick from 6 formations before the game: Garuda (aggressive eagle
+wedge), Kurma (defensive tortoise shell), Makara (crocodile pincer flanks),
+Shakata (cart escort), Krauncha (heron spear with advanced centre pawns),
+Padma (lotus trap with open a-file). A privacy screen separates the two
+picks so neither player sees the other's choice.
+
+Each formation translates to a real board state. Krauncha's centre pawns
+start on rank 3. All formations are auto-mirrored for Player 2.
+
+Standard Chaturanga rules apply. The result screen names which formation
+defeated which.
+
+
+=========================================
+PART 5 — SANKAT CRISIS EVENTS PROTOTYPE (sankat.html)
+=========================================
+
+Standard 2-player Chaturanga where the rules change every 10 turns.
+
+Eight crisis events, each modifying the move generation engine directly:
+
+Fog of War: Legal move indicators hidden for 3 turns.
+Ratha Breakdown: Rathas limited to 3-square range for 3 turns.
+Infantry Surge: Pawns may advance 2 squares forward for 3 turns.
+Elephant Rampage: Elephants slide any diagonal distance for 3 turns.
+Sacred Ground: A random central square becomes impassable for 3 turns.
+Raja in Council: Current player's Raja cannot move this turn.
+Cavalry Charge: Horses may also step 1 square in any direction for 3 turns.
+Dharma Debt: The richer player must remove one of their own Naras immediately.
+
+A counter bar above the board shows turns until the next Sankat. The result
+screen lists every crisis that fired with its turn number.
+
+
+=========================================
+PART 6 — GRANTH LIVE (granth.html)
+=========================================
+
+A post-game manuscript card generator. Move history is scanned for 10
+tactical patterns, each producing a Sanskrit-named inscription with a
+programmatically drawn SVG illustration.
+
+The 10 inscriptions: Ashwa Mudra (horse capture), Avyakta Astra (discovered
+attack pattern), Nara Uttarayan (pawn promotion), Prithvi Vijaya (back-rank
+king capture), Ratha Yatra (two consecutive rook captures), Raja Suraksha
+(king moves without capturing), Tribhuja Vyuha (three consecutive captures),
+Akshaya Sena (win without losing Rathas), Danti Chakra (elephant capture),
+Brahmastra Prapti (the winning king capture).
+
+Each inscription has unique SVG art drawn with paths and Unicode piece
+symbols on a dark parchment background. No external images are used.
+
+The card includes a battle summary strip, a Drona colophon that changes
+based on inscription count, and a Vault that saves up to 20 past manuscripts
+to localStorage.
+
+A global ChaturangaGranth.renderFromGame() function is exposed so
+post-game-analysis.js can call it directly with no reformatting.
+
+
+=========================================
+PART 7 — PASHA PROTOTYPE (pasha.html)
+=========================================
+
+A 2-player game with a secret loaded-dice mechanic referencing the rigged
+dice game from Sabha Parva of the Mahabharata.
+
+One player is secretly assigned the Pasha before the game. Each player
+checks their assignment privately with a look-away screen between them.
+During the game, the holder sees an Invoke Pasha button only on their turns.
+On use, they choose any piece type as the forced dice result. A full-screen
+reveal overlay fires immediately, showing every other player what happened.
+
+Four outcome states: holder used it and won, holder used it and lost, holder
+never used it and won, Pasha never invoked by either side. Each produces
+different result text and a different dharma bar reading. Using the Pasha
+deducts 45 dharma from the invoker and awards 20 dharma to the opponent.
+
+
+=========================================
+PART 8 — THE ORACLE PROTOTYPE (oracle.html)
+=========================================
+
+A pre-game prophecy system that watches the battle for self-fulfilment.
+
+Before the game, three dice are rolled one at a time. Their sum (3 to 18)
+selects one of 8 prophecies from the Mahabharata tradition. The prophecy
+card shows the text, the plain-English condition, and both reward tiers.
+
+During the game, a ribbon above the board shows the prophecy and a live
+progress bar that fills as the condition approaches fulfilment. Relevant
+pieces are highlighted with a purple pulsing outline.
+
+Two fulfilment tiers: Natural (the condition occurs in normal play) and
+Engineered (a stricter version showing deliberate arrangement). Engineered
+fulfilment gives a higher dharma bonus and a gold Legendary Fulfilment
+overlay. Natural fulfilment gives the standard bonus and a purple overlay.
+
+The 8 prophecies by dice sum:
+3-4: Ratha Sacrifice (rook traded and recaptured immediately)
+5-6: Ashwa Leap (horse fork and capture)
+7-8: Raja Walks (king captures a piece)
+9-10: Nara's Ascent (pawn promotes)
+11-12: Open File (rook makes 3+ consecutive moves on the same file)
+13-14: Danti Guardian (elephant captures 2+ pieces)
+15-16: Akshaya Sena (win without losing any Rathas)
+17-18: Long Game (game lasts 30+ turns)
+
+
+=========================================
+LIMITATIONS AND KNOWN GAPS
+=========================================
+
+The four prototype files (vyuha-clash, sankat, pasha, oracle) each contain
+their own copy of the board engine. If the main engine changes they will not
+inherit those changes. Before shipping, the engine should be a shared module.
+
+The Oracle's engineered detection for Ratha Sacrifice uses a wasThreatened
+flag that is set to false in the current build. Full detection would need a
+board snapshot before each move.
+
+The Granth's Avyakta Astra (discovered attack) detection approximates the
+pattern and may produce false positives in some positions.
+
+The tithi calculation in shubh.html is an approximation from a 2024 reference
+date and will drift over years without a proper astronomical library.
+
+None of the prototype files are in sw.js yet and will not cache for offline.
+
+The Shubh leaderboard competitors are seeded per device. Real global scores
+require the server endpoints to be live.
+
+
+=========================================
+WHAT REMAINS NOT YET BUILT
+=========================================
+
+Akhara: The timed training dojo with flash drills, fork finder, and board
+vision ELO. Priority 2 on the original roadmap.
+
+Board Forge: Drag-and-drop position editor with URL sharing and community
+puzzle submission. Priority 4 on the original roadmap.
+
+Historical Battle Reconstruction: Vyuha formations loaded as live playable
+boards with Mahabharata win conditions. Priority 4 on the original roadmap.
+
+Raga Mode: Board position mapped to classical Indian ragas via Web Audio API.
+
+Karma Carry-Over: Dharma score from the previous game modifying the next
+game's starting formation.

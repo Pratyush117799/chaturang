@@ -1,0 +1,15 @@
+Let me check what the Seer vault actually saves before building the replay on top of it.Now I have the full picture. The Granth vault saves `gameData` with full `moveHistory` + inscriptions. Seer vault has quality annotations. Itihasa reads both, renders move-by-move with inscription cards firing at the right moments — cinematic dark aesthetic.745 lines, one file, no dependencies beyond Font Awesome. Here's what it does:
+
+**Layout** — full-viewport cinematic theater: left panel (Chronicle vault), center (board stage with move arrow SVG), right panel (Drona annotation + move log), bottom (scrubber bar).
+
+**Vault** — reads from both `chaturanga_granth_vault` and `chaturanga_seer_vault` automatically. Granth games show inscription tags. Seer games show quality annotations. Falls back to a Load Demo button if neither vault has entries.
+
+**Board replay** — full 8×8 board that reconstructs position from move 0 by replaying every move in sequence. Highlights `from-sq` (gold outline), `to-sq` (gold fill), turning point moves (red tint), inscription-earning moves (animated gold flash).
+
+**Inscription cards** — when playback reaches a move that earned a Granth inscription, a card fires in the right panel with the Sanskrit name and description. Gold dots on the scrubber bar mark exactly where inscriptions happen.
+
+**Drona commentary** — every move gets a contextual voice line from a pool of opening/midgame/endgame/capture/sacrifice/fork/blunder quotes. The line changes based on what happened and where in the game it occurred.
+
+**Scrubber** — progress bar with clickable seek, gold dots for inscription moments, position counter (`14 / 18`), and 5 speed settings (0.5× to 8×). Keyboard: `←` `→` to step, `Space` to play/pause, `Home`/`End` for start/end.
+
+**Deployment** — drop `itihasa.html` at project root. Link from game.html nav, seer.html, and granth.html. Pass `?idx=0` in the URL to auto-open a specific vault entry. No new JS files needed.

@@ -1,0 +1,13 @@
+{
+  "name": "chaturanga-v1-0-5-2",
+  "version": "1.0.5",
+  "description": "Chaturanga server setup",
+  "main": "website/server.js",
+  "scripts": {
+    "start": "node website/server.js"
+  },
+  "dependencies": {
+    "jsdom": "^29.0.1",
+    "ws": "^8.19.0"
+  }
+}

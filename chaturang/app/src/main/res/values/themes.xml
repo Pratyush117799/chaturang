@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.Chaturanga" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <item name="android:statusBarColor">#0a0802</item>
+        <item name="android:navigationBarColor">#0a0802</item>
+    </style>
+
+    <!-- SplashScreen theme mapping standard activity launch styles -->
+    <style name="Theme.Chaturanga.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#0a0802</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Chaturanga</item>
+    </style>
+</resources>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Tournament — v1.0.5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/themes.css"/>
+  <script>(function(){var t=localStorage.getItem('chaturanga_theme');if(t&&t!=='classic')document.documentElement.className='theme-'+t;})();</script>
+  <style>
+    .trn-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px;max-width:1100px;margin:0 auto}
+    .trn-card{background:rgba(201,168,76,.05);border:1px solid var(--border,rgba(201,168,76,.18));border-radius:12px;padding:20px}
+    .trn-tabs{display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border,rgba(201,168,76,.18))}
+    .trn-tab{background:transparent;border:1px solid var(--border,rgba(201,168,76,.2));color:var(--text-muted,#888);border-radius:6px;padding:6px 14px;cursor:pointer;font-family:'Outfit', sans-serif;transition:all .2s}
+    .trn-tab.active{background:rgba(201,168,76,.12);border-color:var(--gold,#c9a84c);color:var(--gold,#c9a84c)}
+    .trn-tab-panel{display:none;padding:16px 20px}.trn-tab-panel.active{display:block}
+    .form-row{margin-bottom:12px}
+    .form-row label{display:block;font-size:.75rem;color:#888;margin-bottom:4px}
+    .form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border,rgba(201,168,76,.18));color:var(--text,#e8e0d0);border-radius:6px;padding:7px 10px;font-family:'Outfit', sans-serif;font-size:.82rem}
+    .form-input:focus{outline:none;border-color:var(--gold,#c9a84c)}
+    .participant-list{border:1px solid var(--border,rgba(201,168,76,.18));border-radius:6px;min-height:80px;padding:6px;margin-top:4px}
+    .participant-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:4px;background:rgba(255,255,255,.03);margin-bottom:4px;font-size:.78rem}
+    .participant-item .rm-btn{margin-left:auto;background:none;border:none;color:#f87171;cursor:pointer;font-size:.8rem}
+    .standings-table{width:100%;border-collapse:collapse;margin-top:10px}
+    .standings-table th,.standings-table td{padding:7px 10px;text-align:left;font-size:.78rem;border-bottom:1px solid var(--border,rgba(201,168,76,.12))}
+    .standings-table th{color:var(--gold,#c9a84c);font-family:'Cinzel',serif;font-size:.7rem}
+    .standings-table tr:hover td{background:rgba(201,168,76,.04)}
+    .match-card{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border,rgba(201,168,76,.12));border-radius:6px;margin-bottom:6px;font-size:.78rem}
+    .match-vs{color:#888;font-size:.7rem}
+    .match-result-btn{background:transparent;border:1px solid var(--border,rgba(201,168,76,.2));color:var(--text,#e8e0d0);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.7rem;font-family:'Outfit', sans-serif}
+    .match-result-btn:hover{border-color:var(--gold,#c9a84c);color:var(--gold,#c9a84c)}
+    .badge-elo{font-size:.65rem;padding:2px 6px;border-radius:10px;background:rgba(201,168,76,.15);color:var(--gold,#c9a84c);margin-left:4px}
+    .btn-primary{background:linear-gradient(135deg,var(--gold,#c9a84c),#f0cc7a);color:#1a1306;border:none;border-radius:8px;padding:9px 20px;cursor:pointer;font-family:'Cinzel', serif;font-size:.82rem;font-weight:600;transition:opacity .2s}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{background:transparent;border:1px solid var(--border,rgba(201,168,76,.2));color:var(--text,#e8e0d0);border-radius:8px;padding:7px 16px;cursor:pointer;font-family:'Outfit', sans-serif;font-size:.78rem}
+    .btn-secondary:hover{border-color:var(--gold,#c9a84c);color:var(--gold,#c9a84c)}
+    .trn-history-item{background:rgba(201,168,76,.04);border:1px solid var(--border,rgba(201,168,76,.12));border-radius:6px;padding:10px 14px;margin-bottom:8px;cursor:pointer;transition:background .2s}
+    .trn-history-item:hover{background:rgba(201,168,76,.1)}
+    select.form-input{cursor:pointer}
+    @media(max-width:700px){.trn-layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav class="top-nav" style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <a href="game.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+    <i class="fa-solid fa-trophy" style="color:var(--gold,#c9a84c)"></i>
+    <span style="font-family:'Cinzel',serif;color:var(--gold,#c9a84c)">Chaturanga Tournament</span>
+    <span class="nav-version">v1.0.5</span>
+  </a>
+  <div style="display:flex;gap:10px">
+    <a href="features/puzzles/puzzles.html" class="nav-icon-btn" style="text-decoration:none"><i class="fa-solid fa-puzzle-piece"></i></a>
+    <a href="features/lessons/lessons.html" class="nav-icon-btn" style="text-decoration:none"><i class="fa-solid fa-graduation-cap"></i></a>
+    <a href="game.html" class="nav-icon-btn" style="text-decoration:none"><i class="fa-solid fa-chess-board"></i></a>
+  </div>
+</nav>
+
+<!-- Tabs -->
+<div class="trn-tabs">
+  <button class="trn-tab active" onclick="showTab('active')"><i class="fa-solid fa-play"></i> Active</button>
+  <button class="trn-tab" onclick="showTab('create')"><i class="fa-solid fa-plus"></i> Create</button>
+  <button class="trn-tab" onclick="showTab('botchamp')"><i class="fa-solid fa-robot"></i> Bot Championship</button>
+  <button class="trn-tab" onclick="showTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+</div>
+
+<!-- Active Tab -->
+<div class="trn-tab-panel active" id="tab-active">
+  <div id="noActiveTrn" style="color:#888;font-size:.85rem">No active tournament. <button onclick="showTab('create')" style="background:transparent;border:none;padding:0;font-family:inherit;font-size:inherit;color:var(--gold,#c9a84c);cursor:pointer;text-decoration:underline">Create one</button> to get started.</div>
+  <div id="activeTrnPanel" style="display:none">
+    <div class="trn-layout">
+      <div class="trn-card">
+        <h4 class="section-label"><i class="fa-solid fa-list"></i> <span id="activeTrnName">—</span></h4>
+        <table class="standings-table"><thead><tr><th>#</th><th>Player</th><th>Pts</th><th>W/D/L</th><th>ELO Δ</th></tr></thead><tbody id="standingsBody"></tbody></table>
+      </div>
+      <div class="trn-card">
+        <h4 class="section-label"><i class="fa-solid fa-swords"></i> Matches</h4>
+        <div id="matchesList"></div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn-secondary" onclick="exportCurrentTrn()"><i class="fa-solid fa-file-export"></i> Export MD</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Tab -->
+<div class="trn-tab-panel" id="tab-create">
+  <div style="max-width:520px">
+    <h4 class="section-label"><i class="fa-solid fa-plus"></i> New Tournament</h4>
+    <div class="form-row"><label for="trnName">Tournament Name</label><input class="form-input" id="trnName" placeholder="Grand Ashtāpada Championship"/></div>
+    <div class="form-row"><label for="trnFormat">Format</label>
+      <select class="form-input" id="trnFormat">
+        <option value="round-robin">Round Robin</option>
+        <option value="single-elim">Single Elimination</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="pName">Add Participant</label>
+      <div style="display:flex;gap:8px">
+        <input class="form-input" id="pName" placeholder="Player or Bot name" style="flex:1"/>
+        <select class="form-input" id="pType" style="width:120px">
+          <option value="human">Human</option>
+          <option value="bot">Bot</option>
+        </select>
+        <input class="form-input" id="pRating" placeholder="Rating" style="width:80px" value="500"/>
+        <button class="btn-secondary" onclick="addParticipant()"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+    <div class="form-row"><div style="font-size:.75rem;color:#888;margin-bottom:4px">Participants (<span id="pCount">0</span>)</div><div class="participant-list" id="participantList"></div></div>
+    <button class="btn-primary" onclick="createTrn()"><i class="fa-solid fa-check"></i> Create Tournament</button>
+  </div>
+</div>
+
+<!-- Bot Championship Tab -->
+<div class="trn-tab-panel" id="tab-botchamp">
+  <h4 class="section-label"><i class="fa-solid fa-robot"></i> Bot Championship — ELO 100 vs 1000</h4>
+  <p style="color:#888;font-size:.82rem;margin-bottom:14px">All 10 bot levels compete in a round-robin. Click Simulate to run all matches instantly.</p>
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn-primary" onclick="startBotChamp()"><i class="fa-solid fa-play"></i> Simulate Championship</button>
+  </div>
+  <div id="botChampResults"></div>
+</div>
+
+<!-- History Tab -->
+<div class="trn-tab-panel" id="tab-history">
+  <h4 class="section-label"><i class="fa-solid fa-scroll"></i> Tournament History</h4>
+  <div id="historyList"><p style="color:#888;font-size:.82rem">No tournaments yet.</p></div>
+</div>
+
+<script src="tournament/tournament-engine.js"></script>
+<script>
+let activeTrnId=null, participants=[];
+
+function showTab(name){
+  document.querySelectorAll('.trn-tab').forEach((t,i)=>{t.classList.toggle('active',['active','create','botchamp','history'][i]===name);});
+  document.querySelectorAll('.trn-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='history') buildHistory();
+  if(name==='active' && activeTrnId) renderActive(activeTrnId);
+}
+
+function addParticipant(){
+  const name=document.getElementById('pName').value.trim();
+  const type=document.getElementById('pType').value;
+  const rating=Number.parseInt(document.getElementById('pRating').value)||500;
+  if(!name) return;
+  const id='p_'+Date.now();
+  participants.push({id,name,type,rating,gamesPlayed:0});
+  document.getElementById('pName').value='';
+  renderParticipantList();
+}
+
+function renderParticipantList(){
+  const el=document.getElementById('participantList');
+  el.innerHTML=participants.map((p,i)=>'<div class="participant-item"><i class="fa-solid fa-'+(p.type==='bot'?'robot':'user')+' fa-xs"></i> '+p.name+' <span class="badge-elo">'+p.rating+'</span><button class="rm-btn" onclick="removeP('+i+')">×</button></div>').join('');
+  document.getElementById('pCount').textContent=participants.length;
+}
+
+function removeP(i){participants.splice(i,1);renderParticipantList();}
+
+function createTrn(){
+  if(participants.length<2){alert('Add at least 2 participants.');return;}
+  const name=document.getElementById('trnName').value.trim()||'Tournament';
+  const format=document.getElementById('trnFormat').value;
+  activeTrnId=globalThis.ChaturangaTournamentEngine.createTournament({name,format,participants:[...participants]});
+  participants=[];renderParticipantList();
+  showTab('active');
+}
+
+function renderActive(id){
+  const all=globalThis.ChaturangaTournamentEngine.loadAll();
+  const t=all.find(x=>x.id===id);
+  if(!t){document.getElementById('noActiveTrn').style.display='block';document.getElementById('activeTrnPanel').style.display='none';return;}
+  document.getElementById('noActiveTrn').style.display='none';
+  document.getElementById('activeTrnPanel').style.display='block';
+  document.getElementById('activeTrnName').textContent=t.name+' ('+t.format+')';
+
+  // Standings
+  const standings=globalThis.ChaturangaTournamentEngine.getStandings(id);
+  document.getElementById('standingsBody').innerHTML=standings.map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+s.name+'</td><td><strong>'+s.points+'</strong></td><td>'+s.wins+'/'+s.draws+'/'+s.losses+'</td><td style="color:'+(s.ratingChange>=0?'#4ade80':'#f87171')+'">'+(s.ratingChange>=0?'+':'')+s.ratingChange+'</td></tr>').join('');
+
+  // Matches
+  const matchesEl=document.getElementById('matchesList');
+  matchesEl.innerHTML='';
+  t.rounds.forEach(r=>{
+    const rh=document.createElement('div');rh.style.cssText='font-size:.7rem;color:#888;margin:8px 0 4px';rh.textContent='Round '+r.round;matchesEl.appendChild(rh);
+    r.matches.forEach(m=>{
+      const p1=t.participants.find(p=>p.id===m.p1);
+      const p2=t.participants.find(p=>p.id===m.p2);
+      const mc=document.createElement('div');mc.className='match-card';
+      if(m.result){
+        let winner='Draw';
+        if (m.result!=='draw') winner = m.result===m.p1 ? p1?.name : p2?.name;
+        mc.innerHTML='<span>'+p1?.name+' vs '+p2?.name+'</span><span style="color:'+(m.result==='draw'?'#fbbf24':'#4ade80')+'">'+winner+'</span>';
+      } else {
+        mc.innerHTML='<span>'+p1?.name+'<span class="match-vs"> vs </span>'+p2?.name+'</span><div style="display:flex;gap:4px"><button class="match-result-btn" onclick="recordResult(\''+m.id+'\',\''+m.p1+'\')">'+p1?.name+' wins</button><button class="match-result-btn" onclick="recordResult(\''+m.id+'\',\'draw\')">Draw</button><button class="match-result-btn" onclick="recordResult(\''+m.id+'\',\''+m.p2+'\')">'+p2?.name+' wins</button></div>';
+      }
+      matchesEl.appendChild(mc);
+    });
+  });
+}
+
+function recordResult(matchId,winnerId){
+  if(!activeTrnId) return;
+  globalThis.ChaturangaTournamentEngine.recordResult(activeTrnId,matchId,winnerId);
+  renderActive(activeTrnId);
+}
+
+function exportCurrentTrn(){
+  if(!activeTrnId) return;
+  const md=globalThis.ChaturangaTournamentEngine.exportResults(activeTrnId);
+  const blob=new Blob([md],{type:'text/markdown'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='tournament_'+new Date().toISOString().slice(0,10)+'.md';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+
+function startBotChamp(){
+  const id=globalThis.ChaturangaTournamentEngine.createTournament({name:'Bot Championship '+new Date().toLocaleDateString(),format:'bot-championship',participants:[]});
+  globalThis.ChaturangaTournamentEngine.simulateBotChampionship(id);
+  activeTrnId=id;
+  const standings=globalThis.ChaturangaTournamentEngine.getStandings(id);
+  const el=document.getElementById('botChampResults');
+  const getMedal = (i) => {
+    if (i === 0) return '🏆';
+    if (i === 1) return '🥈';
+    if (i === 2) return '🥉';
+    return '';
+  };
+  el.innerHTML='<h4 class="section-label" style="margin-top:10px"><i class="fa-solid fa-trophy"></i> Final Standings</h4>'+
+    '<table class="standings-table"><thead><tr><th>#</th><th>Bot</th><th>Pts</th><th>W/D/L</th></tr></thead><tbody>'+
+    standings.map((s,i)=>'<tr><td>'+(i+1)+' '+getMedal(i)+'</td><td>'+s.name+'</td><td><strong>'+s.points+'</strong></td><td>'+s.wins+'/'+s.draws+'/'+s.losses+'</td></tr>').join('') +
+    '</tbody></table><button class="btn-secondary" style="margin-top:10px" onclick="showTab(\'active\')">View Full Details →</button>';
+}
+
+function buildHistory(){
+  const all=globalThis.ChaturangaTournamentEngine.loadAll();
+  const el=document.getElementById('historyList');
+  if(!all.length){el.innerHTML='<p style="color:#888;font-size:.82rem">No tournaments yet.</p>';return;}
+  el.innerHTML=all.slice().reverse().map(t=>{
+    const standings=globalThis.ChaturangaTournamentEngine.getStandings(t.id);
+    const winner=standings[0];
+    return '<div class="trn-history-item" onclick="activeTrnId=\''+t.id+'\';showTab(\'active\')"><div style="font-family:\'Cinzel\',serif;color:var(--gold,#c9a84c)">'+t.name+'</div><div style="font-size:.72rem;color:#888">'+t.format+' · '+new Date(t.createdAt).toLocaleDateString()+'</div>'+(winner?'<div style="font-size:.75rem;color:#4ade80;margin-top:4px">🏆 '+winner.name+' ('+winner.points+' pts)</div>':'')+'</div>';
+  }).join('');
+}
+
+// Load last active tournament
+const all=globalThis.ChaturangaTournamentEngine.loadAll();
+if(all.length){activeTrnId=all[all.length-1].id;renderActive(activeTrnId);}
+</script>
+</body>
+</html>

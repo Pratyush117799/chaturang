@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sena — Chaturanga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0b08;--bg2:#131008;--bg3:#1a1610;--bg4:#221d15;
+  --gold:#c9a84c;--gold-lit:#e8c876;--gold-dim:#6b5a2a;
+  --gold-faint:rgba(201,168,76,0.10);--border:rgba(201,168,76,0.13);
+  --text:#e8dfc8;--text2:#a89e88;--text3:#5e5748;--r:10px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',Georgia,serif;font-size:17px;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 20% 20%,rgba(201,168,76,0.04) 0%,transparent 70%);
+  pointer-events:none;z-index:0}
+
+/* nav */
+.nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(13,11,8,0.9)}
+.nav-back{display:flex;align-items:center;gap:8px;color:var(--text2);text-decoration:none;
+  font-size:14px;letter-spacing:.06em;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+.nav-back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.nav-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase}
+
+/* main */
+.main{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:28px 0 24px}
+.tab{padding:10px 24px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;margin-bottom:-1px}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover:not(.active){color:var(--text2)}
+
+/* panels */
+.panel{display:none}.panel.active{display:block}
+
+/* cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:20px}
+.section-head{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* form elements */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;letter-spacing:.06em;color:var(--text3);margin-bottom:6px;text-transform:uppercase}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;color:var(--text);font-family:'Crimson Pro',serif;font-size:16px;outline:none;
+  transition:border-color .2s}
+.field input:focus{border-color:rgba(201,168,76,0.4)}
+.field input::placeholder{color:var(--text3)}
+
+/* vyuha picker */
+.vyuha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.vyuha-btn{padding:12px 8px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);cursor:pointer;text-align:center;transition:all .2s}
+.vyuha-btn:hover{border-color:rgba(201,168,76,0.3);background:var(--bg4)}
+.vyuha-btn.selected{border-color:rgba(201,168,76,0.6);background:rgba(201,168,76,0.10)}
+.vyuha-icon{font-size:22px;display:block;margin-bottom:4px}
+.vyuha-name{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;color:var(--gold);display:block}
+.vyuha-sub{font-size:11px;color:var(--text3);display:block;margin-top:2px}
+
+/* buttons */
+.btn{padding:11px 26px;border-radius:8px;cursor:pointer;font-family:'Cinzel',serif;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;border:none}
+.btn-primary{background:var(--gold-faint);border:1px solid rgba(201,168,76,0.4);color:var(--gold)}
+.btn-primary:hover{background:rgba(201,168,76,0.18);border-color:rgba(201,168,76,0.7)}
+.btn-danger{background:transparent;border:1px solid rgba(180,60,60,0.3);color:#a04040;font-size:11px;padding:7px 16px}
+.btn-danger:hover{border-color:rgba(180,60,60,0.6);color:#c05050}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:7px 16px}
+.btn-ghost:hover{border-color:rgba(201,168,76,0.3);color:var(--text2)}
+
+/* invite code */
+.invite-code{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.3em;color:var(--gold);
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:12px 20px;text-align:center;cursor:pointer;transition:border-color .2s;user-select:all}
+.invite-code:hover{border-color:rgba(201,168,76,0.4)}
+.invite-hint{font-size:12px;color:var(--text3);text-align:center;margin-top:6px}
+
+/* member list */
+.member-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;
+  padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px}
+.member-row:last-child{border-bottom:none}
+.member-name{color:var(--text);font-weight:400}
+.member-elo{color:var(--gold);font-variant-numeric:tabular-nums;font-size:13px}
+.member-rank{color:var(--text3);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.member-self{color:var(--gold-dim);font-size:10px}
+
+/* sena header */
+.sena-hero{text-align:center;padding:32px 16px 24px}
+.sena-emblem{font-size:52px;margin-bottom:10px}
+.sena-name{font-family:'Cinzel',serif;font-size:28px;color:var(--gold);font-weight:600;margin-bottom:4px}
+.sena-vyuha{font-size:14px;font-style:italic;color:var(--text3);margin-bottom:20px}
+
+/* message */
+.msg{padding:10px 16px;border-radius:8px;font-size:14px;margin-bottom:16px;display:none}
+.msg.error{background:rgba(180,60,60,0.12);border:1px solid rgba(180,60,60,0.3);color:#c06060}
+.msg.success{background:rgba(74,166,77,0.10);border:1px solid rgba(74,166,77,0.25);color:#5abf5e}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-back" href="lobby.html">
+    <svg viewBox="0 0 16 16"><polyline points="10 4 6 8 10 12"/></svg>
+    Return to lobby
+  </a>
+  <span class="nav-title">Sena — Clan</span>
+  <span style="width:80px"></span>
+</nav>
+
+<main class="main">
+
+  <!-- Tab bar -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('my')">My Sena</div>
+    <div class="tab" onclick="showTab('create')">Form Sena</div>
+    <div class="tab" onclick="showTab('join')">Join Sena</div>
+  </div>
+
+  <!-- MY SENA -->
+  <div class="panel active" id="panel-my">
+    <div id="noSenaMsg" class="card" style="text-align:center;padding:48px 24px">
+      <div style="font-size:36px;margin-bottom:14px;opacity:.5">⚔️</div>
+      <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--text3);margin-bottom:10px">You have no Sena</div>
+      <div style="color:var(--text3);font-style:italic;font-size:15px;margin-bottom:24px">
+        Form a new clan or join one with an invite code.
+      </div>
+      <button class="btn btn-primary" onclick="showTab('create')">Form a Sena</button>
+    </div>
+    <div id="senaView" style="display:none">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- CREATE -->
+  <div class="panel" id="panel-create">
+    <div class="card">
+      <div class="section-head">Declare your Sena</div>
+      <div id="createMsg" class="msg"></div>
+
+      <div class="field">
+        <label>Sena name</label>
+        <input type="text" id="senaNameInput" placeholder="e.g. Kurukshetra Wolves" maxlength="32">
+      </div>
+
+      <div class="field">
+        <label>Choose Vyuha emblem</label>
+        <div class="vyuha-grid" id="vyuhaGrid"></div>
+      </div>
+
+      <button class="btn btn-primary" onclick="createSena()">Declare Sena</button>
+    </div>
+  </div>
+
+  <!-- JOIN -->
+  <div class="panel" id="panel-join">
+    <div class="card">
+      <div class="section-head">Join a Sena</div>
+      <div id="joinMsg" class="msg"></div>
+
+      <div class="field">
+        <label>Invite code</label>
+        <input type="text" id="joinCodeInput" placeholder="6-character code" maxlength="6"
+          style="text-transform:uppercase;letter-spacing:.2em;font-size:20px">
+      </div>
+
+      <button class="btn btn-primary" onclick="joinSena()">Join Sena</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const SENA_KEY  = 'chaturanga_sena';
+const ELO_KEY   = 'chaturanga_elo_v2';
+const NAME_KEY  = 'chaturanga_player_name';
+
+const VYUHA_DATA = [
+  { id:'garuda',  name:'Garuda',  icon:'🦅', sub:'Eagle wedge'        },
+  { id:'kurma',   name:'Kurma',   icon:'🐢', sub:'Tortoise shell'     },
+  { id:'makara',  name:'Makara',  icon:'🐊', sub:'Crocodile pincer'   },
+  { id:'shakata', name:'Shakata', icon:'🛒', sub:'Cart escort'        },
+  { id:'krauncha',name:'Krauncha',icon:'🦢', sub:'Heron spear'        },
+  { id:'padma',   name:'Padma',   icon:'🪷', sub:'Lotus trap'         },
+];
+
+const RANKS = [
+  {min:1400,title:'Chakravarti'},{min:1300,title:'Drona-Shishya'},
+  {min:1200,title:'Rathasena'  },{min:1100,title:'Maharathi'    },
+  {min:1000,title:'Senapati'   },{min: 900,title:'Yoddha'       },
+  {min: 800,title:'Sainik'     },{min:   0,title:'Shishya'      },
+];
+
+function getRank(elo){ for(const r of RANKS) if(elo>=r.min) return r.title; return 'Shishya'; }
+function myName(){ return localStorage.getItem(NAME_KEY) || 'Warrior'; }
+function myELO(){
+  try{ const d=JSON.parse(localStorage.getItem(ELO_KEY)||'{}'); return d.current||1000; }catch{ return 1000; }
+}
+function loadSena(){ try{ return JSON.parse(localStorage.getItem(SENA_KEY)); }catch{ return null; } }
+function saveSena(s){ localStorage.setItem(SENA_KEY, JSON.stringify(s)); }
+
+function genCode(){
+  return Math.random().toString(36).slice(2,8).toUpperCase();
+}
+
+let selectedVyuha = 'garuda';
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function showTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>
+    t.classList.toggle('active', ['my','create','join'][i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+// ── Vyuha grid ────────────────────────────────────────────────────────────────
+function buildVyuhaGrid(){
+  const grid = document.getElementById('vyuhaGrid');
+  grid.innerHTML = '';
+  VYUHA_DATA.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='vyuha-btn'+(v.id===selectedVyuha?' selected':'');
+    btn.innerHTML=`<span class="vyuha-icon">${v.icon}</span>
+      <span class="vyuha-name">${v.name}</span>
+      <span class="vyuha-sub">${v.sub}</span>`;
+    btn.onclick=()=>{
+      selectedVyuha=v.id;
+      grid.querySelectorAll('.vyuha-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ── Create ────────────────────────────────────────────────────────────────────
+function createSena(){
+  const name=document.getElementById('senaNameInput').value.trim();
+  const msg=document.getElementById('createMsg');
+  if(!name){ showMsg(msg,'error','Enter a name for your Sena.'); return; }
+
+  const existing=loadSena();
+  if(existing){ showMsg(msg,'error','You are already in a Sena. Leave it first.'); return; }
+
+  const vyuha=VYUHA_DATA.find(v=>v.id===selectedVyuha)||VYUHA_DATA[0];
+  const me={ name:myName(), elo:myELO(), joinedAt:Date.now() };
+
+  const sena={
+    id: genCode(),
+    name,
+    vyuha: vyuha.id,
+    vyuhaIcon: vyuha.icon,
+    vyuhaName: vyuha.name,
+    founder: myName(),
+    createdAt: Date.now(),
+    members:[ me ],
+    inviteCode: genCode(),
+  };
+
+  saveSena(sena);
+  showMsg(msg,'success','Sena declared! Your warriors await.');
+  setTimeout(()=>{ showTab('my'); renderSena(); }, 1200);
+}
+
+// ── Join ──────────────────────────────────────────────────────────────────────
+function joinSena(){
+  const code=document.getElementById('joinCodeInput').value.trim().toUpperCase();
+  const msg=document.getElementById('joinMsg');
+  if(code.length!==6){ showMsg(msg,'error','Enter a valid 6-character invite code.'); return; }
+
+  const existing=loadSena();
+  if(existing && existing.inviteCode===code){
+    // Refresh own ELO in members list
+    const me=existing.members.find(m=>m.name===myName());
+    if(me){ me.elo=myELO(); saveSena(existing); }
+    showMsg(msg,'success','You are already in this Sena!');
+    setTimeout(()=>{ showTab('my'); renderSena(); },1000);
+    return;
+  }
+  if(existing){ showMsg(msg,'error','Leave your current Sena before joining another.'); return; }
+
+  // In localStorage-only mode we can't look up other users' clans by code.
+  // The join flow works when both parties share the same browser (local co-op)
+  // or when a server endpoint is added. For now, create a guest entry.
+  showMsg(msg,'error',
+    'Cross-device join requires the server to be running. Share your browser with the invite code holder, or ask your clan leader to add you.');
+}
+
+// ── Leave / Disband ───────────────────────────────────────────────────────────
+function leaveSena(){
+  if(!confirm('Leave your Sena? This cannot be undone.')) return;
+  localStorage.removeItem(SENA_KEY);
+  renderSena();
+}
+
+// ── Render Sena view ──────────────────────────────────────────────────────────
+function renderSena(){
+  const sena=loadSena();
+  const noMsg=document.getElementById('noSenaMsg');
+  const view=document.getElementById('senaView');
+
+  if(!sena){ noMsg.style.display='block'; view.style.display='none'; return; }
+  noMsg.style.display='none'; view.style.display='block';
+
+  const vyuha=VYUHA_DATA.find(v=>v.id===sena.vyuha)||VYUHA_DATA[0];
+  const isFounder=sena.founder===myName();
+
+  // Update own ELO in member list
+  const me=sena.members.find(m=>m.name===myName());
+  if(me){ me.elo=myELO(); saveSena(sena); }
+
+  // Sort members by ELO desc
+  const sorted=[...sena.members].sort((a,b)=>b.elo-a.elo);
+
+  const memberRows=sorted.map(m=>`
+    <div class="member-row">
+      <span class="member-name">${esc(m.name)}${m.name===myName()?' <span class="member-self">(you)</span>':''}</span>
+      <span class="member-rank">${getRank(m.elo||1000)}</span>
+      <span class="member-elo">${m.elo||1000}</span>
+    </div>`).join('');
+
+  view.innerHTML=`
+    <div class="sena-hero">
+      <div class="sena-emblem">${vyuha.icon}</div>
+      <div class="sena-name">${esc(sena.name)}</div>
+      <div class="sena-vyuha">${vyuha.name} Formation · ${sena.members.length} ${sena.members.length===1?'warrior':'warriors'}</div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Invite Code</div>
+      <div class="invite-code" onclick="copyCode('${sena.inviteCode}')" title="Click to copy">${sena.inviteCode}</div>
+      <div class="invite-hint">Click to copy — share with allies to have them join</div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Warriors</div>
+      <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)">
+        ${memberRows}
+      </div>
+    </div>
+
+    <div class="card" style="display:flex;gap:12px;flex-wrap:wrap">
+      ${isFounder
+        ? `<button class="btn btn-danger" onclick="disbandSena()">Disband Sena</button>`
+        : `<button class="btn btn-danger" onclick="leaveSena()">Leave Sena</button>`}
+    </div>`;
+}
+
+function disbandSena(){
+  if(!confirm('Disband your Sena permanently?')) return;
+  localStorage.removeItem(SENA_KEY);
+  renderSena();
+}
+
+function copyCode(code){
+  navigator.clipboard?.writeText(code).then(()=>toast('Invite code copied!'))
+    .catch(()=>toast(code));
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function showMsg(el,type,text){
+  el.className='msg '+type; el.textContent=text; el.style.display='block';
+  setTimeout(()=>{ el.style.display='none'; },4000);
+}
+
+function toast(msg){
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;bottom:60px;left:50%;transform:translateX(-50%);
+    background:#1a1200;border:1px solid var(--gold);color:var(--gold);
+    padding:8px 20px;border-radius:20px;font-family:'Crimson Pro',serif;font-size:14px;
+    z-index:9999;opacity:0;transition:opacity .25s;`;
+  el.textContent=msg;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>{ el.style.opacity='1'; });
+  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(),300); },2400);
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+buildVyuhaGrid();
+renderSena();
+</script>
+</body>
+</html>

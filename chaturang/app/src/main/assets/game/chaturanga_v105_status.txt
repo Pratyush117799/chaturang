@@ -1,0 +1,806 @@
+════════════════════════════════════════════════════════════════════════════════
+  CHATURANGA — v1.0.5 STATUS REPORT & FORWARD ROADMAP
+  Document generated: March 2026
+  Format: Plain text. No PDF. No doc.
+════════════════════════════════════════════════════════════════════════════════
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 1 — WHAT WAS BUILT IN v1.0.5 (THIS SESSION)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────────────────────────────
+  1.1  KURUKSHETRA CAMPAIGN — DAYS 14–17 + PROGRESSIVE UNLOCK
+  Status: COMPLETE
+────────────────────────────────────────────────────────────
+
+  What was done:
+  - Day 14 — Arjuna's Fury: countdown-capture mechanic. The player has exactly
+    10 moves before sunset. An amber counter panel counts down live. If the
+    counter hits zero without capturing Jayadratha's Raja, the game ends in
+    loss. Bot plays at ELO 600, aggressive.
+
+  - Day 15 — Drona's Death: human plays as Blue (player 1 — the Kaurava side)
+    for the first time in the game. The board, dice, and rules are identical —
+    only the perspective flips. Bot plays Yudhishthira at ELO 700, strategic.
+
+  - Day 16 — Karna Commands: full open-game battle from starting position
+    against the ELO-900 Chakravarti bot. No special mechanics — pure skill.
+
+  - Day 17 — Karna's Wheel Sinks: bot plays at ELO-900 until bot-turn 8,
+    then switches to fully passive (random) moves for exactly 3 bot turns
+    while the wheel counter flashes on screen. After 3 turns the bot resumes
+    strategic strength. Player must break through during the window.
+
+  - Progressive unlock system: completing Day 13 unlocks Day 14. Completing
+    Day 14 unlocks Day 15. And so on through Day 17. Day 18 was always open.
+    Days 2–12 remain Coming Soon. The campaign map re-renders immediately on
+    the result screen so the next day appears without a page reload.
+
+  - New state fields: G.humanMovesUsed (Day 14 countdown),
+    G.botMovesDone (Day 17 wheel trigger), botGetMove('passive') mode.
+
+  - endGame('lose') now also saves progress so failed attempts do not block
+    the unlock chain.
+
+  - Sunset counter uses a distinct amber CSS class instead of the red used
+    by Day 13's survival counter.
+
+
+────────────────────────────────────────────────────────────
+  1.2  AKHARA TRAINING DOJO (akhara.html)
+  Status: COMPLETE
+────────────────────────────────────────────────────────────
+
+  What was done:
+  - 4 fully playable drills with validated board positions:
+
+    · Smriti Pariksha (Flash Drill) — board shown for 3 seconds, then 3
+      multiple-choice questions from memory. 10 positions, max 300 pts.
+      Timer: 15s per question via pure CSS @keyframes countdown bar.
+
+    · Ashwa Vyu (Fork Finder) — click the square where the Ashwa can fork
+      two enemy pieces. 10 positions, 5 seconds each, max 200 pts.
+      All 10 positions validated with L-move geometry verification.
+
+    · Ratha Lakshya (Ratha Hunt) — identify and click the capturable enemy
+      Ratha. 10 positions, 8 seconds each, max 150 pts.
+
+    · Pashaka Niti (Dice Drill) — dice face is shown, player must select the
+      right piece and execute the best move. 10 positions, 10 seconds each,
+      max 250 pts.
+
+  - ELO system: score >= 80% = +25, >= 60% = +10, >= 40% = 0, < 40% = -10.
+    Stored at localStorage key 'chaturanga_akhara'. Bounded 0–1000.
+
+  - 5 Drona ranks: Shishya (0), Yoddha (200), Sarathi (400), Arjuna (600),
+    Brahmastra (800). Live ELO bar on home screen.
+
+  - Integration flag: when eloAkhara >= 400, sets
+    localStorage 'chaturanga_akhara_suggest' = 'hard' for puzzles.html.
+
+  - Per-session result screen: score, accuracy %, ELO delta, per-position
+    breakdown. Drill history stored (last 60 sessions). Rank Scroll screen
+    shows full ladder and history.
+
+
+────────────────────────────────────────────────────────────
+  1.3  GRANTH — PERSONAL SANSKRIT MANUSCRIPT (granth.html)
+  Status: COMPLETE
+────────────────────────────────────────────────────────────
+
+  What was done:
+  - 18 achievement folios across 4 categories:
+    · Tactical (6): Ashwa Mudra, Avyakta Astra, Nara Uttarayan, Prithvi
+      Vijaya, Ashani Pata, Raja Mukha.
+    · Campaign (8): Prathamik, Chakra Praveshi, Arjuna Tulya, Jayadratha
+      Vadha, Vipaksha Drshti, Karna Vijaya, Chakra Mukti, Dharma Samapti.
+    · Mastery (3): Yoddha Prapti, Arjuna Drshti, Brahmastra Prapti.
+    · Shubh (1): Shubh Sapta.
+
+  - Every folio has a unique hand-drawn SVG illustration — 18 distinct
+    miniatures. Gold on dark parchment. Four ornate corner brackets per card.
+
+  - Auto-detection on load: reads chaturanga_campaign, chaturanga_akhara,
+    chaturanga_shubh on page open and inscribes eligible achievements
+    silently.
+
+  - Filter tabs: All / Tactical / Campaign / Mastery / Shubh.
+
+  - Locked folios show a ghost version of the illustration at 38% opacity
+    with the unlock trigger text and a lock glyph.
+
+  - Staggered entrance animation (60ms delay per folio).
+
+  - Share system: Canvas API renders a 600×400 PNG card with Sanskrit name,
+    Devanagari text, description, and inscription date. Downloads as PNG or
+    invokes navigator.share() on mobile.
+
+  - Public API at window.ChaturangaGranth:
+    .inscribe(id), .has(id), .getAll(), .reset()
+
+  - Full integration guide embedded in the file showing the exact
+    grantGranth() helper function and all call sites for kurukshetra.html,
+    akhara.html, and shubh.html.
+
+  - CSS grain texture overlay, dark vellum aesthetic, Cinzel + Cormorant
+    Garamond typography.
+
+
+────────────────────────────────────────────────────────────
+  1.4  SHUBH CHALLENGE (shubh.html)
+  Status: PARTIALLY COMPLETE
+────────────────────────────────────────────────────────────
+
+  What was done in the previous session:
+  - 30-puzzle pool (SP001–SP030) with Hindu calendar tithi detection
+    (Ekadashi = hardest, Purnima = combo, Amavasya = endgame).
+  - Deterministic date-based puzzle selection.
+  - Streak tracking, timer, hint system, result overlay, Drona commentary.
+  - Seeded fake leaderboard for first-time users.
+  - Countdown to next puzzle (6:00 AM IST).
+  - Share result via navigator.share or clipboard.
+
+  What is still missing (identified and deferred):
+  - IST timezone fix for the day key — currently uses local date, so players
+    in different timezones get different puzzles on the same calendar day.
+    Fix: use Math.floor((Date.now() + 19800000) / 86400000) as the day index.
+  - LCG deterministic fake leaderboard — same competitor names and scores
+    should appear every day seeded from dayIndex * 31337, not static
+    hardcoded names.
+  - Festival detection — Diwali, Janmashtami, Holi, Navratri, Makar Sankranti
+    should trigger special puzzle themes.
+  - Ekadashi hint lock — hints should be disabled on Ekadashi days as per spec.
+  - Confetti animation on successful solve.
+  - Granth integration: grantGranth('shubh-sapta') when streak reaches 7.
+
+
+────────────────────────────────────────────────────────────
+  1.5  THINGS CARRIED FORWARD FROM v1.0.4 (NOT YET FIXED)
+  Status: INCOMPLETE
+────────────────────────────────────────────────────────────
+
+  The following were identified as gaps in the existing codebase and have not
+  yet been addressed in this session:
+
+  - Dharma engine (dharma-engine.js): exists but is not integrated into
+    kurukshetra.html. Needs ChaturangaDharma.startSession(),
+    recordEvent(), and finalize() calls wired into the game loop.
+
+  - Kurukshetra Days 2–12: scenario objects and board states were drafted in
+    the v1.0.5 session notes but the full 11 scenario objects and their win
+    condition handlers have not yet been integrated into kurukshetra.html.
+    Currently these days show as Coming Soon on the map.
+
+  - Win condition handlers (7 new types) from the v1.0.5 session spec:
+    formation-capture, flank-survival, piece-hunt, material-threshold,
+    fork-combination, tortoise-survival, king-escape. These were written as
+    code snippets but not integrated into executeMove() and doBotTurn()
+    in kurukshetra.html.
+
+  - sw.js ASSETS array: shubh.html, akhara.html, granth.html not yet added
+    for offline PWA support.
+
+  - Board Forge: position editor and sandbox not yet built (Priority 4).
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 2 — WHAT EXISTS FROM v1.0.4 (PRE-SESSION BASELINE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Feature                                     Status
+  ─────────────────────────────────────────────────────────────────────────────
+  Core game engine (game.html, game.js)       COMPLETE
+  Dice system (Pashaka)                       COMPLETE
+  4-player board, piece movement rules        COMPLETE
+  Vyuha Formations engine (26 formations)     COMPLETE (needs improvement — see below)
+  Lessons system                              COMPLETE
+  Puzzle system — 200 puzzles P001–P200       COMPLETE
+  Tournament mode                             COMPLETE
+  Bot engines ELO 100–1000                    COMPLETE
+  Benchmark system                            COMPLETE
+  Online multiplayer (WebSocket rooms)        PARTIALLY COMPLETE (needs more work)
+  Seer analytics engine                       COMPLETE
+  Acharya Drona chatbot (50+ intents)         COMPLETE (needs improvement — see below)
+  Army Builder (custom armies, point budgets) COMPLETE (piece SVGs issue — see below)
+  Kurukshetra Campaign Days 1, 13, 18         COMPLETE
+  Post-game Seer analysis (move-by-move)      NOT STARTED (P3)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 3 — KNOWN ISSUES AND REQUIRED IMPROVEMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────────────────────────────
+  3.1  CUSTOM ARMY BUILDER — PIECE SVG DESIGNS
+  Priority: HIGH | Status: INCOMPLETE
+────────────────────────────────────────────────────────────
+
+  The current Army Builder uses standard Unicode chess symbols (♜ ♞ ♝ ♟ ♚)
+  which are Western/classical chess pieces. Chaturanga pieces have distinct
+  historical identities:
+
+  · Ratha (Chariot) — should look like an ancient Indian war chariot, not
+    a castle tower. The rook glyph has no cultural connection.
+  · Ashwa (Horse) — close enough in silhouette but ideally shown as a
+    caparisoned Indian cavalry horse, not a European knight's horse.
+  · Danti (Elephant) — should be an Indian war elephant with a howdah,
+    not a European bishop.
+  · Nara (Foot Soldier) — should resemble an ancient Indian foot warrior
+    with spear, not a generic pawn.
+  · Raja (King) — should show a crowned Indian king or a throne, not a
+    European king's crown.
+  · Guptchar (Spy piece) — entirely custom, no Unicode equivalent exists.
+
+  What needs to happen:
+  - Commission or design custom SVG glyphs for all 6 piece types in 4
+    player colours (Red, Blue, Green, Yellow) = 24 distinct SVG files.
+  - These SVGs are pieces of art as much as they are game assets. The
+    design language should be consistent: flat, slightly stylised, gold
+    linework, suitable for rendering at sizes from 24px to 80px.
+  - Once SVGs exist, replace the Unicode symbol renderer in game.js,
+    kurukshetra.html, akhara.html, shubh.html, and granth.html.
+  - This cannot be generated programmatically to the required cultural
+    fidelity — it requires deliberate human or commissioned SVG design.
+
+
+────────────────────────────────────────────────────────────
+  3.2  ONLINE MULTIPLAYER — ADDITIONAL WORK NEEDED
+  Priority: HIGH | Status: PARTIALLY COMPLETE
+────────────────────────────────────────────────────────────
+
+  What currently exists:
+  - WebSocket room system (ws-client.js, server-ws.js)
+  - Basic room creation and joining
+  - Move synchronisation over WebSocket
+
+  What still needs to be built:
+  - Reconnection handling: if a player drops mid-game, the session should
+    hold for at least 2 minutes and allow rejoin by room code.
+  - Spectator mode: allow users to watch live games without being seated.
+  - Rematch system: after a game ends, both players should be offered a
+    rematch without recreating the room.
+  - Room browser: a lobby showing open rooms, player count, and game mode.
+  - Player identification: persistent player name stored in localStorage
+    or a simple account system (username + PIN, no email required).
+  - Anti-cheat for multiplayer: the anticheat.js module needs to be
+    extended to validate moves server-side, not just client-side, so a
+    modified client cannot submit illegal moves.
+  - Latency compensation: the current implementation does not handle
+    move collisions or clock drift between clients.
+  - Chat: a simple in-game text chat for multiplayer rooms.
+  - ELO for multiplayer: separate online ELO rating distinct from the
+    Akhara ELO, updated after every completed online game.
+
+
+────────────────────────────────────────────────────────────
+  3.3  VYUHA FORMATIONS SECTION — MORE COMPREHENSIVE + INTERACTIVE
+  Priority: MEDIUM | Status: NEEDS IMPROVEMENT
+────────────────────────────────────────────────────────────
+
+  What currently exists:
+  - 26 formations rendered on a 14x14 board
+  - 4 board sizes
+  - Static visual renderer
+
+  What needs to be added:
+  - Each formation needs a dedicated information panel: historical source
+    (which Parva of the Mahabharata describes it), the commander who used it,
+    the tactical purpose, known weaknesses, and which counter-formation was
+    used against it historically.
+  - Animated formation deployment: pieces should appear on the board one by
+    one in the order they would be deployed, not all at once.
+  - Formation comparison mode: select two formations side by side on split
+    boards and read the tactical analysis of how they historically interacted.
+  - Interactive overlay: click on any piece cluster in a formation to see
+    a tooltip explaining the role of that unit group (e.g. "the Ratha wings
+    in Garuda Vyuha protect the flanks while the Ashwa spearhead advances").
+  - Vyuha quiz: given a formation on the board, the player must name it from
+    a list, or given a name, must identify it from four visual options.
+  - Filter by type: offensive / defensive / encirclement / retreat.
+  - Link from the campaign map: clicking a day card that involves a named
+    formation should open the Vyuha section with that formation loaded.
+
+
+────────────────────────────────────────────────────────────
+  3.4  ACHARYA'S ASHRAM — CHATBOT + COACH IMPROVEMENT
+  Priority: MEDIUM | Status: NEEDS IMPROVEMENT
+────────────────────────────────────────────────────────────
+
+  What currently exists:
+  - Acharya Drona chatbot with 50+ regex intents
+  - Cultural knowledge about pieces, Mahabharata characters, game rules
+
+  What needs to be improved:
+  - Context awareness: the chatbot currently has no memory of the current
+    game state. It should be able to answer "what should I do next?" by
+    reading the board position the player is in and giving position-specific
+    advice, not just generic tactical tips.
+  - Conversation flow: the current regex intent system cannot handle
+    multi-turn conversations. "Tell me more" after a Drona response should
+    expand on what was just said, not trigger a fresh intent lookup.
+  - Lesson sequencing: Drona should remember which lessons the player has
+    completed (via localStorage) and not repeat beginner explanations to
+    advanced players. The advice should scale with Akhara ELO.
+  - Voice of Drona: every response should feel like it comes from the same
+    character — ancient, formal but warm, using Mahabharata metaphors
+    naturally. Several current intents feel generic. All responses need
+    a tone audit and rewrite.
+  - Puzzle hints: the Ashram should be able to give hints for any of the
+    200 main puzzles, not just a hardcoded set. If the player describes a
+    position or says "I'm stuck on P047," Drona should retrieve the dronaFail
+    text for that puzzle and deliver it in character.
+  - Mobile UX: the Ashram interface needs to work properly on small screens
+    with a keyboard open.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 4 — WHAT NEEDS TO BE BUILT (NOT YET STARTED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+────────────────────────────────────────────────────────────
+  4.1  WEBSITE INTEGRATION
+  Priority: CRITICAL | Status: NOT STARTED
+────────────────────────────────────────────────────────────
+
+  The game (all HTML files) needs to be linked into the existing website
+  stored as a separate folder. This means:
+
+  - Navigation: the website's main nav should have a "Play" entry that
+    links to game.html. All game pages (kurukshetra.html, akhara.html,
+    shubh.html, granth.html, puzzles.html) should be reachable from the
+    website's structure.
+
+  - Consistent header/footer: decide whether the game pages keep their own
+    minimal nav (current state) or inherit the website's full header and
+    footer. Recommendation: keep the game's minimal nav inside the game
+    UI, but add a website-consistent top banner on the landing/hub page.
+
+  - Game hub page: a single page (play.html or index.html inside the game
+    folder) that shows all available game modes with descriptions and
+    links. This is the landing page players reach from the website.
+
+  - Asset paths: all CDN links (Google Fonts, Font Awesome, any JS libs)
+    need to be verified to work from within the website's folder structure.
+    Relative paths in file references need auditing.
+
+  - URL strategy: decide on subdomain (game.chaturanga.app) vs subdirectory
+    (chaturanga.app/play). This affects routing and asset resolution.
+
+  - SEO and meta tags: each game page needs proper <title>, description
+    meta, og:image, and og:title tags consistent with the website's brand.
+
+
+────────────────────────────────────────────────────────────
+  4.2  PAYMENT SYSTEM — SUPPORT OUR MISSION
+  Priority: HIGH | Status: NOT STARTED
+────────────────────────────────────────────────────────────
+
+  The website needs a payment/support flow. Recommended approach:
+
+  - "Support the Mission" page: explains what Chaturanga is trying to do
+    culturally — preserve and revive an ancient Indian game. Emotional,
+    not transactional. Why your contribution matters.
+
+  - One-time donation: Razorpay or Stripe integration for Indian and
+    international donors. Amounts: Rs 99, Rs 299, Rs 999, custom.
+
+  - Supporter tier (optional, no paywalled content): players who contribute
+    receive a visual "Patron of Chaturanga" badge in their Granth — a
+    special folio that cannot be earned any other way, only supported.
+
+  - The game itself remains fully free. No features locked behind payment.
+    This is a cultural project and a paywall would contradict that mission.
+
+  - Transparent usage: a small section on the payment page explaining what
+    the funds go toward — server costs, SVG piece design commission,
+    potential educational outreach.
+
+  - Indian payment methods: UPI, net banking, wallets (Paytm, PhonePe)
+    via Razorpay in addition to card payments.
+
+
+────────────────────────────────────────────────────────────
+  4.3  COMMUNITY BUILDING FEATURES
+  Priority: HIGH | Status: NOT STARTED
+────────────────────────────────────────────────────────────
+
+  From the original roadmap and current requirement:
+
+  - Board Forge (P4 — position editor and sandbox):
+    · Free-form position editor: drag any piece onto any square.
+    · Set the dice value, choose whose turn it is, play from that position.
+    · Bot analysis panel: "What would ELO-700 play here?"
+    · Shareable URL codes — position encoded in URL parameters.
+    · Community puzzle submission: players can submit positions to a voting
+      queue. Highly rated ones enter the official puzzle library as P201+.
+
+  - Global leaderboard page (website-level):
+    · Daily Shubh leaderboard — top 10 solves per day, searchable by player.
+    · Akhara ELO leaderboard — ranked list of all players by board vision ELO.
+    · Campaign completion board — who has completed all 18 days.
+
+  - Player profiles:
+    · Public-facing profile page (shareable URL).
+    · Shows Granth entries unlocked, Akhara rank, campaign progress,
+      Shubh streak, and recent activity.
+
+  - Community forums or discussion section on the website:
+    · A simple threaded discussion area (not full social media).
+    · Categories: Puzzle Discussion, Formation Analysis, Campaign Tips,
+      Historical Chaturanga Research, Feature Suggestions.
+
+  - Discord / WhatsApp community link prominently on the website.
+
+  - Player-generated content pipeline:
+    · Community puzzle submissions reviewed and added to the library.
+    · Community Vyuha formations: players can design and share custom
+      formations via Board Forge, and popular ones get added to the
+      Vyuha library.
+
+
+────────────────────────────────────────────────────────────
+  4.4  CONTACT DETAILS PAGE
+  Priority: MEDIUM | Status: NOT STARTED
+────────────────────────────────────────────────────────────
+
+  - A dedicated contact page on the website with:
+    · Email address for general enquiries.
+    · Email address for press / media.
+    · Email address for educational partnerships (schools, universities).
+    · Social media links (Instagram, X/Twitter, YouTube if applicable).
+    · A contact form (name, email, subject, message) — simple HTML form
+      with a backend endpoint or a service like Formspree.
+    · Response time expectation set honestly.
+
+  - Footer of every website page should show condensed contact info.
+
+
+────────────────────────────────────────────────────────────
+  4.5  DOCUMENTATION SECTION — MORE COMPREHENSIVE
+  Priority: MEDIUM | Status: INCOMPLETE (basic docs likely exist)
+────────────────────────────────────────────────────────────
+
+  The documentation needs to cover all of the following clearly:
+
+  Game Documentation:
+  - Complete rules of Chaturanga (all piece movements, Pashaka dice system,
+    win conditions, 4-player vs 2-player variants, alliance rules).
+  - Piece-by-piece reference with visual SVG illustration of each piece.
+  - Vyuha formations glossary — all 26 formations with illustrations.
+  - Dice roll table — which face allows which pieces.
+  - Promotion rules. Alliance rules. Raja capture rules.
+
+  Historical Documentation:
+  - What is Chaturanga? Etymology, historical period, connection to chess.
+  - Primary sources: Mahabharata, Arthashastra, Harsha-charita.
+  - How Chaturanga became Shatranj, then chess — the migration of the game
+    westward across Persia and into medieval Europe.
+  - Historical Vyuha formations and their Mahabharata context.
+  - The Pashaka dice — history of dice-chess variants.
+
+  Technical Documentation (for developers):
+  - API for the Granth integration (window.ChaturangaGranth).
+  - localStorage key reference — all keys used by all modules.
+  - How to add a new puzzle to the puzzle library.
+  - How to add a new Vyuha formation.
+  - How to add a new Granth achievement.
+  - WebSocket protocol for multiplayer.
+
+  Educational Documentation:
+  - Lesson guides: how to use Chaturanga in a classroom.
+  - Suggested curriculum integration points (history, mathematics, strategy).
+  - A teacher's guide.
+
+
+────────────────────────────────────────────────────────────
+  4.6  POST-GAME SEER ANALYSIS (move-by-move review)
+  Priority: MEDIUM | Status: NOT STARTED
+────────────────────────────────────────────────────────────
+
+  The Seer engine already records all game data. What needs to be built:
+  - Replay UI: step through any completed game move by move.
+  - Each move annotated: Brilliant / Good / Inaccuracy / Mistake / Blunder.
+  - For Mistakes and Blunders: show what the engine would have played
+    instead, and the resulting position.
+  - Drona comment per annotated move.
+  - End-screen summary: accuracy %, turning point move, most accurate player.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 5 — ORIGINAL IDEAS: 5 NEW FEATURES WORTH BUILDING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  These are ideas not in the original roadmap — proposed for consideration.
+  Each is culturally grounded, technically feasible, and would make the game
+  genuinely more compelling.
+
+
+────────────────────────────────────────────────────────────
+  IDEA 1 — RASHTRA MAP: Geography of the Mahabharata War
+────────────────────────────────────────────────────────────
+
+  What it is:
+  A visual, interactive map of ancient India as it existed during the
+  Mahabharata war — showing the 18 kingdoms that sent armies to Kurukshetra,
+  the geographical scale of the conflict, and how it connects to the 18-day
+  campaign in the game.
+
+  Each kingdom on the map is clickable and shows:
+  - Who commanded their forces.
+  - Which side they fought on.
+  - Their formation speciality (e.g. Magadha was known for elephant units).
+  - Their narrative fate in the war.
+  - A link to the relevant campaign day where their forces appear.
+
+  Why it matters:
+  Most players have no sense of the geographical and political scale of what
+  the Mahabharata describes. A map turns a chess game into a window into
+  ancient Indian political geography. No other game has done this.
+
+  Feasibility: HIGH. Pure SVG map + HTML/JS. No external dependencies.
+  Could be built in one session.
+
+
+────────────────────────────────────────────────────────────
+  IDEA 2 — SHASTRA KOSH: The Living Tactical Encyclopedia
+────────────────────────────────────────────────────────────
+
+  What it is:
+  A searchable, growing tactical dictionary — every concept in the game
+  (fork, skewer, discovered attack, opposition, zugzwang, outpost, battery,
+  back-rank) given a Sanskrit name and a full cultural framing from the
+  Arthashastra or Mahabharata.
+
+  For example:
+  - Fork: "Dvimukha Astra" (Two-Faced Weapon) — the Arthashastra's principle
+    of attacking two targets simultaneously so the enemy cannot defend both.
+  - Zugzwang: "Vyuha Bandhan" (Formation Trap) — the position where any move
+    worsens your standing, described in Kautilya's concept of forced movement.
+  - Outpost: "Durg Kshetra" (Fortress Territory) — a piece established on
+    unchallenged ground, controlling the centre.
+
+  Each entry has:
+  - Sanskrit name and Devanagari.
+  - Definition in plain language.
+  - Visual board diagram showing the concept.
+  - A quote from the Arthashastra or Mahabharata that parallels the concept.
+  - Link to a relevant puzzle that demonstrates the idea.
+
+  The Shastra Kosh grows as you play: concepts you execute in real games
+  are "discovered" and added to your personal copy.
+
+  Why it matters:
+  This transforms tactical chess vocabulary into a Sanskrit lexicon. Players
+  learn strategy through Kautilya's political philosophy. It is educational,
+  culturally original, and has never been done for any chess variant.
+
+  Feasibility: HIGH. Static content + discovery trigger. Moderate build time.
+
+
+────────────────────────────────────────────────────────────
+  IDEA 3 — YUDDHA GATHA: Replay Theater with Narration
+────────────────────────────────────────────────────────────
+
+  What it is:
+  A "game theater" mode where famous historical Chaturanga-era battle
+  sequences are reconstructed as playable replays — the player watches
+  the board animate move by move with Drona narrating the action in real
+  time, then is given control at a critical decision point to "change history."
+
+  Example sequences:
+  - "The day Bhishma fell" — reconstructed from the Mahabharata's
+    description of the battle on Day 10. The replay pauses at the moment
+    Shikhandi's arrows fly, and you must decide: do you order Bhishma to
+    retreat, or hold the formation?
+  - "The Chakravyuha breach" — step by step, see how Abhimanyu entered
+    and how the formation sealed behind him.
+
+  The narration is Drona speaking in the present tense — as though you are
+  both watching a replay together. The text is culturally researched and
+  drawn from actual Parva descriptions.
+
+  After you make your choice at the decision point, the replay continues
+  with the historical outcome — and a note on what actually happened.
+
+  Why it matters:
+  It makes the Mahabharata interactive and visceral in a way no textbook or
+  retelling can. Players learn ancient military history by making decisions
+  inside it. Completely original format.
+
+  Feasibility: MEDIUM. Requires replay engine + authored sequences.
+  2–3 build sessions to do properly.
+
+
+────────────────────────────────────────────────────────────
+  IDEA 4 — GURU-SHISHYA: Asynchronous Mentorship Mode
+────────────────────────────────────────────────────────────
+
+  What it is:
+  A correspondence chess variant — one player creates a puzzle position from
+  any game they played (using Board Forge) and sends it to another player
+  as a "challenge from your Guru." The receiving player gets a notification
+  and has 24 hours to find the best move.
+
+  The sender can add a Drona-style message: "Find the move that changes
+  the entire battle, student. I will tell you whether you have seen it."
+
+  After the receiver responds, the sender reviews the move and can reply
+  with a follow-up position: "Good — now what?" Building a multi-move
+  analysis conversation between two players.
+
+  This could also be used between teachers and students in educational
+  contexts — a teacher sends a position to a class, students respond,
+  teacher reviews all responses and highlights the best ones.
+
+  Why it matters:
+  This is how chess was historically taught — through problem-setting and
+  correspondence. It fits the Guru-Shishya tradition of Indian education
+  exactly. No other game platform has implemented it with this cultural lens.
+
+  Feasibility: MEDIUM-HIGH. Requires a simple backend (position storage,
+  notification system) but the game logic is fully built.
+
+
+────────────────────────────────────────────────────────────
+  IDEA 5 — PANCHANGA CALENDAR: The Living Game Year
+────────────────────────────────────────────────────────────
+
+  What it is:
+  A dedicated calendar view inside the game that shows the entire year
+  mapped to the Hindu Panchanga — every Ekadashi, Amavasya, Purnima,
+  major festival, and sacred astronomical event.
+
+  For each day, the calendar shows:
+  - Today's Shubh puzzle difficulty and tithi.
+  - Which Akhara drills are "auspicious" today (e.g. on Dhanur Masa,
+    the archer month, Ratha drills score bonus ELO).
+  - Festival-specific challenges: on Navratri, a 9-day streak challenge.
+    On Diwali, a special one-night puzzle unlocked only on that evening.
+    On Janmashtami, the Chakravyuha scenario is highlighted as the
+    day's featured battle.
+  - A small astronomical note: today's nakshatra, the significance of the
+    tithi in the Mahabharata, and how it connects to the game.
+
+  The Panchanga calendar would be the most deeply researched feature in the
+  game — it requires accurate Hindu calendar computation but the payoff is
+  a living game experience that tracks real sacred time, not arbitrary dates.
+
+  Why it matters:
+  It makes Chaturanga feel like it breathes with the cultural year. Players
+  come back not just for daily puzzles but because the game itself is alive
+  to the same sacred time their grandparents observed. No other game has
+  ever attempted this. It would be internationally remarkable.
+
+  Feasibility: MEDIUM. Calendar computation is achievable in JS. Content
+  requires cultural research. Build time: 2 sessions minimum.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 6 — RECOMMENDED IMPROVEMENTS TO EXISTING SYSTEMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  The following improvements are not new features but refinements to what
+  already exists. They would meaningfully improve quality without requiring
+  new page builds.
+
+  1. MOBILE RESPONSIVENESS AUDIT
+     Every page needs to be opened on a 390px-wide screen (iPhone 14 size)
+     and all layout issues fixed. The board currently scales reasonably but
+     the side panels in game.html collapse poorly on mobile. The Akhara
+     board at 8x8 with 52px squares overflows on screens narrower than 440px.
+
+  2. PUZZLE DIFFICULTY CURVE
+     The 200 puzzles (P001–P200) need to be reviewed for smooth ELO
+     progression. Currently difficulty jumps are uneven. A player going from
+     P040 to P041 should face a comparable challenge, not a sudden spike.
+     Recommend reordering puzzles by ELO rather than arbitrary ID sequence.
+
+  3. BOT STRENGTH CALIBRATION
+     The ELO-900 bot (used in Days 16 and 17) plays with 1-ply lookahead.
+     A player with strong tactical instincts can beat it by forcing tactical
+     patterns it cannot see. This should be intentional — but the difficulty
+     label "ELO-900" sets an expectation that may be too high given the
+     simple scoring heuristic. Either deepen the search or relabel the bot.
+
+  4. CAMPAIGN DRONA COMMENTARY DENSITY
+     Days 14–17 have commentary written, but the live commentary fires
+     infrequently in practice — many moves pass in silence. The commentary
+     array for each scenario needs more entries so that 8 out of 10 moves
+     produce some reaction from Drona, not just the milestone events.
+
+  5. LOADING PERFORMANCE
+     The granth.html file has 18 inline SVGs each with ~20 lines of SVG code.
+     On low-end devices this can cause a rendering stutter on first load.
+     Consider lazy-rendering illustrations only when the folio scrolls into
+     view using IntersectionObserver.
+
+  6. ACCESSIBILITY BASELINE
+     Add aria-label attributes to all icon buttons. Add role="img" to SVG
+     illustrations with aria-label describing what is shown. The colour
+     choices (gold on dark) have good contrast but should be formally
+     verified against WCAG AA for text readability.
+
+  7. GRANTH INTEGRATION IN KURUKSHETRA
+     The grantGranth() helper function needs to actually be added to
+     kurukshetra.html's endGame() function so achievements inscribe live
+     when campaign scenarios are completed, not just on next granth.html
+     visit via autoDetect(). The integration guide is written — it just
+     needs to be wired in.
+
+  8. SAVE STATE VERSIONING
+     As more features are added, the localStorage schemas will drift.
+     Add a version field to each key's stored object (e.g.
+     chaturanga_campaign version: 2) so that future releases can migrate
+     old save states without corrupting player data.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 7 — MASTER COMPLETION CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  LEGEND: [COMPLETE] [PARTIAL] [INCOMPLETE]
+
+  CORE GAME
+  [COMPLETE]   Core 4-player game engine
+  [COMPLETE]   Pashaka dice system
+  [COMPLETE]   All piece movement rules (Raja, Ratha, Ashwa, Danti, Nara)
+  [INCOMPLETE] Custom Chaturanga piece SVG designs (currently using Unicode)
+
+  CAMPAIGN
+  [COMPLETE]   Day 1 — The First Lesson
+  [INCOMPLETE] Days 2–12 — scenario objects drafted, not integrated
+  [COMPLETE]   Day 13 — Abhimanyu in the Chakravyuha (survival mechanic)
+  [COMPLETE]   Day 14 — Arjuna's Fury (countdown-capture mechanic)
+  [COMPLETE]   Day 15 — Drona's Death (human plays Kaurava side)
+  [COMPLETE]   Day 16 — Karna Commands (ELO-900 open battle)
+  [COMPLETE]   Day 17 — Karna's Wheel Sinks (passive window mechanic)
+  [COMPLETE]   Day 18 — The Final Duel (ELO-1000 boss)
+  [COMPLETE]   Progressive unlock chain (Day 13 → 14 → 15 → 16 → 17)
+  [INCOMPLETE] Dharma engine integration into campaign
+
+  TRAINING
+  [COMPLETE]   Akhara Training Dojo (4 drills, ELO system, 5 ranks)
+  [COMPLETE]   200 main puzzles (P001–P200)
+  [INCOMPLETE] Post-game Seer analysis (move-by-move review)
+  [INCOMPLETE] Post-game Seer analysis integration into campaign
+
+  DAILY ENGAGEMENT
+  [PARTIAL]    Shubh Daily Challenge (functional; IST fix, festivals, confetti missing)
+  [COMPLETE]   Granth personal achievement manuscript (18 folios, share system)
+
+  VYUHA & COACHING
+  [COMPLETE]   Vyuha formations (26 formations, basic renderer)
+  [INCOMPLETE] Vyuha improvements (interactive, animated, historical info, quiz)
+  [PARTIAL]    Acharya Drona chatbot (50+ intents; context awareness missing)
+
+  MULTIPLAYER & SOCIAL
+  [PARTIAL]    Online multiplayer (WebSocket rooms; reconnect, lobby, anti-cheat missing)
+  [INCOMPLETE] Community features (Board Forge, leaderboard, player profiles)
+  [INCOMPLETE] Guru-Shishya asynchronous challenge mode
+
+  ARMY BUILDER
+  [PARTIAL]    Custom army builder (logic complete; piece SVGs not Chaturanga-authentic)
+  [INCOMPLETE] Guptchar spy piece fully integrated and balanced
+
+  WEBSITE & PLATFORM
+  [INCOMPLETE] Website integration (game linked to existing website folder)
+  [INCOMPLETE] Payment system (support/donation page)
+  [INCOMPLETE] Contact details page
+  [INCOMPLETE] Documentation section (comprehensive)
+  [INCOMPLETE] Game hub landing page
+  [INCOMPLETE] SEO and meta tags
+
+  ORIGINAL IDEAS (NOT YET STARTED)
+  [INCOMPLETE] Rashtra Map (Mahabharata kingdom geography)
+  [INCOMPLETE] Shastra Kosh (living tactical encyclopedia)
+  [INCOMPLETE] Yuddha Gatha (replay theater with narration and decision points)
+  [INCOMPLETE] Guru-Shishya asynchronous mentorship mode
+  [INCOMPLETE] Panchanga Calendar (living game year in Hindu sacred time)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  END OF DOCUMENT
+  Chaturanga v1.0.5 — Status Report & Forward Roadmap
+  March 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

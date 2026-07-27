@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Lessons — v1.0.4</title>
+  <meta name="description" content="Learn Chaturanga through 18 interactive lessons rooted in Indian philosophy — Mahabharata, Bhagavad Gita, Panchatantra, Ramayana and Chanakya Niti."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../../css/styles.css"/>
+  <link rel="stylesheet" href="../../css/animations.css"/>
+  <link rel="stylesheet" href="../../css/themes.css"/>
+  <script>(function(){var t=localStorage.getItem('chaturanga_theme');if(t&&t!=='classic')document.documentElement.className='theme-'+t;})();</script>
+  <style>
+    :root{--sq:56px}
+    .lessons-layout{display:grid;grid-template-columns:240px 1fr 220px;gap:0;height:calc(100vh - 52px);overflow:hidden}
+    .ls-sidebar{padding:16px;border-right:1px solid var(--border,rgba(201,168,76,.18));overflow-y:auto;background:var(--dark2,#17130a)}
+    .ls-main{padding:20px;display:flex;flex-direction:column;align-items:center;overflow-y:auto}
+    .ls-right{padding:16px;border-left:1px solid var(--border,rgba(201,168,76,.18));overflow-y:auto;background:var(--dark2,#17130a)}
+    .cat-section{margin-bottom:14px}
+    .cat-header{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold,#c9a84c);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .lesson-card{background:rgba(201,168,76,.06);border:1px solid var(--border,rgba(201,168,76,.18));border-radius:6px;padding:8px 10px;margin-bottom:6px;cursor:pointer;transition:all .2s}
+    .lesson-card:hover{background:rgba(201,168,76,.12);border-color:var(--gold,#c9a84c)}
+    .lesson-card.completed{border-color:#4ade80;background:rgba(74,222,128,.06)}
+    .lesson-card.active{border-color:var(--gold,#c9a84c);background:rgba(201,168,76,.14)}
+    .lesson-title{font-size:.78rem;color:var(--gold,#c9a84c);font-weight:600}
+    .lesson-meta{font-size:.67rem;color:#888}
+    .ls-board{display:grid;grid-template-columns:repeat(8,var(--sq));margin:10px 0}
+    .ls-sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s}
+    .ls-sq.light{background:#f0d9b5}.ls-sq.dark{background:#b58863}
+    .ls-sq.highlight{outline:3px solid var(--gold,#c9a84c);outline-offset:-3px;box-shadow:inset 0 0 10px rgba(201,168,76,.3)}
+    .ls-sq.selected{background:rgba(201,168,76,.5) !important}
+    .ls-sq.legal-move::after{content:'';width:30%;height:30%;background:rgba(0,0,0,.3);border-radius:50%;display:block}
+    .ls-piece{width:80%;height:80%;object-fit:contain;pointer-events:none}
+    .narration-bubble{background:rgba(201,168,76,.1);border:1px solid var(--gold,#c9a84c);border-radius:8px;padding:12px 16px;font-size:.84rem;color:var(--text,#e8e0d0);max-width:480px;width:100%;margin-bottom:10px;line-height:1.6}
+    .instruction-box{background:rgba(255,255,255,.04);border:1px solid var(--border,rgba(201,168,76,.18));border-radius:6px;padding:8px 12px;font-size:.78rem;color:var(--gold,#c9a84c);max-width:480px;width:100%;margin-bottom:8px}
+    .ls-status{font-size:.88rem;min-height:26px;font-weight:600;margin-bottom:6px}
+    .ls-status.correct{color:#4ade80}.ls-status.wrong{color:#f87171}
+    .badge-pill{display:inline-block;background:linear-gradient(135deg,#c9a84c,#f0cc7a);color:#1a1306;border-radius:12px;padding:3px 12px;font-size:.72rem;font-weight:700;margin-top:6px}
+    .progress-tree{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+    .pt-cat{font-size:.7rem;color:#888;display:flex;align-items:center;gap:6px;margin-bottom:2px}
+    .pt-ring{width:12px;height:12px;border-radius:50%;border:2px solid var(--border,rgba(201,168,76,.18));display:inline-block}
+    .pt-ring.done{border-color:#4ade80;background:#4ade80}
+    .wisdom-card{background:rgba(201,168,76,.06);border:1px solid var(--border,rgba(201,168,76,.18));border-radius:6px;padding:8px 10px;margin-bottom:8px}
+    .wisdom-source{font-size:.68rem;color:#888;font-style:italic;margin-bottom:3px}
+    .wisdom-text{font-size:.75rem;color:var(--text,#e8e0d0);line-height:1.5}
+    @media(max-width:900px){.lessons-layout{grid-template-columns:1fr}.ls-sidebar,.ls-right{height:auto}}
+  </style>
+</head>
+<body>
+<nav class="top-nav" style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <a href="../../" class="nav-logo" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+    <i class="fa-solid fa-graduation-cap" style="color:var(--gold,#c9a84c)"></i>
+    <span style="font-family:'Cinzel',serif;color:var(--gold,#c9a84c)">Chaturanga Lessons</span>
+    <span class="nav-version">v1.0.4</span>
+  </a>
+  <div style="display:flex;gap:10px">
+    <a href="../../lessons/vyuha-formations.html" class="nav-icon-btn" title="Vyuha Formations" style="text-decoration:none"><i class="fa-brands fa-pagelines"></i></a>
+    <a id="acharyaLink" href="../../lessons/acharya.html" class="nav-icon-btn" title="Ask Acharya" style="text-decoration:none"><i class="fa-solid fa-chalkboard-user"></i></a>
+    <a href="puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none"><i class="fa-solid fa-puzzle-piece"></i></a>
+    <a href="../../" class="nav-icon-btn" title="Tournament" style="text-decoration:none"><i class="fa-solid fa-trophy"></i></a>
+    <a href="../../" class="nav-icon-btn" title="Game" style="text-decoration:none"><i class="fa-solid fa-chess-board"></i></a>
+  </div>
+</nav>
+
+<div class="lessons-layout">
+  <!-- LEFT: Lesson Browser -->
+  <aside class="ls-sidebar" aria-label="Lesson Sidebar">
+    <h4 class="section-label"><i class="fa-solid fa-book-open"></i> Lessons</h4>
+    <div id="lessonBrowser"></div>
+  </aside>
+
+  <!-- CENTER: Active Lesson -->
+  <main class="ls-main">
+    <div id="lsEmpty" style="text-align:center;margin-top:60px;color:var(--text-muted,#888)">
+      <i class="fa-solid fa-graduation-cap" style="font-size:3rem;color:var(--gold,#c9a84c);display:block;margin-bottom:16px"></i>
+      <p>Select a lesson from the left to begin your journey</p>
+      <p style="font-size:.8rem;color:#888;margin-top:8px">Each lesson is rooted in Indian philosophy and history</p>
+    </div>
+    <div id="lsActive" style="display:none;width:100%;align-items:center;flex-direction:column">
+      <h3 id="lsTitle" style="font-family:'Cinzel',serif;color:var(--gold,#c9a84c);margin-bottom:2px">Lesson</h3>
+      <div id="lsCulture" style="font-size:.72rem;color:#888;margin-bottom:10px;font-style:italic"></div>
+      <div id="lsNarration" class="narration-bubble"></div>
+      <div id="lsInstruction" class="instruction-box"></div>
+      <div id="lsStatus" class="ls-status"></div>
+      <div id="lsBoard" class="ls-board"></div>
+      <div id="lsBadge" style="display:none;text-align:center;margin-top:12px"></div>
+      <button id="lsNextBtn" style="display:none;margin-top:10px;background:linear-gradient(135deg,var(--gold,#c9a84c),#f0cc7a);color:#1a1306;border:none;border-radius:8px;padding:8px 24px;font-size:.85rem;cursor:pointer">
+        Next Lesson <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </main>
+
+  <!-- RIGHT: Progress & Wisdom -->
+  <aside class="ls-right" aria-label="Progress Sidebar">
+    <h4 class="section-label"><i class="fa-solid fa-sitemap"></i> Progress</h4>
+    <div id="progressTree" class="progress-tree"></div>
+    <hr style="border-color:var(--border,rgba(201,168,76,.18));margin:12px 0"/>
+    <h4 class="section-label"><i class="fa-solid fa-om"></i> Cultural Wisdom</h4>
+    <div id="wisdomUnlocks"><p style="font-size:.75rem;color:#888">Complete lessons to unlock wisdom from ancient texts.</p></div>
+  </aside>
+</div>
+
+<script src="../../lessons/lesson-data.js"></script>
+<script src="../../lessons/lesson-engine.js"></script>
+<script>
+const PIECE_SYMBOLS={pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PLAYER_COLORS=['red','blue','green','yellow'];
+const PIECE_NAMES={pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja'};
+const CAT_ICONS={basics:'fa-chess-pawn',opening:'fa-arrow-up-right-dots',tactics:'fa-crosshairs',endgame:'fa-flag-checkered',alliance:'fa-handshake',advanced:'fa-brain'};
+
+let currentLesson=null,lsBoardMap=new Map(),lsSelectedSq=null,lsLegalSqs=[];
+
+function buildBrowser(){
+  const el=document.getElementById('lessonBrowser');
+  const lessons=globalThis.ChaturangaLessonData||[];
+  const cats=[...new Set(lessons.map(l=>l.category))];
+  el.innerHTML='';
+  cats.forEach(cat=>{
+    const catLessons=lessons.filter(l=>l.category===cat);
+    const sec=document.createElement('div');sec.className='cat-section';
+    sec.innerHTML='<div class="cat-header"><i class="fa-solid '+CAT_ICONS[cat]+' fa-xs"></i>'+cat.charAt(0).toUpperCase()+cat.slice(1)+'</div>';
+    catLessons.forEach(l=>{
+      const card=document.createElement('div');
+      const done=globalThis.ChaturangaLessonEngine.isCompleted(l.id);
+      card.className='lesson-card'+(done?' completed':'');
+      card.innerHTML='<div class="lesson-title">'+(done?'✔ ':'')+l.title+'</div><div class="lesson-meta">'+l.difficulty+'</div>';
+      card.onclick=()=>loadLesson(l);
+      sec.appendChild(card);
+    });
+    el.appendChild(sec);
+  });
+  buildProgressTree();
+  buildWisdom();
+}
+
+function loadLesson(l){
+  currentLesson=l;
+  // Update Acharya link to pass lessonId context
+  const achLink = document.getElementById('acharyaLink');
+  if (achLink) achLink.href = `lessons/acharya.html?lessonId=${encodeURIComponent(l.id)}`;
+  globalThis.ChaturangaLessonEngine.startLesson(l);
+  const step=l.steps[0];
+  lsBoardMap=new Map();
+  // Use lesson-specific boardState; fall back to a minimal default if absent
+  const boardDef = l.boardState || {
+    'a1':{owner:0,type:'rook'}, 'e1':{owner:0,type:'king'},
+    'h8':{owner:1,type:'king'}, 'h7':{owner:1,type:'rook'}
+  };
+  Object.entries(boardDef).forEach(([sq,v])=>{
+    lsBoardMap.set(sq, typeof v==='string'
+      ? (([o,t])=>({owner:parseInt(o),type:t}))(v.split(':'))
+      : v);
+  });
+
+  document.getElementById('lsEmpty').style.display='none';
+  document.getElementById('lsActive').style.display='flex';
+  document.getElementById('lsTitle').textContent=l.title;
+  document.getElementById('lsCulture').textContent=l.culturalSource;
+  document.getElementById('lsBadge').style.display='none';
+  document.getElementById('lsNextBtn').style.display='none';
+  showStep(step);
+  renderLsBoard(step);
+
+  document.querySelectorAll('.lesson-card').forEach(c=>{
+    c.classList.toggle('active',c.querySelector('.lesson-title')?.textContent.replace('✔ ','')===l.title);
+  });
+}
+
+function showStep(step){
+  document.getElementById('lsNarration').textContent=step.narration;
+  document.getElementById('lsInstruction').innerHTML='<i class="fa-solid fa-arrow-right" style="color:var(--gold,#c9a84c)"></i> '+step.instruction;
+  document.getElementById('lsStatus').textContent='';
+}
+
+function renderLsBoard(step) {
+  const el = document.getElementById('lsBoard');
+  el.innerHTML = '';
+  const highlights = step?.highlight || [];
+  
+  for (let r = 8; r >= 1; r--) {
+    for (let f = 0; f < 8; f++) {
+      const sq = String.fromCodePoint(97 + f) + r;
+      const cell = document.createElement('div');
+      cell.className = `ls-sq ${(f + r) % 2 === 0 ? 'light' : 'dark'}`;
+      if (highlights.includes(sq)) cell.classList.add('highlight');
+      if (lsSelectedSq === sq) cell.classList.add('selected');
+      
+      const piece = lsBoardMap.get(sq);
+      if (piece) {
+        const img = document.createElement('img');
+        img.className = 'ls-piece';
+        const typeStr = (PIECE_NAMES[piece.type] || piece.type).toLowerCase();
+        img.src = `images/pieces/${PLAYER_COLORS[piece.owner]}_${typeStr}.png`;
+        img.onerror = () => {
+          img.style.display = 'none';
+          const span = document.createElement('span');
+          span.style.fontSize = 'calc(var(--sq)*.55)';
+          span.textContent = PIECE_SYMBOLS[piece.type] || '?';
+          cell.appendChild(span);
+        };
+        cell.appendChild(img);
+      }
+      cell.onclick = () => onLsClick(sq);
+      el.appendChild(cell);
+    }
+  }
+}
+
+function attemptLsMove(from, to, stepData) {
+  const piece = lsBoardMap.get(from);
+  lsBoardMap.set(to, piece);
+  lsBoardMap.delete(from);
+  
+  const res = globalThis.ChaturangaLessonEngine.validatePlayerMove(from, to);
+  if (!res.valid) {
+    lsBoardMap.set(from, piece);
+    lsBoardMap.delete(to);
+  }
+  
+  lsSelectedSq = null;
+  handleLsResult(res);
+  renderLsBoard(globalThis.ChaturangaLessonEngine.getCurrentStepData() || {});
+}
+
+function onLsClick(sq) {
+  if (!currentLesson) return;
+  const stepData = globalThis.ChaturangaLessonEngine.getCurrentStepData();
+  if (!stepData) return;
+
+  if (stepData.allowAnyMove) {
+    handleLsResult(globalThis.ChaturangaLessonEngine.validatePlayerMove(sq, sq));
+    return;
+  }
+
+  if (lsSelectedSq) {
+    if (lsSelectedSq === sq) {
+      lsSelectedSq = null;
+      renderLsBoard(stepData);
+    } else {
+      attemptLsMove(lsSelectedSq, sq, stepData);
+    }
+    return;
+  }
+
+  const piece = lsBoardMap.get(sq);
+  if (piece && piece.owner === 0) {
+    lsSelectedSq = sq;
+    renderLsBoard(stepData);
+  }
+}
+
+function handleLsResult(res){
+  if(!res) return;
+  const statusEl=document.getElementById('lsStatus');
+  if(res.valid){
+    statusEl.textContent=res.successMessage||'Correct!';
+    statusEl.className='ls-status correct';
+    if(res.complete){
+      globalThis.ChaturangaLessonEngine.saveProgress(currentLesson.id,true);
+      document.getElementById('lsBadge').style.display='block';
+      document.getElementById('lsBadge').innerHTML=
+        '<i class="fa-solid fa-award" style="font-size:1.5rem;color:var(--gold,#c9a84c);display:block;margin-bottom:6px"></i>'+
+        '<span class="badge-pill">'+res.badge+'</span>'+
+        (res.moralLesson?'<div style="margin-top:10px;font-size:.8rem;color:#ccc;font-style:italic;max-width:400px">📜 '+res.moralLesson+'</div>':'');
+      document.querySelectorAll('.lesson-card').forEach(c=>{
+        if(c.querySelector('.lesson-title')?.textContent.replace('✔ ','')===currentLesson.title){c.classList.add('completed');c.querySelector('.lesson-title').textContent='✔ '+currentLesson.title;}
+      });
+      const nxt=globalThis.ChaturangaLessonEngine.getNextLesson(currentLesson.id);
+      if(nxt){
+        const btn=document.getElementById('lsNextBtn');
+        btn.style.display='inline-flex'; btn.textContent=''; btn.innerHTML='<i class="fa-solid fa-arrow-right"></i>&nbsp;Next: '+nxt.title;
+        btn.onclick=()=>loadLesson(nxt);
+      }
+      buildProgressTree(); buildWisdom();
+    } else if(res.nextStep){
+      showStep(res.nextStep);
+      renderLsBoard(res.nextStep);
+    }
+  } else {
+    statusEl.textContent=res.wrongMessage||'Try again.';
+    statusEl.className='ls-status wrong';
+  }
+}
+
+function buildProgressTree(){
+  const el=document.getElementById('progressTree');
+  const lessons=globalThis.ChaturangaLessonData||[];
+  const cats=[...new Set(lessons.map(l=>l.category))];
+  el.innerHTML='';
+  cats.forEach(cat=>{
+    const catLessons=lessons.filter(l=>l.category===cat);
+    const doneCount=catLessons.filter(l=>globalThis.ChaturangaLessonEngine.isCompleted(l.id)).length;
+    const row=document.createElement('div');row.className='pt-cat';
+    row.innerHTML='<i class="fa-solid '+CAT_ICONS[cat]+' fa-xs"></i><span>'+cat.charAt(0).toUpperCase()+cat.slice(1)+'</span>';
+    catLessons.forEach(l=>{
+      const ring=document.createElement('span');ring.className='pt-ring';
+      if(globalThis.ChaturangaLessonEngine.isCompleted(l.id)) ring.classList.add('done');
+      ring.title=l.title;
+      row.appendChild(ring);
+    });
+    row.innerHTML+='<span style="margin-left:auto;font-size:.65rem;color:#888">'+doneCount+'/'+catLessons.length+'</span>';
+    el.appendChild(row);
+  });
+}
+
+function buildWisdom(){
+  const el=document.getElementById('wisdomUnlocks');
+  const wisdom=globalThis.ChaturangaLessonEngine.getUnlockedWisdom();
+  if(!wisdom.length){el.innerHTML='<p style="font-size:.75rem;color:#888">Complete lessons to unlock wisdom from ancient texts.</p>';return;}
+  el.innerHTML=wisdom.map(w=>'<div class="wisdom-card"><div class="wisdom-source">'+w.source+'</div><div class="wisdom-text">'+w.lesson+'</div></div>').join('');
+}
+
+buildBrowser();
+</script>
+</body>
+</html>

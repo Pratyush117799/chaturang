@@ -1,0 +1,747 @@
+=== Game 4 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ec3 | Blue: Hf3 | Green: Kd7 | Yellow: Kb4
+2. Red: Ha3 | Blue: Hxd2 | Green: Kd8 | Yellow: Kxa3
+3. Red: Ee5 | Blue: Ef5 | Green: Pe6 | Yellow: Ea4
+4. Red: Kxd2 | Blue: Forfeit(horse) | Green: Pxf5 | Yellow: Forfeit(rook)
+5. Red: Exg3 | Blue: Kxg3 | Green: Pxg4 | Yellow: Forfeit(rook)
+6. Red: Pc3 | Blue: Kxg4 | Green: Hf6 | Yellow: Hc6
+7. Red: Forfeit(elephant) | Blue: Rxh7 | Green: Ed6 | Yellow: Exa2
+8. Red: Rxa2 | Blue: Rxh8 | Green: Exb8 | Yellow: Kxa2
+9. Red: Forfeit(elephant) | Blue: Rxd8 | Green: Exb6 | Yellow: Forfeit(elephant)
+10. Red: Forfeit(rook) | Blue: Rxd2
+
+Winner: Team 2
+
+============================================================
+
+=== Game 6 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Ef5 | Green: Pf6 | Yellow: Pc5
+2. Red: Ke1 | Blue: Exh7 | Green: Ed6 | Yellow: Forfeit(rook)
+3. Red: Hc3 | Blue: Eh5 | Green: Rxh5 | Yellow: Ec4
+4. Red: Pa3 | Blue: Forfeit(rook) | Green: Rxh4 | Yellow: Exc2
+5. Red: Ke2 | Blue: Forfeit(rook) | Green: Rxh2 | Yellow: Forfeit(rook)
+6. Red: Ke1 | Blue: Rxh2 | Green: Exb8 | Yellow: Rxb8
+7. Red: Ke2 | Blue: Pf4 | Green: Kd7 | Yellow: Rxg8
+8. Red: Ke1 | Blue: Pf3 | Green: Forfeit(rook) | Yellow: Kb4
+9. Red: Ke2 | Blue: Rh5 | Green: Pg6 | Yellow: Kxc3
+10. Red: Kxf3 | Blue: Rxc5 | Green: Pe6 | Yellow: Rxg6
+11. Red: Kxf4 | Blue: Rxc3
+
+Winner: Team 1
+
+============================================================
+
+=== Game 2 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ec3 | Blue: Forfeit(rook) | Green: Ef6 | Yellow: Forfeit(rook)
+2. Red: Ha3 | Blue: Hf3 | Green: Ed8 | Yellow: Pc6
+3. Red: Hxb5 | Blue: Ef5 | Green: Forfeit(rook) | Yellow: Ec4
+4. Red: Hxa7 | Blue: Rh3 | Green: Ef6 | Yellow: Rxa7
+5. Red: Ec5 | Blue: Rh1 | Green: Hh6 | Yellow: Exc2
+6. Red: Kxc2 | Blue: Exh7 | Green: Rxh7 | Yellow: Pd6
+7. Red: Forfeit(horse) | Blue: Hxd2 | Green: Pxd6 | Yellow: Ra6
+8. Red: Rxg1 | Blue: He4 | Green: Rh8 | Yellow: Forfeit(horse)
+9. Red: Rxh1 | Blue: Kg5 | Green: Pxc5 | Yellow: Pc7
+10. Red: Rxh6 | Blue: Hxf6 | Green: Pxf6 | Yellow: Forfeit(elephant)
+11. Red: Rxh8 | Blue: Pf4 | Green: Ke7 | Yellow: Forfeit(horse)
+12. Red: Forfeit(elephant) | Blue: Pe4 | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+13. Red: Forfeit(horse) | Blue: Pf3 | Green: Pc4 | Yellow: Forfeit(elephant)
+14. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+15. Red: Rxb8 | Blue: Pd4 | Green: Pf5 | Yellow: Ka4
+16. Red: Forfeit(horse) | Blue: Kxf5 | Green: Pf6 | Yellow: Rc6
+17. Red: Kd2 | Blue: Pf2 | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+18. Red: Forfeit(elephant) | Blue: Kg6 | Green: Pf5 | Yellow: Rxg6
+19. Red: Kc2 | Blue: Pe3 | Green: Kf7 | Yellow: Pd7
+20. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Kxg6 | Yellow: Pe7
+21. Red: Kd2 | Blue: Pe2 | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+22. Red: Forfeit(elephant) | Blue: Pd3 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+23. Red: Kxe2 | Blue: Pxc4 | Green: Kg5 | Yellow: Pf7
+24. Red: Forfeit(elephant) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+25. Red: Kf2 | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Pg7
+26. Red: Kg2 | Blue: Forfeit(rook) | Green: Kg6 | Yellow: Forfeit(horse)
+27. Red: Kf2 | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Ka5
+28. Red: Ke2 | Blue: Forfeit(horse) | Green: Kxg7 | Yellow: Ka6
+29. Red: Kd2 | Blue: Forfeit(horse) | Green: Kf7 | Yellow: Forfeit(horse)
+30. Red: Forfeit(horse) | Blue: Pb4 | Green: Forfeit(horse) | Yellow: Ka5
+31. Red: Kc2 | Blue: Pc4 | Green: Ke7 | Yellow: Ka6
+32. Red: Forfeit(horse) | Blue: Pa4 | Green: Kf7 | Yellow: Forfeit(rook)
+33. Red: Forfeit(elephant) | Blue: Pb4
+
+Winner: Team 1
+
+============================================================
+
+=== Game 8 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ec3 | Blue: Pf4 | Green: Hf6 | Yellow: Ec4
+2. Red: Pa3 | Blue: Pf3 | Green: Kd7 | Yellow: Hc6
+3. Red: Ke1 | Blue: Pe3 | Green: Kxc6 | Yellow: Pc8
+4. Red: Pxe3 | Blue: Pxe3 | Green: Rg8 | Yellow: Forfeit(horse)
+5. Red: Kd2 | Blue: Pf1 | Green: Hd5 | Yellow: Exc2
+6. Red: Ra2 | Blue: Rg1 | Green: Kxb6 | Yellow: Forfeit(horse)
+7. Red: Kxc2 | Blue: Ef5 | Green: Rh8 | Yellow: Kxb6
+8. Red: Kd2 | Blue: Rh1 | Green: Rg8 | Yellow: Rxa3
+9. Red: Rxa3 | Blue: Exf7 | Green: Hxc3 | Yellow: Pc5
+10. Red: Pxc3 | Blue: Pf2 | Green: Pe6 | Yellow: Forfeit(elephant)
+11. Red: Kxe3 | Blue: Hg4 | Green: Ed6 | Yellow: Forfeit(horse)
+12. Red: Kxf2 | Blue: Rh3 | Green: Ed4 | Yellow: Pxd4
+13. Red: Pxd4 | Blue: Hh2 | Green: Rxc8 | Yellow: Forfeit(rook)
+14. Red: Rxh3 | Blue: Eh5 | Green: Ph6 | Yellow: Kb5
+15. Red: Rxh4 | Blue: Ef7 | Green: Pe5 | Yellow: Forfeit(rook)
+16. Red: Rxh2 | Blue: Ef5 | Green: Pxd4 | Yellow: Forfeit(elephant)
+17. Red: Kxf1 | Blue: Ef3 | Green: Pd3 | Yellow: Forfeit(rook)
+18. Red: Kf2 | Blue: Ed5 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+19. Red: Rxh6 | Blue: Forfeit(rook) | Green: Rc2 | Yellow: Forfeit(elephant)
+20. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Rxf2
+
+Winner: Team 2
+
+============================================================
+
+=== Game 1 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Hc6
+2. Red: Ec3 | Blue: Pf4 | Green: Pe6 | Yellow: Pc7
+3. Red: Forfeit(rook) | Blue: Pe4 | Green: Hf6 | Yellow: Hb4
+4. Red: Pa3 | Blue: Pd4 | Green: Ke7 | Yellow: Hxc2
+5. Red: Forfeit(horse) | Blue: Pxc3 | Green: Ed6 | Yellow: Ra7
+6. Red: Pxc3 | Blue: Ef5 | Green: Pxf5 | Yellow: Pxd6
+7. Red: Ra2 | Blue: Hf3 | Green: Rxb8 | Yellow: Ec4
+8. Red: Rxc2 | Blue: Rh2 | Green: Forfeit(elephant) | Yellow: Rxe7
+9. Red: Kxf3 | Blue: Kg5 | Green: Hd5 | Yellow: Rxf7
+10. Red: Kxg3 | Blue: Rxh7 | Green: Pf4 | Yellow: Forfeit(horse)
+11. Red: Kxg2 | Blue: Rh6 | Green: Hxc3 | Yellow: Forfeit(horse)
+12. Red: Rxc3 | Blue: Forfeit(horse) | Green: Rxb6 | Yellow: Kxb6
+13. Red: Kxg1 | Blue: Rxd6 | Green: Forfeit(elephant) | Yellow: Kb7
+14. Red: Kg2 | Blue: Forfeit(horse) | Green: Pf3 | Yellow: Ee2
+15. Red: Kg3 | Blue: Rxd2 | Green: Pxe2 | Yellow: Rxg7
+16. Red: Forfeit(horse) | Blue: Kh5 | Green: Pe1 | Yellow: Forfeit(horse)
+17. Red: Kh3 | Blue: Rd4 | Green: Forfeit(elephant) | Yellow: Kb6
+18. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Ke2 | Yellow: Kb7
+19. Red: Kh2 | Blue: Kh6 | Green: Kf2 | Yellow: Kb6
+20. Red: Kh1 | Blue: Kxg7 | Green: Ke2 | Yellow: Forfeit(elephant)
+21. Red: Kg2 | Blue: Re4 | Green: Forfeit(horse) | Yellow: Kb7
+22. Red: Hd2 | Blue: Rxe2 | Green: Forfeit(elephant) | Yellow: Kb6
+23. Red: Kg3 | Blue: Rxd2 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+24. Red: Forfeit(elephant) | Blue: Kf7 | Green: Forfeit(any) | Yellow: Kb7
+25. Red: Kg4 | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(elephant)
+26. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(any) | Yellow: Forfeit(horse)
+27. Red: Rf3 | Blue: Ke7 | Green: Forfeit(any) | Yellow: Pc5
+28. Red: Forfeit(horse) | Blue: Rd4 | Green: Forfeit(pawn-king) | Yellow: Forfeit(horse)
+29. Red: Re3 | Blue: Rxg4
+
+Winner: Team 2
+
+============================================================
+
+=== Game 5 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ee3 | Blue: Hf3 | Green: Ed6 | Yellow: Hc6
+2. Red: Forfeit(rook) | Blue: Rh2 | Green: Exb8 | Yellow: Hxb8
+3. Red: Exg1 | Blue: Hxg1 | Green: Kd8 | Yellow: Ra7
+4. Red: Kc1 | Blue: Pf4 | Green: Forfeit(elephant) | Yellow: Pc5
+5. Red: Kd1 | Blue: Ef5 | Green: Forfeit(rook) | Yellow: Pd5
+6. Red: Forfeit(elephant) | Blue: Exf7 | Green: Forfeit(rook) | Yellow: Pe5
+7. Red: Kc1 | Blue: Pxe5 | Green: Forfeit(rook) | Yellow: Ec4
+8. Red: Forfeit(rook) | Blue: Pd5 | Green: Hf6 | Yellow: Exc2
+9. Red: Kxc2 | Blue: Pc5 | Green: Ke8 | Yellow: Ra8
+10. Red: Hc3 | Blue: Ef5 | Green: Rf8 | Yellow: Hc6
+11. Red: Hb1 | Blue: Pxb6 | Green: Pe6 | Yellow: Rxe8
+12. Red: Forfeit(rook) | Blue: Pf3 | Green: Rxe8 | Yellow: Kxb6
+13. Red: Kb3 | Blue: Pe3 | Green: Ra8 | Yellow: Pc7
+14. Red: Hc3 | Blue: Exh7 | Green: Hxh7 | Yellow: Forfeit(elephant)
+15. Red: Rxg1 | Blue: Forfeit(elephant) | Green: Rxa2 | Yellow: Pd7
+16. Red: Forfeit(elephant) | Blue: Rh3 | Green: Pg6 | Yellow: Hd4
+17. Red: Forfeit(elephant) | Blue: Pxd2 | Green: Rxb2 | Yellow: Forfeit(rook)
+18. Red: Kxb2 | Blue: Rxc3 | Green: Pe5 | Yellow: Forfeit(elephant)
+19. Red: Kxc3 | Blue: Forfeit(elephant) | Green: Pxd4 | Yellow: Pe7
+20. Red: Forfeit(elephant) | Blue: Pf2 | Green: Pd3 | Yellow: Pf7
+21. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Pg5 | Yellow: Forfeit(horse)
+22. Red: Kxd2 | Blue: Kh3 | Green: Pg4 | Yellow: Forfeit(rook)
+23. Red: Forfeit(elephant) | Blue: Kh2 | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+24. Red: Rxg4 | Blue: Forfeit(rook) | Green: Hf6 | Yellow: Kb7
+25. Red: Forfeit(horse) | Blue: Kh3 | Green: Forfeit(pawn-king) | Yellow: Kc7
+26. Red: Forfeit(elephant) | Blue: Kxg4 | Green: Forfeit(elephant) | Yellow: Pg7
+27. Red: Forfeit(elephant) | Blue: Kg5 | Green: He4 | Yellow: Forfeit(horse)
+28. Red: Kxd3 | Blue: Forfeit(elephant) | Green: Hxf2 | Yellow: Kb7
+29. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Kb6
+30. Red: Kc2 | Blue: Kg6 | Green: He4 | Yellow: Kb7
+31. Red: Kb3 | Blue: Kxg7 | Green: Hc5 | Yellow: Forfeit(elephant)
+32. Red: Kb2 | Blue: Kg6 | Green: Forfeit(pawn-king) | Yellow: Kb6
+33. Red: Forfeit(rook) | Blue: Kf7 | Green: He4 | Yellow: Forfeit(horse)
+34. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Kb7
+35. Red: Kb3 | Blue: Forfeit(horse) | Green: Hc5 | Yellow: Forfeit(rook)
+36. Red: Forfeit(elephant) | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Kc7
+37. Red: Forfeit(horse) | Blue: Kg6 | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+38. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+39. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Kb6
+40. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Kxc5
+41. Red: Kc2 | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+42. Red: Forfeit(horse) | Blue: Kg5 | Green: Forfeit(any) | Yellow: Forfeit(elephant)
+43. Red: Kd2 | Blue: Kg6 | Green: Forfeit(any) | Yellow: Kb4
+44. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(any) | Yellow: Forfeit(horse)
+45. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+46. Red: Forfeit(rook) | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+47. Red: Ke2 | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+48. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+49. Red: Forfeit(horse) | Blue: Ke7 | Green: Forfeit(pawn-king) | Yellow: Kb5
+50. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(any) | Yellow: Forfeit(elephant)
+51. Red: Forfeit(rook) | Blue: Kf7 | Green: Forfeit(any) | Yellow: Kb6
+52. Red: Kf2 | Blue: Ke7 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+53. Red: Forfeit(horse) | Blue: Kf7 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+54. Red: Forfeit(elephant) | Blue: Kg6 | Green: Forfeit(pawn-king) | Yellow: Forfeit(rook)
+55. Red: Kg2 | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Kb7
+56. Red: Forfeit(horse) | Blue: Kg7 | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+57. Red: Forfeit(rook) | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+58. Red: Kf2 | Blue: Forfeit(horse) | Green: Forfeit(pawn-king) | Yellow: Forfeit(rook)
+59. Red: Kg3 | Blue: Kg7 | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+60. Red: Kf2 | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Kc7
+61. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(pawn-king) | Yellow: Kb6
+62. Red: Kg2 | Blue: Kg6 | Green: Forfeit(rook) | Yellow: Kc7
+63. Red: Forfeit(rook) | Blue: Kf7 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+64. Red: Kg3 | Blue: Kg6 | Green: Forfeit(elephant) | Yellow: Kb7
+65. Red: Forfeit(horse) | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Kc7
+66. Red: Forfeit(elephant) | Blue: Kg7 | Green: Forfeit(pawn-king) | Yellow: Kb7
+67. Red: Forfeit(elephant) | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+68. Red: Kg4 | Blue: Ke7 | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+69. Red: Forfeit(horse) | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+70. Red: Kg3 | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Kc7
+71. Red: Kg2 | Blue: Ke7 | Green: Forfeit(elephant) | Yellow: Kb7
+72. Red: Forfeit(horse) | Blue: Kf7 | Green: Forfeit(any) | Yellow: Forfeit(horse)
+73. Red: Kf2 | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+74. Red: Kg2 | Blue: Ke7 | Green: Forfeit(rook) | Yellow: Kb6
+75. Red: Forfeit(horse) | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Kb7
+76. Red: Kg3 | Blue: Forfeit(rook) | Green: Forfeit(pawn-king) | Yellow: Forfeit(rook)
+77. Red: Forfeit(rook) | Blue: Ke7 | Green: Forfeit(pawn-king) | Yellow: Forfeit(horse)
+78. Red: Kg2 | Blue: Forfeit(elephant) | Green: Forfeit(any) | Yellow: Forfeit(rook)
+79. Red: Kf2 | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+80. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+81. Red: Ke2 | Blue: Kf7 | Green: Forfeit(any) | Yellow: Kb6
+82. Red: Kf2 | Blue: Ke7 | Green: Forfeit(pawn-king) | Yellow: Forfeit(rook)
+83. Red: Kg3 | Blue: Forfeit(elephant) | Green: Forfeit(pawn-king) | Yellow: Forfeit(rook)
+84. Red: Kg4 | Blue: Forfeit(horse) | Green: Forfeit(any) | Yellow: Forfeit(horse)
+85. Red: Kg3 | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Kb7
+86. Red: Kg4 | Blue: Ke7 | Green: Forfeit(any) | Yellow: Kc7
+87. Red: Kg5 | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Kb7
+88. Red: Kg4 | Blue: Kf7 | Green: Forfeit(rook) | Yellow: Kb6
+89. Red: Kg3 | Blue: Ke7 | Green: Forfeit(rook) | Yellow: Kb7
+90. Red: Forfeit(elephant) | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+91. Red: Forfeit(rook) | Blue: Kf7 | Green: Forfeit(horse) | Yellow: Kc7
+92. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+93. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+94. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(pawn-king) | Yellow: Forfeit(horse)
+95. Red: Kf2 | Blue: Ke7 | Green: Forfeit(pawn-king) | Yellow: Kb7
+96. Red: Kg3 | Blue: Kf7 | Green: Forfeit(pawn-king) | Yellow: Forfeit(horse)
+97. Red: Kg2 | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+98. Red: Kf2 | Blue: Forfeit(rook) | Green: Forfeit(any) | Yellow: Forfeit(elephant)
+99. Red: Kg3 | Blue: Ke7 | Green: Forfeit(elephant) | Yellow: Kc7
+100. Red: Kg2 | Blue: Forfeit(elephant) | Green: Forfeit(any) | Yellow: Kb6
+
+Result: Draw / Timeout
+
+============================================================
+
+=== Game 3 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Pf4 | Green: Kd7 | Yellow: Forfeit(rook)
+2. Red: Forfeit(rook) | Blue: Hg4 | Green: Hf6 | Yellow: Forfeit(rook)
+3. Red: Kd1 | Blue: Ef5 | Green: Ed6 | Yellow: Ec4
+4. Red: Pc3 | Blue: Pf3 | Green: Hxg4 | Yellow: Hc6
+5. Red: Pa3 | Blue: Kxg4 | Green: Kxc6 | Yellow: Ka6
+6. Red: Forfeit(horse) | Blue: Pe4 | Green: Kxb6 | Yellow: Kxb6
+7. Red: Ke1 | Blue: Exf7 | Green: Pg6 | Yellow: Rxa3
+8. Red: Rxa3 | Blue: Rxh7 | Green: Forfeit(horse) | Yellow: Ec6
+9. Red: Forfeit(horse) | Blue: Rxh8 | Green: Forfeit(rook) | Yellow: Pc5
+10. Red: Forfeit(horse) | Blue: Kg3 | Green: Eb4 | Yellow: Forfeit(horse)
+11. Red: Forfeit(horse) | Blue: Rxb8 | Green: Pe6 | Yellow: Pc7
+12. Red: Ee3 | Blue: Ef5 | Green: Forfeit(rook) | Yellow: Kb5
+13. Red: Exc5 | Blue: Ef7 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+14. Red: Pxb4 | Blue: Ed5 | Green: Pxd5 | Yellow: Forfeit(rook)
+15. Red: Ke2 | Blue: Pxd5 | Green: Pg5 | Yellow: Kxc5
+16. Red: Forfeit(elephant) | Blue: Pxc6 | Green: Pg4 | Yellow: Pd7
+17. Red: Rc3 | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Kd4
+18. Red: Rxc6 | Blue: Kxg4 | Green: Forfeit(rook) | Yellow: Pe7
+19. Red: Kxf3 | Blue: Kxf3
+
+Winner: Team 2
+
+============================================================
+
+=== Game 7 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Ef5 | Green: Hf6 | Yellow: Ec4
+2. Red: Pc3 | Blue: Pf4 | Green: Hd5 | Yellow: Exa2
+3. Red: Ke1 | Blue: Pe4 | Green: Hxc3 | Yellow: Ea4
+4. Red: Hxc3 | Blue: Pd4 | Green: Pf6 | Yellow: Pc5
+5. Red: Ee3 | Blue: Pxc3 | Green: Ph6 | Yellow: Hc6
+6. Red: Rxa4 | Blue: Kh3 | Green: Ed6 | Yellow: Hxe7
+7. Red: Rxa5 | Blue: Pxb2 | Green: Exb8 | Yellow: Rxa5
+8. Red: Exc5 | Blue: Pf3 | Green: Rf8 | Yellow: Rxc5
+9. Red: Forfeit(elephant) | Blue: Eh7 | Green: Kxe7 | Yellow: Forfeit(horse)
+10. Red: Ke2 | Blue: Forfeit(rook) | Green: Exb6 | Yellow: Pc7
+11. Red: Kxf3 | Blue: Hf1 | Green: Kf7 | Yellow: Forfeit(elephant)
+12. Red: Kxg2 | Blue: Hxd2 | Green: Kg6 | Yellow: Pd7
+13. Red: Forfeit(rook) | Blue: Kxg2 | Green: Kxh7 | Yellow: Forfeit(elephant)
+14. Red: Forfeit(elephant) | Blue: Pf1 | Green: Kg6 | Yellow: Pe7
+15. Red: Forfeit(rook) | Blue: Pe1 | Green: Kh7 | Yellow: Forfeit(elephant)
+16. Red: Forfeit(elephant) | Blue: Pd1 | Green: Rb8 | Yellow: Rd5
+17. Red: Forfeit(any) | Blue: Rxh6 | Green: Kxh6 | Yellow: Pxf6
+18. Red: Forfeit(any) | Blue: He4 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+19. Red: Forfeit(any) | Blue: Pc1 | Green: Eb4 | Yellow: Pxg7
+20. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Rb6 | Yellow: Ph7
+21. Red: Forfeit(horse) | Blue: Hc3 | Green: Rf6 | Yellow: Forfeit(horse)
+22. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Kxh7 | Yellow: Re5
+23. Red: Forfeit(elephant) | Blue: Pb1 | Green: Exb2 | Yellow: Re3
+24. Red: Forfeit(pawn-king) | Blue: Hd5 | Green: Kg6 | Yellow: Re4
+25. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Rc6 | Yellow: Re5
+26. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Rxd5
+27. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kg6 | Yellow: Forfeit(elephant)
+28. Red: Forfeit(horse) | Blue: Kg3 | Green: Forfeit(horse) | Yellow: Re5
+29. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Kg7 | Yellow: Forfeit(horse)
+30. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Kg6 | Yellow: Forfeit(horse)
+31. Red: Forfeit(any) | Blue: Kg2 | Green: Kg7 | Yellow: Forfeit(elephant)
+32. Red: Forfeit(elephant) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Re4
+33. Red: Forfeit(pawn-king) | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Re5
+34. Red: Forfeit(elephant) | Blue: Kg3 | Green: Kg7 | Yellow: Rd5
+35. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Re5
+36. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+37. Red: Forfeit(horse) | Blue: Kg2 | Green: Ed4 | Yellow: Re3
+38. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Kf7 | Yellow: Re5
+39. Red: Forfeit(elephant) | Blue: Forfeit(rook) | Green: Ef6 | Yellow: Forfeit(pawn-king)
+40. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+41. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+42. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kg6 | Yellow: Forfeit(elephant)
+43. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Kg7 | Yellow: Re4
+44. Red: Forfeit(rook) | Blue: Kf2 | Green: Kf7 | Yellow: Forfeit(pawn-king)
+45. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+46. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Rc3 | Yellow: Forfeit(elephant)
+47. Red: Forfeit(elephant) | Blue: Kg2 | Green: Forfeit(horse) | Yellow: Forfeit(pawn-king)
+48. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Kg7 | Yellow: Forfeit(horse)
+49. Red: Forfeit(horse) | Blue: Kf2 | Green: Eh8 | Yellow: Forfeit(horse)
+50. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Ef6 | Yellow: Forfeit(pawn-king)
+51. Red: Forfeit(any) | Blue: Kg2 | Green: Eh8 | Yellow: Re5
+52. Red: Forfeit(pawn-king) | Blue: Kf2 | Green: Kg6 | Yellow: Re4
+53. Red: Forfeit(horse) | Blue: Kg2 | Green: Kg5 | Yellow: Forfeit(horse)
+54. Red: Forfeit(any) | Blue: Kf2 | Green: Kg6 | Yellow: Forfeit(horse)
+55. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(pawn-king)
+56. Red: Forfeit(horse) | Blue: Kg2 | Green: Ef6 | Yellow: Forfeit(horse)
+57. Red: Forfeit(elephant) | Blue: Kf2 | Green: Rd3 | Yellow: Re5
+58. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Kg6 | Yellow: Forfeit(elephant)
+59. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Kg7 | Yellow: Re4
+60. Red: Forfeit(any) | Blue: Kg2 | Green: Kf7 | Yellow: Re5
+61. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Ed4 | Yellow: Rc5
+62. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Kg7 | Yellow: Re5
+63. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Re6
+64. Red: Forfeit(any) | Blue: Kh2 | Green: Ef2 | Yellow: Re4
+65. Red: Forfeit(pawn-king) | Blue: Kg2 | Green: Ed4 | Yellow: Rxd4
+66. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Rxd4 | Yellow: Forfeit(pawn-king)
+67. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Rd5 | Yellow: Forfeit(elephant)
+68. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(any)
+69. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(any)
+70. Red: Forfeit(rook) | Blue: Kf2 | Green: Rd4 | Yellow: Forfeit(elephant)
+71. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Kg7 | Yellow: Forfeit(pawn-king)
+72. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Kf7 | Yellow: Forfeit(horse)
+73. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+74. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Ke7 | Yellow: Forfeit(any)
+75. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Forfeit(any)
+76. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Ke7 | Yellow: Forfeit(rook)
+77. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Forfeit(any)
+78. Red: Forfeit(rook) | Blue: Kg2 | Green: Forfeit(elephant) | Yellow: Forfeit(any)
+79. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(any)
+80. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Forfeit(any)
+81. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+82. Red: Forfeit(horse) | Blue: Kf2 | Green: Rd5 | Yellow: Forfeit(any)
+83. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(any)
+84. Red: Forfeit(horse) | Blue: Kg2 | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+85. Red: Forfeit(horse) | Blue: Kf2 | Green: Kg7 | Yellow: Forfeit(rook)
+86. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Forfeit(pawn-king)
+87. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Ke7 | Yellow: Forfeit(rook)
+88. Red: Forfeit(any) | Blue: Ke2 | Green: Kf7 | Yellow: Forfeit(any)
+89. Red: Forfeit(rook) | Blue: Kf2 | Green: Re5 | Yellow: Forfeit(rook)
+90. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Re4 | Yellow: Forfeit(elephant)
+91. Red: Forfeit(any) | Blue: Kg3 | Green: Ke7 | Yellow: Forfeit(horse)
+92. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Kd7 | Yellow: Forfeit(any)
+93. Red: Forfeit(elephant) | Blue: Kf2 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+94. Red: Forfeit(horse) | Blue: Kg2 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+95. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Rd4 | Yellow: Forfeit(any)
+96. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Re4 | Yellow: Forfeit(any)
+97. Red: Forfeit(rook) | Blue: Kf2 | Green: Ke7 | Yellow: Forfeit(elephant)
+98. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Rd4 | Yellow: Forfeit(pawn-king)
+99. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Forfeit(horse)
+100. Red: Forfeit(horse) | Blue: Ke2 | Green: Kg7 | Yellow: Forfeit(rook)
+
+Result: Draw / Timeout
+
+============================================================
+
+=== Game 10 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Pf4 | Green: Kd7 | Yellow: Pc5
+2. Red: Kd1 | Blue: Pe4 | Green: Ef6 | Yellow: Forfeit(rook)
+3. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Pd5
+4. Red: Ke2 | Blue: Ef5 | Green: Ph6 | Yellow: Ec4
+5. Red: Forfeit(rook) | Blue: Hg4 | Green: Ef4 | Yellow: Pxe4
+6. Red: Forfeit(rook) | Blue: Pxf4 | Green: Forfeit(elephant) | Yellow: Pxf5
+7. Red: Forfeit(rook) | Blue: Pe4 | Green: Ke8 | Yellow: Pxg4
+8. Red: Ee3 | Blue: Rh3 | Green: Kd7 | Yellow: Kb4
+9. Red: Forfeit(rook) | Blue: Kxg4 | Green: Kd8 | Yellow: Exc2
+10. Red: Forfeit(rook) | Blue: Rxe3 | Green: Hf6 | Yellow: Pc6
+11. Red: Kxe3 | Blue: Pd4 | Green: Rf8 | Yellow: Hb5
+12. Red: Ke2 | Blue: Kg5 | Green: Kd7 | Yellow: Ea4
+13. Red: Kd1 | Blue: Kxf6 | Green: Rxb8 | Yellow: Hxd4
+14. Red: Kc1 | Blue: Forfeit(elephant) | Green: Rxa8 | Yellow: Forfeit(rook)
+15. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Kxc6 | Yellow: Kc4
+16. Red: Forfeit(rook) | Blue: Kxg7 | Green: Forfeit(elephant) | Yellow: Hf3
+17. Red: Ha3 | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Exa2
+18. Red: Kc2 | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Hxd2
+19. Red: Kxd2 | Blue: Kxf7 | Green: Rxa3 | Yellow: Forfeit(rook)
+20. Red: Rxg1 | Blue: Kxe7 | Green: Kxb7 | Yellow: Kb4
+21. Red: Forfeit(elephant) | Blue: Pf2 | Green: Kc7 | Yellow: Kxa3
+22. Red: Kc2 | Blue: Forfeit(horse) | Green: Kb6 | Yellow: Ec4
+23. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+24. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(rook) | Yellow: Ea2
+25. Red: Rg4 | Blue: Pe2 | Green: Forfeit(horse) | Yellow: Ec4
+26. Red: Rxc4 | Blue: Kf7 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+27. Red: Kc1 | Blue: Ke7 | Green: Forfeit(elephant) | Yellow: Ka2
+28. Red: Kc2 | Blue: Forfeit(horse) | Green: Kb7 | Yellow: Ka3
+29. Red: Kb1 | Blue: Forfeit(rook) | Green: Kb6 | Yellow: Forfeit(rook)
+30. Red: Rd4 | Blue: Forfeit(rook) | Green: Kb5 | Yellow: Kxb2
+31. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(rook) | Yellow: Kxb1
+32. Red: Re4 | Blue: Kd7 | Green: Forfeit(rook) | Yellow: Kb2
+33. Red: Rxe2 | Blue: Kc7 | Green: Kb4 | Yellow: Kc1
+34. Red: Forfeit(elephant) | Blue: Kb6 | Green: Kb3 | Yellow: Kd1
+35. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Kxe2
+36. Red: Forfeit(rook) | Blue: Kc7 | Green: Kc2 | Yellow: Forfeit(elephant)
+37. Red: Forfeit(pawn-king) | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(horse)
+38. Red: Forfeit(any) | Blue: Kd7 | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+39. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+40. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Kf2
+41. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Kb2 | Yellow: Kg3
+42. Red: Forfeit(horse) | Blue: Ke7 | Green: Forfeit(elephant) | Yellow: Kg4
+43. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Kg3
+44. Red: Forfeit(pawn-king) | Blue: Kd7 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+45. Red: Forfeit(any) | Blue: Ke7 | Green: Kc2 | Yellow: Forfeit(horse)
+46. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Kd2 | Yellow: Forfeit(rook)
+47. Red: Forfeit(pawn-king) | Blue: Kd7 | Green: Forfeit(horse) | Yellow: Kg4
+48. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+49. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Ke2 | Yellow: Forfeit(elephant)
+50. Red: Forfeit(rook) | Blue: Kc7 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+51. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Kf2 | Yellow: Forfeit(elephant)
+52. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Ke2 | Yellow: Forfeit(horse)
+53. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Kd2 | Yellow: Kg5
+54. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+55. Red: Forfeit(elephant) | Blue: Kd7 | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+56. Red: Forfeit(any) | Blue: Kc7 | Green: Forfeit(horse) | Yellow: Kxh6
+57. Red: Forfeit(rook) | Blue: Kb7 | Green: Ke2 | Yellow: Forfeit(rook)
+58. Red: Forfeit(any) | Blue: Kc7 | Green: Forfeit(rook) | Yellow: Kg5
+59. Red: Forfeit(pawn-king) | Blue: Kb7 | Green: Forfeit(horse) | Yellow: Kg4
+60. Red: Forfeit(rook) | Blue: Kb6 | Green: Kd2 | Yellow: Kg5
+61. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Kg4
+62. Red: Forfeit(pawn-king) | Blue: Kb5 | Green: Ke2 | Yellow: Forfeit(elephant)
+63. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Kd2 | Yellow: Forfeit(elephant)
+64. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Ke2 | Yellow: Forfeit(elephant)
+65. Red: Forfeit(any) | Blue: Kb4 | Green: Kf2 | Yellow: Forfeit(horse)
+66. Red: Forfeit(any) | Blue: Kb5 | Green: Ke2 | Yellow: Forfeit(horse)
+67. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Kd2 | Yellow: Kg5
+68. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Kg6
+69. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+70. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Ke2 | Yellow: Forfeit(rook)
+71. Red: Forfeit(any) | Blue: Forfeit(rook) | Green: Kd2 | Yellow: Kf7
+72. Red: Forfeit(horse) | Blue: Kb6 | Green: Kc2 | Yellow: Forfeit(horse)
+73. Red: Forfeit(elephant) | Blue: Kb7 | Green: Forfeit(elephant) | Yellow: Kg7
+74. Red: Forfeit(pawn-king) | Blue: Kb6 | Green: Kd2 | Yellow: Forfeit(rook)
+75. Red: Forfeit(elephant) | Blue: Kc7 | Green: Kc2 | Yellow: Kg6
+76. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Kd2 | Yellow: Forfeit(rook)
+77. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+78. Red: Forfeit(any) | Blue: Kd7 | Green: Forfeit(elephant) | Yellow: Kg7
+79. Red: Forfeit(elephant) | Blue: Ke7 | Green: Forfeit(horse) | Yellow: Kg6
+80. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kc2 | Yellow: Forfeit(horse)
+81. Red: Forfeit(rook) | Blue: Kd7 | Green: Forfeit(horse) | Yellow: Kg7
+82. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+83. Red: Forfeit(any) | Blue: Ke7 | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+84. Red: Forfeit(pawn-king) | Blue: Kd7 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+85. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Kf7
+86. Red: Forfeit(horse) | Blue: Kc7 | Green: Forfeit(elephant) | Yellow: Ke7
+87. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Kb3 | Yellow: Kf7
+88. Red: Forfeit(horse) | Blue: Kb6 | Green: Kb2 | Yellow: Forfeit(horse)
+89. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+90. Red: Forfeit(elephant) | Blue: Kc7 | Green: Forfeit(rook) | Yellow: Kg6
+91. Red: Forfeit(pawn-king) | Blue: Forfeit(rook) | Green: Kc2 | Yellow: Kg5
+92. Red: Forfeit(rook) | Blue: Kd7 | Green: Kb2 | Yellow: Kg4
+93. Red: Forfeit(horse) | Blue: Ke7 | Green: Forfeit(elephant) | Yellow: Kg3
+94. Red: Forfeit(elephant) | Blue: Kd7 | Green: Kb3 | Yellow: Forfeit(elephant)
+95. Red: Forfeit(rook) | Blue: Kc7 | Green: Kb4 | Yellow: Forfeit(elephant)
+96. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+97. Red: Forfeit(any) | Blue: Kd7 | Green: Kb5 | Yellow: Kf2
+98. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(rook) | Yellow: Forfeit(elephant)
+99. Red: Forfeit(rook) | Blue: Kc7 | Green: Kb4 | Yellow: Kg2
+100. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Kg3
+
+Result: Draw / Timeout
+
+============================================================
+
+=== Game 12 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Pf4 | Green: Kd7 | Yellow: Pc5
+2. Red: Kd1 | Blue: Hf3 | Green: Hf6 | Yellow: Ec4
+3. Red: Pc3 | Blue: Hxd2 | Green: Kd8 | Yellow: Pc6
+4. Red: Forfeit(rook) | Blue: Hxb1 | Green: Rg8 | Yellow: Kb4
+5. Red: Forfeit(horse) | Blue: Hxc3 | Green: Rh8 | Yellow: Ka5
+6. Red: Exc3 | Blue: Pf3 | Green: Kd7 | Yellow: Pd5
+7. Red: Rc1 | Blue: Pe3 | Green: Hxd5 | Yellow: Pxd5
+8. Red: Ec5 | Blue: Pd3 | Green: Ke8 | Yellow: Exa2
+9. Red: Exa7 | Blue: Pe4 | Green: Forfeit(horse) | Yellow: Ea4
+10. Red: Ec5 | Blue: Forfeit(horse) | Green: Pe6 | Yellow: Pxe6
+11. Red: Rc4 | Blue: Forfeit(horse) | Green: Pxe6 | Yellow: Ra6
+12. Red: Kd2 | Blue: Pf1 | Green: Rg8 | Yellow: Forfeit(horse)
+13. Red: Kxd3 | Blue: Pe1 | Green: Ef6 | Yellow: Rxe6
+14. Red: Forfeit(horse) | Blue: Pd1 | Green: Kd7 | Yellow: Rxf6
+15. Red: Kxe4 | Blue: Kg5 | Green: Kd8 | Yellow: Ec6
+16. Red: Ec3 | Blue: Kxf6 | Green: Rh8 | Yellow: Ea8
+17. Red: Rd4 | Blue: Eh5 | Green: Ke8 | Yellow: Ec6
+18. Red: Ec5 | Blue: Forfeit(horse) | Green: Ph6 | Yellow: Pc8
+19. Red: Rxd1 | Blue: Rxd1 | Green: Kf8 | Yellow: Kb4
+20. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Kxc5
+21. Red: Pb3 | Blue: Pf2 | Green: Kg8 | Yellow: Pc7
+22. Red: Forfeit(rook) | Blue: Pe2 | Green: Kf8 | Yellow: Kb5
+23. Red: Kf4 | Blue: Rd4 | Green: Rg8 | Yellow: Forfeit(rook)
+24. Red: Forfeit(horse) | Blue: Eh3 | Green: Rh8 | Yellow: Ea8
+25. Red: Kg3 | Blue: Rd5 | Green: Kg8 | Yellow: Forfeit(horse)
+26. Red: Kxh3 | Blue: Rxb5 | Green: Kh7 | Yellow: Forfeit(horse)
+27. Red: Kg2 | Blue: Forfeit(elephant) | Green: Kg8 | Yellow: Pd7
+28. Red: Kf2 | Blue: Pd2 | Green: Kh7 | Yellow: Forfeit(horse)
+29. Red: Ke2 | Blue: Pc2 | Green: Rxc8 | Yellow: Ea6
+30. Red: Forfeit(rook) | Blue: Rxb3 | Green: Rxc2 | Yellow: Ea4
+31. Red: Kf2 | Blue: Kg5 | Green: Kg8 | Yellow: Forfeit(rook)
+32. Red: Forfeit(horse) | Blue: Kxh6 | Green: Kf7 | Yellow: Forfeit(horse)
+33. Red: Forfeit(elephant) | Blue: Kg5 | Green: Rxf2 | Yellow: Ec6
+34. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Kf8 | Yellow: Ee4
+35. Red: Forfeit(rook) | Blue: Kg4 | Green: Kf7 | Yellow: Ec6
+36. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Kg6 | Yellow: Forfeit(rook)
+37. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Kf7 | Yellow: Ee4
+38. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Kg8 | Yellow: Pe7
+39. Red: Forfeit(any) | Blue: Rd3 | Green: Kh8 | Yellow: Pf7
+40. Red: Forfeit(rook) | Blue: Kg5 | Green: Rxf7 | Yellow: Forfeit(pawn-king)
+41. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Kg8 | Yellow: Ec6
+42. Red: Forfeit(any) | Blue: Kg4 | Green: Kh7 | Yellow: Ee4
+43. Red: Forfeit(elephant) | Blue: Rd5 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+44. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Ec6
+45. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+46. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Rf6 | Yellow: Ee4
+47. Red: Forfeit(any) | Blue: Kg3 | Green: Kh8 | Yellow: Ee2
+48. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(pawn-king)
+49. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Re6 | Yellow: Forfeit(horse)
+50. Red: Forfeit(rook) | Blue: Kg2 | Green: Kh7 | Yellow: Ec4
+51. Red: Forfeit(rook) | Blue: Kg3 | Green: Kg6 | Yellow: Ec2
+52. Red: Forfeit(any) | Blue: Kf2 | Green: Rc6 | Yellow: Forfeit(pawn-king)
+53. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Ee4
+54. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Ee6
+55. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Forfeit(pawn-king)
+56. Red: Forfeit(any) | Blue: Ke2 | Green: Rxe6 | Yellow: Forfeit(rook)
+57. Red: Forfeit(rook) | Blue: Kf2 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+58. Red: Forfeit(any) | Blue: Kg3 | Green: Kf7 | Yellow: Forfeit(any)
+59. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+60. Red: Forfeit(any) | Blue: Rd4 | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+61. Red: Forfeit(elephant) | Blue: Rd5 | Green: Kg6 | Yellow: Forfeit(rook)
+62. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(pawn-king)
+63. Red: Forfeit(pawn-king) | Blue: Kg2 | Green: Ke7 | Yellow: Forfeit(any)
+64. Red: Forfeit(horse) | Blue: Kf2 | Green: Kf7 | Yellow: Forfeit(elephant)
+65. Red: Forfeit(pawn-king) | Blue: Rd4 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+66. Red: Forfeit(any) | Blue: Kg3 | Green: Ke7 | Yellow: Forfeit(horse)
+67. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(horse)
+68. Red: Forfeit(horse) | Blue: Kf2 | Green: Kg6 | Yellow: Forfeit(elephant)
+69. Red: Forfeit(horse) | Blue: Rd5 | Green: Forfeit(elephant) | Yellow: Forfeit(pawn-king)
+70. Red: Forfeit(elephant) | Blue: Kg3 | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+71. Red: Forfeit(elephant) | Blue: Kg2 | Green: Kf7 | Yellow: Forfeit(any)
+72. Red: Forfeit(any) | Blue: Kg3 | Green: Re4 | Yellow: Forfeit(any)
+73. Red: Forfeit(any) | Blue: Kf2 | Green: Kg6 | Yellow: Forfeit(any)
+74. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Kf7 | Yellow: Forfeit(any)
+75. Red: Forfeit(elephant) | Blue: Rc5 | Green: Forfeit(elephant) | Yellow: Forfeit(any)
+76. Red: Forfeit(pawn-king) | Blue: Kg3 | Green: Forfeit(horse) | Yellow: Forfeit(any)
+77. Red: Forfeit(pawn-king) | Blue: Kf2 | Green: Ke7 | Yellow: Forfeit(pawn-king)
+78. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Forfeit(pawn-king)
+79. Red: Forfeit(pawn-king) | Blue: Forfeit(horse) | Green: Kd7 | Yellow: Forfeit(horse)
+80. Red: Forfeit(any) | Blue: Forfeit(horse) | Green: Ke7 | Yellow: Forfeit(rook)
+81. Red: Forfeit(any) | Blue: Rd5 | Green: Forfeit(elephant) | Yellow: Forfeit(any)
+82. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(elephant)
+83. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Forfeit(any)
+84. Red: Forfeit(rook) | Blue: Kg3 | Green: Kg6 | Yellow: Forfeit(horse)
+85. Red: Forfeit(pawn-king) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(elephant)
+86. Red: Forfeit(elephant) | Blue: Rc5 | Green: Ke7 | Yellow: Forfeit(any)
+87. Red: Forfeit(rook) | Blue: Kg2 | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+88. Red: Forfeit(rook) | Blue: Kg3 | Green: Rd4 | Yellow: Forfeit(elephant)
+89. Red: Forfeit(horse) | Blue: Kf2 | Green: Kd7 | Yellow: Forfeit(any)
+90. Red: Forfeit(horse) | Blue: Ke2 | Green: Re4 | Yellow: Forfeit(any)
+91. Red: Forfeit(any) | Blue: Forfeit(elephant) | Green: Ke7 | Yellow: Forfeit(any)
+92. Red: Forfeit(rook) | Blue: Rd5 | Green: Kf7 | Yellow: Forfeit(pawn-king)
+93. Red: Forfeit(horse) | Blue: Rc5 | Green: Rxe2
+
+Winner: Team 1
+
+============================================================
+
+=== Game 9 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Pf4 | Green: Kd7 | Yellow: Pc5
+2. Red: Ke1 | Blue: Pe4 | Green: Forfeit(rook) | Yellow: Hb5
+3. Red: Ke2 | Blue: Ef5 | Green: Forfeit(rook) | Yellow: Pd5
+4. Red: Ee3 | Blue: Exf7 | Green: Forfeit(rook) | Yellow: Ha7
+5. Red: Exg1 | Blue: Exd5 | Green: Kd8 | Yellow: Ec4
+6. Red: Exg3 | Blue: Kxg3 | Green: Forfeit(rook) | Yellow: Exc2
+7. Red: Hc3 | Blue: Rxa1 | Green: Hf6 | Yellow: Pc6
+8. Red: Hxd5 | Blue: Pxd5 | Green: Kd7 | Yellow: Pxd5
+9. Red: Pa3 | Blue: Rxa3 | Green: Ed6 | Yellow: Kb5
+10. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Ke8 | Yellow: Pe5
+11. Red: Ke1 | Blue: Rxa7 | Green: Rf8 | Yellow: Pxf6
+12. Red: Ke2 | Blue: Rxa8 | Green: Forfeit(horse) | Yellow: Pxg7
+13. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kf7 | Yellow: Forfeit(horse)
+14. Red: Ke1 | Blue: Ra3 | Green: Kxg7 | Yellow: Forfeit(rook)
+15. Red: Forfeit(elephant) | Blue: Kg4 | Green: Exb8 | Yellow: Forfeit(horse)
+16. Red: Ke2 | Blue: Forfeit(elephant) | Green: Kg6 | Yellow: Forfeit(horse)
+17. Red: Kd1 | Blue: Re3 | Green: Ed6 | Yellow: Forfeit(rook)
+18. Red: Kxc2 | Blue: Forfeit(elephant) | Green: Kg7 | Yellow: Forfeit(elephant)
+19. Red: Kd1 | Blue: Rxe7 | Green: Kg6 | Yellow: Forfeit(rook)
+20. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Ph6 | Yellow: Forfeit(elephant)
+21. Red: Kc2 | Blue: Kg3 | Green: Kg5 | Yellow: Kb6
+22. Red: Kb3 | Blue: Kh3 | Green: Forfeit(horse) | Yellow: Kb5
+23. Red: Forfeit(horse) | Blue: Rxb7 | Green: Kg6 | Yellow: Ka5
+24. Red: Kc2 | Blue: Forfeit(elephant) | Green: Rf6 | Yellow: Forfeit(elephant)
+25. Red: Forfeit(elephant) | Blue: Kg4 | Green: Re6 | Yellow: Ka6
+26. Red: Kd1 | Blue: Forfeit(elephant) | Green: Kf6 | Yellow: Forfeit(horse)
+27. Red: Kc2 | Blue: Rxb2 | Green: Ke7 | Yellow: Forfeit(rook)
+28. Red: Kxb2 | Blue: Hf3 | Green: Kd7 | Yellow: Kb6
+29. Red: Pd3 | Blue: Hd2 | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+30. Red: Kc2 | Blue: Forfeit(rook) | Green: Ke7 | Yellow: Kb5
+31. Red: Forfeit(horse) | Blue: Hf3 | Green: Eb8 | Yellow: Forfeit(elephant)
+32. Red: Kb2 | Blue: Pf2 | Green: Kd7 | Yellow: Kb4
+33. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Re4 | Yellow: Kb5
+34. Red: Kb3 | Blue: Kg5 | Green: Re6 | Yellow: Ka5
+35. Red: Kc2 | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Kb5
+36. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+37. Red: Forfeit(horse) | Blue: Kg4 | Green: Re4 | Yellow: Forfeit(elephant)
+38. Red: Forfeit(elephant) | Blue: Kg5 | Green: Ke7 | Yellow: Forfeit(horse)
+39. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kd7 | Yellow: Ka6
+40. Red: Forfeit(horse) | Blue: Kxh6 | Green: Ke7 | Yellow: Kb7
+41. Red: Kb2 | Blue: Kg6 | Green: Re6 | Yellow: Kxb8
+42. Red: Forfeit(elephant) | Blue: Kg7 | Green: Forfeit(horse) | Yellow: Kb7
+43. Red: Forfeit(rook) | Blue: Hd2 | Green: Kd7 | Yellow: Kb8
+44. Red: Forfeit(horse) | Blue: Kf7 | Green: Kd8 | Yellow: Kb7
+45. Red: Forfeit(rook) | Blue: Kxe6 | Green: Ke8 | Yellow: Kb6
+46. Red: Kc2 | Blue: He4 | Green: Forfeit(elephant) | Yellow: Kb7
+47. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Kf8 | Yellow: Kb6
+48. Red: Forfeit(elephant) | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Kb5
+49. Red: Pxe4 | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+50. Red: Kd2 | Blue: Kd7 | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+51. Red: Kc2 | Blue: Pe2 | Green: Forfeit(rook) | Yellow: Kb4
+52. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Kf7 | Yellow: Kb5
+53. Red: Kb3 | Blue: Pd2 | Green: Kg7 | Yellow: Forfeit(rook)
+54. Red: Kb2 | Blue: Kc7 | Green: Forfeit(rook) | Yellow: Forfeit(elephant)
+55. Red: Kb3 | Blue: Kb7 | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+56. Red: Kb2 | Blue: Forfeit(elephant) | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+57. Red: Forfeit(rook) | Blue: Kc7 | Green: Forfeit(rook) | Yellow: Kb4
+58. Red: Ka2 | Blue: Forfeit(elephant) | Green: Kg6 | Yellow: Forfeit(horse)
+59. Red: Kb2 | Blue: Forfeit(horse) | Green: Forfeit(horse) | Yellow: Forfeit(horse)
+60. Red: Ka1 | Blue: Pc2 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+61. Red: Kb1 | Blue: Kd7 | Green: Forfeit(elephant) | Yellow: Kb3
+62. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+63. Red: Kc1 | Blue: Forfeit(horse) | Green: Kg5 | Yellow: Forfeit(horse)
+64. Red: Kd2 | Blue: Kc7 | Green: Kg6 | Yellow: Kb4
+65. Red: Forfeit(rook) | Blue: Forfeit(elephant) | Green: Kg7 | Yellow: Forfeit(horse)
+66. Red: Kxc2 | Blue: Kb6 | Green: Kg6 | Yellow: Forfeit(elephant)
+67. Red: Forfeit(horse) | Blue: Kc7 | Green: Kg5 | Yellow: Forfeit(elephant)
+68. Red: Kb2 | Blue: Kb6 | Green: Kg6 | Yellow: Forfeit(elephant)
+69. Red: Kc2 | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Ka3
+70. Red: Kd2 | Blue: Kb5 | Green: Kg5 | Yellow: Forfeit(rook)
+71. Red: Kc2 | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Ka2
+72. Red: Forfeit(elephant) | Blue: Kb4 | Green: Forfeit(rook) | Yellow: Ka1
+73. Red: Kd2 | Blue: Kb3 | Green: Kg4 | Yellow: Forfeit(rook)
+74. Red: Ke2 | Blue: Forfeit(horse) | Green: Kg3 | Yellow: Forfeit(horse)
+75. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Kb1
+76. Red: Kd2 | Blue: Kb4 | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+77. Red: Ke2 | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(elephant)
+78. Red: Kd2 | Blue: Kb3 | Green: Kf2 | Yellow: Forfeit(elephant)
+79. Red: Kd1 | Blue: Kb4 | Green: Kg2 | Yellow: Kb2
+80. Red: Forfeit(rook) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Ka2
+81. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Kg3 | Yellow: Forfeit(elephant)
+82. Red: Forfeit(elephant) | Blue: Kb5 | Green: Kf2 | Yellow: Kb2
+83. Red: Kd2 | Blue: Forfeit(horse) | Green: Kg2 | Yellow: Forfeit(elephant)
+84. Red: Ke2 | Blue: Kb6 | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+85. Red: Kd2 | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Kb3
+86. Red: Forfeit(rook) | Blue: Kb5 | Green: Kf2 | Yellow: Kb2
+87. Red: Forfeit(horse) | Blue: Kb4 | Green: Kg2 | Yellow: Ka2
+88. Red: Kc2 | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Ka1
+89. Red: Kd2 | Blue: Forfeit(elephant) | Green: Kf2 | Yellow: Kb2
+90. Red: Forfeit(elephant) | Blue: Forfeit(horse) | Green: Kg3 | Yellow: Forfeit(horse)
+91. Red: Forfeit(horse) | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Kb1
+92. Red: Ke2 | Blue: Forfeit(horse) | Green: Forfeit(elephant) | Yellow: Forfeit(rook)
+93. Red: Forfeit(horse) | Blue: Forfeit(elephant) | Green: Kg2 | Yellow: Forfeit(elephant)
+94. Red: Kd2 | Blue: Kb3 | Green: Forfeit(elephant) | Yellow: Ka1
+95. Red: Ke2 | Blue: Kc2 | Green: Forfeit(elephant) | Yellow: Ka2
+96. Red: Ke1 | Blue: Forfeit(rook) | Green: Forfeit(elephant) | Yellow: Forfeit(horse)
+97. Red: Forfeit(horse) | Blue: Forfeit(rook) | Green: Kg3 | Yellow: Ka3
+98. Red: Forfeit(horse) | Blue: Kc1 | Green: Forfeit(horse) | Yellow: Forfeit(rook)
+99. Red: Ke2 | Blue: Forfeit(elephant) | Green: Kg2 | Yellow: Forfeit(horse)
+100. Red: Ke1 | Blue: Kc2 | Green: Forfeit(rook) | Yellow: Kb4
+
+Result: Draw / Timeout
+
+============================================================
+
+=== Game 11 ===
+Mode: Team (2v2)
+Team A (Red/Green) ELO: 300  vs  Team B (Blue/Yellow) ELO: 500
+
+1. Red: Ke2 | Blue: Forfeit(rook) | Green: Kd7 | Yellow: Pc5
+2. Red: Ee3 | Blue: Forfeit(rook) | Green: Ke8 | Yellow: Pd5
+3. Red: Ke1 | Blue: Pf4 | Green: Kd7 | Yellow: Kb4
+4. Red: Hc3 | Blue: Pxe3 | Green: Forfeit(rook) | Yellow: Kxc3
+5. Red: Forfeit(horse) | Blue: Pxd2 | Green: Ed6 | Yellow: Ec4
+6. Red: Pa3 | Blue: Pf3 | Green: Forfeit(rook) | Yellow: Forfeit(rook)
+7. Red: Kd1 | Blue: Hg4 | Green: Kd8 | Yellow: Kxb2
+8. Red: Forfeit(horse) | Blue: Pe3 | Green: Exb8 | Yellow: Kxa1
+9. Red: Forfeit(rook) | Blue: Pd3 | Green: Exb6 | Yellow: Rxd8
+10. Red: Pxd3 | Blue: Ef5 | Green: Hf6 | Yellow: Rxh8
+11. Red: Pxc4 | Blue: Hxf6 | Green: Ed4 | Yellow: Pe5
+12. Red: Forfeit(horse) | Blue: Exf7 | Green: Pxf6 | Yellow: Rxh7
+13. Red: Ke2 | Blue: Kg4 | Green: Ed6 | Yellow: Rxh1
+14. Red: Forfeit(rook) | Blue: Pc2 | Green: Ed4 | Yellow: Forfeit(elephant)
+15. Red: Forfeit(horse) | Blue: Ed5 | Green: Ed6 | Yellow: Pxf6
+16. Red: Forfeit(rook) | Blue: Kg5 | Green: Pxf6 | Yellow: Pc7
+17. Red: Forfeit(elephant) | Blue: Kxf6 | Green: Ed4 | Yellow: Rxg1
+18. Red: Pxd5 | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(elephant)
+19. Red: Forfeit(rook) | Blue: Forfeit(rook) | Green: Forfeit(rook) | Yellow: Pd7
+20. Red: Pa4 | Blue: Kg7 | Green: Forfeit(horse) | Yellow: Hc8
+21. Red: Pa5 | Blue: Forfeit(horse) | Green: Forfeit(rook) | Yellow: Forfeit(elephant)
+22. Red: Forfeit(horse) | Blue: Kg6 | Green: Ed6 | Yellow: Forfeit(elephant)
+23. Red: Kd2 | Blue: Forfeit(rook) | Green: Forfeit(horse) | Yellow: Hxd6
+24. Red: Kxc2 | Blue: Pf2 | Green: Forfeit(horse) | Yellow: Forfeit(elephant)
+25. Red: Forfeit(horse) | Blue: Kg7 | Green: Forfeit(horse) | Yellow: Rxg7
+26. Red: Forfeit(rook) | Blue: Pe2 | Green: Forfeit(any) | Yellow: He4
+27. Red: Forfeit(rook) | Blue: Pd2
+
+Winner: Team 1

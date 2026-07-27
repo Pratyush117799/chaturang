@@ -1,0 +1,333 @@
+================================================================================
+  CHATURANGA v1.0.3.2 — DEVELOPMENT PLAN
+  "Higher ELO Bots" Edition
+  Based on: Chaturanga v1.0.3 (github.com/Pratyush117799/chaturang)
+  Target:   github.com/Pratyush117799/Chaturanga-version-1.0.3.2-higher-elo-bots
+================================================================================
+
+OVERVIEW
+--------
+Version 1.0.3.2 is a focused intelligence upgrade over v1.0.3. The core game
+logic, board, rules, and UI remain unchanged. The only major addition is a
+new tiered bot system — replacing (or supplementing) the existing single-level
+bot with multiple difficulty tiers backed by real game-tree search algorithms.
+The new files introduced are:
+
+  tieredBots.js   — AI engine with 4 difficulty tiers
+  ui.js           — Updated UI to handle bot-tier selection
+  game.html       — Updated entry point wiring tieredBots + ui
+  benchmark.html  — Standalone page to pit bots against each other for testing
+
+--------------------------------------------------------------------------------
+PHASE 1 — AUDIT THE v1.0.3 CODEBASE
+--------------------------------------------------------------------------------
+
+Goal: Understand exactly what the existing bot does so we know what to replace.
+
+Steps:
+  1. Open the v1.0.3 folder from the chaturang repo locally.
+  2. Identify the bot function — typically something like getBotMove(), getAIMove(),
+     or randomMove() inside the main JS file.
+  3. Note how the bot is called:
+       - Is it triggered by a turn timer / event listener?
+       - Does it receive the full board state, or just legal moves?
+       - What data structure represents the board? (2D array? Object map?)
+  4. Note how a move is executed — what function applies a move to the board.
+  5. Note how legal moves are generated — getLegalMoves() or similar.
+  6. Write down the signatures of the 3 key functions you will need to reuse:
+       - generateLegalMoves(board, player)  → [Move]
+       - applyMove(board, move)             → newBoard
+       - evaluateWinner(board)              → null | 'player1' | 'player2' | ...
+  7. Check if the board is mutated in-place or returned as new state.
+     IMPORTANT: The minimax algorithm in tieredBots.js requires a copyable
+     board state. If applyMove mutates in place, you must add a deepCopy()
+     helper before integrating.
+
+Deliverable: A short "Codebase Notes" document (or comments at the top of
+tieredBots.js) that documents the above six points.
+
+--------------------------------------------------------------------------------
+PHASE 2 — DESIGN THE TIERED BOT ARCHITECTURE
+--------------------------------------------------------------------------------
+
+Goal: Define 4 bot tiers and the algorithm each one uses.
+
+The 4 tiers (names are suggestions — change to match your UI):
+
+  TIER 1 — Novice (ELO ~400)
+  Algorithm: Pure random move selection.
+  Logic:
+    - Generate all legal moves.
+    - Return a uniformly random one.
+  Why useful: Gives new players a win. Also a baseline for benchmarking.
+
+  TIER 2 — Apprentice (ELO ~800)
+  Algorithm: Greedy one-ply evaluation.
+  Logic:
+    - Generate all legal moves.
+    - For each move, apply it and score the resulting board with a simple
+      material-count evaluation (piece values).
+    - Return the move with the highest score.
+    - Tie-break randomly.
+  Why useful: Bot will always capture when it can, but has no look-ahead.
+
+  TIER 3 — Warrior (ELO ~1200)
+  Algorithm: Minimax with alpha-beta pruning, depth 3.
+  Logic:
+    - Recursive minimax tree search to depth 3 half-moves (plies).
+    - Alpha-beta pruning to cut off branches that can't improve the result.
+    - Evaluation function: material count + simple positional bonuses
+      (center control, piece activity).
+    - Move ordering: try captures first (improves alpha-beta cutoffs).
+  Why useful: Plays recognizable strategic chess. Will not blunder pieces.
+
+  TIER 4 — Champion (ELO ~1600+)
+  Algorithm: Minimax + alpha-beta, depth 4–5, with enhancements.
+  Enhancements over Tier 3:
+    - Deeper search (depth 4 by default, 5 on fast hardware via time check).
+    - Piece-square tables: positional bonuses for each piece type at each
+      board square (e.g. elephant prefers the center, chariot prefers open files).
+    - Quiescence search: after the main search depth, continue searching
+      capture-only moves until the position is "quiet" — prevents horizon effect.
+    - Opening book (optional): hard-coded first 2-3 move sequences for
+      strong opening play.
+  Why useful: Challenging for most players. Noticeably stronger than Tier 3.
+
+Deliverable: Finalized tier spec written as comments at the top of tieredBots.js.
+
+--------------------------------------------------------------------------------
+PHASE 3 — IMPLEMENT tieredBots.js
+--------------------------------------------------------------------------------
+
+Goal: Write the full tieredBots.js file.
+
+File structure:
+
+  ┌─ tieredBots.js ───────────────────────────────────────────────────────────┐
+  │                                                                           │
+  │  // ── PIECE VALUES ──────────────────────────────────────────────────── │
+  │  const PIECE_VALUES = { pawn: 1, cavalry: 3, elephant: 3, chariot: 5,   │
+  │                          advisor: 9, king: 1000 };                        │
+  │                                                                           │
+  │  // ── PIECE-SQUARE TABLES (for Tier 4) ─────────────────────────────── │
+  │  const PST = { pawn: [...], cavalry: [...], ... };                       │
+  │                                                                           │
+  │  // ── BOARD UTILITIES ─────────────────────────────────────────────── │
+  │  function deepCopyBoard(board) { ... }                                    │
+  │  function evaluateBoard(board, player) { ... }  // material + PST        │
+  │  function generateMoves(board, player) { ... }  // wraps v1.0.3 function  │
+  │                                                                           │
+  │  // ── MINIMAX ENGINE ─────────────────────────────────────────────────  │
+  │  function minimax(board, depth, alpha, beta, maximizing, player) { ... } │
+  │  function quiescence(board, alpha, beta, player) { ... }  // Tier 4 only │
+  │                                                                           │
+  │  // ── BOT TIER ENTRY POINTS ──────────────────────────────────────────  │
+  │  function getBotMove_Novice(board, player)     { ... }  // random         │
+  │  function getBotMove_Apprentice(board, player) { ... }  // greedy 1-ply  │
+  │  function getBotMove_Warrior(board, player)    { ... }  // minimax d=3    │
+  │  function getBotMove_Champion(board, player)   { ... }  // minimax d=4+q  │
+  │                                                                           │
+  │  // ── PUBLIC API ───────────────────────────────────────────────────── │
+  │  function getBotMove(board, player, tier) {                               │
+  │    const fns = { novice: getBotMove_Novice,                               │
+  │                  apprentice: getBotMove_Apprentice,                       │
+  │                  warrior: getBotMove_Warrior,                             │
+  │                  champion: getBotMove_Champion };                         │
+  │    return fns[tier](board, player);                                       │
+  │  }                                                                        │
+  │                                                                           │
+  └───────────────────────────────────────────────────────────────────────────┘
+
+Key implementation notes:
+
+  a) deepCopyBoard: Must return a completely independent copy of the board.
+     Use JSON.parse(JSON.stringify(board)) as a simple but safe option,
+     or write a typed copy if performance is critical.
+
+  b) evaluateBoard: Always compute from the perspective of a given player.
+     Score = (sum of your pieces' values) - (sum of opponent pieces' values)
+     For Tier 4, add PST bonus: score += PST[pieceType][squareIndex].
+
+  c) minimax: Standard negamax form is cleanest.
+     - At leaf nodes (depth=0 or game over), return evaluateBoard().
+     - Otherwise iterate moves, apply each, recurse, undo (or use copy).
+     - Track alpha/beta for pruning.
+
+  d) Move ordering (Tier 3 and 4): Sort moves so captures come first.
+     This dramatically improves alpha-beta efficiency.
+     Quick heuristic: moves that land on an occupied enemy square go first.
+
+  e) Quiescence search (Tier 4 only): When depth=0 in the main search,
+     instead of immediately returning the static evaluation, call quiescence()
+     which only searches capture moves until no captures remain. This avoids
+     the "horizon effect" where the bot doesn't see a recapture one move away.
+
+  f) Chaturanga-specific rules to respect:
+     - There is no castling — don't add castling heuristics from chess code.
+     - The boat/chariot (rook) moves in a straight line.
+     - The elephant (bishop) in ancient Chaturanga moves differently from
+       the modern chess bishop — 2 squares diagonally, jumping. Check v1.0.3
+       rules and mirror them exactly in any move generation fallback.
+     - The advisor/minister (queen equivalent) may have restricted movement
+       compared to the modern queen. Verify in rules.txt from the repo.
+
+Deliverable: Complete tieredBots.js file committed to v1.0.3.2 repo.
+
+--------------------------------------------------------------------------------
+PHASE 4 — IMPLEMENT ui.js (Bot Tier Selector)
+--------------------------------------------------------------------------------
+
+Goal: Add difficulty selection to the existing UI without touching game logic.
+
+Changes needed in ui.js:
+
+  1. Add a difficulty dropdown / button group to the game screen.
+     Suggested HTML element (added via JS or directly in game.html):
+       <select id="botTierSelect">
+         <option value="novice">Novice</option>
+         <option value="apprentice">Apprentice</option>
+         <option value="warrior">Warrior</option>
+         <option value="champion">Champion</option>
+       </select>
+
+  2. Read the selected tier when it's the bot's turn:
+       const tier = document.getElementById('botTierSelect').value;
+       const move = getBotMove(currentBoard, botPlayer, tier);
+
+  3. Add a "Thinking..." indicator for Tier 3/4, since minimax can take
+     100–500ms. Use setTimeout(..., 0) to let the UI repaint before the
+     bot computes:
+       statusDiv.textContent = "Bot is thinking...";
+       setTimeout(() => {
+         const move = getBotMove(board, player, tier);
+         applyMove(board, move);
+         renderBoard();
+       }, 10);
+
+  4. Preserve all existing v1.0.3 UI behaviour — piece drag/drop, board
+     rendering, win/lose screen, etc. Only the bot invocation line changes.
+
+Deliverable: ui.js committed to v1.0.3.2 repo.
+
+--------------------------------------------------------------------------------
+PHASE 5 — UPDATE game.html
+--------------------------------------------------------------------------------
+
+Goal: Wire everything together in a single playable HTML page.
+
+Changes over v1.0.3's HTML:
+
+  1. Add <script src="tieredBots.js"></script> before the closing </body>.
+  2. Add <script src="ui.js"></script> after tieredBots.js.
+  3. Add the difficulty selector element to the game UI section.
+  4. Make sure the script load order is:
+       (a) Game rules / board logic (from v1.0.3)
+       (b) tieredBots.js
+       (c) ui.js
+     This ensures getBotMove is defined before ui.js tries to call it.
+  5. Update the version string displayed in the UI to "v1.0.3.2".
+
+Deliverable: game.html committed to v1.0.3.2 repo.
+
+--------------------------------------------------------------------------------
+PHASE 6 — IMPLEMENT benchmark.html
+--------------------------------------------------------------------------------
+
+Goal: Create an automated test page to verify that higher tiers actually
+      beat lower tiers, and to measure move speed.
+
+Structure of benchmark.html:
+
+  - No human interaction — bots play against each other autonomously.
+  - UI: Two dropdowns (Bot A tier, Bot B tier), a "Run N Games" button,
+    and a results table showing win rates and average move time.
+  - Logic:
+      for (let i = 0; i < N; i++) {
+        let board = initBoard();
+        while (!isGameOver(board)) {
+          const mover = getCurrentPlayer(board);
+          const tier = mover === 'A' ? tierA : tierB;
+          const move = getBotMove(board, mover, tier);
+          board = applyMove(board, move);
+        }
+        recordResult(getWinner(board));
+      }
+  - Add a move-time logger using performance.now() around each getBotMove call.
+  - Display results as: "Tier A won X/N games. Avg move time: Yms."
+
+Expected benchmark results (targets, not guarantees):
+  - Apprentice beats Novice: ~90%+ win rate.
+  - Warrior beats Apprentice: ~80%+ win rate.
+  - Champion beats Warrior: ~70%+ win rate.
+  - Champion avg move time: < 500ms per move on a modern laptop.
+
+Deliverable: benchmark.html committed to v1.0.3.2 repo.
+
+--------------------------------------------------------------------------------
+PHASE 7 — TESTING
+--------------------------------------------------------------------------------
+
+Manual testing checklist:
+  [ ] Game loads without console errors.
+  [ ] All 4 difficulty levels are selectable.
+  [ ] Novice bot makes legal moves only.
+  [ ] Apprentice bot captures available pieces.
+  [ ] Warrior bot does not blunder pieces in obvious 1-move threats.
+  [ ] Champion bot plays recognizable opening moves.
+  [ ] "Thinking..." indicator appears for Tier 3 and Tier 4.
+  [ ] Bot does not freeze the browser tab (< 2 seconds per move).
+  [ ] Win/lose detection works correctly after bot moves.
+  [ ] Board renders correctly after every bot move.
+  [ ] Game can be restarted (new game button) without refreshing the page.
+
+Benchmark testing:
+  [ ] Run benchmark.html: Apprentice vs Novice, 20 games. Novice should lose.
+  [ ] Run Champion vs Warrior, 20 games. Warrior should lose more than it wins.
+  [ ] Check average move time for Champion: target < 500ms.
+
+--------------------------------------------------------------------------------
+PHASE 8 — REPO SETUP & COMMIT STRUCTURE
+--------------------------------------------------------------------------------
+
+File structure of the v1.0.3.2 repo (already started):
+  Chaturanga-version-1.0.3.2-higher-elo-bots/
+  ├── game.html          ← Main game (updated from v1.0.3)
+  ├── tieredBots.js      ← New: AI engine (4 tiers)
+  ├── ui.js              ← New: UI with tier selector
+  ├── benchmark.html     ← New: Bot-vs-bot test page
+  └── README.md          ← Documentation (see companion file)
+
+Suggested commit sequence:
+  Commit 1: "init: copy v1.0.3 base files"
+  Commit 2: "feat: add tieredBots.js with 4-tier AI engine"
+  Commit 3: "feat: update ui.js with difficulty selector"
+  Commit 4: "feat: update game.html to load tieredBots and ui"
+  Commit 5: "feat: add benchmark.html for bot-vs-bot testing"
+  Commit 6: "docs: add README.md"
+  Commit 7: "fix: [any bugs found during testing]"
+
+Tag the final commit as: v1.0.3.2
+
+--------------------------------------------------------------------------------
+KNOWN RISKS & MITIGATION
+--------------------------------------------------------------------------------
+
+Risk 1: The v1.0.3 board state is mutated in-place by applyMove().
+Mitigation: Add a deepCopyBoard() function and use it before every minimax
+recursive call. Test by verifying the board is unchanged after getBotMove().
+
+Risk 2: Minimax is too slow for depth 4/5 on large chaturanga boards.
+Mitigation: Start at depth 3 for Tier 4 and increase if benchmarks are fast.
+Add a time-limit fallback: if a move takes >1s, return the best move found so far.
+
+Risk 3: Chaturanga piece movement rules differ from standard chess.
+Mitigation: Do NOT copy a chess minimax from the internet. Always use the
+generateLegalMoves() function from v1.0.3 as the source of truth.
+
+Risk 4: Move ordering breaks if the move object format changes.
+Mitigation: Keep all move format assumptions in one place (the generateMoves
+wrapper function in tieredBots.js) so only one function needs updating.
+
+================================================================================
+END OF PLAN
+================================================================================

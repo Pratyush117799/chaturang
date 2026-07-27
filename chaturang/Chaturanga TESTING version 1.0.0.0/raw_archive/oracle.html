@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Oracle — Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c96a;--gold3:#f5e4a0;
+  --dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;
+  --border:rgba(201,168,76,.18);--text:#f0e4c8;--muted:#8a7050;
+  --red:#e74c3c;--blue:#60a5fa;--sq:52px;
+  --oracle:#7c3aed;--oracle2:#a78bfa;--oracle3:#ddd6fe;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--dark);color:var(--text);
+  font-family:'Outfit',sans-serif;overflow-x:hidden}
+
+/* ── NAV ── */
+.nav{background:var(--dark2);border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:200}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;text-decoration:none}
+.nav-badge{font-size:.62rem;background:rgba(124,58,237,.15);color:var(--oracle2);
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(124,58,237,.3)}
+.proto-badge{font-size:.6rem;background:rgba(248,113,113,.08);color:#fca5a5;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(248,113,113,.15);margin-left:auto}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:calc(100vh - 52px)}
+.screen.active{display:flex}
+
+/* ══════════════════════════════════════
+   ORACLE SCREEN — pre-game prophecy roll
+══════════════════════════════════════ */
+#oracleScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+
+.oracle-eye{
+  font-size:4rem;margin-bottom:16px;
+  animation:eyeBreathe 4s ease-in-out infinite;
+}
+@keyframes eyeBreathe{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(124,58,237,.3))}
+  50%{transform:scale(1.08);filter:drop-shadow(0 0 20px rgba(124,58,237,.6))}
+}
+.oracle-eyebrow{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(124,58,237,.5);margin-bottom:10px}
+.oracle-title{font-family:'Cinzel',serif;font-size:2rem;color:var(--oracle2);
+  font-weight:700;margin-bottom:6px}
+.oracle-sub{font-size:.85rem;color:var(--muted);line-height:1.65;
+  max-width:460px;margin-bottom:28px}
+
+/* The three dice */
+.oracle-dice-row{display:flex;gap:16px;align-items:center;justify-content:center;
+  margin-bottom:28px}
+.oracle-die{
+  width:64px;height:64px;border-radius:10px;
+  background:var(--dark2);border:2px solid rgba(124,58,237,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;cursor:pointer;transition:all .3s;
+  user-select:none;
+}
+.oracle-die.rolled{
+  border-color:rgba(124,58,237,.6);
+  box-shadow:0 0 20px rgba(124,58,237,.3);
+  animation:dieSettle .4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes dieSettle{
+  from{transform:scale(1.3) rotate(15deg);opacity:.6}
+  to{transform:scale(1) rotate(0deg);opacity:1}
+}
+.oracle-die.spinning{animation:dieSpin .3s linear infinite}
+@keyframes dieSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.roll-oracle-btn{
+  padding:12px 36px;
+  background:linear-gradient(135deg,#5b21b6,#3b0764);
+  color:#ddd6fe;border:1px solid rgba(124,58,237,.4);border-radius:8px;
+  font-family:'Cinzel',serif;font-size:.9rem;font-weight:600;cursor:pointer;
+  transition:all .25s;letter-spacing:.04em;margin-bottom:8px;
+}
+.roll-oracle-btn:hover{
+  background:linear-gradient(135deg,#7c3aed,#4c1d95);
+  box-shadow:0 0 20px rgba(124,58,237,.4);transform:translateY(-1px);
+}
+.roll-oracle-btn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}
+.oracle-roll-hint{font-size:.7rem;color:rgba(124,58,237,.4);margin-bottom:24px}
+
+/* Prophecy reveal card */
+#prophecyCard{
+  display:none;
+  background:linear-gradient(160deg,#1a1020 0%,#0f0a14 100%);
+  border:1px solid rgba(124,58,237,.35);border-radius:12px;
+  padding:22px 24px;max-width:500px;width:100%;margin-bottom:24px;
+  box-shadow:0 0 40px rgba(124,58,237,.1);
+  animation:propReveal .5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes propReveal{
+  from{opacity:0;transform:scale(.92) translateY(10px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.pc-eyebrow{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(124,58,237,.5);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pc-eyebrow::before,.pc-eyebrow::after{content:'';flex:1;height:1px;
+  background:rgba(124,58,237,.2)}
+.pc-prophecy{
+  font-family:'Cormorant Garamond',serif;font-size:1.15rem;
+  color:#ddd6fe;line-height:1.75;margin-bottom:10px;font-style:italic;
+}
+.pc-condition{
+  font-size:.75rem;color:var(--muted);line-height:1.5;
+  background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);
+  border-radius:6px;padding:8px 12px;margin-bottom:10px;
+}
+.pc-condition strong{color:var(--oracle2)}
+.pc-bonus{
+  font-size:.7rem;color:rgba(124,58,237,.6);
+  display:flex;align-items:center;gap:6px;
+}
+.pc-ref{font-size:.65rem;color:rgba(201,168,76,.25);
+  text-align:right;margin-top:8px;font-style:italic}
+
+.begin-btn{
+  padding:12px 40px;
+  background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;
+  display:none;
+}
+.begin-btn:hover{background:linear-gradient(135deg,#e8b52a,#c8960c);transform:translateY(-1px)}
+
+/* ══════════════════════════════════════
+   GAME SCREEN
+══════════════════════════════════════ */
+#gameScreen{
+  flex-direction:column;align-items:center;padding:12px 16px 32px;gap:8px;
+}
+
+/* Oracle prophecy ribbon — always visible */
+.oracle-ribbon{
+  width:100%;max-width:calc(var(--sq)*8 + 18px);
+  border-radius:8px;padding:9px 12px;
+  background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);
+  display:flex;align-items:flex-start;gap:10px;
+  transition:all .5s;
+}
+.or-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.or-text{flex:1;min-width:0}
+.or-label{font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;
+  color:rgba(124,58,237,.5);margin-bottom:2px}
+.or-prophecy{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.85rem;color:#c4b5fd;line-height:1.45}
+.or-progress{margin-left:auto;flex-shrink:0;text-align:right}
+.or-pct{font-family:'Cinzel',serif;font-size:.85rem;color:var(--oracle2)}
+.or-pct-lbl{font-size:.58rem;color:rgba(124,58,237,.4)}
+.or-progress-bar{
+  width:60px;height:4px;background:rgba(124,58,237,.15);border-radius:2px;
+  overflow:hidden;margin-top:3px;
+}
+.or-progress-fill{height:100%;background:var(--oracle2);border-radius:2px;
+  transition:width .5s ease}
+
+/* Ribbon state: fulfilled */
+.oracle-ribbon.fulfilled{
+  background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.5);
+  box-shadow:0 0 16px rgba(124,58,237,.2);
+}
+.oracle-ribbon.fulfilled .or-prophecy{color:#ddd6fe}
+.oracle-ribbon.fulfilled .or-label{color:var(--oracle2)}
+
+/* Ribbon state: engineered */
+.oracle-ribbon.engineered{
+  background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.4);
+  box-shadow:0 0 20px rgba(201,168,76,.2);
+}
+.oracle-ribbon.engineered .or-prophecy{color:var(--gold2)}
+.oracle-ribbon.engineered .or-label{color:var(--gold);content:'⚡ Engineered'}
+
+/* Turn + dice row */
+.turn-dice-row{
+  display:flex;align-items:center;gap:10px;
+  width:100%;max-width:calc(var(--sq)*8 + 18px);
+}
+.td-player{
+  font-family:'Cinzel',serif;font-size:.82rem;font-weight:600;
+  padding:5px 10px;border-radius:6px;border:1px solid;
+  transition:all .3s;
+}
+.dice-face{font-size:1.6rem;min-width:32px;text-align:center}
+.dice-face.spin{animation:dfSpin .25s ease-out}
+@keyframes dfSpin{from{transform:scale(1.4) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
+.dice-piece-name{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold)}
+
+/* Board */
+.board-labels-top{display:flex;width:calc(var(--sq)*8)}
+.blt{width:var(--sq);text-align:center;font-size:.6rem;color:var(--muted);padding-bottom:2px}
+.board-row{display:flex;align-items:center}
+.board-rank-col{width:18px;display:flex;flex-direction:column}
+.board{display:grid;grid-template-columns:repeat(8,var(--sq));
+  border:2px solid rgba(201,168,76,.3);border-radius:2px}
+.sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background .1s}
+.sq.light{background:#e8d5b0}.sq.dark{background:#a07848}
+.sq.selected{background:rgba(201,168,76,.55)!important;outline:2px solid var(--gold);outline-offset:-2px}
+.sq.legal::after{content:'';width:28%;height:28%;background:rgba(0,0,0,.22);
+  border-radius:50%;display:block;pointer-events:none}
+.sq.legal-capture{outline:2px solid #f87171;outline-offset:-2px}
+.sq.last-from{background:rgba(201,168,76,.28)!important}
+.sq.last-to{background:rgba(201,168,76,.42)!important}
+/* Oracle glow — squares relevant to prophecy */
+.sq.oracle-watch{
+  outline:2px solid rgba(124,58,237,.5);outline-offset:-2px;
+  animation:oracleWatch 2s ease-in-out infinite;
+}
+@keyframes oracleWatch{
+  0%,100%{outline-color:rgba(124,58,237,.3)}
+  50%{outline-color:rgba(124,58,237,.7)}
+}
+.piece{font-size:calc(var(--sq)*.56);line-height:1;user-select:none;
+  pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.5);transition:transform .12s}
+.sq:hover .piece{transform:scale(1.08)}
+
+.status-bar{font-size:.8rem;color:var(--gold);padding:6px 10px;
+  background:rgba(201,168,76,.07);border-radius:6px;
+  width:calc(var(--sq)*8 + 18px);text-align:center;
+  border:1px solid var(--border);min-height:32px}
+.actions-row{display:flex;gap:8px;width:calc(var(--sq)*8 + 18px)}
+.action-btn{flex:1;padding:9px 12px;border-radius:7px;border:none;
+  font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.roll-btn{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;font-weight:600}
+.roll-btn:hover:not(:disabled){background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.roll-btn:disabled{opacity:.35;cursor:default}
+.forfeit-btn{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.forfeit-btn:hover:not(:disabled){border-color:#f87171;color:#f87171}
+.forfeit-btn:disabled{opacity:.3;cursor:default}
+
+/* ══════════════════════════════════════
+   FULFILMENT OVERLAY
+══════════════════════════════════════ */
+#fulfilmentOverlay{
+  position:fixed;inset:0;z-index:5000;
+  background:rgba(5,2,10,.95);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+#fulfilmentOverlay.show{display:flex}
+
+.fo-stars{
+  font-size:1.2rem;letter-spacing:8px;color:rgba(124,58,237,.4);
+  margin-bottom:16px;animation:starsIn .8s ease;
+}
+@keyframes starsIn{from{opacity:0;letter-spacing:2px}to{opacity:1;letter-spacing:8px}}
+.fo-eye{
+  font-size:4rem;margin-bottom:12px;
+  animation:foEye .6s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes foEye{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.fo-eyebrow{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(124,58,237,.5);margin-bottom:8px}
+.fo-title{font-family:'Cinzel',serif;font-size:2rem;color:var(--oracle2);
+  font-weight:700;margin-bottom:4px;
+  text-shadow:0 0 30px rgba(124,58,237,.5);
+}
+.fo-subtitle{font-family:'Cinzel',serif;font-size:.85rem;color:rgba(124,58,237,.5);
+  margin-bottom:20px}
+.fo-prophecy-echo{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.05rem;color:#c4b5fd;line-height:1.7;
+  max-width:440px;margin-bottom:6px;
+}
+.fo-prophecy-echo.engineered-text{color:var(--gold2)}
+.fo-ref{font-size:.68rem;color:rgba(124,58,237,.35);margin-bottom:20px}
+
+.fo-bonus{
+  border-radius:10px;padding:14px 22px;margin-bottom:24px;
+  display:inline-block;
+}
+.fo-bonus.normal{
+  background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);
+}
+.fo-bonus.engineered{
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);
+}
+.fo-bonus-label{font-size:.58rem;text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:4px}
+.fo-bonus.normal .fo-bonus-label{color:rgba(124,58,237,.5)}
+.fo-bonus.engineered .fo-bonus-label{color:rgba(201,168,76,.45)}
+.fo-bonus-val{font-family:'Cinzel',serif;font-size:1.2rem}
+.fo-bonus.normal .fo-bonus-val{color:var(--oracle2)}
+.fo-bonus.engineered .fo-bonus-val{color:var(--gold2)}
+.fo-bonus-desc{font-size:.72rem;margin-top:3px}
+.fo-bonus.normal .fo-bonus-desc{color:rgba(124,58,237,.5)}
+.fo-bonus.engineered .fo-bonus-desc{color:rgba(201,168,76,.4)}
+
+.fo-btn{
+  padding:11px 32px;background:linear-gradient(135deg,#5b21b6,#3b0764);
+  color:#ddd6fe;border:1px solid rgba(124,58,237,.4);border-radius:8px;
+  font-family:'Cinzel',serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.fo-btn:hover{background:linear-gradient(135deg,#7c3aed,#4c1d95)}
+
+/* ══════════════════════════════════════
+   RESULT SCREEN
+══════════════════════════════════════ */
+#resultScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+.result-icon{font-size:3rem;margin-bottom:12px}
+.result-title{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold2);
+  font-weight:700;margin-bottom:6px}
+.result-sub{font-size:.88rem;color:var(--muted);line-height:1.6;
+  max-width:460px;margin-bottom:22px}
+
+.oracle-verdict{
+  border-radius:10px;padding:16px 20px;max-width:460px;width:100%;margin-bottom:22px;
+}
+.oracle-verdict.fulfilled{
+  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);
+}
+.oracle-verdict.engineered{
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);
+}
+.oracle-verdict.unfulfilled{
+  background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.1);
+}
+.ov-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;
+  color:rgba(124,58,237,.5);margin-bottom:8px}
+.oracle-verdict.fulfilled .ov-label{color:rgba(124,58,237,.5)}
+.oracle-verdict.engineered .ov-label{color:rgba(201,168,76,.45)}
+.oracle-verdict.unfulfilled .ov-label{color:rgba(201,168,76,.3)}
+.ov-prophecy{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.9rem;line-height:1.65;margin-bottom:8px;
+}
+.oracle-verdict.fulfilled .ov-prophecy{color:#c4b5fd}
+.oracle-verdict.engineered .ov-prophecy{color:#d4b87a}
+.oracle-verdict.unfulfilled .ov-prophecy{color:rgba(201,168,76,.35)}
+.ov-outcome{font-size:.75rem;line-height:1.5}
+.oracle-verdict.fulfilled .ov-outcome{color:rgba(124,58,237,.6)}
+.oracle-verdict.engineered .ov-outcome{color:rgba(201,168,76,.5)}
+.oracle-verdict.unfulfilled .ov-outcome{color:rgba(201,168,76,.25)}
+
+/* Dharma meter */
+.dharma-row{display:flex;align-items:center;gap:10px;
+  width:100%;max-width:460px;margin-bottom:20px}
+.dharma-bar{flex:1;height:6px;border-radius:3px;
+  background:rgba(255,255,255,.06);overflow:hidden}
+.dharma-fill{height:100%;border-radius:3px;background:var(--gold);transition:width 1.5s ease}
+.dharma-score{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold)}
+.dharma-label{font-size:.6rem;color:rgba(201,168,76,.3)}
+
+.result-btns{display:flex;gap:10px;margin-top:4px}
+.btn-primary{padding:11px 32px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.btn-ghost{padding:11px 24px;background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.85rem;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:520px){:root{--sq:40px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="game.html" class="nav-logo">Chaturanga</a>
+  <span class="nav-badge">🔮 The Oracle</span>
+  <span class="proto-badge">⚗ Prototype</span>
+</nav>
+
+<!-- ══ ORACLE SCREEN ════════════════════════════════════════════ -->
+<div id="oracleScreen" class="screen active">
+  <div class="oracle-eye">🔮</div>
+  <div class="oracle-eyebrow">The Oracle of the Ashtāpada</div>
+  <div class="oracle-title">Before the Battle — a Prophecy</div>
+  <div class="oracle-sub">
+    Three dice are rolled before the game begins. Their faces summon a prophecy
+    drawn from the Mahabharata. If the prophecy fulfils itself during play,
+    your Dharma is rewarded. If you engineer the fulfilment deliberately —
+    the Oracle grants a legendary blessing.
+  </div>
+
+  <div class="oracle-dice-row">
+    <div class="oracle-die" id="die0">⚄</div>
+    <div class="oracle-die" id="die1">⚄</div>
+    <div class="oracle-die" id="die2">⚄</div>
+  </div>
+
+  <button class="roll-oracle-btn" id="rollOracleBtn" onclick="rollOracle()">
+    🎲 Consult the Oracle
+  </button>
+  <div class="oracle-roll-hint">Roll three times to receive the prophecy</div>
+
+  <div id="prophecyCard">
+    <div class="pc-eyebrow">The Oracle speaks</div>
+    <div class="pc-prophecy" id="pcProphecy">—</div>
+    <div class="pc-condition">
+      <strong>Fulfilment condition:</strong> <span id="pcCondition">—</span>
+    </div>
+    <div class="pc-bonus" id="pcBonus">—</div>
+    <div class="pc-ref" id="pcRef">—</div>
+  </div>
+
+  <button class="begin-btn" id="beginBtn" onclick="startGame()">
+    Begin the Battle ⚔
+  </button>
+</div>
+
+<!-- ══ GAME SCREEN ══════════════════════════════════════════════ -->
+<div id="gameScreen" class="screen">
+
+  <div class="oracle-ribbon" id="oracleRibbon">
+    <div class="or-icon">🔮</div>
+    <div class="or-text">
+      <div class="or-label" id="orLabel">The Oracle foretells</div>
+      <div class="or-prophecy" id="orProphecy">—</div>
+    </div>
+    <div class="or-progress">
+      <div class="or-pct" id="orPct">0%</div>
+      <div class="or-pct-lbl">fulfilled</div>
+      <div class="or-progress-bar">
+        <div class="or-progress-fill" id="orFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="turn-dice-row">
+    <div class="td-player" id="tdPlayer"
+      style="border-color:rgba(231,76,60,.3);color:#f87171">Player 1</div>
+    <div style="flex:1"></div>
+    <div class="dice-face" id="diceFace">🎲</div>
+    <div>
+      <div class="dice-piece-name" id="dicePiece">Roll to begin</div>
+    </div>
+  </div>
+
+  <div class="board-labels-top" id="boardLabelsTop"></div>
+  <div class="board-row">
+    <div class="board-rank-col" id="boardRanks"></div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="status-bar" id="statusBar">Roll the Pāśaka to begin.</div>
+  <div class="actions-row">
+    <button class="action-btn roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Pāśaka</button>
+    <button class="action-btn forfeit-btn" id="forfeitBtn" onclick="forfeitTurn()" disabled>🏳 Forfeit</button>
+  </div>
+
+</div>
+
+<!-- ══ FULFILMENT OVERLAY ════════════════════════════════════════ -->
+<div id="fulfilmentOverlay">
+  <div class="fo-stars" id="foStars">✦ ✦ ✦ ✦ ✦</div>
+  <div class="fo-eye">🔮</div>
+  <div class="fo-eyebrow" id="foEyebrow">The Oracle's Prophecy Has Come to Pass</div>
+  <div class="fo-title" id="foTitle">Prophecy Fulfilled</div>
+  <div class="fo-subtitle" id="foSubtitle">—</div>
+  <div class="fo-prophecy-echo" id="foProphecy">—</div>
+  <div class="fo-ref" id="foRef">—</div>
+  <div class="fo-bonus" id="foBonus">
+    <div class="fo-bonus-label" id="foBonusLabel">Dharma Reward</div>
+    <div class="fo-bonus-val" id="foBonusVal">+20 Dharma</div>
+    <div class="fo-bonus-desc" id="foBonusDesc">—</div>
+  </div>
+  <button class="fo-btn" onclick="dismissFulfilment()">
+    Continue — the battle resumes
+  </button>
+</div>
+
+<!-- ══ RESULT SCREEN ════════════════════════════════════════════ -->
+<div id="resultScreen" class="screen">
+  <div class="result-icon" id="resultIcon">🏆</div>
+  <div class="result-title" id="resultTitle">—</div>
+  <div class="result-sub" id="resultSub">—</div>
+
+  <div class="oracle-verdict" id="oracleVerdict">
+    <div class="ov-label" id="ovLabel">Oracle's Verdict</div>
+    <div class="ov-prophecy" id="ovProphecy">—</div>
+    <div class="ov-outcome" id="ovOutcome">—</div>
+  </div>
+
+  <div class="dharma-row">
+    <div class="dharma-label">Adharma</div>
+    <div class="dharma-bar">
+      <div class="dharma-fill" id="dharmaFill" style="width:50%"></div>
+    </div>
+    <div class="dharma-label">Dharma</div>
+    <div class="dharma-score" id="dharmaScore">50</div>
+  </div>
+
+  <div class="result-btns">
+    <button class="btn-primary" onclick="resetAll()">New Oracle + Game</button>
+    <button class="btn-ghost" onclick="showScreen('oracleScreen')">New Prophecy Only</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// PROPHECY POOL — 18 prophecies mapped to dice sum ranges
+// Each prophecy:
+//   text        — the Oracle's words (Mahabharata flavour)
+//   condition   — plain-English description for the player
+//   ref         — source text
+//   dharmaBonus — dharma awarded on natural fulfilment
+//   engineeredBonus — extra dharma if deliberately engineered
+//   engineeredLabel — what the legendary bonus is called
+//   progress(state) — 0..1 — how close to fulfilment (for ribbon bar)
+//   fulfilled(state) — bool — is it done?
+//   engineered(state) — bool — was it deliberately arranged?
+//   watchSquares(board) — squares to highlight in purple
+// ═══════════════════════════════════════════════════════════════
+const PROPHECIES = [
+
+  // ── RATHA SACRIFICE (sum 3–4) ─────────────────────────────
+  {
+    id:'ratha_sacrifice',
+    sumMin:3, sumMax:4,
+    text:'A Ratha shall fall that need not fall. The chariot that sacrifices itself opens the path that wins the war. Watch for the wheel that breaks by choice, not by force.',
+    condition:'A Ratha (rook) is captured but the captor is then immediately captured in return — a deliberate sacrifice.',
+    ref:'— Arthashastra, Book IX: "The sacrifice that creates the opening is worth ten captures."',
+    dharmaBonus: 18,
+    engineeredBonus: 35,
+    engineeredLabel:'Willing Sacrifice',
+    _sacrificeDetected: false,
+    progress(state){
+      // Rises when a rook has been captured at all
+      const rookCaptures = state.history.filter(m=>m.cap?.type==='rook').length;
+      return Math.min(1, rookCaptures / 2);
+    },
+    fulfilled(state){
+      // Rook was captured, then the capturing piece was immediately captured back
+      const h = state.history;
+      for(let i=0;i<h.length-1;i++){
+        if(h[i].cap?.type==='rook' && h[i+1].to===h[i].to) return true;
+      }
+      return false;
+    },
+    engineered(state){
+      // Same as fulfilled — if a rook sacrifice occurs within 3 moves of the rook being under threat
+      return this.fulfilled(state) && state.history.some(m=>m.wasThreatened&&m.piece?.type==='rook');
+    },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='rook') sqs.push(sq); });
+      return sqs.slice(0,4);
+    },
+  },
+
+  // ── THE HORSE THAT LEAPS (sum 5–6) ─────────────────────────
+  {
+    id:'ashwa_leap',
+    sumMin:5, sumMax:6,
+    text:'The Ashwa shall leap where no other piece can go, and in that leap, two enemies shall fall to one blow. The cavalry\'s secret weapon has always been the jump that cannot be blocked.',
+    condition:'An Ashwa (horse) captures a piece while simultaneously threatening another — a fork.',
+    ref:'— Drona Parva: "Arjuna\'s horses leapt over the battlefield as if the earth itself bent for them."',
+    dharmaBonus: 20,
+    engineeredBonus: 40,
+    engineeredLabel:'Calculated Fork',
+    progress(state){
+      const horseCaptures = state.history.filter(m=>m.piece?.type==='horse'&&m.cap).length;
+      return Math.min(1, horseCaptures / 1);
+    },
+    fulfilled(state){
+      return state.history.some(m=>m.piece?.type==='horse' && m.cap);
+    },
+    engineered(state){
+      // Horse captures and a fork was set up (horse moved to threatening-two-pieces square)
+      return state.history.some(m=>m.piece?.type==='horse' && m.cap && m.wasForking);
+    },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='horse') sqs.push(sq); });
+      return sqs.slice(0,2);
+    },
+  },
+
+  // ── THE RAJA WALKS (sum 7–8) ─────────────────────────────────
+  {
+    id:'raja_walks',
+    sumMin:7, sumMax:8,
+    text:'The Raja himself shall walk into battle and seal the victory — not hiding behind his army, but leading it. A king who acts is worth more than a king who waits.',
+    condition:'The winning player\'s Raja captures at least one piece during the game.',
+    ref:'— Bhagavad Gita 3.21: "Whatever a great man does, others follow."',
+    dharmaBonus: 15,
+    engineeredBonus: 30,
+    engineeredLabel:'Raja\'s Strike',
+    progress(state){
+      const rajaCaptures = state.history.filter(m=>m.piece?.type==='king'&&m.cap).length;
+      return Math.min(1, rajaCaptures / 1);
+    },
+    fulfilled(state){
+      return state.history.some(m=>m.piece?.type==='king' && m.cap);
+    },
+    engineered(state){
+      return state.history.filter(m=>m.piece?.type==='king'&&m.cap).length >= 2;
+    },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='king') sqs.push(sq); });
+      return sqs;
+    },
+  },
+
+  // ── THE NARA'S ASCENT (sum 9–10) ────────────────────────────
+  {
+    id:'nara_ascent',
+    sumMin:9, sumMax:10,
+    text:'From the rank of foot soldiers, one Nara shall rise above all others and become what it was always destined to be. The humblest piece on the board holds the highest potential.',
+    condition:'A Nara (pawn) reaches the final rank and promotes to a Ratha.',
+    ref:'— Panchatantra, Book I: "The seed that survives the season becomes the tree."',
+    dharmaBonus: 22,
+    engineeredBonus: 38,
+    engineeredLabel:'Protected Ascent',
+    progress(state){
+      // Track how far the leading pawn has advanced
+      let maxAdvance=0;
+      state.history.forEach(m=>{
+        if(m.piece?.type==='pawn'&&m.piece?.owner===state.currentWatcher){
+          const rank=parseInt(m.to[1]);
+          const advance = m.piece.owner===0 ? rank-2 : 7-rank;
+          if(advance>maxAdvance) maxAdvance=advance;
+        }
+      });
+      return Math.min(1, maxAdvance / 6);
+    },
+    fulfilled(state){ return state.history.some(m=>m.promoted); },
+    engineered(state){
+      // Promoted AND at least one piece was used to escort/clear the path
+      return state.history.some(m=>m.promoted) &&
+        state.history.some(m=>m.cap && m.piece?.type!=='pawn');
+    },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='pawn') sqs.push(sq); });
+      return sqs.slice(0,3);
+    },
+  },
+
+  // ── THE OPEN FILE (sum 11–12) ───────────────────────────────
+  {
+    id:'open_file',
+    sumMin:11, sumMax:12,
+    text:'Control of the open column shall decide this battle. The Ratha that commands the empty file will strike at will. Let no enemy stand between your chariot and their king.',
+    condition:'A Ratha (rook) makes 3 or more moves on the same file without leaving it.',
+    ref:'— Arthashastra, Book IX: "The chariot that holds the road holds the kingdom."',
+    dharmaBonus: 16,
+    engineeredBonus: 32,
+    engineeredLabel:'File Domination',
+    progress(state){
+      // Count max consecutive rook moves on same file
+      let maxSameFile=0, current=0, lastFile='';
+      state.history.forEach(m=>{
+        if(m.piece?.type==='rook'){
+          const file=m.to[0];
+          if(file===lastFile) current++; else current=1;
+          lastFile=file;
+          if(current>maxSameFile) maxSameFile=current;
+        }
+      });
+      return Math.min(1, maxSameFile / 3);
+    },
+    fulfilled(state){
+      let current=0, lastFile='';
+      for(const m of state.history){
+        if(m.piece?.type==='rook'){
+          const file=m.to[0];
+          if(file===lastFile) current++; else current=1;
+          lastFile=file;
+          if(current>=3) return true;
+        }
+      }
+      return false;
+    },
+    engineered(state){
+      let current=0, lastFile='';
+      for(const m of state.history){
+        if(m.piece?.type==='rook'){
+          const file=m.to[0];
+          if(file===lastFile) current++; else current=1;
+          lastFile=file;
+          if(current>=5) return true;
+        }
+      }
+      return false;
+    },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='rook') sqs.push(sq); });
+      return sqs.slice(0,2);
+    },
+  },
+
+  // ── THE DIAGONAL GUARDIAN (sum 13–14) ───────────────────────
+  {
+    id:'danti_guardian',
+    sumMin:13, sumMax:14,
+    text:'The Danti shall become guardian of the diagonal — leaping twice and twice again, covering the board\'s hidden angles. The elephant sees what the rook cannot reach.',
+    condition:'A Danti (elephant) captures 2 or more pieces during the game.',
+    ref:'— Bhishma Parva: "Drona\'s elephants shook the earth as they charged the Pandava left."',
+    dharmaBonus: 18,
+    engineeredBonus: 36,
+    engineeredLabel:'Elephant Rampage',
+    progress(state){
+      const dantiCaps = state.history.filter(m=>m.piece?.type==='elephant'&&m.cap).length;
+      return Math.min(1, dantiCaps / 2);
+    },
+    fulfilled(state){
+      return state.history.filter(m=>m.piece?.type==='elephant'&&m.cap).length >= 2;
+    },
+    engineered(state){
+      return state.history.filter(m=>m.piece?.type==='elephant'&&m.cap).length >= 3;
+    },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='elephant') sqs.push(sq); });
+      return sqs;
+    },
+  },
+
+  // ── BATTLE WITHOUT LOSS (sum 15–16) ─────────────────────────
+  {
+    id:'akshaya_sena',
+    sumMin:15, sumMax:16,
+    text:'One side shall not lose a single Ratha from start to end. The indestructible army — precision so total that the chariots never need to risk themselves. Victory through control.',
+    condition:'The winner captures the enemy Raja without losing any of their own Rathas.',
+    ref:'— Arthashastra, Book X: "The general who wins without losing is greater than the general who wins despite losing."',
+    dharmaBonus: 25,
+    engineeredBonus: 50,
+    engineeredLabel:'Perfect Discipline',
+    progress(state){
+      // Check if player 0 still has all their rooks
+      const rooksLost = state.history.filter(m=>
+        m.cap?.type==='rook' && m.cap.owner===state.currentWatcher
+      ).length;
+      return rooksLost===0 ? 0.4 : 0; // partial — they haven't lost one yet
+    },
+    fulfilled(state){
+      const winnerCaptures = state.history.filter(m=>m.cap?.type==='king');
+      if(!winnerCaptures.length) return false;
+      const winner = winnerCaptures[0].playerId;
+      const rooksLost = state.history.filter(m=>
+        m.cap?.type==='rook' && m.cap?.owner===winner
+      ).length;
+      return rooksLost===0;
+    },
+    engineered(state){ return this.fulfilled(state); },
+    watchSquares(board){
+      const sqs=[];
+      board.forEach((p,sq)=>{ if(p.type==='rook') sqs.push(sq); });
+      return sqs.slice(0,2);
+    },
+  },
+
+  // ── THE LONG GAME (sum 17–18) ─────────────────────────────────
+  {
+    id:'long_game',
+    sumMin:17, sumMax:18,
+    text:'This battle shall not end quickly. The final victory will come after 30 turns — to the player who conserves their strength while the other exhausts theirs. Patience is the greatest weapon.',
+    condition:'The game lasts 30 or more turns before the Raja falls.',
+    ref:'— Vidura Niti, Mahabharata: "He who can wait is the master of the situation."',
+    dharmaBonus: 20,
+    engineeredBonus: 42,
+    engineeredLabel:'Endgame Master',
+    progress(state){
+      return Math.min(1, state.turnCount / 30);
+    },
+    fulfilled(state){
+      return state.turnCount >= 30 && state.history.some(m=>m.cap?.type==='king');
+    },
+    engineered(state){
+      return state.turnCount >= 45 && state.history.some(m=>m.cap?.type==='king');
+    },
+    watchSquares(board){ return []; },
+  },
+
+];
+
+// Get prophecy by dice sum (with fallback)
+function getProphecyBySum(sum) {
+  const clamped = Math.max(3, Math.min(18, sum));
+  let p = PROPHECIES.find(x => clamped >= x.sumMin && clamped <= x.sumMax);
+  if(!p) p = PROPHECIES[Math.floor(Math.random() * PROPHECIES.length)];
+  return p;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD ENGINE
+// ═══════════════════════════════════════════════════════════════
+class Board {
+  constructor(){ this.squares=new Map(); }
+  get(sq)       { return this.squares.get(sq)||null; }
+  set(sq,piece) { piece?this.squares.set(sq,piece):this.squares.delete(sq); }
+  delete(sq)    { this.squares.delete(sq); }
+  forEach(fn)   { this.squares.forEach(fn); }
+  static standard(){
+    const b=new Board();
+    const s={
+      'a1':'0:rook','b1':'0:horse','c1':'0:elephant','d1':'0:king',
+      'f1':'0:elephant','g1':'0:horse','h1':'0:rook',
+      'a2':'0:pawn','b2':'0:pawn','c2':'0:pawn','d2':'0:pawn',
+      'e2':'0:pawn','f2':'0:pawn','g2':'0:pawn','h2':'0:pawn',
+      'a8':'1:rook','b8':'1:horse','c8':'1:elephant','d8':'1:king',
+      'f8':'1:elephant','g8':'1:horse','h8':'1:rook',
+      'a7':'1:pawn','b7':'1:pawn','c7':'1:pawn','d7':'1:pawn',
+      'e7':'1:pawn','f7':'1:pawn','g7':'1:pawn','h7':'1:pawn',
+    };
+    Object.entries(s).forEach(([sq,v])=>{
+      const[o,t]=v.split(':');b.set(sq,{owner:+o,type:t});
+    });
+    return b;
+  }
+}
+
+function getLegalMoves(board,from,fp){
+  const piece=board.get(from);
+  if(!piece) return [];
+  const f=from.charCodeAt(0)-97, r=parseInt(from[1]);
+  const moves=[];
+  const addSq=(nf,nr)=>{
+    if(nf<0||nf>7||nr<1||nr>8) return false;
+    const ns=String.fromCharCode(97+nf)+nr;
+    const t=board.get(ns);
+    if(t&&t.owner===piece.owner) return false;
+    moves.push(ns); return !t;
+  };
+  if(fp&&fp!=='any'){
+    if(fp==='pawn-king'&&piece.type!=='pawn'&&piece.type!=='king') return [];
+    if(fp!=='pawn-king'&&piece.type!==fp) return [];
+  }
+  switch(piece.type){
+    case 'rook':
+      [[0,1],[0,-1],[1,0],[-1,0]].forEach(([df,dr])=>{
+        for(let i=1;i<8;i++){
+          const nf=f+df*i,nr=r+dr*i;
+          if(nf<0||nf>7||nr<1||nr>8) break;
+          const ns=String.fromCharCode(97+nf)+nr;
+          const t=board.get(ns);
+          if(t){if(t.owner!==piece.owner)moves.push(ns);break;}
+          moves.push(ns);
+        }
+      }); break;
+    case 'horse':
+      [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[2,-1],[-2,1],[-2,-1]]
+        .forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'elephant':
+      [[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'king':
+      [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]
+        .forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'pawn':{
+      const dir=piece.owner===0?1:-1;
+      const fwd=String.fromCharCode(97+f)+(r+dir);
+      if(r+dir>=1&&r+dir<=8&&!board.get(fwd)) moves.push(fwd);
+      [[1,dir],[-1,dir]].forEach(([df,dr])=>{
+        const ns=String.fromCharCode(97+f+df)+(r+dr);
+        if(f+df>=0&&f+df<=7&&r+dr>=1&&r+dr<=8){
+          const t=board.get(ns);if(t&&t.owner!==piece.owner)moves.push(ns);
+        }
+      }); break;
+    }
+  }
+  return moves;
+}
+
+function getAllMoves(board,owner,fp){
+  const m=[];
+  board.forEach((p,sq)=>{
+    if(p.owner===owner) getLegalMoves(board,sq,fp).forEach(to=>m.push({from:sq,to}));
+  });
+  return m;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ORACLE STATE
+// ═══════════════════════════════════════════════════════════════
+const DICE_FACES=['—','⚀','⚁','⚂','⚃','⚄','⚅'];
+const DICE_TO_PIECE={1:'rook',2:'any',3:'horse',4:'elephant',5:'any',6:'pawn-king'};
+const PSYMBOLS={pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PNAMES={pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja'};
+const PCOLORS=['#e74c3c','#60a5fa'];
+
+let oracleDiceValues=[0,0,0];
+let oracleRollsLeft=3;
+let activeProphecy=null;
+let prophecyFulfilled=false;
+let prophecyEngineered=false;
+
+let G={};
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ORACLE ROLL SEQUENCE
+// Three sequential rolls, one die at a time
+// ═══════════════════════════════════════════════════════════════
+function rollOracle(){
+  if(oracleRollsLeft<=0) return;
+  const idx = 3 - oracleRollsLeft;
+  const dieEl = document.getElementById('die'+idx);
+
+  // Spin animation
+  dieEl.classList.add('spinning');
+  const spinMs=600;
+  const face = Math.ceil(Math.random()*6);
+  oracleDiceValues[idx]=face;
+
+  setTimeout(()=>{
+    dieEl.classList.remove('spinning');
+    dieEl.classList.add('rolled');
+    dieEl.textContent=DICE_FACES[face];
+    oracleRollsLeft--;
+
+    if(oracleRollsLeft>0){
+      document.getElementById('rollOracleBtn').textContent=
+        oracleRollsLeft===2?'🎲 Roll Second Die':'🎲 Roll Third Die';
+    } else {
+      // All three rolled — reveal prophecy
+      document.getElementById('rollOracleBtn').disabled=true;
+      setTimeout(revealProphecy, 400);
+    }
+  }, spinMs);
+}
+
+function revealProphecy(){
+  const sum = oracleDiceValues.reduce((a,b)=>a+b,0);
+  activeProphecy = getProphecyBySum(sum);
+
+  document.getElementById('pcProphecy').textContent=`"${activeProphecy.text}"`;
+  document.getElementById('pcCondition').textContent=activeProphecy.condition;
+  document.getElementById('pcBonus').innerHTML=
+    `✦ Natural fulfilment: <strong style="color:var(--oracle2)">+${activeProphecy.dharmaBonus} Dharma</strong>&nbsp;&nbsp;
+     ✦ Engineered: <strong style="color:var(--gold2)">+${activeProphecy.engineeredBonus} Dharma</strong>
+       (${activeProphecy.engineeredLabel})`;
+  document.getElementById('pcRef').textContent=activeProphecy.ref;
+
+  const card=document.getElementById('prophecyCard');
+  card.style.display='block';
+
+  const btn=document.getElementById('beginBtn');
+  btn.style.display='inline-block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAME
+// ═══════════════════════════════════════════════════════════════
+function startGame(){
+  if(!activeProphecy) return;
+  prophecyFulfilled=false;
+  prophecyEngineered=false;
+
+  G = {
+    board:         Board.standard(),
+    currentPlayer: 0,
+    phase:         'roll',
+    selectedSq:    null,
+    legalMoves:    [],
+    forcedPiece:   null,
+    lastFrom:      null,
+    lastTo:        null,
+    gameOver:      false,
+    turnCount:     0,
+    history:       [],
+    dharmaScore:   50,
+    currentWatcher:0,
+  };
+
+  showScreen('gameScreen');
+
+  // Ribbon
+  document.getElementById('orProphecy').textContent=`"${activeProphecy.text.slice(0,100)}…"`;
+  updateOracleRibbon();
+
+  renderBoard();
+  updateTurnIndicator();
+  enableRoll();
+  setStatus(`Player 1 begins — roll the Pāśaka.`);
+}
+
+// ── Oracle ribbon update ─────────────────────────────────────
+function updateOracleRibbon(){
+  if(!activeProphecy||prophecyFulfilled) return;
+  const state={history:G.history, turnCount:G.turnCount, currentWatcher:0};
+  const pct=Math.round(activeProphecy.progress(state)*100);
+  document.getElementById('orPct').textContent=pct+'%';
+  document.getElementById('orFill').style.width=pct+'%';
+}
+
+// ── Check prophecy after every move ─────────────────────────
+function checkProphecy(){
+  if(!activeProphecy||prophecyFulfilled) return;
+  const state={history:G.history, turnCount:G.turnCount, currentWatcher:0};
+
+  const isEngineered = activeProphecy.engineered(state);
+  const isFulfilled  = activeProphecy.fulfilled(state);
+
+  if(isEngineered||isFulfilled){
+    prophecyFulfilled=true;
+    prophecyEngineered=isEngineered;
+    const bonus = isEngineered ? activeProphecy.engineeredBonus : activeProphecy.dharmaBonus;
+    G.dharmaScore = Math.min(100, G.dharmaScore + bonus);
+
+    // Update ribbon
+    const ribbon=document.getElementById('oracleRibbon');
+    ribbon.classList.add(isEngineered?'engineered':'fulfilled');
+    document.getElementById('orLabel').textContent=
+      isEngineered?'⚡ Engineered — Oracle Fulfilled':'✦ Oracle Fulfilled';
+    document.getElementById('orPct').textContent='100%';
+    document.getElementById('orFill').style.width='100%';
+
+    // Show fulfilment overlay (slight delay so the move renders first)
+    setTimeout(()=>showFulfilment(isEngineered, bonus), 600);
+  }
+}
+
+function showFulfilment(isEngineered, bonus){
+  const overlay=document.getElementById('fulfilmentOverlay');
+
+  if(isEngineered){
+    document.getElementById('foStars').textContent='✦ ✦ ✦ ✦ ✦';
+    document.getElementById('foStars').style.color='rgba(201,168,76,.6)';
+    document.getElementById('foEyebrow').textContent='The Oracle\'s Prophecy Was Engineered';
+    document.getElementById('foTitle').textContent='Legendary Fulfilment';
+    document.getElementById('foTitle').style.color='var(--gold2)';
+    document.getElementById('foTitle').style.textShadow='0 0 30px rgba(201,168,76,.5)';
+    document.getElementById('foSubtitle').textContent='You shaped the prophecy deliberately';
+    document.getElementById('foProphecy').className='fo-prophecy-echo engineered-text';
+    document.getElementById('foBonus').className='fo-bonus engineered';
+    document.getElementById('foBonusLabel').textContent=activeProphecy.engineeredLabel;
+    document.getElementById('foBonusVal').textContent=`+${bonus} Dharma`;
+    document.getElementById('foBonusDesc').textContent=
+      'The Oracle rewards those who bend the battlefield to their will.';
+  } else {
+    document.getElementById('foStars').textContent='✦ ✦ ✦ ✦ ✦';
+    document.getElementById('foStars').style.color='rgba(124,58,237,.5)';
+    document.getElementById('foEyebrow').textContent='The Oracle\'s Prophecy Has Come to Pass';
+    document.getElementById('foTitle').textContent='Prophecy Fulfilled';
+    document.getElementById('foTitle').style.color='var(--oracle2)';
+    document.getElementById('foTitle').style.textShadow='0 0 30px rgba(124,58,237,.5)';
+    document.getElementById('foSubtitle').textContent='The Oracle spoke. The Ashtāpada listened.';
+    document.getElementById('foProphecy').className='fo-prophecy-echo';
+    document.getElementById('foBonus').className='fo-bonus normal';
+    document.getElementById('foBonusLabel').textContent='Dharma Reward';
+    document.getElementById('foBonusVal').textContent=`+${bonus} Dharma`;
+    document.getElementById('foBonusDesc').textContent=
+      'Natural fulfilment — the battle followed the Oracle\'s vision.';
+  }
+
+  document.getElementById('foProphecy').textContent=`"${activeProphecy.text}"`;
+  document.getElementById('foRef').textContent=activeProphecy.ref;
+  overlay.classList.add('show');
+}
+
+function dismissFulfilment(){
+  document.getElementById('fulfilmentOverlay').classList.remove('show');
+}
+
+// ── Board render ─────────────────────────────────────────────
+function renderBoard(){
+  document.getElementById('boardLabelsTop').innerHTML=
+    ['a','b','c','d','e','f','g','h'].map(l=>`<div class="blt">${l}</div>`).join('');
+  document.getElementById('boardRanks').innerHTML=
+    Array.from({length:8},(_,i)=>`<div style="height:var(--sq);display:flex;align-items:center;
+      justify-content:center;font-size:.6rem;color:var(--muted)">${8-i}</div>`).join('');
+
+  // Get oracle-watched squares
+  const watchSqs = (!prophecyFulfilled&&activeProphecy)
+    ? activeProphecy.watchSquares(G.board) : [];
+
+  const boardEl=document.getElementById('board');
+  boardEl.innerHTML='';
+  for(let r=8;r>=1;r--){
+    for(let fi=0;fi<8;fi++){
+      const sq=String.fromCharCode(97+fi)+r;
+      const piece=G.board.get(sq);
+      const isLight=(fi+r)%2===0;
+      let cls=`sq ${isLight?'light':'dark'}`;
+      if(sq===G.selectedSq) cls+=' selected';
+      if(G.legalMoves.includes(sq)) cls+=piece?' legal-capture':' legal';
+      if(sq===G.lastFrom) cls+=' last-from';
+      if(sq===G.lastTo)   cls+=' last-to';
+      if(watchSqs.includes(sq)) cls+=' oracle-watch';
+      const cell=document.createElement('div');
+      cell.className=cls;
+      if(piece){
+        const span=document.createElement('span');
+        span.className='piece';
+        span.textContent=PSYMBOLS[piece.type];
+        span.style.color=PCOLORS[piece.owner];
+        cell.appendChild(span);
+      }
+      cell.addEventListener('click',()=>onSquareClick(sq));
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+// ── Click & move ─────────────────────────────────────────────
+function onSquareClick(sq){
+  if(G.phase!=='move'||G.gameOver) return;
+  const piece=G.board.get(sq);
+  if(G.selectedSq){
+    if(G.legalMoves.includes(sq)){ executeMove(G.selectedSq,sq); return; }
+    if(piece&&piece.owner===G.currentPlayer){
+      G.selectedSq=sq;
+      G.legalMoves=getLegalMoves(G.board,sq,G.forcedPiece);
+    } else { G.selectedSq=null; G.legalMoves=[]; }
+  } else {
+    if(piece&&piece.owner===G.currentPlayer){
+      const mv=getLegalMoves(G.board,sq,G.forcedPiece);
+      if(mv.length){ G.selectedSq=sq; G.legalMoves=mv;
+        setStatus(`${PNAMES[piece.type]} selected — ${mv.length} move${mv.length!==1?'s':''} available.`);
+      } else setStatus(`No legal moves for this ${PNAMES[piece.type]}.`);
+    }
+  }
+  renderBoard();
+}
+
+function executeMove(from,to){
+  const piece=G.board.get(from);
+  const target=G.board.get(to);
+  G.lastFrom=from; G.lastTo=to;
+  G.board.set(to,piece); G.board.delete(from);
+  G.selectedSq=null; G.legalMoves=[]; G.forcedPiece=null;
+
+  // Detect fork (horse threatening two enemies after move)
+  let wasForking=false;
+  if(piece.type==='horse'){
+    let threats=0;
+    getLegalMoves(G.board,to,'any').forEach(sq=>{
+      const t=G.board.get(sq);
+      if(t&&t.owner!==piece.owner) threats++;
+    });
+    wasForking=threats>=2;
+  }
+
+  // Pawn promotion
+  let promoted=false;
+  if(piece.type==='pawn'){
+    const ri=parseInt(to[1]);
+    if((piece.owner===0&&ri===8)||(piece.owner===1&&ri===1)){
+      G.board.set(to,{owner:piece.owner,type:'rook'});
+      promoted=true;
+    }
+  }
+
+  // Record in history
+  G.history.push({
+    from,to,
+    piece:{type:piece.type,owner:piece.owner},
+    cap:target?{type:target.type,owner:target.owner}:null,
+    playerId:G.currentPlayer,
+    promoted,
+    wasForking,
+    wasThreatened:false, // simplified
+  });
+
+  G.turnCount++;
+
+  // Check oracle after recording
+  checkProphecy();
+  updateOracleRibbon();
+
+  if(target&&target.type==='king'){
+    renderBoard();
+    setTimeout(()=>endGame(G.currentPlayer),prophecyFulfilled?1200:400);
+    return;
+  }
+
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  renderBoard();
+  updateTurnIndicator();
+  G.phase='roll';
+  enableRoll();
+  setStatus(`Player ${G.currentPlayer+1} — roll the Pāśaka.`);
+}
+
+// ── Dice ─────────────────────────────────────────────────────
+function rollDice(){
+  if(G.gameOver||G.phase!=='roll') return;
+  const face=Math.ceil(Math.random()*6);
+  G.forcedPiece=DICE_TO_PIECE[face];
+  const dfEl=document.getElementById('diceFace');
+  dfEl.textContent=DICE_FACES[face];
+  dfEl.classList.add('spin');
+  setTimeout(()=>dfEl.classList.remove('spin'),300);
+  document.getElementById('dicePiece').textContent=
+    G.forcedPiece==='any'?'Any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece];
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('forfeitBtn').disabled=false;
+  G.phase='move';
+  const allMoves=getAllMoves(G.board,G.currentPlayer,G.forcedPiece);
+  if(allMoves.length===0) setStatus('No pieces can move — forfeit.');
+  else setStatus(`Player ${G.currentPlayer+1}: ${
+    G.forcedPiece==='any'?'Any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece]
+  } — select a piece.`);
+}
+
+function forfeitTurn(){
+  if(G.gameOver) return;
+  G.forcedPiece=null;G.selectedSq=null;G.legalMoves=[];
+  G.history.push({from:'—',to:'—',piece:null,cap:null,playerId:G.currentPlayer,forfeit:true});
+  G.turnCount++;
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  renderBoard();updateTurnIndicator();G.phase='roll';enableRoll();
+  setStatus(`Turn forfeited. Player ${G.currentPlayer+1} — roll.`);
+}
+
+function enableRoll(){
+  document.getElementById('rollBtn').disabled=false;
+  document.getElementById('forfeitBtn').disabled=true;
+  document.getElementById('diceFace').textContent='🎲';
+  document.getElementById('dicePiece').textContent='Roll to begin';
+}
+
+function setStatus(t){ document.getElementById('statusBar').textContent=t; }
+
+function updateTurnIndicator(){
+  const el=document.getElementById('tdPlayer');
+  const p=G.currentPlayer;
+  el.textContent=`Player ${p+1}`;
+  el.style.color=PCOLORS[p];
+  el.style.borderColor=PCOLORS[p]+'44';
+}
+
+// ── End game ─────────────────────────────────────────────────
+function endGame(winner){
+  G.gameOver=true;
+  showScreen('resultScreen');
+
+  const wName=`Player ${winner+1}`;
+  document.getElementById('resultIcon').textContent=
+    prophecyEngineered?'⚡':prophecyFulfilled?'🔮':'🏆';
+  document.getElementById('resultTitle').textContent=`${wName} Wins`;
+  document.getElementById('resultSub').textContent=
+    `${G.turnCount} turns played. ` +
+    (prophecyFulfilled
+      ? (prophecyEngineered
+          ? 'The Oracle\'s prophecy was engineered deliberately — a legendary feat.'
+          : 'The Oracle\'s prophecy was fulfilled naturally — the Ashtāpada remembered.')
+      : 'The Oracle\'s prophecy was not fulfilled this battle.');
+
+  // Oracle verdict block
+  const verdict=document.getElementById('oracleVerdict');
+  verdict.className='oracle-verdict '+(prophecyEngineered?'engineered':prophecyFulfilled?'fulfilled':'unfulfilled');
+  document.getElementById('ovLabel').textContent=
+    prophecyEngineered?'⚡ Oracle — Engineered':
+    prophecyFulfilled?'✦ Oracle — Fulfilled':'Oracle — Unfulfilled';
+  document.getElementById('ovProphecy').textContent=`"${activeProphecy.text}"`;
+  document.getElementById('ovOutcome').textContent=
+    prophecyEngineered?`Legendary fulfilment · +${activeProphecy.engineeredBonus} Dharma awarded`:
+    prophecyFulfilled?`Natural fulfilment · +${activeProphecy.dharmaBonus} Dharma awarded`:
+    'The prophecy passed unheeded. Return and listen more carefully.';
+
+  // Dharma bar
+  const fill=document.getElementById('dharmaFill');
+  fill.style.width='0%';
+  setTimeout(()=>{ fill.style.width=G.dharmaScore+'%'; },400);
+  document.getElementById('dharmaScore').textContent=G.dharmaScore;
+}
+
+// ── Reset ─────────────────────────────────────────────────────
+function resetAll(){
+  // Reset oracle state
+  oracleDiceValues=[0,0,0];
+  oracleRollsLeft=3;
+  activeProphecy=null;
+  prophecyFulfilled=false;
+  prophecyEngineered=false;
+  // Reset dice UI
+  [0,1,2].forEach(i=>{
+    const d=document.getElementById('die'+i);
+    d.textContent='⚄';d.className='oracle-die';
+  });
+  document.getElementById('rollOracleBtn').disabled=false;
+  document.getElementById('rollOracleBtn').textContent='🎲 Consult the Oracle';
+  document.getElementById('prophecyCard').style.display='none';
+  document.getElementById('beginBtn').style.display='none';
+  showScreen('oracleScreen');
+}
+</script>
+</body>
+</html>
