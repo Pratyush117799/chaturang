@@ -526,9 +526,18 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   <div class="reconnect-progress"><div class="reconnect-bar" id="reconnectBar"></div></div>
 </div>
 
+
+<script src="C:\Users\admin\Documents\chaturang\chaturang\Chaturanga TESTING version 1.0.0.0\website\session.js"></script>
+
 <script>
 'use strict';
 
+
+if (!Session.isLoggedIn()) {
+    window.location.href = 'loginpage.html'; // gate a protected page
+  }
+  const user = Session.get(); // { id, name, email } or null
+  // e.g. show user.name in a navbar greeting
 // ═══════════════════════════════════════════════════════════════
 // CONFIG — change WS_URL to your server address
 // ═══════════════════════════════════════════════════════════════

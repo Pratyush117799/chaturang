@@ -733,4 +733,13 @@
   </footer>
 \n</body>
 
+
+<script src="C:\Users\admin\Documents\chaturang\chaturang\Chaturanga TESTING version 1.0.0.0\website\session.js"></script>
+<script>
+  if (!Session.isLoggedIn()) {
+    window.location.href = 'loginpage.html'; // gate a protected page
+  }
+  const user = Session.get(); // { id, name, email } or null
+  // e.g. show user.name in a navbar greeting
+</script>
 </html>

@@ -934,6 +934,14 @@ const weights = {
 
   <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
+  <script src="session.js"></script>
+  <script>
+  if (!Session.isLoggedIn()) {
+    window.location.href = 'loginpage.html'; // gate a protected page
+  }
+  const user = Session.get(); // { id, name, email } or null
+  // e.g. show user.name in a navbar greeting
+</script>
 </body>
 
 </html>
