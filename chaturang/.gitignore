@@ -3,3 +3,5 @@ node_modules/
 *.log
 .DS_Store
 Chaturanga-v1.0.5.2-Repo/
+.env.local
+.env.*.local

@@ -88,31 +88,34 @@
   <!-- NAVBAR -->
   <nav id="navbar" class="navbar">
     <div class="nav-container">
-      <a href="#hero" class="nav-logo">
-        <span class="logo-devanagari">चतुरंग</span>
-        <span class="logo-divider">·</span>
-        <span class="logo-latin">Chaturanga</span>
-      </a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#about" class="nav-link">About</a></li>
-        <li><a href="#play" class="nav-link">Play</a></li>
-        <li><a href="#docs" class="nav-link">Documentation</a></li>
-        <li><a href="#contribute" class="nav-link">Contribute</a></li>
-      </ul>
-      <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
-        <i class="fa-solid fa-chess-king"></i> Play Now
-      </button>
-      <a href="howtoplay.html" class="howto-nav-link">
-        <i class="fa-solid fa-graduation-cap"></i> <span>How to Play</span>
-      </a>
-      <button class="features-btn" id="featuresToggle" aria-label="Open Features">
-        <i class="fa-solid fa-bars"></i>
-        <span>Features</span>
-      </button>
-      <button class="hamburger" id="hamburger" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+  <a href="#hero" class="nav-logo">
+    <span class="logo-devanagari">चतुरंग</span>
+    <span class="logo-divider">·</span>
+    <span class="logo-latin">Chaturanga</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" class="nav-link">About</a></li>
+    <li><a href="#play" class="nav-link">Play</a></li>
+    <li><a href="#docs" class="nav-link">Documentation</a></li>
+    <li><a href="#contribute" class="nav-link">Contribute</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
+    <i class="fa-solid fa-chess-king"></i> Play Now
+  </button>
+  <a href="howtoplay.html" class="howto-nav-link">
+    <i class="fa-solid fa-graduation-cap"></i> <span>How to Play</span>
+  </a>
+  <div class="nav-user" id="navUser">
+    <!-- filled in by JS below: either a "Sign In" link or a logged-in badge -->
+  </div>
+  <button class="features-btn" id="featuresToggle" aria-label="Open Features">
+    <i class="fa-solid fa-bars"></i>
+    <span>Features</span>
+  </button>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
   </nav>
 
   <!-- FEATURES SIDEBAR -->
@@ -935,12 +938,53 @@ const weights = {
   <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
   <script src="session.js"></script>
-  <script>
-  if (!Session.isLoggedIn()) {
-    window.location.href = 'loginpage.html'; // gate a protected page
+<script>
+  function renderNavUser() {
+    const navUser = document.getElementById('navUser');
+    if (!navUser) return;
+    navUser.innerHTML = '';
+
+    const user = Session.get();
+
+    if (user) {
+      const badge = document.createElement('div');
+      badge.className = 'nav-user-badge';
+
+      const avatar = document.createElement('span');
+      avatar.className = 'nav-user-avatar';
+      avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
+
+      const name = document.createElement('span');
+      name.className = 'nav-user-name';
+      name.textContent = user.name || user.email;
+      name.title = user.name || user.email; // full name on hover if truncated
+
+      const logoutBtn = document.createElement('button');
+      logoutBtn.type = 'button';
+      logoutBtn.className = 'nav-logout-btn';
+      logoutBtn.setAttribute('aria-label', 'Log out');
+      logoutBtn.title = 'Log out';
+      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
+      logoutBtn.addEventListener('click', function () {
+        Session.clear();
+        renderNavUser();
+      });
+
+      badge.appendChild(avatar);
+      badge.appendChild(name);
+      badge.appendChild(logoutBtn);
+      navUser.appendChild(badge);
+    } else {
+      const link = document.createElement('a');
+      link.href = 'loginpage.html';
+      link.className = 'nav-signin-link';
+      link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
+      navUser.appendChild(link);
+    }
   }
-  const user = Session.get(); // { id, name, email } or null
-  // e.g. show user.name in a navbar greeting
+
+  renderNavUser();
+  Session.onChange(renderNavUser); // stays in sync if another tab logs in/out
 </script>
 </body>
 

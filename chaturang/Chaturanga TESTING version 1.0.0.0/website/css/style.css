@@ -47,6 +47,160 @@
     --safe-right: env(safe-area-inset-right, 0px);
 }
 
+/* Nav user slot — Sign In link OR logged-in badge, driven by session.js */
+.nav-user {
+    position: relative; /* anchors the dropdown */
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201, 168, 76, 0.1);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 100px;
+    padding: 5px 12px 5px 6px;
+    min-height: 44px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .nav-user-badge:hover {
+        background: rgba(201, 168, 76, 0.16);
+        border-color: var(--gold);
+    }
+}
+
+.nav-user-avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--midnight);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-user-name {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    color: var(--sandstone);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-user-caret {
+    font-size: 0.6rem;
+    color: var(--gold-dim);
+    transition: transform 0.2s ease;
+}
+
+.nav-user-badge[aria-expanded="true"] .nav-user-caret {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.nav-user-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 190px;
+    background: rgba(18, 4, 0, 0.97);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 1200;
+}
+
+.nav-user-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 18px;
+    width: 12px;
+    height: 12px;
+    background: inherit;
+    border-left: 1px solid rgba(201, 168, 76, 0.3);
+    border-top: 1px solid rgba(201, 168, 76, 0.3);
+    transform: rotate(45deg);
+}
+
+.nav-user-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.nav-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    min-height: 44px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-dropdown-item i {
+    width: 16px;
+    text-align: center;
+    color: var(--gold-dim);
+    transition: color 0.15s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .nav-dropdown-item:hover {
+        background: rgba(201, 168, 76, 0.08);
+        color: var(--gold);
+    }
+    .nav-dropdown-item:hover i {
+        color: var(--gold);
+    }
+}
+
+.nav-dropdown-logout:hover {
+    color: #ffb4b4 !important;
+}
+.nav-dropdown-logout:hover i {
+    color: #e05a5a !important;
+}
+
+@media (max-width: 480px) {
+    .nav-signin-link span { display: none; }
+    .nav-user-name { display: none; }
+    .nav-user-dropdown { right: -8px; }
+}
+
+
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%; /* stop iOS auto-zooming text */
@@ -79,6 +233,9 @@ html, body {
        even when the page itself is rendering fine */
     overscroll-behavior-y: contain;
 }
+
+
+
 
 /* ---- SCROLLBAR ---- */
 ::-webkit-scrollbar {
@@ -127,7 +284,7 @@ html, body {
        layer re-creation mid-scroll, and so the backdrop-filter's blur
        sampling stays isolated from the rest of the page's paint work */
     transform: translateZ(0);
-    contain: layout style paint;
+    contain: layout style;
 }
 
 .navbar.scrolled {
