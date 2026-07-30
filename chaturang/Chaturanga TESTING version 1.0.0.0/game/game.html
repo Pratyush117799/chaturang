@@ -36,9 +36,14 @@
 
     <!-- ═══ TOP NAVIGATION BAR ═══ -->
     <nav class="top-nav" id="topNav">
-        <a href="index.html" class="nav-icon-btn" title="Home" style="text-decoration:none">
+        <!-- Inside <div class="nav-right"> -->
+<div class="nav-user-profile" id="userProfile" style="display: flex; align-items: center; gap: 8px; color: var(--text-primary, #fff);">
+    <i class="fa-solid fa-user-circle"></i>
+    <span id="navUsername">Guest</span>
+</div>
+        <div  id="homeNavBtn" class="nav-icon-btn" title="Home" style="text-decoration:none">
             <i class="fa-solid fa-house"></i>
-        </a>
+        </div>
         <a href="lessons/vyuha_builder.html" class="nav-icon-btn" title="Vyuha Formations" style="text-decoration:none">
             <i class="fa-solid fa-dharmachakra"></i>
         </a>
@@ -50,10 +55,7 @@
             </a>
             <span class="nav-version">v1.0.5</span>
         </div>
-        <div class="nav-center" id="turnBanner">
-            <span class="turn-color-dot" id="turnDot"></span>
-            <span id="turnIndicator" class="turn-label">—</span>
-        </div>
+      
         <div class="nav-right">
             <a href="features/puzzles/puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none">
                 <i class="fa-solid fa-puzzle-piece"></i>
@@ -98,6 +100,11 @@
         </div>
     </nav>
 
+<div id="turnBanner" class="standalone-turn-banner">
+        <span class="turn-color-dot" id="turnDot"></span>
+        <span id="turnIndicator" class="turn-label">—</span>
+    </div>
+      
     <!-- ═══ MAIN LAYOUT: left | board | right ═══ -->
     <div class="game-layout" id="gameLayout">
 
@@ -554,7 +561,7 @@
 <script src="js/clock-ui.js"></script>
 <script src="js/premove.js"></script>
 <script src="js/sound-engine.js"></script>
-
+<script src="../website/session.js"></script>
 <script src="js/ui.js"></script>
     <!-- BUG-014 FIX: post-game-analysis.js and dharma-engine.js are optional
          enhancement scripts. Guard each with onerror so an error in either
@@ -734,13 +741,155 @@
 \n</body>
 
 
-<script src="C:\Users\admin\Documents\chaturang\chaturang\Chaturanga TESTING version 1.0.0.0\website\session.js"></script>
 <script>
   if (!Session.isLoggedIn()) {
-    window.location.href = 'loginpage.html'; // gate a protected page
+    window.location.href = '../website/loginpage.html'; // gate a protected page
   }
   const user = Session.get(); // { id, name, email } or null
   // e.g. show user.name in a navbar greeting
-  alert(`${user.name}`);
+   document.addEventListener("DOMContentLoaded", () => {
+
+
+  // 1. Get the current user from the Session module
+  const user = Session.get();
+
+  // 2. Select the navbar username element
+  const navUsername = document.getElementById("navUsername");
+
+  if (navUsername) {
+    // 3. Update the text with the session name, or fall back to 'Guest'
+    if (user && user.name) {
+      navUsername.textContent = user.name;
+    } else {
+      navUsername.textContent = "Guest";
+    }
+  }
+
+
+
+
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const homeNavBtn = document.getElementById("homeNavBtn");
+
+  if (homeNavBtn) {
+    homeNavBtn.addEventListener("click", async (event) => {
+      // 1. If game is still running, intercept navigation
+      if (!isGameFinished) {
+        event.preventDefault(); // Stop immediate navigation
+
+        try {
+          // 2. Wait for the backend update to complete
+          await recordGameResultAsync("quitted");
+        } catch (err) {
+          console.error("Failed to record quit state:", err);
+        } finally {
+          isGameFinished = true;
+          // 3. Navigate away after API call finishes
+          window.location.href = "../website/index.html";
+        }
+      }
+    });
+  }
+});
+
+// Async helper that returns a Promise
+async function recordGameResultAsync(resultType) {
+  const user = Session.get();
+  if (!user || (!user.id && !user._id)) return;
+
+  return fetch('http://localhost:5000/api/user/game-history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: user.id || user._id,
+      startedAt: gameStartTime,
+      endedAt: new Date().toISOString(),
+      type: getGameTypeFromURL(),
+      result: resultType
+    })
+  });
+}
+// Optional: Automatically update the navbar name if the user logs out or switches accounts in another tab
+Session.onChange((user) => {
+  const navUsername = document.getElementById("navUsername");
+  if (navUsername) {
+    navUsername.textContent = user && user.name ? user.name : "Guest";
+  }
+});
+
+
+const gameStartTime = new Date().toISOString();
+let isGameFinished = false; // Set this to true when game normal ends (win/defeat)
+
+// 2. Extract botCount from URL query string
+function getGameTypeFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const botCount = urlParams.get('botCount') || '1'; // Default to 1bot if missing
+  return `${botCount}bot`;
+}
+
+// 3. Helper to send payload safely on window exit
+function recordGameResult(resultType) {
+  if (isGameFinished) return;
+
+  const user = Session.get();
+  if (!user || (!user.id && !user._id)) return;
+
+  const payload = JSON.stringify({
+    userId: user.id || user._id,
+    startedAt: gameStartTime,
+    endedAt: new Date().toISOString(),
+    type: getGameTypeFromURL(),
+    result: resultType
+  });
+
+  const url = 'http://localhost:5000/api/user/game-history';
+
+  // Option A: sendBeacon (runs in background even after unload)
+  if (navigator.sendBeacon) {
+    const blob = new Blob([payload], { type: 'application/json' });
+    navigator.sendBeacon(url, blob);
+  } 
+  // Option B: fetch with keepalive
+  else {
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true // <--- Key parameter: keeps HTTP connection alive after unload
+    });
+  }
+
+  isGameFinished = true;
+}
+// 4. Handle Tab Close / Navigation (Quitted)
+window.addEventListener('pagehide', (event) => {
+  if (!isGameFinished) {
+    recordGameResult('quitted');
+  }
+});
+
+// 5. Call this explicitly when game finishes naturally
+function onGameComplete(finalResult) { // 'win' or 'defeat'
+  isGameFinished = true;
+  
+  // Standard fetch is fine here since the page is still open
+  fetch('http://localhost:5000/api/user/game-history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: (Session.get() || {}).id,
+      startedAt: gameStartTime,
+      endedAt: new Date().toISOString(),
+      type: getGameTypeFromURL(),
+      result: finalResult
+    })
+  });
+}
+
+
 </script>
 </html>

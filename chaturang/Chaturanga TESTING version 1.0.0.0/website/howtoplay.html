@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>How to Play — Chaturanga</title>
 <meta name="description" content="Learn Chaturanga on the board itself: how each piece moves, and simple attacks like the fork — no rulebook required." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,10 +42,15 @@
     font-weight:300;
     line-height:1.65;
     -webkit-font-smoothing:antialiased;
+    overscroll-behavior-y:contain;
   }
   h1,h2,h3,h4{font-family:'Cinzel', serif; margin:0; letter-spacing:0.01em;}
   a{color:inherit;}
   button{font-family:'Outfit',sans-serif;}
+  button, .lesson-dot, .nav-btn, .back-to-game, .footer-links a{
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
   }
@@ -190,6 +195,8 @@
     border:1px solid var(--border-strong); box-shadow:var(--shadow);
     touch-action:none; /* no scroll/zoom interference while tapping the board */
     contain: layout paint style; /* isolate repaints to the board only */
+    user-select:none;
+    -webkit-user-select:none;
   }
   .lb-sq{
     position:relative;
@@ -201,6 +208,7 @@
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
+    -webkit-tap-highlight-color:transparent;
   }
   .lb-sq.alt{background:#170f04;}
   .lb-sq.sel{box-shadow:inset 0 0 0 3px var(--gold-light);}
@@ -573,9 +581,52 @@
     return getLegalMoves(board, r, c).captures.length;
   }
 
+  // ---- Free-practice vulnerability finder ----
+  // After the scripted guide steps finish, we let a rival piece reposition
+  // itself into a square that one of the player's own pieces can legally
+  // capture (not a "guarded" capture — a real one). Computed live against
+  // the current board rather than hard-coded per lesson, so it always
+  // matches whatever pieces happen to remain on the board at that moment.
+  function findVulnerabilityMove(board){
+    for (var r=0;r<8;r++){
+      for (var c=0;c<8;c++){
+        var piece = board[r][c];
+        if (!piece || piece.side !== 'enemy') continue;
+        var ownMoves = getLegalMoves(board, r, c).moves;
+        for (var i=0;i<ownMoves.length;i++){
+          var dest = ownMoves[i];
+          // Simulate the reposition
+          board[r][c] = null;
+          board[dest.r][dest.c] = piece;
+
+          var vulnerable = false;
+          for (var fr=0; fr<8 && !vulnerable; fr++){
+            for (var fc=0; fc<8 && !vulnerable; fc++){
+              var fp = board[fr][fc];
+              if (!fp || fp.side !== 'friend') continue;
+              var fCaptures = getLegalMoves(board, fr, fc).captures;
+              for (var k=0;k<fCaptures.length;k++){
+                if (fCaptures[k].r === dest.r && fCaptures[k].c === dest.c){ vulnerable = true; break; }
+              }
+            }
+          }
+
+          // Revert simulation
+          board[dest.r][dest.c] = null;
+          board[r][c] = piece;
+
+          if (vulnerable){
+            return { from:{r:r,c:c}, to:{r:dest.r,c:dest.c}, type:piece.type };
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   var LESSONS = [
     {
-      kicker:'Piece Movement', title:'The Ratha', dev:'रथ', pieceType:'ratha',
+      kicker:'Piece Movement', title:'The Ratha', dev:'रथ', pieceType:'ratha', practiceEnabled:true,
       instructions:'The Ratha is your Chariot — it slides in a straight line, as far as the road is clear.',
       tips:['Tap the yellow Ratha to see it slide across the whole rank and file.','It stops dead behind a piece of your own.','It captures the first enemy it meets — then stops there.'],
       setup:[
@@ -593,7 +644,7 @@
       }
     },
     {
-      kicker:'Piece Movement', title:'The Ashwa', dev:'अश्व', pieceType:'ashwa',
+      kicker:'Piece Movement', title:'The Ashwa', dev:'अश्व', pieceType:'ashwa', practiceEnabled:true,
       instructions:'The Ashwa is your Horse — it leaps in an L-shape and jumps clean over anything in its way.',
       tips:['Notice the two blockers hugging it — they change nothing.','One landing square has a capturable rival.','One landing square shows a dashed ring: that piece is guarded.'],
       setup:[
@@ -612,7 +663,7 @@
       }
     },
     {
-      kicker:'Piece Movement', title:'The Danti', dev:'दन्ती', pieceType:'danti',
+      kicker:'Piece Movement', title:'The Danti', dev:'दन्ती', pieceType:'danti', practiceEnabled:true,
       instructions:'The Danti is your War Elephant — it vaults exactly two squares on a diagonal, sailing over whatever sits in between.',
       tips:['The blocker sitting diagonally beside it is not in danger — the Danti sails right over it.','One vault lands on a capturable rival two squares out.','Another lands on a guarded piece — visible, untouchable.'],
       setup:[
@@ -630,7 +681,7 @@
       }
     },
     {
-      kicker:'Piece Movement', title:'The Nara', dev:'नर', pieceType:'nara',
+      kicker:'Piece Movement', title:'The Nara', dev:'नर', pieceType:'nara', practiceEnabled:true,
       instructions:'The Nara is your Foot Soldier — it steps straight ahead into empty ground, but only strikes on the diagonal.',
       tips:['Straight ahead is blocked — a Nara can never capture head-on.','Diagonally ahead, an open rival falls.'],
       setup:[
@@ -648,7 +699,7 @@
       }
     },
     {
-      kicker:'Piece Movement', title:'The Raja', dev:'राजा', pieceType:'raja',
+      kicker:'Piece Movement', title:'The Raja', dev:'राजा', pieceType:'raja', practiceEnabled:true,
       instructions:'The Raja is your King — one square in any direction. Unlike the Ashwa and Danti, the Raja has no restriction on what it can capture.',
       tips:['One neighbor is your own piece — blocked.','One neighbor is a rival — and the Raja takes it without hesitation.'],
       setup:[
@@ -713,6 +764,10 @@
   var board = null;
   var selected = null;
   var legalMoves = null;
+
+  // Free-practice state — populated once the scripted guide finishes and a
+  // rival piece has stepped into a capturable square on its own.
+  var practice = { active:false, vulnerable:null, capturedType:null };
 
   var boardEl = document.getElementById('lessonBoard');
   var fileRowEl = document.getElementById('fileRow');
@@ -858,6 +913,7 @@
     board = buildBoard(lesson.setup);
     selected = null;
     legalMoves = null;
+    practice = { active:false, vulnerable:null, capturedType:null };
     hideBoardToast();
 
     kickerEl.textContent = lesson.kicker;
@@ -931,6 +987,29 @@
 
     selected = { r:r, c:c, viewOnly: piece.side === 'enemy' };
     legalMoves = getLegalMoves(board, r, c);
+
+    // Free-practice hint: once the scripted guide has finished and a rival
+    // has stepped into a vulnerable square on its own, whichever friendly
+    // piece the player selects gets checked against that square. If this
+    // piece can actually take it, we point it out and explain why.
+    if (!guide.active && practice.active && piece.side === 'friend'){
+      clearHints();
+      hideBoardToast();
+      var canTake = practice.vulnerable && legalMoves.captures.some(function(m){
+        return m.r === practice.vulnerable.r && m.c === practice.vulnerable.c;
+      });
+      if (canTake){
+        showHintOnSquare(practice.vulnerable.r, practice.vulnerable.c);
+        var enemyName = NAMES[practice.capturedType] || 'piece';
+        var friendName = NAMES[piece.type];
+        showBoardToast(
+          practice.vulnerable.r, practice.vulnerable.c,
+          'Their ' + enemyName + ' just moved within reach — your ' + friendName + ' can capture it here.',
+          'info'
+        );
+      }
+    }
+
     setFeedback(
       piece.side === 'enemy'
         ? 'This is what the rival piece threatens right now — you can look, but only your own pieces can move.'
@@ -987,13 +1066,27 @@
       var moveInfo = { from:selected, to:{r:r,c:c}, piece:movingPiece, captured:capturedPiece };
       var msg = null;
       if (lesson.successCheck) msg = lesson.successCheck(board, moveInfo);
+
+      // Was this the exact capture the free-practice system was hinting at?
+      var wasPracticeCapture = !guide.active && practice.active && capturedPiece &&
+        practice.vulnerable && practice.vulnerable.r === r && practice.vulnerable.c === c;
+
       if (!msg){
-        msg = capturedPiece
-          ? 'Captured! The ' + NAMES[movingPiece.type] + ' takes the square.'
-          : 'The ' + NAMES[movingPiece.type] + ' moves there.';
+        if (wasPracticeCapture){
+          msg = '🏆 You spotted it yourself! The ' + NAMES[movingPiece.type] + ' takes the ' + NAMES[capturedPiece.type] + '.';
+        } else {
+          msg = capturedPiece
+            ? 'Captured! The ' + NAMES[movingPiece.type] + ' takes the square.'
+            : 'The ' + NAMES[movingPiece.type] + ' moves there.';
+        }
       }
       setFeedback(msg);
       hideBoardToast();
+      clearHints();
+      if (wasPracticeCapture){
+        setGuideBanner('🏆 Well spotted — no hints needed for that one!', true);
+      }
+      if (practice.active){ practice.active = false; practice.vulnerable = null; practice.capturedType = null; }
 
       selected = null; legalMoves = null;
       render();
@@ -1070,6 +1163,13 @@
         ? lesson.guide.doneText
         : '✅ Nicely done! Feel free to keep exploring this lesson freely.';
       setGuideBanner(doneText, true);
+
+      // Hand-off to free practice: let a rival piece step into danger on
+      // its own, then clear all scripted hints and let the player hunt for
+      // the capture themselves.
+      if (lesson.practiceEnabled){
+        guide.timer = setTimeout(startPractice, 1600);
+      }
       return;
     }
 
@@ -1110,6 +1210,45 @@
     if (step.pos.r !== r || step.pos.c !== c) return;
     guide.stepIndex++;
     guide.timer = setTimeout(enterGuideStep, 550);
+  }
+
+  // ---- Free-practice phase ----
+  // Runs once, right after the scripted guide finishes. Finds a rival move
+  // that steps into real danger, animates it exactly like a scripted
+  // "auto" step, then goes quiet and waits for the player to find the
+  // capture on their own (handled inside trySelect / onSquareClick above).
+  function startPractice(){
+    var vuln = findVulnerabilityMove(board);
+    if (!vuln){
+      // Nothing sensible to offer on this board — just hand off control.
+      setGuideBanner('');
+      setFeedback('Explore freely — tap any of your pieces to see its moves.', true);
+      return;
+    }
+
+    setGuideBanner('👀 Watch — the rival repositions...');
+    guide.timer = setTimeout(function(){
+      var mover = board[vuln.from.r][vuln.from.c];
+      if (mover){
+        board[vuln.to.r][vuln.to.c] = mover;
+        board[vuln.from.r][vuln.from.c] = null;
+      }
+      render();
+      var cell = squareEls[vuln.to.r][vuln.to.c];
+      if (cell){
+        cell.sq.classList.remove('enemy-flash');
+        void cell.sq.offsetWidth;
+        cell.sq.classList.add('enemy-flash');
+      }
+
+      // Guiding animations go away — the player is on their own now.
+      setGuideBanner('');
+      setFeedback('Your move — tap one of your own pieces to find the capture.', true);
+
+      practice.active = true;
+      practice.vulnerable = { r: vuln.to.r, c: vuln.to.c };
+      practice.capturedType = vuln.type;
+    }, 900);
   }
 
   prevBtn.addEventListener('click', function(){ loadLesson(currentIndex - 1); });

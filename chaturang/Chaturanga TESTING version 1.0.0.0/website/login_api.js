@@ -104,10 +104,64 @@ function sendRegisterNotification(toEmail, name) {
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true } ,
+  last50games: [{
+  startedAt: { type: Date },
+  endedAt: { type: Date, default: Date.now },
+  type: { type: String, enum: ['1bot', '2bot', '3bot'] },
+  result: { type: String, enum: ['win', 'defeat', 'quitted'] }
+}]
+});
+
+
+app.post('/api/user/game-history', async (req, res) => {
+  try {
+    const { userId, startedAt, endedAt, type, result } = req.body;
+
+    if (!userId || !type || !result) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+
+
+
+    console.log(result);
+    const newGame = {
+      startedAt: startedAt ? new Date(startedAt) : new Date(),
+      endedAt: endedAt ? new Date(endedAt) : new Date(),
+      type,
+      result
+    };
+
+    // $position: 0 puts newest first; $slice: 50 caps array size at 50
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          last50games: {
+            $each: [newGame],
+            $position: 0,
+            $slice: 50
+          }
+        }
+      },
+      { new: true }
+    );
+
+    res.json({ success: true, history: updatedUser.last50games });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 const User = mongoose.model('User', userSchema);
+
+
+
+// Inside your User Schema definition
+
+
+
 
 // API Endpoints
 app.post('/api/auth/register', async (req, res) => {

@@ -102,9 +102,7 @@
   <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
     <i class="fa-solid fa-chess-king"></i> Play Now
   </button>
-  <a href="howtoplay.html" class="howto-nav-link">
-    <i class="fa-solid fa-graduation-cap"></i> <span>How to Play</span>
-  </a>
+  
   <div class="nav-user" id="navUser">
     <!-- filled in by JS below: either a "Sign In" link or a logged-in badge -->
   </div>
@@ -127,6 +125,27 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
+
+    <!-- ACCOUNT -->
+<div class="sidebar-account" id="sidebarAccount">
+  <button class="account-toggle" id="accountToggle" aria-haspopup="true" aria-expanded="false">
+    <span class="account-avatar"><i class="fa-solid fa-user"></i></span>
+    <span class="account-info">
+      <span class="account-name" id="accountName">Guest</span>
+      <span class="account-sub" id="accountSub">Not signed in</span>
+    </span>
+    <i class="fa-solid fa-chevron-down account-chevron"></i>
+  </button>
+  <div class="account-dropdown" id="accountDropdown">
+    <button class="account-action logout" id="logoutBtn" style="display:none">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+    <button class="account-action signin" id="signinBtn" style="display:none">
+      <i class="fa-solid fa-right-to-bracket"></i> Sign In
+    </button>
+  </div>
+</div>
+
     <div class="features-sidebar-content">
       <ul class="features-list">
         <li><a href="../game/features/acharya/acharya.html"><i class="fa-solid fa-chalkboard-user"></i> Acharya</a></li>
@@ -938,54 +957,168 @@ const weights = {
   <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
   <script src="session.js"></script>
+
+
 <script>
-  function renderNavUser() {
+
+
+  (function(){
+  var accountEl = document.getElementById('sidebarAccount');
+  var toggleBtn = document.getElementById('accountToggle');
+  var nameEl = document.getElementById('accountName');
+  var subEl = document.getElementById('accountSub');
+  var logoutBtn = document.getElementById('logoutBtn');
+  var signinBtn = document.getElementById('signinBtn');
+
+  if (!accountEl || typeof Session === 'undefined') return;
+
+  function renderAccount(){
+    var user = Session.get();
+    if (user){
+      nameEl.textContent = user.name || user.email || 'Player';
+      subEl.textContent = (user.name && user.email) ? user.email : 'Signed in';
+      logoutBtn.style.display = '';
+      signinBtn.style.display = 'none';
+    } else {
+      nameEl.textContent = 'Guest';
+      subEl.textContent = 'Not signed in';
+      logoutBtn.style.display = 'none';
+      signinBtn.style.display = '';
+    }
+  }
+
+  function closeDropdown(){
+    accountEl.classList.remove('open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  toggleBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var isOpen = accountEl.classList.toggle('open');
+    toggleBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  // Close on any click outside the account block
+  document.addEventListener('click', function(e){
+    if (!accountEl.contains(e.target)) closeDropdown();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeDropdown();
+  });
+
+  logoutBtn.addEventListener('click', function(){
+    Session.clear();
+    renderAccount();
+    closeDropdown();
+  });
+
+  signinBtn.addEventListener('click', function(){
+    window.location.href = 'loginpage.html';
+  });
+
+  // If the session changes in another tab (e.g. logout elsewhere),
+  // reflect it here too — this is exactly what Session.onChange is for.
+  Session.onChange(function(){ renderAccount(); });
+
+  renderAccount();
+})();
+
+function renderNavUser() {
     const navUser = document.getElementById('navUser');
     if (!navUser) return;
     navUser.innerHTML = '';
 
     const user = Session.get();
 
-    if (user) {
-      const badge = document.createElement('div');
-      badge.className = 'nav-user-badge';
-
-      const avatar = document.createElement('span');
-      avatar.className = 'nav-user-avatar';
-      avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
-
-      const name = document.createElement('span');
-      name.className = 'nav-user-name';
-      name.textContent = user.name || user.email;
-      name.title = user.name || user.email; // full name on hover if truncated
-
-      const logoutBtn = document.createElement('button');
-      logoutBtn.type = 'button';
-      logoutBtn.className = 'nav-logout-btn';
-      logoutBtn.setAttribute('aria-label', 'Log out');
-      logoutBtn.title = 'Log out';
-      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
-      logoutBtn.addEventListener('click', function () {
-        Session.clear();
-        renderNavUser();
-      });
-
-      badge.appendChild(avatar);
-      badge.appendChild(name);
-      badge.appendChild(logoutBtn);
-      navUser.appendChild(badge);
-    } else {
+    if (!user) {
       const link = document.createElement('a');
       link.href = 'loginpage.html';
       link.className = 'nav-signin-link';
       link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
       navUser.appendChild(link);
+      return;
     }
+
+    // --- Trigger (the avatar + name button) ---
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'nav-user-badge';
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+
+    const avatar = document.createElement('span');
+    avatar.className = 'nav-user-avatar';
+    avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
+
+    const name = document.createElement('span');
+    name.className = 'nav-user-name';
+    name.textContent = user.name || user.email;
+    name.title = user.name || user.email;
+
+    const caret = document.createElement('i');
+    caret.className = 'fa-solid fa-chevron-down nav-user-caret';
+    caret.setAttribute('aria-hidden', 'true');
+
+    trigger.append(avatar, name, caret);
+
+    // --- Dropdown panel ---
+    const dropdown = document.createElement('div');
+    dropdown.className = 'nav-user-dropdown';
+    dropdown.setAttribute('role', 'menu');
+
+    const profileLink = document.createElement('a');
+    profileLink.href = 'profile.html';
+    profileLink.className = 'nav-dropdown-item';
+    profileLink.setAttribute('role', 'menuitem');
+    profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
+
+    const logoutBtn = document.createElement('button');
+    logoutBtn.type = 'button';
+    logoutBtn.className = 'nav-dropdown-item nav-dropdown-logout';
+    logoutBtn.setAttribute('role', 'menuitem');
+    logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
+
+    dropdown.append(profileLink, logoutBtn);
+    navUser.append(trigger, dropdown);
+
+    // --- Open/close behavior ---
+    function openDropdown() {
+      dropdown.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+      document.addEventListener('click', onOutsideClick);
+      document.addEventListener('keydown', onKeydown);
+    }
+    function closeDropdown() {
+      dropdown.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onOutsideClick);
+      document.removeEventListener('keydown', onKeydown);
+    }
+    function onOutsideClick(e) {
+      if (!navUser.contains(e.target)) closeDropdown();
+    }
+    function onKeydown(e) {
+      if (e.key === 'Escape') closeDropdown();
+    }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
+    });
+
+    logoutBtn.addEventListener('click', function () {
+      closeDropdown();
+      Session.clear();
+      renderNavUser();
+    });
   }
 
   renderNavUser();
-  Session.onChange(renderNavUser); // stays in sync if another tab logs in/out
-</script>
+  Session.onChange(renderNavUser);
+
+ </script>
 </body>
 
 </html>
