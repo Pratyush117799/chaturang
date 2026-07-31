@@ -649,246 +649,256 @@
 
   <script>
     // Point this at wherever the Express server actually runs.
-    const API_BASE = 'http://localhost:5000';
+    // Point this at wherever the Express server actually runs.
+const API_BASE = 'http://localhost:5000';
 
-    // If a session already exists (from a previous visit), skip the auth
-    // screen entirely — this is the payoff of Session living in one file.
-    if (Session.isLoggedIn()) {
-      window.location.href = 'index.html';
-    }
+// If a session already exists (from a previous visit), skip the auth
+// screen entirely — this is the payoff of Session living in one file.
+if (Session.isLoggedIn()) {
+  window.location.href = 'index.html';
+}
+
 function renderNavUser() {
-    const navUser = document.getElementById('navUser');
-    if (!navUser) return;
-    navUser.innerHTML = '';
+  const navUser = document.getElementById('navUser');
+  if (!navUser) return;
+  navUser.innerHTML = '';
 
-    const user = Session.get();
+  const user = Session.get();
 
-    if (user) {
-      const badge = document.createElement('div');
-      badge.className = 'nav-user-badge';
+  if (user) {
+    const badge = document.createElement('div');
+    badge.className = 'nav-user-badge';
 
-      const avatar = document.createElement('span');
-      avatar.className = 'nav-user-avatar';
-      avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
+    const avatar = document.createElement('span');
+    avatar.className = 'nav-user-avatar';
+    avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
 
-      const name = document.createElement('span');
-      name.className = 'nav-user-name';
-      name.textContent = user.name || user.email;
-      name.title = user.name || user.email; // full name on hover if truncated
+    const name = document.createElement('span');
+    name.className = 'nav-user-name';
+    name.textContent = user.name || user.email;
+    name.title = user.name || user.email; // full name on hover if truncated
 
-      const logoutBtn = document.createElement('button');
-      logoutBtn.type = 'button';
-      logoutBtn.className = 'nav-logout-btn';
-      logoutBtn.setAttribute('aria-label', 'Log out');
-      logoutBtn.title = 'Log out';
-      logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
-      logoutBtn.addEventListener('click', function () {
-        Session.clear();
-        renderNavUser();
-      });
+    const logoutBtn = document.createElement('button');
+    logoutBtn.type = 'button';
+    logoutBtn.className = 'nav-logout-btn';
+    logoutBtn.setAttribute('aria-label', 'Log out');
+    logoutBtn.title = 'Log out';
+    logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
+    logoutBtn.addEventListener('click', function () {
+      Session.clear();
+      renderNavUser();
+    });
 
-      badge.appendChild(avatar);
-      badge.appendChild(name);
-      badge.appendChild(logoutBtn);
-      navUser.appendChild(badge);
-    } else {
-      const link = document.createElement('a');
-      link.href = 'loginpage.html';
-      link.className = 'nav-signin-link';
-      link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
-      navUser.appendChild(link);
-    }
+    badge.appendChild(avatar);
+    badge.appendChild(name);
+    badge.appendChild(logoutBtn);
+    navUser.appendChild(badge);
+  } else {
+    const link = document.createElement('a');
+    link.href = 'loginpage.html';
+    link.className = 'nav-signin-link';
+    link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
+    navUser.appendChild(link);
+  }
+}
+
+renderNavUser();
+Session.onChange(renderNavUser); // stays in sync if another tab logs in/out
+
+/* ---------- Tab switching ---------- */
+function switchTab(target) {
+  const switcher = document.getElementById('tab-switcher');
+  const tabs = switcher.querySelectorAll('.tab-btn');
+  const forms = document.querySelectorAll('.form-view');
+
+  switcher.style.display = (target === 'forgot') ? 'none' : 'flex';
+  tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === target));
+  forms.forEach(form => form.classList.toggle('active', form.id === `${target}-form`));
+
+  hideAlert();
+}
+
+/* ---------- Inline alert banner ---------- */
+const alertEl = document.getElementById('form-alert');
+const alertIconEl = document.getElementById('alert-icon');
+const alertTextEl = document.getElementById('alert-text');
+
+function showAlert(message, type) {
+  alertEl.classList.remove('error', 'success');
+  alertEl.classList.add('show', type);
+  alertIconEl.textContent = type === 'success' ? '✓' : '⚠';
+  alertTextEl.textContent = message;
+}
+
+function hideAlert() {
+  alertEl.classList.remove('show', 'error', 'success');
+}
+
+/* ---------- Field validation helpers ---------- */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setFieldValidity(inputEl, hintEl, valid) {
+  inputEl.classList.toggle('invalid', !valid);
+  if (hintEl) hintEl.classList.toggle('show', !valid);
+}
+
+/* ---------- Button loading state ---------- */
+function setLoading(buttonEl, isLoading) {
+  buttonEl.classList.toggle('loading', isLoading);
+  buttonEl.disabled = isLoading;
+}
+
+/* ---------- Password visibility toggle ---------- */
+function togglePasswordVisibility(fieldId, btn) {
+  const input = document.getElementById(fieldId);
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  btn.style.color = showing ? 'var(--gold-dim)' : 'var(--gold)';
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+}
+
+/* ---------- API helper ---------- */
+async function callApi(path, body) {
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (networkErr) {
+    return { success: false, message: 'Could not reach the server — make sure the backend is running on localhost:5000.' };
+  }
+  let data;
+  try {
+    data = await res.json();
+  } catch (parseErr) {
+    return { success: false, message: 'Unexpected response from the server.' };
+  }
+  // The server sends a meaningful message alongside non-2xx statuses too
+  // (409 on duplicate email, 401 on bad credentials, etc) — surface it
+  // instead of only trusting `success`.
+  if (!res.ok && data.success === undefined) {
+    data.success = false;
+  }
+  return data;
+}
+
+/* ---------- LOGIN ---------- */
+document.getElementById('login-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  hideAlert();
+
+  const emailEl = document.getElementById('login-email');
+  const passwordEl = document.getElementById('login-password');
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+
+  const emailValid = EMAIL_RE.test(email);
+  const passwordValid = password.length > 0;
+  setFieldValidity(emailEl, document.getElementById('login-email-hint'), emailValid);
+  setFieldValidity(passwordEl, document.getElementById('login-password-hint'), passwordValid);
+  if (!emailValid || !passwordValid) return;
+
+  const submitBtn = document.getElementById('login-submit');
+  setLoading(submitBtn, true);
+
+  const result = await callApi('/api/auth/login', { email, password });
+
+  setLoading(submitBtn, false);
+
+  if (result.success) {
+    const remember = document.getElementById('remember-me').checked;
+    // result.user.id (Mongo _id) is what the WS game server expects as
+    // `userId` on create-room / join-room / quick-match messages so that
+    // this player's elo/history is tracked against their real account
+    // instead of a throwaway guest token.
+    Session.save(result.user, remember);
+    showAlert('Welcome back! Taking you to the battlefield...', 'success');
+    setTimeout(() => { window.location.href = 'index.html'; }, 900);
+  } else {
+    showAlert(result.message || 'Invalid credentials.', 'error');
+  }
+});
+
+/* ---------- SIGNUP ---------- */
+document.getElementById('signup-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  hideAlert();
+
+  const nameEl = document.getElementById('signup-name');
+  const emailEl = document.getElementById('signup-email');
+  const passwordEl = document.getElementById('signup-password');
+  const acceptEl = document.getElementById('accept-rules');
+
+  const name = nameEl.value.trim();
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+
+  const nameValid = name.length > 0;
+  const emailValid = EMAIL_RE.test(email);
+  const passwordValid = password.length >= 8;
+
+  setFieldValidity(nameEl, document.getElementById('signup-name-hint'), nameValid);
+  setFieldValidity(emailEl, document.getElementById('signup-email-hint'), emailValid);
+  setFieldValidity(passwordEl, document.getElementById('signup-password-hint'), passwordValid);
+  if (!nameValid || !emailValid || !passwordValid) return;
+
+  if (!acceptEl.checked) {
+    showAlert('Please accept the Rules of Engagement to continue.', 'error');
+    return;
   }
 
-  renderNavUser();
-  Session.onChange(renderNavUser); // stays in sync if another tab logs in/out
+  const submitBtn = document.getElementById('signup-submit');
+  setLoading(submitBtn, true);
 
-    /* ---------- Tab switching ---------- */
-    function switchTab(target) {
-      const switcher = document.getElementById('tab-switcher');
-      const tabs = switcher.querySelectorAll('.tab-btn');
-      const forms = document.querySelectorAll('.form-view');
+  const result = await callApi('/api/auth/register', { name, email, password });
 
-      switcher.style.display = (target === 'forgot') ? 'none' : 'flex';
+  setLoading(submitBtn, false);
 
-      tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === target));
+  if (result.success) {
+    Session.save(result.user, true);
+    showAlert('Account created! Taking you to the battlefield...', 'success');
+    setTimeout(() => { window.location.href = 'index.html'; }, 900);
+  } else {
+    showAlert(result.message || 'Registration failed.', 'error');
+  }
+});
 
-      forms.forEach(form => form.classList.toggle('active', form.id === `${target}-form`));
+/* ---------- FORGOT PASSWORD ---------- */
+document.getElementById('forgot-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  hideAlert();
 
-      hideAlert();
-    }
+  const emailEl = document.getElementById('forgot-email');
+  const email = emailEl.value.trim();
+  const emailValid = EMAIL_RE.test(email);
+  setFieldValidity(emailEl, document.getElementById('forgot-email-hint'), emailValid);
+  if (!emailValid) return;
 
-    /* ---------- Inline alert banner ---------- */
-    const alertEl = document.getElementById('form-alert');
-    const alertIconEl = document.getElementById('alert-icon');
-    const alertTextEl = document.getElementById('alert-text');
+  const submitBtn = document.getElementById('forgot-submit');
+  setLoading(submitBtn, true);
 
-    function showAlert(message, type) {
-      alertEl.classList.remove('error', 'success');
-      alertEl.classList.add('show', type);
-      alertIconEl.textContent = type === 'success' ? '✓' : '⚠';
-      alertTextEl.textContent = message;
-    }
+  const result = await callApi('/api/auth/forgot-password', { email });
 
-    function hideAlert() {
-      alertEl.classList.remove('show', 'error', 'success');
-    }
+  setLoading(submitBtn, false);
 
-    /* ---------- Field validation helpers ---------- */
-    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (result.success) {
+    showAlert(result.message || 'Recovery instructions sent.', 'success');
+  } else {
+    showAlert(result.message || 'That email is not registered.', 'error');
+  }
+});
 
-    function setFieldValidity(inputEl, hintEl, valid) {
-      inputEl.classList.toggle('invalid', !valid);
-      if (hintEl) hintEl.classList.toggle('show', !valid);
-    }
-
-    /* ---------- Button loading state ---------- */
-    function setLoading(buttonEl, isLoading) {
-      buttonEl.classList.toggle('loading', isLoading);
-      buttonEl.disabled = isLoading;
-    }
-
-    /* ---------- Password visibility toggle ---------- */
-    function togglePasswordVisibility(fieldId, btn) {
-      const input = document.getElementById(fieldId);
-      const showing = input.type === 'text';
-      input.type = showing ? 'password' : 'text';
-      btn.style.color = showing ? 'var(--gold-dim)' : 'var(--gold)';
-      btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
-    }
-
-    /* ---------- API helper ---------- */
-    async function callApi(path, body) {
-      let res;
-      try {
-        res = await fetch(`${API_BASE}${path}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-      } catch (networkErr) {
-        return { success: false, message: 'Could not reach the server — make sure the backend is running on localhost:5000.' };
-      }
-      let data;
-      try {
-        data = await res.json();
-      } catch (parseErr) {
-        return { success: false, message: 'Unexpected response from the server.' };
-      }
-      return data;
-    }
-
-    /* ---------- LOGIN ---------- */
-    document.getElementById('login-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      hideAlert();
-
-      const emailEl = document.getElementById('login-email');
-      const passwordEl = document.getElementById('login-password');
-      const email = emailEl.value.trim();
-      const password = passwordEl.value;
-
-      const emailValid = EMAIL_RE.test(email);
-      const passwordValid = password.length > 0;
-      setFieldValidity(emailEl, document.getElementById('login-email-hint'), emailValid);
-      setFieldValidity(passwordEl, document.getElementById('login-password-hint'), passwordValid);
-      if (!emailValid || !passwordValid) return;
-
-      const submitBtn = document.getElementById('login-submit');
-      setLoading(submitBtn, true);
-
-      const result = await callApi('/api/auth/login', { email, password });
-
-      setLoading(submitBtn, false);
-
-      if (result.success) {
-        const remember = document.getElementById('remember-me').checked;
-        Session.save(result.user, remember);
-        showAlert('Welcome back! Taking you to the battlefield...', 'success');
-        setTimeout(() => { window.location.href = 'index.html'; }, 900);
-      } else {
-        showAlert(result.message || 'Invalid credentials.', 'error');
-      }
-    });
-
-    /* ---------- SIGNUP ---------- */
-    document.getElementById('signup-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      hideAlert();
-
-      const nameEl = document.getElementById('signup-name');
-      const emailEl = document.getElementById('signup-email');
-      const passwordEl = document.getElementById('signup-password');
-      const acceptEl = document.getElementById('accept-rules');
-
-      const name = nameEl.value.trim();
-      const email = emailEl.value.trim();
-      const password = passwordEl.value;
-
-      const nameValid = name.length > 0;
-      const emailValid = EMAIL_RE.test(email);
-      const passwordValid = password.length >= 8;
-
-      setFieldValidity(nameEl, document.getElementById('signup-name-hint'), nameValid);
-      setFieldValidity(emailEl, document.getElementById('signup-email-hint'), emailValid);
-      setFieldValidity(passwordEl, document.getElementById('signup-password-hint'), passwordValid);
-      if (!nameValid || !emailValid || !passwordValid) return;
-
-      if (!acceptEl.checked) {
-        showAlert('Please accept the Rules of Engagement to continue.', 'error');
-        return;
-      }
-
-      const submitBtn = document.getElementById('signup-submit');
-      setLoading(submitBtn, true);
-
-      const result = await callApi('/api/auth/register', { name, email, password });
-
-      setLoading(submitBtn, false);
-
-      if (result.success) {
-        Session.save(result.user, true);
-        showAlert('Account created! Taking you to the battlefield...', 'success');
-        setTimeout(() => { window.location.href = 'index.html'; }, 900);
-      } else {
-        showAlert(result.message || 'Registration failed.', 'error');
-      }
-    });
-
-    /* ---------- FORGOT PASSWORD ---------- */
-    document.getElementById('forgot-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      hideAlert();
-
-      const emailEl = document.getElementById('forgot-email');
-      const email = emailEl.value.trim();
-      const emailValid = EMAIL_RE.test(email);
-      setFieldValidity(emailEl, document.getElementById('forgot-email-hint'), emailValid);
-      if (!emailValid) return;
-
-      const submitBtn = document.getElementById('forgot-submit');
-      setLoading(submitBtn, true);
-
-      const result = await callApi('/api/auth/forgot-password', { email });
-
-      setLoading(submitBtn, false);
-
-      if (result.success) {
-        showAlert(result.message || 'Recovery instructions sent.', 'success');
-      } else {
-        showAlert(result.message || 'That email is not registered.', 'error');
-      }
-    });
-
-    // Clear a field's error state as soon as the person edits it again,
-    // instead of leaving a stale red border until the next submit attempt.
-    document.querySelectorAll('.input-field').forEach(function (input) {
-      input.addEventListener('input', function () {
-        input.classList.remove('invalid');
-        const hint = document.getElementById(input.id + '-hint');
-        if (hint) hint.classList.remove('show');
-      });
-    });
+// Clear a field's error state as soon as the person edits it again,
+// instead of leaving a stale red border until the next submit attempt.
+document.querySelectorAll('.input-field').forEach(function (input) {
+  input.addEventListener('input', function () {
+    input.classList.remove('invalid');
+    const hint = document.getElementById(input.id + '-hint');
+    if (hint) hint.classList.remove('show');
+  });
+});
   </script>
 </body>
 </html>

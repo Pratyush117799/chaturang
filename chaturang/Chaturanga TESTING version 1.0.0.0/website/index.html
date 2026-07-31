@@ -137,6 +137,9 @@
     <i class="fa-solid fa-chevron-down account-chevron"></i>
   </button>
   <div class="account-dropdown" id="accountDropdown">
+    <button class="account-action profile" id="profileBtn" onclick="window.location.href='userprofile.html'" >
+      <i class="fa-solid fa-user-gear"></i> View Profile
+    </button>
     <button class="account-action logout" id="logoutBtn" style="display:none">
       <i class="fa-solid fa-right-from-bracket"></i> Logout
     </button>
@@ -433,9 +436,7 @@
             <p>Challenge warriors from across the realm. Form alliances with friends or meet new opponents in the global
               Ashtāpada.</p>
             <div class="coming-soon-banner">
-              <span class="cs-lotus">🪷</span>
-              <span class="cs-text">Coming Soon</span>
-              <span class="cs-lotus">🪷</span>
+                 <button  onclick="{window.location.href = '../game/lobby.html'}"> PLAY </button>
             </div>
           </div>
         </div>
@@ -1069,7 +1070,7 @@ function renderNavUser() {
     dropdown.setAttribute('role', 'menu');
 
     const profileLink = document.createElement('a');
-    profileLink.href = 'profile.html';
+    profileLink.href = '../website/userprofile.html';
     profileLink.className = 'nav-dropdown-item';
     profileLink.setAttribute('role', 'menuitem');
     profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
