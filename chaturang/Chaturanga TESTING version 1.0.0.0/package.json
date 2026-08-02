@@ -2,9 +2,9 @@
   "name": "chaturanga-v1-0-5-2",
   "version": "1.0.5",
   "description": "Chaturanga server setup",
-  "main": "website/server.js",
+  "main": "game/server.js",
   "scripts": {
-    "start": "node website/server.js"
+    "start": "node game/server.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -12,6 +12,7 @@
     "express": "^5.2.1",
     "jsdom": "^29.0.1",
     "mongoose": "^9.8.1",
+    "socket.io": "^4.8.3",
     "ws": "^8.19.0"
   }
 }

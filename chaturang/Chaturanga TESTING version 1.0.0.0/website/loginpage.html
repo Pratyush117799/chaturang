@@ -629,8 +629,49 @@
           <p class="field-hint" id="forgot-email-hint">Enter a valid email address.</p>
         </div>
 
+        <div id="otp-step-group" style="display: none;">
+          <div class="input-group">
+            <label class="input-label" for="forgot-otp">6-Digit OTP Code</label>
+            <div class="input-wrapper">
+              <input type="text" id="forgot-otp" class="input-field" placeholder="123456"
+                     maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="letter-spacing: 4px; font-weight: 700; text-align: center;">
+            </div>
+            <p class="field-hint" id="forgot-otp-hint">Enter the 6-digit OTP code sent to your email.</p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="forgot-password">New Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="forgot-password" class="input-field" placeholder="••••••••"
+                     autocomplete="new-password" minlength="8">
+              <button type="button" class="btn-toggle-pw" aria-label="Toggle password visibility">
+                <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <p class="field-hint" id="forgot-password-hint">Password must be at least 8 characters.</p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="forgot-confirm-password">Confirm New Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="forgot-confirm-password" class="input-field" placeholder="••••••••"
+                     autocomplete="new-password" minlength="8">
+              <button type="button" class="btn-toggle-pw" aria-label="Toggle password visibility">
+                <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <p class="field-hint" id="forgot-confirm-password-hint">Passwords do not match.</p>
+          </div>
+        </div>
+
         <button type="submit" class="btn-submit" id="forgot-submit">
-          <span class="btn-label">Send Recovery Seal</span>
+          <span class="btn-label" id="forgot-submit-label">Send OTP Code</span>
           <span class="btn-spinner" aria-hidden="true"></span>
         </button>
 
@@ -865,28 +906,75 @@ document.getElementById('signup-form').addEventListener('submit', async function
   }
 });
 
-/* ---------- FORGOT PASSWORD ---------- */
+/* ---------- FORGOT PASSWORD & OTP ---------- */
+let forgotStep = 1;
+
 document.getElementById('forgot-form').addEventListener('submit', async function (e) {
   e.preventDefault();
   hideAlert();
 
   const emailEl = document.getElementById('forgot-email');
+  const otpStepGroup = document.getElementById('otp-step-group');
+  const otpEl = document.getElementById('forgot-otp');
+  const pwEl = document.getElementById('forgot-password');
+  const confirmEl = document.getElementById('forgot-confirm-password');
+  const submitBtn = document.getElementById('forgot-submit');
+  const submitLabel = document.getElementById('forgot-submit-label');
+
   const email = emailEl.value.trim();
   const emailValid = EMAIL_RE.test(email);
   setFieldValidity(emailEl, document.getElementById('forgot-email-hint'), emailValid);
   if (!emailValid) return;
 
-  const submitBtn = document.getElementById('forgot-submit');
-  setLoading(submitBtn, true);
+  if (forgotStep === 1) {
+    // Step 1: Send OTP to email
+    setLoading(submitBtn, true);
+    const result = await callApi('/api/auth/send-otp', { email });
+    setLoading(submitBtn, false);
 
-  const result = await callApi('/api/auth/forgot-password', { email });
-
-  setLoading(submitBtn, false);
-
-  if (result.success) {
-    showAlert(result.message || 'Recovery instructions sent.', 'success');
+    if (result.success) {
+      forgotStep = 2;
+      emailEl.disabled = true;
+      if (otpStepGroup) otpStepGroup.style.display = 'block';
+      if (submitLabel) submitLabel.textContent = 'Verify OTP & Reset Password';
+      showAlert(result.message || 'OTP sent to your email. Check your inbox!', 'success');
+    } else {
+      showAlert(result.message || 'Failed to send OTP.', 'error');
+    }
   } else {
-    showAlert(result.message || 'That email is not registered.', 'error');
+    // Step 2: Verify OTP & Reset Password
+    const otp = otpEl ? otpEl.value.trim() : '';
+    const password = pwEl ? pwEl.value : '';
+    const confirmPassword = confirmEl ? confirmEl.value : '';
+
+    const otpValid = /^\d{6}$/.test(otp);
+    const pwValid = password.length >= 8;
+    const matchValid = (password === confirmPassword);
+
+    if (otpEl) setFieldValidity(otpEl, document.getElementById('forgot-otp-hint'), otpValid);
+    if (pwEl) setFieldValidity(pwEl, document.getElementById('forgot-password-hint'), pwValid);
+    if (confirmEl) setFieldValidity(confirmEl, document.getElementById('forgot-confirm-password-hint'), matchValid);
+
+    if (!otpValid || !pwValid || !matchValid) return;
+
+    setLoading(submitBtn, true);
+    const result = await callApi('/api/auth/forgot-password', { email, otp, newPassword: password });
+    setLoading(submitBtn, false);
+
+    if (result.success) {
+      showAlert(result.message || 'Password reset successfully! Returning to sign in...', 'success');
+      const loginEmailInput = document.getElementById('login-email');
+      if (loginEmailInput) loginEmailInput.value = email;
+      setTimeout(() => {
+        forgotStep = 1;
+        emailEl.disabled = false;
+        if (otpStepGroup) otpStepGroup.style.display = 'none';
+        if (submitLabel) submitLabel.textContent = 'Send OTP Code';
+        switchTab('login');
+      }, 1500);
+    } else {
+      showAlert(result.message || 'OTP verification failed.', 'error');
+    }
   }
 });
 

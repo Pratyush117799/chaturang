@@ -1,19 +1,3 @@
-/**
- * Chaturanga 1.0.3 — Tiered Bot System
- * ═══════════════════════════════════════════════════════════════════
- *
- *  ELO 100  Pure Random
- *  ELO 200  Greedy
- *  ELO 300  Tactical
- *  ELO 400  Strategic  (1-ply Expectiminimax)
- *  ELO 500  Deep Tactical  (SEE + 2-ply Lookahead + Mobility)
- *  ELO 600  Paranoid Strategist  (Paranoid Algorithm + Rich Eval)
- *
- * Hypothesis: 2000 Chaturanga ELO ≈ 3500 Chess ELO
- *   ELO 500 ≈  875 Chess ELO
- *   ELO 600 ≈ 1050 Chess ELO
- * ═══════════════════════════════════════════════════════════════════
- */
 (function () {
   'use strict';
 
@@ -30,6 +14,21 @@
     5: 'any',
     6: 'pawn-king'
   };
+
+  // Same information as DICE_TO_FORCED, but deduplicated by outcome with the
+  // correct probability weight attached. Faces 2 and 5 both resolve to 'any',
+  // so naively looping d=1..6 evaluates that branch twice for no reason —
+  // wasted work that gets tripled when nested 3-deep (opponent 1 x opponent 2
+  // x opponent 3) in the ELO 600 paranoid search. Looping over these 5
+  // buckets instead of 6 raw dice faces gives identical expected-value math
+  // for roughly 17% less work per level (and compounds at deeper nesting).
+  const DICE_BUCKETS = [
+    { forced: 'rook',       weight: 1 / 6 },
+    { forced: 'any',        weight: 2 / 6 },
+    { forced: 'horse',      weight: 1 / 6 },
+    { forced: 'elephant',   weight: 1 / 6 },
+    { forced: 'pawn-king',  weight: 1 / 6 }
+  ];
 
   // ── Shared Helpers ────────────────────────────────────────────────────────
 
@@ -235,7 +234,7 @@
    *      from the destination square (from-position vs to-position delta).
    *
    *   c) 1-ply opponent response via Expectiminimax:
-   *      For each of the 6 dice outcomes (uniform probability 1/6)
+   *      For each distinct dice outcome (weighted by true probability)
    *        → determine opponent's best greedy response
    *        → accumulate expected material loss to our side
    *      This models "on average, how badly will the next player hurt us?"
@@ -289,9 +288,9 @@
       if (nextOppId !== -1) {
         let expectedLoss = 0;
 
-        for (let d = 1; d <= 6; d++) {
+        for (const bucket of DICE_BUCKETS) {
           const savedF = game.forcedPiece, savedT = game.turnIndex;
-          game.forcedPiece = DICE_TO_FORCED[d];
+          game.forcedPiece = bucket.forced;
           game.turnIndex   = nextOppId;
 
           const oppMoves = getAllLegalMoves(game);
@@ -309,9 +308,7 @@
                 : ot.owner === playerId;
               if (isOurSide && val > oppBestCapture) oppBestCapture = val;
             }
-            // Each dice face has probability 1/6 (2 and 5 both give 'any',
-            // so their combined weight is naturally 2/6 — handled correctly).
-            expectedLoss += oppBestCapture / 6;
+            expectedLoss += oppBestCapture * bucket.weight;
           }
 
           game.forcedPiece = savedF;
@@ -581,9 +578,9 @@
       if (nextOppId !== -1) {
         let expectedPositionScore = 0;
 
-        for (let d = 1; d <= 6; d++) {
+        for (const bucket of DICE_BUCKETS) {
           const savedF = game.forcedPiece, savedT = game.turnIndex;
-          game.forcedPiece = DICE_TO_FORCED[d];
+          game.forcedPiece = bucket.forced;
           game.turnIndex   = nextOppId;
 
           const oppMoves = getAllLegalMoves(game);
@@ -618,7 +615,7 @@
             positionScore = staticEval500(game, playerId);
           }
 
-          expectedPositionScore += positionScore / 6;
+          expectedPositionScore += positionScore * bucket.weight;
 
           game.forcedPiece = savedF;
           game.turnIndex   = savedT;
@@ -646,16 +643,49 @@
   //   "Assume all opponents are playing cooperatively to minimise YOUR score."
   //
   // Search structure (per candidate move of ours):
-  //   Our move  →  Opp-1 best response (averaged over 6 dice)
-  //             →  Opp-2 best response (averaged over 6 dice)
-  //             →  Opp-3 best response (averaged over 6 dice)
+  //   Our move  →  Opp-1 best response (weighted over dice outcomes)
+  //             →  Opp-2 best response (weighted over dice outcomes)
+  //             →  Opp-3 best response (weighted over dice outcomes)
   //             →  Evaluate position with richEval600()
   //
-  // Per-opponent branching is bounded to a SINGLE best move per dice face
-  // (rather than full tree expansion) to keep browser performance acceptable.
-  // The dice expectation is handled explicitly at each level.
+  // Per-opponent branching is bounded to a SINGLE best move per dice bucket
+  // (rather than full tree expansion) to keep this tractable. The dice
+  // expectation is handled explicitly at each level.
+  //
+  // IMPORTANT — this file is run SERVER-SIDE (server.js requires it and
+  // calls getMove() synchronously on the one shared Node event loop for
+  // every multiplayer room). A per-move cost that was "acceptable in-browser"
+  // (blocking only one tab) blocks the ENTIRE server — every room, every
+  // lobby watcher, every HTTP request — until it finishes. MAX_DEEP_CANDIDATES
+  // below exists specifically to bound worst-case wall-clock time regardless
+  // of how many legal moves are available (e.g. dice forcing 'any' piece with
+  // several movable pieces can easily produce 20-30+ legal moves).
   //
   // ─────────────────────────────────────────────────────────────────────────
+
+  // Only the top-N moves by quick heuristic get the full (expensive) paranoid
+  // search; the rest are discarded outright. This bounds this bot's cost to
+  // roughly MAX_DEEP_CANDIDATES * 125 leaf evaluations (5^3 dice buckets for
+  // up to 3 opponents) no matter how many legal moves exist.
+  const MAX_DEEP_CANDIDATES = 8;
+
+  /**
+   * Cheap, single-pass move ranking (no board mutation, no lookahead) used
+   * purely to shortlist which moves are worth the expensive full search.
+   */
+  function quickRank(game, move, opponentThreats) {
+    const piece  = game.board.get(move.from);
+    const target = game.board.get(move.to);
+    let q = target ? PIECE_VALUES[target.type] * 10 : 0;
+    q += centerBonus(move.to);
+    if (opponentThreats.has(move.from) && !opponentThreats.has(move.to)) {
+      q += PIECE_VALUES[piece.type] * 4; // escaping a threatened piece matters
+    }
+    if (opponentThreats.has(move.to)) {
+      q -= PIECE_VALUES[piece.type] * 6;
+    }
+    return q;
+  }
 
   // ── Rich static evaluator (ELO 600) ─────────────────────────────────────
   /**
@@ -829,9 +859,9 @@
   }
 
   /**
-   * Simulate one opponent's turn (expected-value over 6 dice),
-   * apply their best move for each face, then invoke `continuation()`
-   * to evaluate. Returns the average score across all 6 dice outcomes.
+   * Simulate one opponent's turn (expected-value over dice buckets),
+   * apply their best move for each bucket, then invoke `continuation()`
+   * to evaluate. Returns the weighted-average score across dice outcomes.
    *
    * @param {Game}     game         current game state (modified in place, restored)
    * @param {number}   oppId        opponent player index
@@ -841,14 +871,13 @@
     if (game.players[oppId].eliminated) return continuation();
 
     let expectedScore = 0;
-    for (let d = 1; d <= 6; d++) {
-      const forced = DICE_TO_FORCED[d];
-      const oppMove = getBestOppMove(game, oppId, forced);
+    for (const bucket of DICE_BUCKETS) {
+      const oppMove = getBestOppMove(game, oppId, bucket.forced);
 
       let rec = null;
       if (oppMove) rec = applyMoveTemp(game, oppMove.from, oppMove.to);
 
-      expectedScore += continuation() / 6;
+      expectedScore += continuation() * bucket.weight;
 
       if (rec) undoMoveTemp(game, rec);
     }
@@ -873,9 +902,25 @@
     // Skip eliminated opponents
     const activeOpps = oppSequence.filter(id => !game.players[id].eliminated);
 
+    // ── Shortlist: only the top MAX_DEEP_CANDIDATES moves get the full,
+    // expensive paranoid search. This is what actually bounds worst-case
+    // cost — without it, a dice roll of 'any' with several movable pieces
+    // can produce 20-30+ legal moves, and 30 moves * 5^3 leaf evals *
+    // richEval600's own several board scans can take seconds, blocking the
+    // entire server (see file-header comment above).
+    const opponentThreatsForShortlist = buildOpponentThreatMap(game, playerId);
+    let candidates = moves;
+    if (moves.length > MAX_DEEP_CANDIDATES) {
+      candidates = moves
+        .map(m => ({ m, q: quickRank(game, m, opponentThreatsForShortlist) }))
+        .sort((a, b) => b.q - a.q)
+        .slice(0, MAX_DEEP_CANDIDATES)
+        .map(x => x.m);
+    }
+
     let best = null, bestScore = -Infinity;
 
-    for (const move of moves) {
+    for (const move of candidates) {
       const piece  = game.board.get(move.from);
       const target = game.board.get(move.to);
 
@@ -894,9 +939,9 @@
       //
       //   Final leaf: richEval600(game, playerId)
       //
-      //   With 3 opponents this creates:
-      //     6 (opp1 dice) × 6 (opp2 dice) × 6 (opp3 dice) = 216 leaf evals
-      //   per candidate move — acceptable in-browser.
+      //   With 3 opponents and 5 dice buckets each this creates:
+      //     5 (opp1) × 5 (opp2) × 5 (opp3) = 125 leaf evals per candidate
+      //   move — bounded to at most MAX_DEEP_CANDIDATES candidates.
 
       let paranoidScore;
 
@@ -973,7 +1018,8 @@
     _PIECE_VALUES:      PIECE_VALUES,
     _see:               see,
     _computeMobility:   computeMobility,
-    _richEval600:       richEval600
+    _richEval600:       richEval600,
+    _MAX_DEEP_CANDIDATES: MAX_DEEP_CANDIDATES
   };
 
 })();

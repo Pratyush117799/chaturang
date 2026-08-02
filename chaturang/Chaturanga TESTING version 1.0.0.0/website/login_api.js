@@ -81,6 +81,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, trim: true, lowercase: true },
   password: { type: String, required: true },
   elo: { type: Number, default: 1200 }, // matches the WS server's starting elo assumption
+  resetOtp: { type: String, default: null },
+  resetOtpExpires: { type: Date, default: null },
   last50games: [{
     startedAt: { type: Date },
     endedAt: { type: Date, default: Date.now },
@@ -169,16 +171,92 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-app.post('/api/auth/forgot-password', async (req, res) => {
+// SEND OTP FOR PASSWORD RESET
+app.post('/api/auth/send-otp', async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email: (email || '').toLowerCase().trim() });
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'Email not found' });
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email address is required' });
     }
-    // TODO: generate + email a real reset token. Placeholder response for now.
-    res.status(200).json({ success: true, message: 'Password reset instructions sent' });
+    const cleanEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: cleanEmail });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No registered account found with that email address.' });
+    }
+
+    // Generate 6-digit numeric OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.resetOtp = otp;
+    user.resetOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    await user.save();
+
+    const otpHtml = `
+      <div style="font-family:sans-serif; color:#2a0e0e; padding:20px; background:#faf8f5; border:1px solid #c8960c; border-radius:8px;">
+        <h2 style="color:#8a6e2f; margin-top:0;">चतुरंग · Chaturanga Recovery Seal</h2>
+        <p>Hi <strong>${user.name}</strong>,</p>
+        <p>You requested a password reset for your Chaturanga account.</p>
+        <div style="background:#110e05; color:#c8960c; font-size:2rem; font-weight:700; letter-spacing:6px; padding:12px 24px; text-align:center; border-radius:6px; margin:16px 0;">
+          ${otp}
+        </div>
+        <p style="font-size:0.85rem; color:#666;">This OTP is valid for <strong>10 minutes</strong>. If you did not request a password reset, please ignore this email.</p>
+      </div>`;
+
+    sendMail(user.email, 'Chaturanga Password Recovery OTP', user.name, otpHtml);
+    res.status(200).json({ success: true, message: `OTP sent to ${user.email}. Please check your inbox!` });
   } catch (err) {
+    console.error('Send OTP error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// VERIFY OTP & RESET PASSWORD
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email address is required' });
+    }
+    const cleanEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: cleanEmail });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No registered account found with that email address.' });
+    }
+
+    if (otp || newPassword) {
+      if (!otp) {
+        return res.status(400).json({ success: false, message: 'OTP code is required' });
+      }
+      if (!newPassword || newPassword.length < 8) {
+        return res.status(400).json({ success: false, message: 'New password must be at least 8 characters' });
+      }
+
+      if (!user.resetOtp || user.resetOtp !== String(otp).trim()) {
+        return res.status(400).json({ success: false, message: 'Invalid OTP code. Please check your email and try again.' });
+      }
+
+      if (!user.resetOtpExpires || Date.now() > new Date(user.resetOtpExpires).getTime()) {
+        return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new OTP.' });
+      }
+
+      user.password = newPassword; // pre('save') hook automatically hashes this via bcrypt
+      user.resetOtp = null;
+      user.resetOtpExpires = null;
+      await user.save();
+
+      sendMail(user.email, 'Chaturanga Password Reset Successful', user.name, `
+        <div style="font-family:sans-serif; color:#2a0e0e; padding:16px;">
+          <h2 style="color:#8a6e2f;">चतुरंग · Chaturanga</h2>
+          <p>Hi ${user.name || 'there'},</p>
+          <p><strong>Your Chaturanga account password has been successfully reset.</strong></p>
+          <p style="color:#777; font-size:0.85rem;">If you did not request this change, please contact support immediately.</p>
+        </div>
+      `);
+      return res.status(200).json({ success: true, message: 'Password reset successfully! You can now log in.' });
+    }
+
+    res.status(200).json({ success: true, message: 'Account verified.' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

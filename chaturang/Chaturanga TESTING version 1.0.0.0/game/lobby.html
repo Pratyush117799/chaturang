@@ -636,7 +636,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     <!-- Shown once fallback triggers -->
     <div class="mm-bot-fallback" id="mmBotFallback" style="display:none">
       <i class="fa-solid fa-robot fa-xs"></i>
-      No players found — matched you with <span id="mmBotName">Bot: Kausalya</span>
+      No players found — matched you with <span id="mmBotName">Kausalya</span>
     </div>
 
     <button class="wc-cancel" onclick="cancelQuickMatch()">
@@ -646,11 +646,13 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 </div>
 
 
-<script src="../website/session.js"> </script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="../website/session.js"></script>
 
 <script>
 'use strict';
-
+alert('hey');
 // ── Name/session block left exactly as-is — separate feature, not touched ──
 function initPlayerName() {
   const inputEl = document.getElementById('playerNameInput');
@@ -720,7 +722,7 @@ function saveOnlineElo(elo) {
   }
 }
 
-let ws = null, wsConnected = false, reconnectTimer = null, reconnectDelay = 1000;
+let socket = null, wsConnected = false;
 let savedToken = localStorage.getItem(LS_TOKEN) || null;
 let savedRoom  = localStorage.getItem(LS_ROOM)  || null;
 
@@ -738,30 +740,50 @@ let LOBBY_MODE = '2p';
 
 function connect() {
   setConnStatus('connecting', 'Connecting to server…');
-  document.getElementById('connAddr').textContent = WS_URL;
-  try { ws = new WebSocket(WS_URL); }
-  catch(e) { setConnStatus('disconnected', 'Could not connect. Is the server running?'); scheduleReconnect(); return; }
+  document.getElementById('connAddr').textContent = HTTP_API_URL;
 
-  ws.onopen = () => {
-    wsConnected = true; reconnectDelay = 1000;
-    clearTimeout(reconnectTimer);
+  const ioFunc = window.io || globalThis.io;
+  if (!ioFunc) {
+    setConnStatus('disconnected', 'Socket.io library loading error.');
+    return;
+  }
+
+  socket = ioFunc(HTTP_API_URL, {
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000
+  });
+
+  socket.on('connect', () => {
+    wsConnected = true;
     setConnStatus('connected', 'Connected');
     if (savedToken && savedRoom) send({ type:'reconnect', token:savedToken });
-  };
-  ws.onmessage = e => { let msg; try { msg = JSON.parse(e.data); } catch { return; } handleMessage(msg); };
-  ws.onclose = () => {
+  });
+
+  socket.on('message', msg => {
+    handleMessage(msg);
+  });
+
+ socket.on('disconnect', (reason) => {
+  alert(`[socket] disconnected:, ${reason}`); // NEW — tells you WHY
+  wsConnected = false;
+  setConnStatus('disconnected', 'Disconnected — reconnecting…');
+  if (mmActive) { mmActive = false; stopMmCountdown(); showScreen('lobbyScreen'); }
+});
+
+  socket.on('connect_error', () => {
     wsConnected = false;
-    setConnStatus('disconnected', 'Disconnected — reconnecting…');
-    if (mmActive) { mmActive = false; stopMmCountdown(); showScreen('lobbyScreen'); }
-    scheduleReconnect();
-  };
-  ws.onerror = () => setConnStatus('disconnected', 'Connection error');
+    setConnStatus('disconnected', 'Connection error');
+  });
 }
-function send(obj) { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(obj)); }
-function scheduleReconnect() {
-  clearTimeout(reconnectTimer);
-  reconnectTimer = setTimeout(() => { reconnectDelay = Math.min(reconnectDelay * 2, 30000); connect(); }, reconnectDelay);
+
+function send(obj) {
+  if (socket && socket.connected) {
+    socket.emit('message', obj);
+  }
 }
+
 function setConnStatus(state, text) {
   const banner = document.getElementById('connBanner');
   banner.className = `conn-banner ${state}`;
@@ -839,9 +861,19 @@ function startQuickMatch() {
   document.getElementById('mmBotFallback').style.display = 'none';
   document.getElementById('mmStatusText').textContent = 'Searching online players…';
   document.getElementById('mmSub').textContent = 'Searching the lobby for a live player…';
-  startMmCountdown();
-  send({ type:'quick-match', name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '', userId: getUserId() || '' });
+  startMmCountdown(); // purely cosmetic now — doesn't drive any real timeout
+  send({
+    type:'quick-match', name, elo:getOnlineElo(),
+    token: localStorage.getItem(LS_TOKEN) || '',
+    userId: getUserId() || '',
+    mode: LOBBY_MODE   // NEW — server needs this to know 2p vs 4p
+  });
 }
+
+// FIX: the server now owns the 15s bot-fallback timer entirely and invisibly.
+// This local countdown is purely a decorative "still searching" animation —
+// it must NOT send anything to the server anymore when it hits zero.
+
 function cancelQuickMatch() {
   mmActive = false; stopMmCountdown();
   send({ type:'cancel-quick-match' });
@@ -875,14 +907,15 @@ function updateMmTimerUI() {
 }
 function onMmSearchTimeout() {
   if (!mmActive) return;
-  document.getElementById('mmStatusText').textContent = 'No players found, requesting a bot match…';
-  send({ type:'quick-match-timeout' });
+
+  document.getElementById('mmStatusText').textContent = 'Still searching…';
+  startMmCountdown(); // loop the cosmetic countdown rather than stopping at 0
 }
 function onQuickMatchSearching(msg) { document.getElementById('mmStatusText').textContent = 'Searching online players…'; }
 function onQuickMatchFound(msg) { mmActive = false; stopMmCountdown(); setRoomSession(msg); }
 function onQuickMatchBot(msg) {
   mmActive = false; stopMmCountdown();
-  document.getElementById('mmBotName').textContent = 'Bot: ' + (msg.botName || 'Unknown');
+  document.getElementById('mmBotName').textContent =( msg.botName || 'Unknown');
   document.getElementById('mmBotFallback').style.display = 'block';
   setRoomSession(msg);
 }
@@ -900,6 +933,7 @@ function onRoomJoined(msg) {
   savedToken = msg.token; savedRoom = msg.code;
   showWaitingScreen(msg.snapshot);
 }
+
 function setRoomSession(msg) {
   G.roomCode = msg.code; G.mySeat = msg.seat; G.snapshot = msg.snapshot;
   localStorage.setItem(LS_TOKEN, msg.token); localStorage.setItem(LS_ROOM, msg.code);
@@ -917,6 +951,8 @@ function onReconnected(msg) {
     showScreen('lobbyScreen'); requestLobby();
   }
 }
+
+
 function onPlayerJoined(msg) {
   const snap = G.snapshot; if (!snap) return;
   if (!snap.players.some(p => p.seat === msg.seat)) snap.players.push({seat:msg.seat, name:msg.name, elo:msg.elo, connected:true});

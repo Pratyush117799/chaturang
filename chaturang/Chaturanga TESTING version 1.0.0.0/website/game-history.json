@@ -628,5 +628,15 @@
     "gameType": "pvp",
     "roomCode": "YEUKDB",
     "ts": 1785507973977
+  },
+  {
+    "token": "ms9xftcr2sjrar84",
+    "userId": "6a6caf26b6d13e8dda80bec8",
+    "name": "GAUTOMATED",
+    "result": "win",
+    "reason": "capture",
+    "gameType": "1bot",
+    "roomCode": "HQZCRG",
+    "ts": 1785562048906
   }
 ]
