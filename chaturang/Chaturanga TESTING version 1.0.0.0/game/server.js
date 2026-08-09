@@ -445,8 +445,7 @@ function clearRematchTimer(room) {
   room._rematchDeadline = null;
 }
 function rematchNeededSeats(room) {
-  // Only connected humans count toward "needed" — a disconnected player or
-  // a bot seat can no longer block a rematch from completing.
+  
   return room.players.filter(p => p && !p.isBot && p.connected).map(p => p.seat);
 }
 function broadcastRematchTally(room) {
@@ -462,13 +461,7 @@ function startGame(room) {
   clearRoomBotFallback(room);
   clearRematchTimer(room);
   room.lastGameOver = null;
-
- const humanSeatsNeeded = room.mode === '4p' ? 4 : 2;
-        const humanSeatsFilled = room.players.filter(p => p && !p.isBot).length;
-        if (humanSeatsFilled >= humanSeatsNeeded) {room.status = 'playing';}
-        else {
-room.status = 'waiting';
-        }
+  room.status = 'playing';
 
 
   
@@ -863,16 +856,39 @@ case 'check-friends-online': {
         send(socket, { type: 'lobby-update', rooms: getLobbySnapshot() });
         break;
       }
-      case 'rematch': {
-        const room = rooms.get(socket._room);
-        if (!room || room.status !== 'finished') break;
-        room.rematchVotes.add(socket._seat);
+      case 'rematch-vote': {
+        const tokenEntry = tokens.get(String(msg.token || socket._token || ''));
+        const roomCode = socket._room || msg.code || tokenEntry?.roomCode;
+        const room = rooms.get(roomCode);
+        if (!room) {
+          console.warn(`[rematch-vote] Room not found for code "${roomCode}"`);
+          break;
+        }
+
+        // Re-bind socket to room and seat if reconnect hadn't finished
+        let seat = socket._seat;
+        if (seat === null || seat === undefined || seat < 0) {
+          if (tokenEntry && tokenEntry.roomCode === roomCode) {
+            seat = tokenEntry.seat;
+            socket._seat = seat;
+            socket._room = roomCode;
+            socket._token = msg.token || socket._token;
+            if (room.players[seat]) {
+              room.players[seat].socket = socket;
+              room.players[seat].connected = true;
+            }
+          }
+        }
+
+        if (room.status !== 'finished' || seat === null || seat === undefined) break;
+
+        room.rematchVotes.add(seat);
 
         if (!room._rematchTimer) {
           room._rematchDeadline = Date.now() + REMATCH_VOTE_TIMEOUT_MS;
           room._rematchTimer = setTimeout(() => {
             room._rematchTimer = null; room._rematchDeadline = null;
-            if (room.status !== 'finished') return; // already rematched or room gone
+            if (room.status !== 'finished') return;
             room.rematchVotes.clear();
             broadcast(room, { type: 'rematch-timeout' });
           }, REMATCH_VOTE_TIMEOUT_MS);
@@ -880,6 +896,7 @@ case 'check-friends-online': {
 
         const neededSeats = rematchNeededSeats(room);
         broadcastRematchTally(room);
+
         if (neededSeats.length > 0 && neededSeats.every(s => room.rematchVotes.has(s))) {
           clearRematchTimer(room);
           startGame(room);

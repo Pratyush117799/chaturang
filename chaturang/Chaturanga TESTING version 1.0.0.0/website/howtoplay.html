@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script src="../game/js/game.js"></script>
+<script src="../game/js/bot/tieredBots.js"></script>
 
 <style>
   :root{
@@ -281,8 +283,20 @@
     pointer-events:none;
   }
   @keyframes hintBounce{
-    0%,100%{ transform:translateX(-50%) translateY(0); }
-    50%{ transform:translateX(-50%) translateY(7px); }
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+
+  @keyframes bounceDown {
+    0%, 100% { transform: translateX(-50%) translateY(0); text-shadow: 0 0 5px rgba(234,179,8,0.5); }
+    50% { transform: translateX(-50%) translateY(-10px); text-shadow: 0 0 15px rgba(234,179,8,0.9); }
+  }
+  @keyframes btnGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(234,179,8,0.4); }
+    50% { box-shadow: 0 0 25px rgba(234,179,8,0.9); }
+  }
+  .btn-glowing {
+    animation: btnGlow 1.5s infinite !important;
   }
   @keyframes enemyFlash{
     0%{ box-shadow: inset 0 0 0 3px var(--enemy), 0 0 26px 10px rgba(192,69,61,0.75); }
@@ -366,14 +380,6 @@
     <a href="index.html" class="back-to-game"><i class="fa-solid fa-chess-board"></i> Back to the Board</a>
   </header>
 
-  <section class="hero">
-    <span class="hero-eyebrow"><i class="fa-solid fa-dharmachakra"></i> Learn by playing</span>
-    <h1>Forget the rulebook.<br><em>Touch the board.</em></h1>
-    <p class="lede">Tap a piece below to see exactly where it can go — then try your first fork. Everything here is live: click, capture, and reset as many times as you like.</p>
-    <a href="#tutorial" class="btn-primary"><i class="fa-solid fa-hand-pointer"></i> Start the Tutorial</a>
-  </section>
-
-  <div class="divider"></div>
 
   <section class="tutorial" id="tutorial">
     <div class="tutorial-head">
@@ -401,6 +407,29 @@
 
         <div class="guide-banner" id="guideBanner"></div>
 
+        <!-- Interactive Pāśaka Rolling Widget -->
+        <div id="pasakaWidget" style="display:none;margin-top:16px;padding:16px;background:rgba(200,150,12,0.08);border:1px solid var(--border-strong);border-radius:12px;text-align:center;">
+          <div style="font-size:0.75rem;color:var(--gold-dim);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:8px;">Pāśaka Casting (पासा)</div>
+          
+          <div id="pasakaPlayerUI">
+            <div id="pasakaDieDisplay" style="font-size:2.2rem;color:var(--gold-light);font-family:'Cinzel',serif;margin-bottom:8px;text-shadow:0 0 12px rgba(234,179,8,0.5);">🎲 1</div>
+            <div id="pasakaResultLabel" style="font-size:0.85rem;color:var(--parchment);font-weight:600;margin-bottom:12px;">Ratha Only (Chariot)</div>
+            <div style="position:relative; display:inline-block;">
+              <button type="button" id="pasakaRollBtn" style="padding:10px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#160f02;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 12px rgba(200,150,12,0.25);transition:box-shadow 0.3s ease;">
+                <i class="fa-solid fa-dice"></i> Cast Pāśaka
+              </button>
+              <div id="rollDiceArrow" style="display:none; position:absolute; bottom:115%; left:50%; transform:translateX(-50%); color:var(--gold-light); font-size:1.6rem; animation: bounceDown 1s infinite; z-index:10; pointer-events:none;">
+                <i class="fa-solid fa-arrow-down"></i>
+              </div>
+            </div>
+          </div>
+
+          <div id="botThinkingUI" style="display:none;">
+            <img id="botThinkingImg" src="" alt="Bot King" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px;" />
+            <div id="botThinkingLabel" style="font-size:0.85rem;color:var(--parchment);font-weight:600;">Thinking...</div>
+          </div>
+        </div>
+
         <div class="feedback-line idle" id="feedbackLine">
           <i class="fa-solid fa-circle-info"></i>
           <span id="feedbackText">Tap the piece on the board to see its legal moves.</span>
@@ -418,9 +447,16 @@
         <div class="file-row" id="fileRow"></div>
         <div class="board-frame">
           <div class="rank-col" id="rankCol"></div>
-          <div class="board-relative">
+          <div class="board-relative" style="position:relative;">
             <div class="lesson-board" id="lessonBoard"></div>
             <div class="board-toast-layer" id="boardToastLayer"></div>
+            <!-- Game Over Overlay -->
+            <div id="gameOverOverlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:20; border-radius:12px; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+              <h2 id="gameOverTitle" style="font-family:'Cinzel',serif; color:var(--red); font-size:2.5rem; margin:0 0 16px 0; text-shadow:0 0 15px rgba(255,0,0,0.6);">Defeat</h2>
+              <button id="tryAgainBtn" style="padding:12px 24px; font-size:1.1rem; border-radius:8px; background:linear-gradient(135deg,var(--gold-light),var(--gold)); color:#160f02; border:none; cursor:pointer; font-weight:bold; box-shadow:0 4px 12px rgba(200,150,12,0.4); display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-rotate-right"></i> Try Again
+              </button>
+            </div>
           </div>
         </div>
         <p class="board-hint">Gold dot = move · Red ring = capture · Dashed gold ring = <em>guarded</em> — visible, but illegal to take.</p>
@@ -480,6 +516,9 @@
 
   function getPieceImageSrc(color, pieceType){
     var c = color || COLOR_MAP['friend'];
+    if (c === 'red' || c === 'green' || c === 'blue' || c === 'yellow') {
+      return '../game/images/pieces/' + c + '_' + pieceType + '.webp';
+    }
     return ASSET_PATH + c + '-' + pieceType + '.webp';
   }
 
@@ -626,6 +665,31 @@
 
   var LESSONS = [
     {
+      kicker:'Core Rule', title:'The Pāśaka Roll', dev:'पासा', pieceType:'ratha', practiceEnabled:false, isPasakaLesson:true,
+      instructions:'Before every turn, you roll the Pāśaka (dice) — the face determines which piece you can touch.',
+      tips:[
+        'Roll 1 = Ratha (Chariot)',
+        'Roll 2 or 5 = Any Piece (Free Choice)',
+        'Roll 3 = Ashwa (Horse)',
+        'Roll 4 = Danti (Elephant)',
+        'Roll 6 = Nara or Raja (Pawn or King)'
+      ],
+      setup:[
+        {type:'ratha', side:'friend', r:7, c:7},
+        {type:'ashwa', side:'friend', r:7, c:6},
+        {type:'danti', side:'friend', r:7, c:5},
+        {type:'raja', side:'friend', r:7, c:4},
+        {type:'nara', side:'friend', r:6, c:7},
+        {type:'nara', side:'friend', r:6, c:6},
+        {type:'ratha', side:'enemy', r:0, c:0},
+        {type:'raja', side:'enemy', r:0, c:3}
+      ],
+      guide:{
+        steps:[],
+        doneText:'🎲 Cast the Pāśaka below to see which pieces light up on the board!'
+      }
+    },
+    {
       kicker:'Piece Movement', title:'The Ratha', dev:'रथ', pieceType:'ratha', practiceEnabled:true,
       instructions:'The Ratha is your Chariot — it slides in a straight line, as far as the road is clear.',
       tips:['Tap the yellow Ratha to see it slide across the whole rank and file.','It stops dead behind a piece of your own.','It captures the first enemy it meets — then stops there.'],
@@ -756,6 +820,56 @@
           {type:'select', pos:{r:6,c:4}, text:'👉 Tap the enemy Ashwa to reveal what it actually threatens.'}
         ],
         doneText:'🛡 See the dashed rings? Those are guarded — visible, but untouchable.'
+      }
+    },
+    {
+      kicker:'Practice Arena', title:'Bot Practice Match', dev:'अभ्यास', pieceType:'raja', practiceEnabled:false, isBotMatchLesson:true,
+      instructions:'Test your skills in a live 4-player match against 3 Tiered Bots! You control Red (Bottom-Left). Cast the Pāśaka and lead your army to victory.',
+      tips:['Cast the Pāśaka on your turn to activate pieces.','Eliminate rival Kings (Rajas) to win.','Watch how Green, Yellow, and Blue Bots execute tactical responses!'],
+      setup:[
+        // Player 0 (Red / Human - Bottom-Left)
+        {type:'ratha', side:'friend', color:'red', r:7, c:0},
+        {type:'ashwa', side:'friend', color:'red', r:7, c:1},
+        {type:'danti', side:'friend', color:'red', r:7, c:2},
+        {type:'raja', side:'friend', color:'red', r:7, c:3},
+        {type:'nara', side:'friend', color:'red', r:6, c:0},
+        {type:'nara', side:'friend', color:'red', r:6, c:1},
+        {type:'nara', side:'friend', color:'red', r:6, c:2},
+        {type:'nara', side:'friend', color:'red', r:6, c:3},
+
+        // Player 1 (Green / Bot 1 - Right File h)
+        {type:'ratha', side:'enemy', color:'green', r:7, c:7},
+        {type:'ashwa', side:'enemy', color:'green', r:6, c:7},
+        {type:'danti', side:'enemy', color:'green', r:5, c:7},
+        {type:'raja', side:'enemy', color:'green', r:4, c:7},
+        {type:'nara', side:'enemy', color:'green', r:7, c:6},
+        {type:'nara', side:'enemy', color:'green', r:6, c:6},
+        {type:'nara', side:'enemy', color:'green', r:5, c:6},
+        {type:'nara', side:'enemy', color:'green', r:4, c:6},
+
+        // Player 2 (Yellow / Bot 2 - Top Rank 8)
+        {type:'ratha', side:'enemy', color:'yellow', r:0, c:7},
+        {type:'ashwa', side:'enemy', color:'yellow', r:0, c:6},
+        {type:'danti', side:'enemy', color:'yellow', r:0, c:5},
+        {type:'raja', side:'enemy', color:'yellow', r:0, c:4},
+        {type:'nara', side:'enemy', color:'yellow', r:1, c:7},
+        {type:'nara', side:'enemy', color:'yellow', r:1, c:6},
+        {type:'nara', side:'enemy', color:'yellow', r:1, c:5},
+        {type:'nara', side:'enemy', color:'yellow', r:1, c:4},
+
+        // Player 3 (Blue / Bot 3 - Left File a)
+        {type:'ratha', side:'enemy', color:'blue', r:0, c:0},
+        {type:'ashwa', side:'enemy', color:'blue', r:1, c:0},
+        {type:'danti', side:'enemy', color:'blue', r:2, c:0},
+        {type:'raja', side:'enemy', color:'blue', r:3, c:0},
+        {type:'nara', side:'enemy', color:'blue', r:0, c:1},
+        {type:'nara', side:'enemy', color:'blue', r:1, c:1},
+        {type:'nara', side:'enemy', color:'blue', r:2, c:1},
+        {type:'nara', side:'enemy', color:'blue', r:3, c:1}
+      ],
+      guide:{
+        steps:[],
+        doneText:'⚔️ Cast the Pāśaka to begin the Practice Match against 3 Bots!'
       }
     }
   ];
@@ -906,8 +1020,322 @@
     feedbackLine.classList.toggle('idle', !!idle);
   }
 
+  var pasakaWidgetEl = document.getElementById('pasakaWidget');
+  var pasakaPlayerUIEl = document.getElementById('pasakaPlayerUI');
+  var botThinkingUIEl = document.getElementById('botThinkingUI');
+  var botThinkingImgEl = document.getElementById('botThinkingImg');
+  var botThinkingLabelEl = document.getElementById('botThinkingLabel');
+  var pasakaRollBtnEl = document.getElementById('pasakaRollBtn');
+  var pasakaDieDisplayEl = document.getElementById('pasakaDieDisplay');
+  var pasakaResultLabelEl = document.getElementById('pasakaResultLabel');
+  var gameOverOverlayEl = document.getElementById('gameOverOverlay');
+  var gameOverTitleEl = document.getElementById('gameOverTitle');
+  var tryAgainBtnEl = document.getElementById('tryAgainBtn');
+
+  if (tryAgainBtnEl) {
+    tryAgainBtnEl.addEventListener('click', function() {
+      if (gameOverOverlayEl) gameOverOverlayEl.style.display = 'none';
+      loadLesson(currentIndex);
+    });
+  }
+
+  var botMatchGame = null;
+  var pendingForced = null;
+  var humanRollsCount = 0;
+  // Player order in game.js: 0=Red, 1=Blue, 2=Green, 3=Yellow
+  var botElosMap = { 1: 300, 2: 400, 3: 500 };
+  var botNamesMap = { 0: 'You (Red)', 1: 'Kausalya [Bot - Blue]', 2: 'Valmiki [Bot - Green]', 3: 'Sugriva [Bot - Yellow]' };
+
+  function updateRollDiceAnimation() {
+    var arrowEl = document.getElementById('rollDiceArrow');
+    if (!pasakaRollBtnEl) return;
+    
+    var isPlayerTurn = botMatchGame && botMatchGame.turnIndex === 0 && !botMatchGame.gameOver && botMatchGame.players[0] && !botMatchGame.players[0].eliminated && !pendingForced;
+    
+    if (isPlayerTurn) {
+      if (humanRollsCount < 3) {
+        if (arrowEl) arrowEl.style.display = 'block';
+        pasakaRollBtnEl.classList.remove('btn-glowing');
+      } else {
+        if (arrowEl) arrowEl.style.display = 'none';
+        pasakaRollBtnEl.classList.add('btn-glowing');
+      }
+    } else {
+      if (arrowEl) arrowEl.style.display = 'none';
+      pasakaRollBtnEl.classList.remove('btn-glowing');
+    }
+  }
+
+  function initBotMatchArena() {
+    if (typeof ChaturangaGame === 'undefined') return;
+    botMatchGame = new ChaturangaGame();
+    // Constructor already calls initPosition(), so board is ready.
+    // Just configure bots: Player 0 = human, Players 1,2,3 = bots
+    botMatchGame.setBotConfig(3);
+    pendingForced = null;
+    humanRollsCount = 0;
+
+    if (botThinkingUIEl) botThinkingUIEl.style.display = 'none';
+    if (pasakaPlayerUIEl) pasakaPlayerUIEl.style.display = 'block';
+    if (pasakaRollBtnEl) pasakaRollBtnEl.disabled = false;
+
+    updateRollDiceAnimation();
+
+    syncBoardFromGame(botMatchGame);
+    render();
+    setFeedback('Your turn (Red)! Tap "Cast Pāśaka" to roll for your turn.', false);
+  }
+
+  function syncBoardFromGame(game) {
+    var b = makeBoard();
+    var ownerToSide = { 0: 'friend', 1: 'enemy', 2: 'enemy', 3: 'enemy' };
+    // Must match game.js constructor: Player(0,'red'), Player(1,'blue'), Player(2,'green'), Player(3,'yellow')
+    var ownerToColor = { 0: 'red', 1: 'blue', 2: 'green', 3: 'yellow' };
+    var typeMap = { pawn: 'nara', horse: 'ashwa', elephant: 'danti', rook: 'ratha', king: 'raja' };
+
+    for (var r = 1; r <= 8; r++) {
+      for (var f = 0; f < 8; f++) {
+        var sqStr = String.fromCharCode(97 + f) + r;
+        var piece = game.board.get(sqStr);
+        if (piece) {
+          var rowIdx = 8 - r;
+          var colIdx = f;
+          var t = typeMap[piece.type] || piece.type;
+          b[rowIdx][colIdx] = {
+            type: t,
+            side: ownerToSide[piece.owner] || 'enemy',
+            color: ownerToColor[piece.owner] || 'red'
+          };
+        }
+      }
+    }
+    board = b;
+  }
+
+  // Check whether the current player has ANY legal move for the current forcedPiece
+  function hasAnyLegalMoveForForced(game) {
+    var playerId = game.turnIndex;
+    for (var r = 1; r <= 8; r++) {
+      for (var f = 0; f < 8; f++) {
+        var sq = String.fromCharCode(97 + f) + r;
+        var p = game.board.get(sq);
+        if (p && p.owner === playerId) {
+          var moves = game.getLegalMoves(sq);
+          if (moves.length > 0) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  var botTurnTimer = null;
+
+  function runBotTurns() {
+    var lesson = LESSONS[currentIndex];
+    if (!lesson || !lesson.isBotMatchLesson || !botMatchGame || botMatchGame.gameOver) return;
+
+    var turn = botMatchGame.turnIndex;
+    if (turn === 0) {
+      pendingForced = null;
+      if (pasakaPlayerUIEl) pasakaPlayerUIEl.style.display = 'block';
+      if (botThinkingUIEl) botThinkingUIEl.style.display = 'none';
+      if (pasakaRollBtnEl) pasakaRollBtnEl.disabled = false;
+      updateRollDiceAnimation();
+      setFeedback('Your turn (Red)! Tap "Cast Pāśaka" to roll for your turn.', false);
+      return;
+    }
+
+    if (pasakaPlayerUIEl) pasakaPlayerUIEl.style.display = 'none';
+    if (botThinkingUIEl) botThinkingUIEl.style.display = 'block';
+    updateRollDiceAnimation();
+
+    var botPlayer = botMatchGame.players[turn];
+    if (!botPlayer || botPlayer.eliminated) {
+      botMatchGame.nextTurn();
+      runBotTurns();
+      return;
+    }
+
+    var botName = botNamesMap[turn] || ('Bot ' + turn);
+    var roll = botMatchGame.rollDice();
+    var forced = botMatchGame.forcedPiece;
+    var forcedLabel = forced === 'any' ? 'Any Piece' : forced === 'pawn-king' ? 'Nara / Raja' : forced;
+
+    // Check if this bot has any legal move at all for this roll
+    if (!hasAnyLegalMoveForForced(botMatchGame)) {
+      // Auto-forfeit: no legal moves for the forced piece type
+      botMatchGame.nextTurn();
+      setFeedback(botName + ' rolled ' + roll + ' (' + forcedLabel + ') — no legal moves, forfeited.', true);
+      botTurnTimer = setTimeout(runBotTurns, 400);
+      return;
+    }
+
+    var botColor = turn === 1 ? 'blue' : (turn === 2 ? 'green' : 'yellow');
+    if (botThinkingImgEl) {
+      botThinkingImgEl.src = getPieceImageSrc(botColor, 'raja');
+    }
+    if (botThinkingLabelEl) {
+      botThinkingLabelEl.textContent = botName + ' is thinking...';
+    }
+    
+    setFeedback(botName + ' rolled ' + roll + ' (' + forcedLabel + ') and is thinking...', true);
+
+    botTurnTimer = setTimeout(function() {
+      // Snapshot the turn — the closure must remember which bot we're moving for
+      var savedTurn = turn;
+      try {
+        var elo = botElosMap[savedTurn] || 300;
+        var move = null;
+        if (window.ChaturangaTieredBot) {
+          move = window.ChaturangaTieredBot.getMove(botMatchGame, elo);
+        }
+
+        if (move && botMatchGame.getLegalMoves(move.from).includes(move.to)) {
+          // makeMove() already calls nextTurn() internally — do NOT call it again
+          botMatchGame.makeMove(move.from, move.to);
+          if (botMatchGame.pendingElimination) botMatchGame.completeElimination();
+          setFeedback(botName + ' moved ' + move.from + ' → ' + move.to, false);
+          syncBoardFromGame(botMatchGame);
+          render();
+        } else {
+          // Bot couldn't find a valid move — forfeit turn
+          botMatchGame.nextTurn();
+          setFeedback(botName + ' had no legal moves for roll ' + roll + '.', true);
+          syncBoardFromGame(botMatchGame);
+          render();
+        }
+      } catch (err) {
+        console.error('Error in bot turn execution:', err);
+        botMatchGame.nextTurn();
+        syncBoardFromGame(botMatchGame);
+        render();
+      }
+
+      if (botMatchGame.players[0] && botMatchGame.players[0].eliminated) {
+        if (botThinkingUIEl) botThinkingUIEl.style.display = 'none';
+        if (pasakaPlayerUIEl) pasakaPlayerUIEl.style.display = 'block';
+        if (pasakaRollBtnEl) pasakaRollBtnEl.disabled = true;
+
+        if (gameOverTitleEl) {
+          gameOverTitleEl.textContent = 'Defeat';
+          gameOverTitleEl.style.color = 'var(--red)';
+        }
+        if (gameOverOverlayEl) gameOverOverlayEl.style.display = 'flex';
+        setFeedback('Your Raja was captured! You lose.', false);
+      } else if (botMatchGame.gameOver) {
+        if (botThinkingUIEl) botThinkingUIEl.style.display = 'none';
+        if (pasakaPlayerUIEl) pasakaPlayerUIEl.style.display = 'block';
+        if (pasakaRollBtnEl) pasakaRollBtnEl.disabled = true;
+
+        var winnerName = botNamesMap[botMatchGame.winnerPlayerId] || 'Winner';
+        if (gameOverTitleEl) {
+          gameOverTitleEl.textContent = 'Victory!';
+          gameOverTitleEl.style.color = 'var(--gold-light)';
+        }
+        if (gameOverOverlayEl) gameOverOverlayEl.style.display = 'flex';
+        setFeedback('🏆 Game Over! ' + winnerName + ' claims victory!', false);
+      } else {
+        botTurnTimer = setTimeout(runBotTurns, 750);
+      }
+    }, 650);
+  }
+
+  var pasakaMap = {
+    1: { type: 'ratha', label: '1: Ratha Only (Chariot)', name: 'Ratha' },
+    2: { type: 'any', label: '2: Free Choice (Any Piece)', name: 'Any Piece' },
+    3: { type: 'ashwa', label: '3: Ashwa Only (Horse)', name: 'Ashwa' },
+    4: { type: 'danti', label: '4: Danti Only (Elephant)', name: 'Danti' },
+    5: { type: 'any', label: '5: Free Choice (Any Piece)', name: 'Any Piece' },
+    6: { type: 'nara-raja', label: '6: Nara or Raja (Pawn or King)', name: 'Nara or Raja' }
+  };
+
+  function rollPasakaDemo(){
+    var lesson = LESSONS[currentIndex];
+    if (lesson && lesson.isBotMatchLesson && botMatchGame) {
+      if (botMatchGame.turnIndex !== 0) {
+        setFeedback('Wait for your turn! The bots are thinking...', true);
+        return;
+      }
+      if (pendingForced) {
+        setFeedback('You already rolled — make a move with the highlighted piece first.', true);
+        return;
+      }
+      var roll = botMatchGame.rollDice();
+      var info = pasakaMap[roll];
+      pendingForced = info.type;
+
+      if (pasakaDieDisplayEl) pasakaDieDisplayEl.textContent = '🎲 ' + roll;
+      if (pasakaResultLabelEl) pasakaResultLabelEl.textContent = info.label;
+
+      // Auto-forfeit: if the human has no legal moves for this roll, skip automatically
+      if (!hasAnyLegalMoveForForced(botMatchGame)) {
+        setFeedback('You rolled ' + roll + ' (' + info.name + ') but have no legal moves — turn forfeited!', true);
+        pendingForced = null;
+        updateRollDiceAnimation();
+        botMatchGame.nextTurn();
+        clearHints();
+        setTimeout(runBotTurns, 700);
+        return;
+      }
+      
+      humanRollsCount++;
+      updateRollDiceAnimation();
+
+      setFeedback('You rolled ' + roll + ': Move your ' + info.name + '!', false);
+
+      for (var r=0; r<8; r++){
+        for (var c=0; c<8; c++){
+          var piece = board[r][c];
+          var sq = squareEls[r][c].sq;
+          if (piece && piece.color === 'red'){
+            var match = false;
+            if (info.type === 'any') match = true;
+            else if (info.type === 'nara-raja') match = (piece.type === 'nara' || piece.type === 'raja');
+            else match = (piece.type === info.type);
+            sq.classList.toggle('hint', match);
+          } else {
+            sq.classList.remove('hint');
+          }
+        }
+      }
+      return;
+    }
+
+    if (!pasakaDieDisplayEl || !pasakaResultLabelEl) return;
+    var roll = Math.floor(Math.random() * 6) + 1;
+    var info = pasakaMap[roll];
+
+    pasakaDieDisplayEl.textContent = '🎲 ' + roll;
+    pasakaResultLabelEl.textContent = info.label;
+    setFeedback('Rolled ' + roll + ': You may move ' + info.name + '!', false);
+
+    for (var r=0; r<8; r++){
+      for (var c=0; c<8; c++){
+        var piece = board[r][c];
+        var sq = squareEls[r][c].sq;
+        if (piece && piece.side === 'friend'){
+          var match = false;
+          if (info.type === 'any') match = true;
+          else if (info.type === 'nara-raja') match = (piece.type === 'nara' || piece.type === 'raja');
+          else match = (piece.type === info.type);
+
+          sq.classList.toggle('hint', match);
+        } else {
+          sq.classList.remove('hint');
+        }
+      }
+    }
+  }
+
+  if (pasakaRollBtnEl) {
+    pasakaRollBtnEl.addEventListener('click', rollPasakaDemo);
+  }
+
   function loadLesson(idx){
     if (idx < 0 || idx >= LESSONS.length) return;
+    if (guide.timer) { clearTimeout(guide.timer); guide.timer = null; }
+    if (botTurnTimer) { clearTimeout(botTurnTimer); botTurnTimer = null; }
+
     currentIndex = idx;
     var lesson = LESSONS[idx];
     board = buildBoard(lesson.setup);
@@ -915,11 +1343,23 @@
     legalMoves = null;
     practice = { active:false, vulnerable:null, capturedType:null };
     hideBoardToast();
+    clearHints();
 
+    if (gameOverOverlayEl) gameOverOverlayEl.style.display = 'none';
+
+    if (pasakaDieDisplayEl) pasakaDieDisplayEl.textContent = '🎲 ?';
+    if (pasakaResultLabelEl) pasakaResultLabelEl.textContent = 'Roll to begin';
+
+    if (pasakaWidgetEl) {
+      pasakaWidgetEl.style.display = (lesson.isPasakaLesson || lesson.isBotMatchLesson) ? 'block' : 'none';
+    }
+
+    // --- Update ALL lesson chrome first, before anything that could throw.
+    // This guarantees title/instructions/tips/board always match idx, even
+    // if a later step (bot-arena init) fails.
     kickerEl.textContent = lesson.kicker;
     titleEl.innerHTML = lesson.title + (lesson.dev ? '<span class="dev">'+lesson.dev+'</span>' : '');
 
-    // Always show yellow piece in the instruction card preview badge
     if(lesson.pieceType) {
       previewImgEl.src = getPieceImageSrc('yellow', lesson.pieceType);
       previewImgEl.alt = lesson.title;
@@ -936,10 +1376,20 @@
     prevBtn.disabled = idx === 0;
     nextBtn.disabled = idx === LESSONS.length - 1;
     buildDots();
-    render();
-    startGuide();
-  }
+    render(); // render the plain setup board first — always safe
 
+    // Only now do the risky, lesson-specific work, fully guarded.
+    if (lesson.isBotMatchLesson) {
+      try {
+        initBotMatchArena();
+      } catch (err) {
+        console.error('Bot match arena failed to initialize:', err);
+        setFeedback('Could not start the bot match engine — showing the starting position.', true);
+      }
+    }
+
+    startGuide();
+}
   function render(){
     for (var r=0;r<8;r++){
       for (var c=0;c<8;c++){
@@ -977,10 +1427,29 @@
     var piece = board[r][c];
     if (!piece) return false;
 
+
+     var lesson = LESSONS[currentIndex];
+    if (lesson.isBotMatchLesson && piece.side === 'friend') {
+      if (!pendingForced) {
+        showBoardToast(r, c, "Cast the Pāśaka first to see which pieces you can move.");
+        setFeedback("You must cast the Pāśaka before touching a piece.", true);
+        return false;
+      }
+      var allowed =
+        pendingForced === 'any' ||
+        (pendingForced === 'nara-raja' && (piece.type === 'nara' || piece.type === 'raja')) ||
+        piece.type === pendingForced;
+      if (!allowed) {
+        showBoardToast(r, c, "The dice forces a different piece this turn — check the highlighted squares.");
+        setFeedback("That piece can't move on this roll — pick a highlighted piece.", true);
+        return false;
+      }
+    }
+
+
     if (piece.side === 'enemy' && !isGuidedEnemyPeek(r, c)){
-      // Rule: the player only ever moves their own (yellow) pieces. Enemy
-      // pieces move on their own, on cue, as part of the guided steps.
-      showBoardToast(r, c, "That's a rival piece — enemies move on their own. Tap your own (yellow) piece instead.");
+      var ownLabel = (lesson && lesson.isBotMatchLesson) ? 'red' : 'yellow';
+      showBoardToast(r, c, "That's a rival piece — enemies move on their own. Tap your own (" + ownLabel + ") piece instead.");
       setFeedback("You can only move your own pieces — watch how the rivals move on their own.");
       return false;
     }
@@ -1035,8 +1504,6 @@
     }
 
     if (selected.viewOnly){
-      // An enemy piece is selected purely for inspection — it can never
-      // actually move, even onto an otherwise-highlighted square.
       var threatensHere = legalMoves.captures.some(function(m){return m.r===r&&m.c===c;}) ||
                            legalMoves.guarded.some(function(m){return m.r===r&&m.c===c;});
       if (threatensHere){
@@ -1060,6 +1527,56 @@
     if (isMove || isCapture){
       var movingPiece = board[selected.r][selected.c];
       var capturedPiece = board[r][c];
+
+      // ──── Bot Match Arena: all moves go through the real engine ────
+      if (lesson.isBotMatchLesson && botMatchGame) {
+        var fromSq = String.fromCharCode(97 + selected.c) + (8 - selected.r);
+        var toSq = String.fromCharCode(97 + c) + (8 - r);
+
+        if (!botMatchGame.getLegalMoves(fromSq).includes(toSq)) {
+          showBoardToast(r, c, "That move isn't legal for this roll — try a highlighted square.");
+          setFeedback("Illegal move for this turn's roll — try again.", true);
+          selected = null; legalMoves = null; render();
+          return;
+        }
+
+        // makeMove() already calls nextTurn() internally — do NOT call it again
+        botMatchGame.makeMove(fromSq, toSq);
+        if (botMatchGame.pendingElimination) botMatchGame.completeElimination();
+        pendingForced = null;
+        syncBoardFromGame(botMatchGame);
+        render();
+
+        var msg = capturedPiece
+          ? 'Captured! The ' + NAMES[movingPiece.type] + ' takes the square.'
+          : 'The ' + NAMES[movingPiece.type] + ' moves there.';
+        setFeedback(msg);
+        hideBoardToast();
+        clearHints();
+        selected = null; legalMoves = null;
+
+        if (botMatchGame.players[0] && botMatchGame.players[0].eliminated) {
+          if (gameOverTitleEl) {
+            gameOverTitleEl.textContent = 'Defeat';
+            gameOverTitleEl.style.color = 'var(--red)';
+          }
+          if (gameOverOverlayEl) gameOverOverlayEl.style.display = 'flex';
+          setFeedback('Your Raja was captured! You lose.', false);
+        } else if (botMatchGame.gameOver) {
+          var winnerName = botNamesMap[botMatchGame.winnerPlayerId] || 'Winner';
+          if (gameOverTitleEl) {
+            gameOverTitleEl.textContent = 'Victory!';
+            gameOverTitleEl.style.color = 'var(--gold-light)';
+          }
+          if (gameOverOverlayEl) gameOverOverlayEl.style.display = 'flex';
+          setFeedback('🏆 Game Over! ' + winnerName + ' claims victory!', false);
+        } else {
+          setTimeout(runBotTurns, 700);
+        }
+        return;
+      }
+
+      // ──── Regular lesson move (not bot match) ────
       board[r][c] = movingPiece;
       board[selected.r][selected.c] = null;
 
@@ -1067,7 +1584,6 @@
       var msg = null;
       if (lesson.successCheck) msg = lesson.successCheck(board, moveInfo);
 
-      // Was this the exact capture the free-practice system was hinting at?
       var wasPracticeCapture = !guide.active && practice.active && capturedPiece &&
         practice.vulnerable && practice.vulnerable.r === r && practice.vulnerable.c === c;
 
@@ -1090,6 +1606,7 @@
 
       selected = null; legalMoves = null;
       render();
+
       checkGuideProgress('target', r, c);
       return;
     }
