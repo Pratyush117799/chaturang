@@ -202,7 +202,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .rank-lbl{height:var(--sq);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--muted)}
 .board{display:grid;grid-template-columns:repeat(8,var(--sq));border:2px solid rgba(201,168,76,.3);border-radius:2px}
 .sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;position:relative;transition:background .08s}
+  cursor:pointer;position:relative;transition:background .08s ease;contain:layout style paint;transform:translateZ(0)}
 .sq.light{background:#f0d9b5}.sq.dark{background:#b58863}
 .sq.sel{background:rgba(201,168,76,.55)!important;outline:2px solid var(--gold);outline-offset:-2px}
 .sq.legal::after{content:'';width:26%;height:26%;background:rgba(0,0,0,.2);border-radius:50%;display:block;pointer-events:none}
@@ -212,8 +212,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .sq.king-danger{animation:kp 1s ease-in-out infinite}
 @keyframes kp{0%,100%{background:rgba(248,113,113,.3)!important}50%{background:rgba(248,113,113,.6)!important}}
 .piece{font-size:calc(var(--sq)*.58);line-height:1;user-select:none;pointer-events:none;
-  text-shadow:0 1px 3px rgba(0,0,0,.55);transition:transform .12s}
-.sq:hover .piece{transform:scale(1.07)}
+  text-shadow:0 1px 3px rgba(0,0,0,.55);transition:transform .12s ease}
+.piece-img{width:86%;height:86%;object-fit:contain;border-radius:50%;padding:4px;
+  background:rgba(0,0,0,0.22);box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.15);
+  pointer-events:none;user-select:none;-webkit-user-drag:none;
+  transition:transform .12s ease,filter .12s ease;transform:translateZ(0);will-change:transform}
+.sq:hover .piece-img,.sq:hover .piece{transform:scale(1.08) translateZ(0);filter:brightness(1.15)}
 
 .action-row{display:flex;gap:7px;width:calc(var(--sq)*8)}
 .act-btn{flex:1;padding:8px 10px;border-radius:6px;border:none;font-family:'Outfit',sans-serif;
@@ -374,6 +378,37 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .lb-games{color:var(--muted);font-size:.68rem;text-align:right}
 .lb-rank-badge{font-size:.6rem;padding:1px 6px;border-radius:8px}
 .lb-empty{text-align:center;padding:24px;color:var(--muted);font-size:.8rem;font-style:italic}
+
+/* ── REALTIME GAME-INVITE TOASTS ─────────────────────────────── */
+#inviteToastContainer{position:fixed;top:70px;right:16px;z-index:10050;
+  display:flex;flex-direction:column;gap:10px;max-width:320px}
+.invite-toast{background:linear-gradient(160deg,#1c1508,#100c04);
+  border:1px solid var(--border2);border-radius:12px;padding:16px 18px;
+  min-width:260px;box-shadow:0 8px 30px rgba(0,0,0,.5);
+  animation:inviteSlideIn .3s ease;position:relative;overflow:hidden}
+@keyframes inviteSlideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+.invite-toast.leaving{animation:inviteSlideOut .25s ease forwards}
+@keyframes inviteSlideOut{to{transform:translateX(120%);opacity:0}}
+.it-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.it-icon{width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,.15);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0}
+.it-title{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold2)}
+.it-sub{font-size:.74rem;color:var(--muted);margin-bottom:12px;line-height:1.4}
+.it-btns{display:flex;gap:8px}
+.it-btn{flex:1;padding:7px;border-radius:6px;border:none;font-size:.76rem;
+  font-weight:600;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.it-accept{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00}
+.it-accept:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.it-reject{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.it-reject:hover{border-color:var(--red);color:var(--red)}
+.it-timer{position:absolute;bottom:0;left:0;height:2px;background:var(--gold);
+  width:100%;animation:itTimerShrink 30s linear forwards}
+@keyframes itTimerShrink{from{width:100%}to{width:0%}}
+
+.friend-online-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  background:#555;display:inline-block;margin-right:5px}
+.friend-online-dot.online{background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.6)}
+.friend-invite-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -386,6 +421,10 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   </a>
   <span class="nav-badge">Multiplayer</span>
   <div class="nav-links">
+    <butopebton type="button" class="nav-link" id="friendsNavBtn" onclick="openFriendsModal()" style="position:relative;background:none;border:none;cursor:pointer;color:var(--text);font-family:inherit;font-size:inherit;">
+      <i class="fa-solid fa-user-group fa-xs"></i> Friends
+      <span class="friends-badge" id="friendsBadge" style="display:none;position:absolute;top:-4px;right:-8px;background:var(--red);color:#fff;font-size:0.6rem;font-weight:700;border-radius:10px;padding:2px 6px;">0</span>
+    </button>
     <a href="game.html"  class="nav-link"><i class="fa-solid fa-chess-board fa-xs"></i> Game</a>
     <a href="puzzles.html" class="nav-link"><i class="fa-solid fa-puzzle-piece fa-xs"></i> Puzzles</a>
     <a href="akhara.html"  class="nav-link"><i class="fa-solid fa-dumbbell fa-xs"></i> Akhara</a>
@@ -498,8 +537,11 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 <div id="waitingScreen" class="screen">
   <div class="waiting-card">
     <div class="wc-title">Waiting for Players</div>
-    <div class="wc-sub">Share the code below with your opponent. The game starts automatically when all seats are filled.</div>
+    <div class="wc-sub">Share the code or scan the QR code below with your opponent. The game starts automatically when all seats are filled.</div>
     <div class="wc-code-big" id="wcCode">——</div>
+    <div class="qr-container-waiting" style="margin:12px auto;text-align:center">
+      <canvas id="waitingQrCanvas" style="width:130px;height:130px;border-radius:8px;background:#fff;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,0.5)"></canvas>
+    </div>
     <div class="wc-share" onclick="copyRoomLink()">
       <i class="fa-solid fa-copy fa-xs"></i> Copy invite link
     </div>
@@ -528,6 +570,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
     <div class="players-list" id="playersListEl">
       <!-- rendered dynamically -->
+    </div>
+
+    <!-- QR Code below players list -->
+    <div class="qr-box-game" style="margin:8px 0;text-align:center;background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:8px;padding:8px">
+      <div style="font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Scan to Join / Share</div>
+      <canvas id="gameQrCanvas" style="width:105px;height:105px;border-radius:6px;background:#fff;padding:4px;display:inline-block"></canvas>
     </div>
 
     <div class="info-card">
@@ -582,6 +630,23 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 </div>
 </div>
 
+<!-- ════════════ RESIGN CONFIRMATION DIALOGUE ════════════ -->
+<div id="resignModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.88);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border);border-radius:14px;max-width:400px;width:100%;padding:24px;text-align:center;box-shadow:0 0 50px rgba(220,38,38,.25);position:relative;">
+    <div style="font-size:2.4rem;color:var(--red);margin-bottom:8px;"><i class="fa-solid fa-flag"></i></div>
+    <div style="font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold);margin-bottom:6px;">Resign Match?</div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;line-height:1.5;">Are you sure you want to forfeit this battle? Your opponent will be awarded victory.</div>
+    <div style="display:flex;gap:10px;">
+      <button type="button" onclick="closeResignModal()" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-weight:600;font-size:0.82rem;cursor:pointer;">
+        Cancel
+      </button>
+      <button type="button" onclick="confirmResignGame()" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--red);color:#fff;font-weight:600;font-size:0.82rem;cursor:pointer;">
+        Confirm Resign
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════════ RESULT OVERLAY ════════════ -->
 <div id="resultOverlay">
   <div class="result-card">
@@ -598,8 +663,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       </button>
     </div>
     <div class="rematch-note" id="rematchNote"></div>
+    <span id="rematchCountdown" style="font-size:.72rem;color:var(--muted)"></span>
   </div>
 </div>
+
+<!-- REALTIME GAME-INVITE TOASTS (react-toastify-style popups) -->
+<div id="inviteToastContainer"></div>
 
 <!-- DISCONNECTED TOAST -->
 <div class="dc-toast" id="dcToast">
@@ -645,14 +714,68 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   </div>
 </div>
 
+<!-- ════════════ FRIENDS MODAL ════════════ -->
+<div id="friendsModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.85);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border);border-radius:14px;max-width:480px;width:100%;padding:24px;box-shadow:0 0 50px rgba(201,168,76,.15);position:relative;">
+    <button type="button" onclick="closeFriendsModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
+
+    <div style="font-family:'Cinzel',serif;font-size:1.25rem;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      <i class="fa-solid fa-user-group"></i> Warriors &amp; Friends
+    </div>
+
+    <!-- Modal Tabs -->
+    <div style="display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:16px;padding-bottom:8px;">
+      <button type="button" class="fm-tab active" id="fmTabFriends" onclick="switchFriendsTab('friends')" style="padding:6px 12px;border-radius:6px;border:none;background:rgba(201,168,76,.15);color:var(--gold);font-size:0.8rem;font-weight:600;cursor:pointer;">
+        Friends (<span id="fmFriendsCount">0</span>)
+      </button>
+      <button type="button" class="fm-tab" id="fmTabRequests" onclick="switchFriendsTab('requests')" style="padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:0.8rem;font-weight:600;cursor:pointer;position:relative;">
+        Requests (<span id="fmRequestsCount">0</span>)
+      </button>
+      <button type="button" class="fm-tab" id="fmTabAdd" onclick="switchFriendsTab('add')" style="padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:0.8rem;font-weight:600;cursor:pointer;">
+        + Add Friend
+      </button>
+    </div>
+
+    <!-- Tab 1: Friends List -->
+    <div id="fmSectionFriends">
+      <div id="fmFriendsList" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;">
+        <div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">Loading friends...</div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Incoming Requests -->
+    <div id="fmSectionRequests" style="display:none;">
+      <div id="fmRequestsList" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;">
+        <div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">No pending requests.</div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Add Friend Form -->
+    <div id="fmSectionAdd" style="display:none;">
+      <div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Send a friend request to a registered warrior by entering their email address.</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="email" id="fmAddEmailInput" placeholder="warrior@chaturanga.in" style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:rgba(0,0,0,0.3);color:var(--text);font-family:inherit;font-size:0.8rem;" />
+        <button type="button" onclick="submitSendFriendRequest()" style="padding:8px 16px;border-radius:6px;border:none;background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;font-weight:600;font-size:0.8rem;cursor:pointer;">
+          Send
+        </button>
+      </div>
+      <div id="fmAddMsg" style="font-size:0.75rem;display:none;"></div>
+    </div>
+  </div>
+</div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script src="../website/session.js"></script>
 
 <script>
 'use strict';
-alert('hey');
+
+// Get URL search parameters from current page
+
+
 // ── Name/session block left exactly as-is — separate feature, not touched ──
 function initPlayerName() {
   const inputEl = document.getElementById('playerNameInput');
@@ -755,10 +878,22 @@ function connect() {
     reconnectionDelayMax: 5000
   });
 
+
+  
+
   socket.on('connect', () => {
     wsConnected = true;
     setConnStatus('connected', 'Connected');
+    sendIdentify(); // register presence so friends can see us online / invite us
     if (savedToken && savedRoom) send({ type:'reconnect', token:savedToken });
+    const urlParams = new URLSearchParams(window.location.search);
+const roomCode = urlParams.get('room');
+
+// If a room code exists in the URL, directly join the room
+if (roomCode) {
+
+    joinByCode(roomCode);
+}
   });
 
   socket.on('message', msg => {
@@ -766,7 +901,7 @@ function connect() {
   });
 
  socket.on('disconnect', (reason) => {
-  alert(`[socket] disconnected:, ${reason}`); // NEW — tells you WHY
+ 
   wsConnected = false;
   setConnStatus('disconnected', 'Disconnected — reconnecting…');
   if (mmActive) { mmActive = false; stopMmCountdown(); showScreen('lobbyScreen'); }
@@ -809,6 +944,7 @@ function handleMessage(msg) {
     case 'player-forfeited':   onPlayerForfeited(msg); break;
     case 'player-left':        onPlayerLeft(msg); break;
     case 'server-shutdown':    onServerShutdown(msg); break;
+    case 'rematch-timeout': onRematchTimeout(); break; 
     case 'error':
       addSystemChat(`Error: ${msg.message}`);
       if (msg.code === 'ROOM_NOT_FOUND') {
@@ -827,6 +963,12 @@ function handleMessage(msg) {
     case 'quick-match-found':     onQuickMatchFound(msg);     break;
     case 'quick-match-bot':       onQuickMatchBot(msg);       break;
     case 'quick-match-cancelled': onQuickMatchCancelled(msg); break;
+    case 'friends-online-status': onFriendsOnlineStatus(msg); break;
+    case 'game-invite':           onGameInvite(msg);          break;
+    case 'invite-accepted-self':  onInviteAcceptedSelf(msg);  break;
+    case 'invite-accepted':       onInviteAccepted(msg);      break;
+    case 'invite-declined':       onInviteDeclined(msg);      break;
+    case 'invite-timeout':        onInviteTimeout(msg);       break;
   }
 }
 
@@ -853,7 +995,7 @@ function onLobbyUpdate(rooms) {
 }
 
 function startQuickMatch() {
-  const name = getPlayerName() || document.getElementById('playerNameInput').value.trim() || 'Player';
+  const name = getPlayerName() || 'Player';
   if (!name) { alert('Please enter a name first.'); return; }
   if (!wsConnected) { alert('Not connected to server.'); return; }
   mmActive = true;
@@ -941,15 +1083,46 @@ function setRoomSession(msg) {
 }
 function onReconnected(msg) {
   G.roomCode = savedRoom; G.mySeat = msg.seat; G.snapshot = msg.snapshot;
+
   if (msg.snapshot.status === 'playing') {
     applySnapshot(msg.snapshot); showScreen('gameScreen'); setStatus('Reconnected! Continue playing.');
   } else if (msg.snapshot.status === 'waiting') {
     showWaitingScreen(msg.snapshot);
+  } else if (msg.snapshot.status === 'finished' && msg.lastGameOver) {   // NEW
+    applySnapshot(msg.snapshot);
+    showScreen('gameScreen');
+    reopenResultOverlay(msg.lastGameOver);
+    if (msg.rematch) renderRematchStatus(msg.rematch.votedSeats, msg.rematch.neededSeats, msg.rematch.deadline);
   } else {
     localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_ROOM);
     savedToken = null; savedRoom = null;
     showScreen('lobbyScreen'); requestLobby();
   }
+}
+
+// Rebuilds the same result card onGameOver builds, without re-touching elo
+// (already applied the first time this game ended) — just redisplays it.
+function reopenResultOverlay({ reason, winnerSeat, eloChanges }) {
+  const isWinner = winnerSeat === G.mySeat;
+  const winnerName = G.snapshot?.players?.find(p => p.seat === winnerSeat)?.name || SEAT_NAMES[winnerSeat] || '?';
+  let subText = reason === 'forfeit' ? 'A player forfeited the match.'
+    : reason === 'resign' ? (isWinner ? `${winnerName} won by resignation.` : 'You resigned the match.')
+    : (isWinner ? 'Your Raja stands supreme on the Ashtāpada.' : `${winnerName} captured your Raja.`);
+
+  document.getElementById('rcIcon').textContent  = isWinner ? '✦' : '✗';
+  document.getElementById('rcTitle').textContent = isWinner ? 'Victory!' : 'Defeated';
+  document.getElementById('rcSub').textContent   = subText;
+
+  const eloEl = document.getElementById('rcEloChanges');
+  if (eloChanges && eloEl) {
+    eloEl.innerHTML = Object.values(eloChanges).map(e => {
+      const cls = e.delta > 0 ? 'pos' : e.delta < 0 ? 'neg' : 'zero';
+      const sign = e.delta >= 0 ? '+' : '';
+      return `<div class="elo-row"><span class="elo-name">${escapeHTML(e.name)}</span>
+        <span class="elo-delta ${cls}">${e.oldElo} → ${e.newElo} (${sign}${e.delta})</span></div>`;
+    }).join('');
+  }
+  document.getElementById('resultOverlay').classList.add('show');
 }
 
 
@@ -965,6 +1138,8 @@ function onPlayerLeft(msg) {
 }
 
 function onGameStart(msg) {
+  const resultOverlay = document.getElementById('resultOverlay');
+  if (resultOverlay) resultOverlay.classList.remove('show');
   applySnapshot(msg.snapshot);
   showScreen('gameScreen');
   addSystemChat('Battle begins! The Pāśaka decides the first move.');
@@ -978,6 +1153,18 @@ function applySnapshot(snap) {
   document.getElementById('gameRoomCode').textContent = snap.code || G.roomCode;
   renderPlayers(snap.players);
   updateDiceDisplay(); updateTurnDisplay(); renderGameBoard(); updateActionButtons();
+  renderRoomQrCode(snap.code || G.roomCode);
+
+  if (snap.status === 'playing') {
+    const isMyTurn = snap.currentSeat === G.mySeat;
+    if (snap.forcedPiece != null) {
+      setStatus(isMyTurn ? `Select a ${PNAMES[snap.forcedPiece]||'piece'} to move.` : `${SEAT_NAMES[snap.currentSeat]} rolled ${DICE_FACES[snap.diceFace]} — ${PNAMES[snap.forcedPiece]||'any'}.`);
+    } else {
+      setStatus(isMyTurn ? 'Your turn — roll the Pāśaka.' : `${SEAT_NAMES[snap.currentSeat]}'s turn.`);
+    }
+  } else if (snap.status === 'waiting') {
+    setStatus('Waiting for players to join…');
+  }
 }
 function onDiceRolled(msg) {
   G.diceFace = msg.face; G.forcedPiece = msg.forcedPiece;
@@ -1055,32 +1242,53 @@ function onGameOver(msg) {
 }
 
 function onRematchVote(msg) {
-  document.getElementById('rematchNote').textContent = `Rematch votes: ${msg.votes}/${msg.needed}. Waiting for all players…`;
+  const votedSeats = msg.votedSeats || [];
+  const neededSeats = msg.neededSeats || [];
+  renderRematchStatus(votedSeats, neededSeats, msg.deadline);
 }
-function onChatMessage(msg) {
-  const el = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg';
-  const color = PCOLORS[msg.seat] || '#fff';
-  div.innerHTML = `<span class="cm-name" style="color:${color}">${escapeHTML(msg.name)}</span> <span class="cm-text">${escapeHTML(msg.text)}</span>`;
-  el.appendChild(div); el.scrollTop = el.scrollHeight;
+
+function renderRematchStatus(votedSeats, neededSeats, deadline) {
+  const note = document.getElementById('rematchNote');
+  if (!note) return;
+
+  const votedArr = votedSeats || [];
+  const neededArr = neededSeats || [];
+  const votedCount = votedArr.length;
+  const totalCount = neededArr.length;
+
+  const hasMyVote = votedArr.includes(G.mySeat);
+  const hasOpponentVote = votedArr.some(s => s !== G.mySeat);
+
+  let statusHeader = '';
+  if (hasMyVote && !hasOpponentVote && totalCount > 1) {
+    statusHeader = `<div style="font-weight:700;font-size:0.85rem;color:var(--gold2);margin-bottom:6px;">Rematch vote sent (${votedCount} / ${totalCount}) — waiting for opponent…</div>`;
+  } else if (hasOpponentVote && !hasMyVote) {
+    statusHeader = `<div style="font-weight:700;font-size:0.88rem;color:var(--green);margin-bottom:6px;">⚔ Opponent requested a rematch! (${votedCount} / ${totalCount} voted)</div>`;
+  } else {
+    statusHeader = `<div style="font-weight:700;font-size:0.85rem;color:var(--gold2);margin-bottom:6px;">Rematch: ${votedCount} / ${totalCount} voted</div>`;
+  }
+
+  const rows = neededArr.map(seat => {
+    const p = G.snapshot?.players?.find(x => x.seat === seat);
+    const name = p ? escapeHTML(p.name) : (SEAT_NAMES[seat] || `Seat ${seat}`);
+    const voted = votedArr.includes(seat);
+    return `<span style="color:${voted ? 'var(--green)' : 'var(--muted)'}">${voted ? '✓' : '…'} ${name}</span>`;
+  }).join(' &nbsp; ');
+
+  note.innerHTML = statusHeader + (rows || 'Waiting for players…');
+  setStatus(`Rematch: ${votedCount} / ${totalCount} voted`);
+
+  clearInterval(rematchCountdownTimer);
+  if (deadline) {
+    rematchCountdownTimer = setInterval(() => {
+      const secsLeft = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      const cdEl = document.getElementById('rematchCountdown');
+      if (cdEl) cdEl.textContent = secsLeft > 0 ? ` (${secsLeft}s remaining)` : '';
+      if (secsLeft <= 0) clearInterval(rematchCountdownTimer);
+    }, 500);
+  }
 }
-function addSystemChat(text) {
-  const el = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg system'; div.textContent = text;
-  el.appendChild(div); el.scrollTop = el.scrollHeight;
-}
-function onPlayerDisconnected(msg) {
-  const toast = document.getElementById('dcToast');
-  document.getElementById('dcToastSub').textContent = `${msg.name} disconnected. They have ${msg.reconnectWindowSecs}s to reconnect.`;
-  const bar = document.getElementById('reconnectBar');
-  bar.style.animation = 'none'; void bar.offsetWidth;
-  bar.style.animation = `rprogress ${msg.reconnectWindowSecs}s linear forwards`;
-  toast.classList.add('show');
-  addSystemChat(`${msg.name} disconnected. Waiting ${msg.reconnectWindowSecs}s for reconnect…`);
-  renderPlayers(G.snapshot?.players || []);
-}
+let rematchCountdownTimer = null; // NEW — module-level, alongside other timers
 function onPlayerReconnected(msg) {
   document.getElementById('dcToast').classList.remove('show');
   addSystemChat(`${msg.name} reconnected.`);
@@ -1196,13 +1404,14 @@ const PIECE_NAME_MAP = {
   'nauka': 'ratha'
 };
 
+let boardCellsCache = null;
+
 function renderGameBoard() {
   const wrap = document.getElementById('gameBoardWrap');
   if (!wrap) return;
 
-  // Build top/side rank labels ONLY ONCE to stop board flicker on moves
   let boardEl = document.getElementById('gameBoard');
-  if (!boardEl) {
+  if (!boardEl || !boardCellsCache) {
     let html = '<div class="board-labels-top">';
     ['a','b','c','d','e','f','g','h'].forEach(l => html += `<div class="blt-sq">${l}</div>`);
     html += '</div><div class="board-row-w"><div class="board-ranks">';
@@ -1210,69 +1419,84 @@ function renderGameBoard() {
     html += '</div><div class="board" id="gameBoard"></div></div>';
     wrap.innerHTML = html;
     boardEl = document.getElementById('gameBoard');
-  }
 
-  const cells = new Array(64);
-  const seat = G.mySeat ?? 0;
+    // Single delegated click handler for 60FPS event dispatching
+    boardEl.addEventListener('click', (e) => {
+      const sqEl = e.target.closest('.sq');
+      if (sqEl && sqEl.dataset.sq) onBoardClick(sqEl.dataset.sq);
+    });
 
-  for (let r = 8; r >= 1; r--) {
-    for (let fi = 0; fi < 8; fi++) {
-      const sq = String.fromCharCode(97 + fi) + r;
-      const [sf, sr] = seatToScreen(sq, seat);
-      const screenIndex = (7 - sr) * 8 + sf;
-      const piece = G.board[sq];
-      const isLight = (fi + r) % 2 === 0;
-
-      let cls = `sq ${isLight ? 'light' : 'dark'}`;
-      if (sq === G.selectedSq) cls += ' sel';
-      if (G.legalMoves && G.legalMoves.includes(sq)) cls += piece ? ' legal-cap' : ' legal';
-      if (sq === G.lastFrom) cls += ' lf';
-      if (sq === G.lastTo)   cls += ' lt';
-      if (piece && +piece.split(':')[0] === seat && piece.split(':')[1] === 'king' && typeof isKingThreatened === 'function' && isKingThreatened(G.board, seat)) {
-        cls += ' king-danger';
-      }
-
-      const div = document.createElement('div');
-      div.className = cls; 
-      div.dataset.sq = sq;
-
-      if (piece) {
-        const [ow, tp] = piece.split(':');
-        const rawType = tp.toLowerCase();
-        
-        const colorName = SEAT_COLOR_MAP[+ow] || 'red';
-        const pieceFileName = PIECE_NAME_MAP[rawType] || rawType;
-        
-        // Target image path: ./images/{color}_{piecename}.webp
-        const imagePath = `./images/pieces/${colorName}_${pieceFileName}.webp`;
-        const img = document.createElement('img');
-        img.className = 'piece-img';
-        img.src = imagePath;
-        img.alt = `${colorName} ${pieceFileName}`;
-        img.draggable = false;
-
-        // Fallback to text symbol if a specific file is missing
-        img.onerror = function() {
-          console.error(`[Board Image Error] Could not load: "${this.src}". Check file name in ./images/`);
-          const fallback = document.createElement('span');
-          fallback.className = 'piece';
-          fallback.textContent = (typeof PSYMBOLS !== 'undefined' && PSYMBOLS[tp]) ? PSYMBOLS[tp] : '?';
-          fallback.style.color = (typeof PCOLORS !== 'undefined' && PCOLORS[+ow]) ? PCOLORS[+ow] : '#fff';
-          if (div.contains(img)) {
-            div.replaceChild(fallback, img);
-          }
-        };
-
-        div.appendChild(img);
-      }
-
-      div.addEventListener('click', () => onBoardClick(sq));
-      cells[screenIndex] = div;
+    // Persistent 64 square cells
+    boardCellsCache = new Array(64);
+    for (let i = 0; i < 64; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'sq';
+      boardEl.appendChild(cell);
+      boardCellsCache[i] = cell;
     }
   }
 
-  boardEl.innerHTML = '';
-  cells.forEach(c => boardEl.appendChild(c));
+  requestAnimationFrame(() => {
+    const seat = G.mySeat ?? 0;
+
+    for (let r = 8; r >= 1; r--) {
+      for (let fi = 0; fi < 8; fi++) {
+        const sq = String.fromCharCode(97 + fi) + r;
+        const [sf, sr] = seatToScreen(sq, seat);
+        const screenIndex = (7 - sr) * 8 + sf;
+        const cell = boardCellsCache[screenIndex];
+        if (!cell) continue;
+
+        const piece = G.board[sq];
+        const isLight = (fi + r) % 2 === 0;
+
+        let cls = `sq ${isLight ? 'light' : 'dark'}`;
+        if (sq === G.selectedSq) cls += ' sel';
+        if (G.legalMoves && G.legalMoves.includes(sq)) cls += piece ? ' legal-cap' : ' legal';
+        if (sq === G.lastFrom) cls += ' lf';
+        if (sq === G.lastTo)   cls += ' lt';
+        if (piece && +piece.split(':')[0] === seat && piece.split(':')[1] === 'king' && typeof isKingThreatened === 'function' && isKingThreatened(G.board, seat)) {
+          cls += ' king-danger';
+        }
+
+        if (cell.className !== cls) cell.className = cls;
+        if (cell.dataset.sq !== sq) cell.dataset.sq = sq;
+
+        if (piece) {
+          const [ow, tp] = piece.split(':');
+          const rawType = tp.toLowerCase();
+          const colorName = SEAT_COLOR_MAP[+ow] || 'red';
+          const pieceFileName = PIECE_NAME_MAP[rawType] || rawType;
+          const imagePath = `./images/pieces/${colorName}_${pieceFileName}.webp`;
+
+          let img = cell.querySelector('img.piece-img');
+          if (!img) {
+            cell.replaceChildren();
+            img = document.createElement('img');
+            img.className = 'piece-img';
+            img.draggable = false;
+            cell.appendChild(img);
+          }
+
+          if (img.getAttribute('src') !== imagePath) {
+            img.src = imagePath;
+            img.alt = `${colorName} ${pieceFileName}`;
+            img.onerror = function() {
+              const fallback = document.createElement('span');
+              fallback.className = 'piece';
+              fallback.textContent = (typeof PSYMBOLS !== 'undefined' && PSYMBOLS[tp]) ? PSYMBOLS[tp] : '?';
+              fallback.style.color = (typeof PCOLORS !== 'undefined' && PCOLORS[+ow]) ? PCOLORS[+ow] : '#fff';
+              if (cell.contains(this)) {
+                cell.replaceChild(fallback, this);
+              }
+            };
+          }
+        } else {
+          if (cell.firstChild) cell.replaceChildren();
+        }
+      }
+    }
+  });
 }
 
 
@@ -1313,7 +1537,16 @@ function forfeitTurn() {
 }
 function resignGame() {
   if (G.gameOver) return;
-  if (!confirm('Resign this match? It will count as a loss and you will leave the room.')) return;
+  const modal = document.getElementById('resignModal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeResignModal() {
+  const modal = document.getElementById('resignModal');
+  if (modal) modal.style.display = 'none';
+}
+function confirmResignGame() {
+  closeResignModal();
+  if (G.gameOver) return;
   send({ type:'resign' });
   const btn = document.getElementById('resignBtn');
   if (btn) btn.disabled = true;
@@ -1329,16 +1562,17 @@ function sendChat() {
   send({ type:'chat', text }); input.value = '';
 }
 function voteRematch() {
-  send({ type:'rematch' });
-  document.getElementById('rematchNote').textContent = 'Rematch vote sent — waiting for opponent…';
+  send({ type:'rematch-vote', code: G.roomCode || savedRoom, token: savedToken || '' });
 }
 function returnToLobby() {
-  document.getElementById('resultOverlay').classList.remove('show');
+  const resultOverlay = document.getElementById('resultOverlay');
+  if (resultOverlay) resultOverlay.classList.remove('show');
   send({ type:'leave-room' });
   G.roomCode=null; G.mySeat=null; G.snapshot=null;
   localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_ROOM);
   savedToken=null; savedRoom=null;
   showScreen('lobbyScreen'); requestLobby();
+  loadLeaderboard();
 }
 
 function setStatus(txt) { document.getElementById('statusBar').textContent=txt; }
@@ -1375,10 +1609,31 @@ function renderPlayers(players) {
   }).join('');
   document.getElementById('yourSeatDisplay').textContent = `${SEAT_NAMES[G.mySeat]||'?'} (Seat ${G.mySeat})`;
 }
+function renderRoomQrCode(code) {
+  if (!code) return;
+  const joinUrl = `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`;
+
+  const drawCanvas = (canvasId, size) => {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+      QRCode.toCanvas(canvas, joinUrl, {
+        width: size,
+        margin: 1,
+        color: { dark: '#110e05', light: '#ffffff' }
+      }, err => { if (err) console.warn('QR Code render error:', err); });
+    }
+  };
+
+  drawCanvas('waitingQrCanvas', 130);
+  drawCanvas('gameQrCanvas', 105);
+}
+
 function showWaitingScreen(snap) {
   document.getElementById('wcCode').textContent = snap.code;
   refreshWaitingPlayers(snap);
   showScreen('waitingScreen');
+  renderRoomQrCode(snap.code);
 }
 function refreshWaitingPlayers(snap) {
   const el = document.getElementById('wcPlayers'); if (!snap || !snap.players) return;
@@ -1402,7 +1657,11 @@ function cancelRoom() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.getElementById('resultOverlay').classList.remove('show');
 }
+
+
+
 function copyRoomLink() {
   const code = G.roomCode || document.getElementById('wcCode').textContent;
   const url  = `${location.origin}${location.pathname}?room=${code}`;
@@ -1474,6 +1733,23 @@ function renderSparkline() {
 // Logged-in players: profile (including elo + last50games) is authoritative
 // in MongoDB via the Express API. Guests: stats live in the WS server's flat
 // file ledger, keyed by their local token. Never mix the two.
+
+function prepareForIncomingRoomTransition() {
+  document.getElementById('resultOverlay').classList.remove('show');
+  clearTimeout(resignAckTimer);
+
+  if (mmActive) {                       // fixes #5
+    mmActive = false;
+    stopMmCountdown();
+    send({ type: 'cancel-quick-match' });
+  }
+
+  Object.keys(activeInvites).forEach(id => dismissInviteToast(id)); // fixes #3
+  closeFriendsModal();                  // fixes #7
+}
+
+
+
 function fetchPlayerStats() {
   const userId = getUserId();
 
@@ -1606,10 +1882,340 @@ function joinByCode(code) {
 }
 function requestLobby() { send({ type:'get-lobby' }); }
 
+/* ---------- FRIENDS & SOCIAL SYSTEM CLIENT ---------- */
+let currentFriendsData = { friends: [], friendRequests: [] };
+
+function openFriendsModal() {
+  const modal = document.getElementById('friendsModal');
+  if (modal) modal.style.display = 'flex';
+  loadFriendsData().then(startFriendsPolling);
+}
+
+function closeFriendsModal() {
+  const modal = document.getElementById('friendsModal');
+  if (modal) modal.style.display = 'none';
+  stopFriendsPolling();
+}
+
+function switchFriendsTab(tab) {
+  ['friends', 'requests', 'add'].forEach(t => {
+    const btn = document.getElementById(`fmTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    const sec = document.getElementById(`fmSection${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    if (btn) {
+      btn.style.background = t === tab ? 'rgba(201,168,76,.15)' : 'transparent';
+      btn.style.color = t === tab ? 'var(--gold)' : 'var(--muted)';
+    }
+    if (sec) sec.style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+async function loadFriendsData() {
+  const userId = getUserId();
+  if (!userId) {
+    const fList = document.getElementById('fmFriendsList');
+    const rList = document.getElementById('fmRequestsList');
+    if (fList) fList.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">Please log in with a registered account to add friends.</div>';
+    if (rList) rList.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">Please log in with a registered account to view requests.</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/friends/list/${encodeURIComponent(userId)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.success) return;
+
+    currentFriendsData = data;
+
+    const friendsCount = (data.friends || []).length;
+    const requestsCount = (data.friendRequests || []).length;
+
+    const fcEl = document.getElementById('fmFriendsCount');
+    const rcEl = document.getElementById('fmRequestsCount');
+    if (fcEl) fcEl.textContent = friendsCount;
+    if (rcEl) rcEl.textContent = requestsCount;
+
+    const badge = document.getElementById('friendsBadge');
+    if (badge) {
+      badge.textContent = requestsCount;
+      badge.style.display = requestsCount > 0 ? 'inline-block' : 'none';
+    }
+
+    // Render Friends List
+    const fEl = document.getElementById('fmFriendsList');
+    if (fEl) {
+      if (!data.friends || !data.friends.length) {
+        fEl.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">No friends added yet. Click "+ Add Friend" to invite warriors!</div>';
+      } else {
+        fEl.innerHTML = data.friends.map(f => `
+          <div data-friend-id="${f._id}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;">
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;color:var(--text);display:flex;align-items:center;">
+                <span class="friend-online-dot ${onlineFriendIds.has(String(f._id)) ? 'online' : ''}"></span>${escapeHTML(f.name)}
+              </div>
+              <div style="font-size:0.7rem;color:var(--muted);">${f.elo || 1200} ELO · ${escapeHTML(f.email)}</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="friend-invite-btn" onclick="inviteFriendToRoom('${f._id}','${escapeHTML(f.name)}')" ${onlineFriendIds.has(String(f._id)) ? '' : 'disabled'} style="padding:4px 10px;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.15);color:var(--gold);font-size:0.7rem;cursor:pointer;">
+                Invite
+              </button>
+              <button type="button" onclick="removeFriend('${f._id}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--red);font-size:0.7rem;cursor:pointer;">
+                Remove
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Render Incoming Requests
+    const rEl = document.getElementById('fmRequestsList');
+    if (rEl) {
+      if (!data.friendRequests || !data.friendRequests.length) {
+        rEl.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">No pending incoming requests.</div>';
+      } else {
+        rEl.innerHTML = data.friendRequests.map(r => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;">
+            <div>
+              <div style="font-weight:600;font-size:0.85rem;color:var(--text);">${escapeHTML(r.fromName)}</div>
+              <div style="font-size:0.7rem;color:var(--muted);">${escapeHTML(r.fromEmail)}</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" onclick="acceptFriend('${r.fromUserId}')" style="padding:4px 10px;border-radius:5px;border:none;background:var(--green);color:#fff;font-size:0.72rem;font-weight:600;cursor:pointer;">
+                Accept
+              </button>
+              <button type="button" onclick="rejectFriend('${r.fromUserId}')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.72rem;cursor:pointer;">
+                Decline
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+  } catch (err) {
+    console.error('Error loading friends:', err);
+  }
+}
+
+async function submitSendFriendRequest() {
+  const userId = getUserId();
+  if (!userId) { alert('Please log in with a registered account first.'); return; }
+  const emailInput = document.getElementById('fmAddEmailInput');
+  const targetEmail = emailInput ? emailInput.value.trim() : '';
+  if (!targetEmail) { alert('Please enter a target email address.'); return; }
+
+  const msgEl = document.getElementById('fmAddMsg');
+  try {
+    const res = await fetch(`${API_BASE}/api/friends/request`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, targetEmail })
+    });
+    const data = await res.json();
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = data.success ? 'var(--green)' : 'var(--red)';
+      msgEl.textContent = data.message || (data.success ? 'Request sent!' : 'Failed to send request.');
+    }
+    if (data.success) {
+      emailInput.value = '';
+      loadFriendsData();
+    }
+  } catch (err) {
+    console.error('Send request error:', err);
+  }
+}
+
+async function acceptFriend(requesterId) {
+  const userId = getUserId();
+  if (!userId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/friends/accept`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, requesterId })
+    });
+    const data = await res.json();
+    if (data.success) loadFriendsData();
+  } catch (err) {
+    console.error('Accept friend error:', err);
+  }
+}
+
+async function rejectFriend(requesterId) {
+  const userId = getUserId();
+  if (!userId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/friends/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, requesterId })
+    });
+    const data = await res.json();
+    if (data.success) loadFriendsData();
+  } catch (err) {
+    console.error('Reject friend error:', err);
+  }
+}
+
+async function removeFriend(friendId) {
+  const userId = getUserId();
+  if (!userId) return;
+  if (!confirm('Are you sure you want to remove this friend?')) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/friends/remove`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, friendId })
+    });
+    const data = await res.json();
+    if (data.success) loadFriendsData();
+  } catch (err) {
+    console.error('Remove friend error:', err);
+  }
+}
+
+/* ---------- REALTIME FRIEND INVITES (game-invite popup, accept/reject) --- */
+let onlineFriendIds = new Set();
+let friendsPollTimer = null;
+let activeInvites = {}; // inviteId -> { roomCode } — invites currently shown to us
+
+// Tells the WS server "this userId is online on this socket" so friends can
+// see our status and invite us in real time. Guests (no account) are skipped
+// — friend invites require a logged-in account, same as the rest of Friends.
+function sendIdentify() {
+  const userId = getUserId();
+  if (userId && wsConnected) {
+    send({ type: 'identify', userId, name: getPlayerName(), elo: getOnlineElo() });
+  }
+}
+
+function pollFriendsOnlineStatus() {
+  const userId = getUserId();
+  if (!userId || !wsConnected) return;
+  const ids = (currentFriendsData.friends || []).map(f => f._id);
+  if (!ids.length) return;
+  send({ type: 'check-friends-online', friendIds: ids });
+}
+function startFriendsPolling() {
+  pollFriendsOnlineStatus();
+  clearInterval(friendsPollTimer);
+  friendsPollTimer = setInterval(pollFriendsOnlineStatus, 8000);
+}
+function stopFriendsPolling() { clearInterval(friendsPollTimer); friendsPollTimer = null; }
+
+function onFriendsOnlineStatus(msg) {
+  onlineFriendIds = new Set(Object.keys(msg.status || {}).filter(id => msg.status[id]));
+  const fEl = document.getElementById('fmFriendsList');
+  if (!fEl) return;
+  fEl.querySelectorAll('[data-friend-id]').forEach(row => {
+    const online = onlineFriendIds.has(row.dataset.friendId);
+    const dot = row.querySelector('.friend-online-dot');
+    if (dot) dot.classList.toggle('online', online);
+    const btn = row.querySelector('.friend-invite-btn');
+    if (btn) btn.disabled = !online;
+  });
+}
+
+// Called from the Invite button in the friends list. Creates a room exactly
+// like "Create Room" does, then asks the server to push a game-invite popup
+// to the friend's socket instead of us having to share a code manually.
+function inviteFriendToRoom(friendId, friendName) {
+  if (!wsConnected) { alert('Not connected to server.'); return; }
+  if (!onlineFriendIds.has(String(friendId))) { alert(`${friendName || 'This friend'} is not online right now.`); return; }
+
+  if (G.roomCode && G.snapshot && !G.gameOver &&
+      (G.snapshot.status === 'playing' || G.snapshot.status === 'waiting')) {
+    alert("You're already in a match — finish or leave it before inviting a friend to a new one.");
+    return;
+  }
+
+  send({
+    type: 'invite-friend',
+    targetUserId: friendId,
+    name: getPlayerName(),
+    elo: getOnlineElo(),
+    token: localStorage.getItem(LS_TOKEN) || '',
+    userId: getUserId(),
+    mode: LOBBY_MODE
+  });
+  closeFriendsModal();
+  addSystemChat(`Invite sent to ${friendName || 'your friend'} — waiting for a response…`);
+}
+
+// Renders a react-toastify-style popup with Accept/Reject for an incoming invite.
+function showInviteToast(msg) {
+  const container = document.getElementById('inviteToastContainer');
+  if (!container) return;
+  activeInvites[msg.inviteId] = { roomCode: msg.roomCode };
+  const el = document.createElement('div');
+  el.className = 'invite-toast';
+  el.id = `toast-${msg.inviteId}`;
+  el.innerHTML = `
+    <div class="it-header">
+      <div class="it-icon"><i class="fa-solid fa-chess-board fa-xs"></i></div>
+      <div class="it-title">Game Invite</div>
+    </div>
+    <div class="it-sub">${escapeHTML(msg.fromName)} (${msg.fromElo} ELO) invited you to a ${msg.mode === '4p' ? '4-Player' : '2-Player'} match.</div>
+    <div class="it-btns">
+      <button class="it-btn it-accept" onclick="respondToInvite('${msg.inviteId}', true)">
+        <i class="fa-solid fa-check fa-xs"></i> Accept
+      </button>
+      <button class="it-btn it-reject" onclick="respondToInvite('${msg.inviteId}', false)">
+        <i class="fa-solid fa-xmark fa-xs"></i> Decline
+      </button>
+    </div>
+    <div class="it-timer"></div>`;
+  container.appendChild(el);
+  setTimeout(() => dismissInviteToast(msg.inviteId), 30000);
+}
+function dismissInviteToast(inviteId) {
+  const el = document.getElementById(`toast-${inviteId}`);
+  if (!el) return;
+  el.classList.add('leaving');
+  setTimeout(() => el.remove(), 250);
+  delete activeInvites[inviteId];
+}
+
+function respondToInvite(inviteId, accepted) {
+  if (accepted && G.roomCode && G.snapshot && !G.gameOver &&
+      (G.snapshot.status === 'playing' || G.snapshot.status === 'waiting')) {
+    if (!confirm('Accepting will leave your current match. Continue?')) return;
+    send({ type: 'leave-room' });
+    G.roomCode = null; G.mySeat = null; G.snapshot = null;
+    localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_ROOM);
+    savedToken = null; savedRoom = null;
+  }
+  send({ type: 'invite-response', inviteId, accepted, name: getPlayerName() });
+  dismissInviteToast(inviteId);
+}
+
+function onGameInvite(msg) { showInviteToast(msg); }
+// We accepted — the server has already added a seat for us in the inviter's
+// room, so join it exactly the same way clicking an open-room card would.
+function onInviteAcceptedSelf(msg) {  prepareForIncomingRoomTransition(); joinByCode(msg.roomCode); }
+function onInviteAccepted(msg) { addSystemChat('Your friend accepted — starting the match!'); }
+function onInviteDeclined(msg) {
+  addSystemChat(`${msg.byName || 'Your friend'} declined the invite.`);
+  showScreen('lobbyScreen'); requestLobby();
+}
+function onInviteTimeout(msg) {
+  addSystemChat(`${msg.toName || 'Your friend'} didn't respond to the invite in time.`);
+  showScreen('lobbyScreen'); requestLobby();
+}
+
+function onRematchTimeout() {
+  const note = document.getElementById('rematchNote');
+  if (note) note.textContent = 'Rematch vote timed out — click Rematch again if you still want one.';
+  const cdEl = document.getElementById('rematchCountdown');
+  if (cdEl) cdEl.textContent = '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initPlayerName();
   updateEloDisplay();
   loadLeaderboard();
+  loadFriendsData();
   const params = new URLSearchParams(location.search);
   const urlRoom = params.get('room');
   if (urlRoom) document.getElementById('joinCodeInput').value = urlRoom.toUpperCase();

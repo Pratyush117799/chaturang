@@ -83,6 +83,13 @@ const userSchema = new mongoose.Schema({
   elo: { type: Number, default: 1200 }, // matches the WS server's starting elo assumption
   resetOtp: { type: String, default: null },
   resetOtpExpires: { type: Date, default: null },
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  friendRequests: [{
+    fromUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    fromName: { type: String, required: true },
+    fromEmail: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+  }],
   last50games: [{
     startedAt: { type: Date },
     endedAt: { type: Date, default: Date.now },
@@ -382,6 +389,155 @@ app.post('/api/user/game-history', async (req, res) => {
   } catch (err) {
     console.error('game-history error:', err);
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ---------------------------------------------------------
+// Friends & Social System
+// ---------------------------------------------------------
+
+// GET friends list and pending requests for a user
+app.get('/api/friends/list/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId)
+      .populate('friends', 'name email elo createdAt')
+      .lean();
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    res.json({
+      success: true,
+      friends: user.friends || [],
+      friendRequests: user.friendRequests || []
+    });
+  } catch (err) {
+    console.error('Fetch friends error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// SEND a friend request by email
+app.post('/api/friends/request', async (req, res) => {
+  try {
+    const { userId, targetEmail } = req.body;
+    if (!userId || !targetEmail) {
+      return res.status(400).json({ success: false, message: 'User ID and Target Email are required' });
+    }
+
+    const sender = await User.findById(userId);
+    if (!sender) return res.status(404).json({ success: false, message: 'Sender user not found' });
+
+    const cleanEmail = targetEmail.toLowerCase().trim();
+    if (sender.email.toLowerCase() === cleanEmail) {
+      return res.status(400).json({ success: false, message: 'You cannot send a friend request to yourself.' });
+    }
+
+    const target = await User.findOne({ email: cleanEmail });
+    if (!target) {
+      return res.status(404).json({ success: false, message: 'No registered user found with that email address.' });
+    }
+
+    // Check if already friends
+    if (sender.friends && sender.friends.some(f => f.toString() === target._id.toString())) {
+      return res.status(400).json({ success: false, message: 'You are already friends with this warrior!' });
+    }
+
+    // Check if pending request already sent
+    const alreadyRequested = target.friendRequests && target.friendRequests.some(r => r.fromUserId.toString() === sender._id.toString());
+    if (alreadyRequested) {
+      return res.status(400).json({ success: false, message: 'Friend request already sent to this warrior.' });
+    }
+
+    if (!target.friendRequests) target.friendRequests = [];
+    target.friendRequests.push({
+      fromUserId: sender._id,
+      fromName: sender.name,
+      fromEmail: sender.email,
+      createdAt: new Date()
+    });
+    await target.save();
+
+    res.json({ success: true, message: `Friend request sent to ${target.name}!` });
+  } catch (err) {
+    console.error('Send friend request error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ACCEPT a friend request
+app.post('/api/friends/accept', async (req, res) => {
+  try {
+    const { userId, requesterId } = req.body;
+    if (!userId || !requesterId) {
+      return res.status(400).json({ success: false, message: 'userId and requesterId are required' });
+    }
+
+    const user = await User.findById(userId);
+    const requester = await User.findById(requesterId);
+
+    if (!user || !requester) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove from friendRequests
+    user.friendRequests = (user.friendRequests || []).filter(r => r.fromUserId.toString() !== requesterId.toString());
+
+    // Add to mutual friends
+    if (!user.friends) user.friends = [];
+    if (!requester.friends) requester.friends = [];
+
+    if (!user.friends.some(f => f.toString() === requesterId.toString())) {
+      user.friends.push(requester._id);
+    }
+    if (!requester.friends.some(f => f.toString() === userId.toString())) {
+      requester.friends.push(user._id);
+    }
+
+    await user.save();
+    await requester.save();
+
+    res.json({ success: true, message: `Accepted friend request from ${requester.name}!` });
+  } catch (err) {
+    console.error('Accept friend error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// REJECT a friend request
+app.post('/api/friends/reject', async (req, res) => {
+  try {
+    const { userId, requesterId } = req.body;
+    if (!userId || !requesterId) {
+      return res.status(400).json({ success: false, message: 'userId and requesterId are required' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    user.friendRequests = (user.friendRequests || []).filter(r => r.fromUserId.toString() !== requesterId.toString());
+    await user.save();
+
+    res.json({ success: true, message: 'Friend request declined.' });
+  } catch (err) {
+    console.error('Reject friend error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// REMOVE a friend
+app.post('/api/friends/remove', async (req, res) => {
+  try {
+    const { userId, friendId } = req.body;
+    if (!userId || !friendId) {
+      return res.status(400).json({ success: false, message: 'userId and friendId are required' });
+    }
+
+    await User.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
+    await User.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
+
+    res.json({ success: true, message: 'Friend removed.' });
+  } catch (err) {
+    console.error('Remove friend error:', err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

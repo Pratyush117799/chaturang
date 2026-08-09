@@ -5,6 +5,10 @@ const { Server } = require('socket.io');
 const port = process.env.PORT || 8765;
 const root = path.join(__dirname, '..');
 
+const onlineUsers = new Map();     // userId -> { sockets:Set<Socket>, name, elo }
+const pendingInvites = new Map();  // inviteId -> { fromUserId, fromSocket, fromName, toUserId, roomCode, mode, timer }
+const INVITE_TIMEOUT_MS = 30000;
+
 // ── Real rules engine + bot AI ────────────────────────────────────────────
 // game.js's Game constructor touches localStorage (browser-only custom-army
 // feature) — stub it before requiring so construction doesn't throw in Node.
@@ -53,6 +57,41 @@ function loadJSONSelfHealing(filePath, label, fallback) {
     return fallback;
   }
 }
+
+
+function makeInviteId() {
+  return 'inv_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function markUserOnline(userId, socket, name, elo) {
+  if (!userId) return;
+  let entry = onlineUsers.get(userId);
+  if (!entry) { entry = { sockets: new Set(), name, elo }; onlineUsers.set(userId, entry); }
+  entry.sockets.add(socket);
+  entry.name = name || entry.name;
+  entry.elo = (typeof elo === 'number') ? elo : entry.elo;
+  socket._userId = userId;
+}
+function markUserOffline(socket) {
+  const userId = socket._userId;
+  if (!userId) return;
+  const entry = onlineUsers.get(userId);
+  if (!entry) return;
+  entry.sockets.delete(socket);
+  if (entry.sockets.size === 0) onlineUsers.delete(userId);
+}
+function sendToUser(userId, obj) {
+  const entry = onlineUsers.get(userId);
+  if (!entry || entry.sockets.size === 0) return false;
+  entry.sockets.forEach(s => send(s, obj));
+  return true;
+}
+// Cancels a pending invite's reserved room (used on decline/timeout/disconnect).
+function discardInviteRoom(roomCode) {
+  const r = rooms.get(roomCode);
+  if (r && r.status === 'waiting') { clearRoomBotFallback(r); rooms.delete(roomCode); broadcastLobby(); }
+}
+ 
 
 function loadLedger() { return loadJSONSelfHealing(LEDGER_PATH, 'ELO', {}); }
 function saveLedger(ledger) {
@@ -218,6 +257,7 @@ const K = 32;
 const DB_API_URL = process.env.DB_API_URL || 'http://localhost:5000';
 const QUICK_MATCH_BOT_FALLBACK_MS = 10000;
 const ROOM_BOT_FALLBACK_MS = 10000;
+const REMATCH_VOTE_TIMEOUT_MS = 30000;
 
 function makeRoomCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -364,6 +404,7 @@ function finishGameWithWinner(room, winnerSeats, reason) {
   });
 
   recordGameHistoryForRoom(room, seats, reason);
+  room.lastGameOver = { reason, winnerSeat: primaryWinner, winnerSeats: seats, eloChanges };
   broadcast(room, { type: 'game-over', reason, winnerSeat: primaryWinner, winnerSeats: seats, eloChanges });
   broadcastLobby();
 }
@@ -390,6 +431,7 @@ function finishGameByAbandon(room, resignerSeat, reason) {
   }
 
   recordGameHistoryForRoom(room, winnerSeats, reason);
+  room.lastGameOver = { reason, winnerSeat: primaryWinner, winnerSeats, eloChanges };
   broadcast(room, { type: 'game-over', reason, winnerSeat: primaryWinner, winnerSeats, eloChanges });
   broadcastLobby();
 }
@@ -398,9 +440,31 @@ function clearRoomBotFallback(room) {
   if (room._botFallbackTimer) { clearTimeout(room._botFallbackTimer); room._botFallbackTimer = null; }
 }
 
+function clearRematchTimer(room) {
+  if (room._rematchTimer) { clearTimeout(room._rematchTimer); room._rematchTimer = null; }
+  room._rematchDeadline = null;
+}
+function rematchNeededSeats(room) {
+  
+  return room.players.filter(p => p && !p.isBot && p.connected).map(p => p.seat);
+}
+function broadcastRematchTally(room) {
+  broadcast(room, {
+    type: 'rematch-vote',
+    votedSeats: [...room.rematchVotes],
+    neededSeats: rematchNeededSeats(room),
+    deadline: room._rematchDeadline || null,
+  });
+}
+
 function startGame(room) {
   clearRoomBotFallback(room);
+  clearRematchTimer(room);
+  room.lastGameOver = null;
   room.status = 'playing';
+
+
+  
   room.engine = createEngineForRoom();
   syncRoomFromEngine(room);
   room.turn = 0;
@@ -483,7 +547,7 @@ function scheduleRoomBotFallback(room) {
 function fillRoomWithBots(room) {
   const referenceElo = (room.players.find(Boolean) || {}).elo || 1200;
   room.players = room.players.map((p, seat) => p || {
-    seat, name: `Bot: ${randomBotBaseName()}`, token: makeToken(), elo: referenceElo,
+    seat, name: `${randomBotBaseName()}`, token: makeToken(), elo: referenceElo,
     socket: null, disconnectedAt: null, connected: true, isBot: true
   });
 }
@@ -609,6 +673,14 @@ io.on('connection', socket => {
         scheduleRoomBotFallback(room); // fills the remaining human seat(s) if no one joins in time
         break;
       }
+
+      case 'identify': {
+  const userId = resolveUserId(msg.userId);
+  if (userId) markUserOnline(userId, socket, String(msg.name || 'Player').slice(0, 20), +msg.elo || 1200);
+  break;
+}
+
+
       case 'quick-match': {
         removeFromQueue(socket);
         const mode = msg.mode === '4p' ? '4p' : '2p';
@@ -633,7 +705,18 @@ io.on('connection', socket => {
         const room = rooms.get(code);
         if (!room) { send(socket, { type: 'error', code: 'ROOM_NOT_FOUND', message: `Room ${code} not found.` }); break; }
         if (room.status !== 'waiting') { send(socket, { type: 'error', code: 'ROOM_FULL', message: 'Game already started.' }); break; }
-        const emptyIdx = room.players.findIndex(p => p === null);
+
+        if (socket._room && socket._room !== code) {
+    const current = rooms.get(socket._room);
+    if (current && (current.status === 'playing' || current.status === 'waiting')) {
+      send(socket, { type: 'error', code: 'ALREADY_IN_ROOM', message: 'Leave your current match before joining another.' });
+      break;
+    }
+  }
+
+
+
+        const emptyIdx = room.players.findIndex(p => (p === null || p.isBot));
         if (emptyIdx === -1) { send(socket, { type: 'error', code: 'ROOM_FULL', message: 'Room is full.' }); break; }
         const player = { seat: emptyIdx, name, token, elo, socket, disconnectedAt: null, connected: true, isBot: false, dbUserId: userId };
         tokens.set(token, { roomCode: code, seat: emptyIdx });
@@ -659,8 +742,15 @@ io.on('connection', socket => {
         socket._room = entry.roomCode; socket._seat = entry.seat; socket._token = msg.token;
         socket.leave('lobby');
         socket.join(entry.roomCode);
-        send(socket, { type: 'reconnected', seat: entry.seat, snapshot: getRoomSnapshot(room) });
+        send(socket, {
+          type: 'reconnected', seat: entry.seat, snapshot: getRoomSnapshot(room),
+          lastGameOver: room.status === 'finished' ? room.lastGameOver : null,
+          rematch: room.status === 'finished'
+            ? { votedSeats: [...room.rematchVotes], neededSeats: rematchNeededSeats(room), deadline: room._rematchDeadline || null }
+            : null,
+        });
         broadcast(room, { type: 'player-reconnected', seat: entry.seat, name: player.name }, entry.seat);
+        if (room.status === 'finished') broadcastRematchTally(room); // recompute now that this seat is connected again
         break;
       }
       case 'roll-dice': {
@@ -711,6 +801,16 @@ io.on('connection', socket => {
         scheduleBotTurn(room);
         break;
       }
+       
+case 'check-friends-online': {
+  const ids = Array.isArray(msg.friendIds) ? msg.friendIds : [];
+  const status = {};
+  ids.forEach(id => { status[String(id)] = onlineUsers.has(String(id)); });
+  send(socket, { type: 'friends-online-status', status });
+  break;
+}
+
+
       case 'chat': {
         const room = rooms.get(socket._room);
         const player = room?.players[socket._seat];
@@ -744,8 +844,11 @@ io.on('connection', socket => {
             tokens.delete(player.token);
             if (room.rematchVotes) room.rematchVotes.delete(seat);
             broadcast(room, { type: 'player-left', seat, name: player.name }, seat);
-            if (room.players.every(p => !p)) { clearRoomBotFallback(room); rooms.delete(room.code); }
-            else broadcastLobby();
+            if (room.players.every(p => !p)) { clearRoomBotFallback(room); clearRematchTimer(room); rooms.delete(room.code); }
+            else {
+              broadcastLobby();
+              if (room.status === 'finished') broadcastRematchTally(room);
+            }
           }
         }
         socket._room = null; socket._seat = null; socket._token = null;
@@ -753,21 +856,167 @@ io.on('connection', socket => {
         send(socket, { type: 'lobby-update', rooms: getLobbySnapshot() });
         break;
       }
-      case 'rematch': {
-        const room = rooms.get(socket._room);
-        if (!room || room.status !== 'finished') break;
-        room.rematchVotes.add(socket._seat);
-        const needed = room.players.filter(p => p && !p.isBot).length;
-        broadcast(room, { type: 'rematch-vote', seat: socket._seat, votes: room.rematchVotes.size, needed });
-        if (room.rematchVotes.size >= needed) startGame(room);
+      case 'rematch-vote': {
+        const tokenEntry = tokens.get(String(msg.token || socket._token || ''));
+        const roomCode = socket._room || msg.code || tokenEntry?.roomCode;
+        const room = rooms.get(roomCode);
+        if (!room) {
+          console.warn(`[rematch-vote] Room not found for code "${roomCode}"`);
+          break;
+        }
+
+        // Re-bind socket to room and seat if reconnect hadn't finished
+        let seat = socket._seat;
+        if (seat === null || seat === undefined || seat < 0) {
+          if (tokenEntry && tokenEntry.roomCode === roomCode) {
+            seat = tokenEntry.seat;
+            socket._seat = seat;
+            socket._room = roomCode;
+            socket._token = msg.token || socket._token;
+            if (room.players[seat]) {
+              room.players[seat].socket = socket;
+              room.players[seat].connected = true;
+            }
+          }
+        }
+
+        if (room.status !== 'finished' || seat === null || seat === undefined) break;
+
+        room.rematchVotes.add(seat);
+
+        if (!room._rematchTimer) {
+          room._rematchDeadline = Date.now() + REMATCH_VOTE_TIMEOUT_MS;
+          room._rematchTimer = setTimeout(() => {
+            room._rematchTimer = null; room._rematchDeadline = null;
+            if (room.status !== 'finished') return;
+            room.rematchVotes.clear();
+            broadcast(room, { type: 'rematch-timeout' });
+          }, REMATCH_VOTE_TIMEOUT_MS);
+        }
+
+        const neededSeats = rematchNeededSeats(room);
+        broadcastRematchTally(room);
+
+        if (neededSeats.length > 0 && neededSeats.every(s => room.rematchVotes.has(s))) {
+          clearRematchTimer(room);
+          startGame(room);
+        }
         break;
       }
+    
+      case 'invite-friend': {
+  const userId = resolveUserId(msg.userId);
+  const targetUserId = resolveUserId(msg.targetUserId);
+  if (!userId) { send(socket, { type: 'error', code: 'NOT_LOGGED_IN', message: 'You must be logged in to invite friends.' }); break; }
+  if (!targetUserId) break;
+  if (!onlineUsers.has(targetUserId)) { send(socket, { type: 'error', code: 'FRIEND_OFFLINE', message: 'That friend is not online right now.' }); break; }
+ 
+
+
+  if (socket._room) {
+    const existing = rooms.get(socket._room);
+    if (existing && (existing.status === 'playing' || existing.status === 'waiting')) {
+      send(socket, { type: 'error', code: 'ALREADY_IN_ROOM', message: 'Leave or finish your current match before inviting a friend.' });
+      break;
+    }
+  }
+
+
+  const name = String(msg.name || 'Player').slice(0, 20);
+  const token = resolveToken(msg.token);
+  const elo = await resolveEloAuthoritative(token, msg.elo, userId);
+  const mode = msg.mode === '4p' ? '4p' : '2p';
+ 
+  // Same room shape as the 'create-room' handler — the inviter takes seat 0
+  // and waits; a 2p room's seats 2/3 are permanent bots as usual.
+  let code; do { code = makeRoomCode(); } while (rooms.has(code));
+  const player = { seat: 0, name, token, elo, socket, disconnectedAt: null, connected: true, isBot: false, dbUserId: userId };
+  tokens.set(token, { roomCode: code, seat: 0 });
+  const players = mode === '4p'
+    ? [player, null, null, null]
+    : [player, null,
+       { seat: 2, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true },
+       { seat: 3, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true }];
+  const room = {
+    code, mode, status: 'waiting', players,
+    board: null, currentSeat: 0, turn: 0, forcedPiece: null, diceFace: null,
+    chatHistory: [], rematchVotes: new Set(), createdAt: Date.now(), engine: null,
+  };
+  rooms.set(code, room);
+  socket._room = code; socket._seat = 0; socket._token = token;
+  socket.leave('lobby');
+  socket.join(code);
+  send(socket, { type: 'room-created', code, seat: 0, token, snapshot: getRoomSnapshot(room) });
+  broadcastLobby();
+  // NOTE: no scheduleRoomBotFallback() here — an invite is either accepted,
+  // declined, or times out on its own 30s clock (below), so bots should
+  // never silently fill a friend-invite room.
+ 
+  const inviteId = makeInviteId();
+  const timer = setTimeout(() => {
+    const inv = pendingInvites.get(inviteId);
+    if (!inv) return;
+    pendingInvites.delete(inviteId);
+    send(inv.fromSocket, { type: 'invite-timeout', inviteId, toName: inv.toName });
+    discardInviteRoom(inv.roomCode);
+  }, INVITE_TIMEOUT_MS);
+ 
+  pendingInvites.set(inviteId, {
+  inviteId, fromUserId: userId, fromSocket: socket, fromName: name,
+  toUserId: targetUserId, toSocket: null,   // NEW — filled in once we know the invitee is deliverable
+  roomCode: code, mode, timer
+});
+ 
+ const delivered = sendToUser(targetUserId, {
+  type: 'game-invite', inviteId, fromUserId: userId, fromName: name, fromElo: elo, mode, roomCode: code
+});
+if (delivered) {
+  const inv = pendingInvites.get(inviteId);
+  const entry = onlineUsers.get(targetUserId);
+  if (inv && entry) inv.toSocket = [...entry.sockets][0]; // first active socket for the invitee
+}
+  if (!delivered) {
+    clearTimeout(timer);
+    pendingInvites.delete(inviteId);
+    discardInviteRoom(code);
+    send(socket, { type: 'error', code: 'FRIEND_OFFLINE', message: 'That friend just went offline.' });
+  }
+  break;
+}
+
+      case 'invite-response': {
+  const inv = pendingInvites.get(msg.inviteId);
+  if (!inv) { send(socket, { type: 'error', code: 'INVITE_EXPIRED', message: 'This invite has expired.' }); break; }
+  pendingInvites.delete(inv.inviteId);
+  clearTimeout(inv.timer);
+ 
+  if (!msg.accepted) {
+    send(inv.fromSocket, { type: 'invite-declined', inviteId: inv.inviteId, byName: String(msg.name || 'Friend').slice(0, 20) });
+    discardInviteRoom(inv.roomCode);
+    break;
+  }
+  // Tell the invitee to join-room normally with the reserved code — reuses
+  // your existing 'join-room' handler/validation instead of duplicating it.
+  send(socket, { type: 'invite-accepted-self', roomCode: inv.roomCode });
+  send(inv.fromSocket, { type: 'invite-accepted', inviteId: inv.inviteId, roomCode: inv.roomCode });
+  break;
+}
+      
       case 'ping': send(socket, { type: 'pong', ts: Date.now() }); break;
       case 'get-lobby': send(socket, { type: 'lobby-update', rooms: getLobbySnapshot() }); break;
     }
   });
 
   socket.on('disconnect', () => {
+    markUserOffline(socket);
+pendingInvites.forEach((inv, id) => {
+  if (inv.fromSocket === socket) {
+    clearTimeout(inv.timer);
+    pendingInvites.delete(id);
+    discardInviteRoom(inv.roomCode);
+     if (inv.toSocket) send(inv.toSocket, { type: 'invite-cancelled', inviteId: id }); // NEW
+  }
+});
     removeFromQueue(socket);
     socket.leave('lobby');
     const room = rooms.get(socket._room);
@@ -775,6 +1024,10 @@ io.on('connection', socket => {
     if (player && player.socket === socket) {
       player.connected = false; player.disconnectedAt = Date.now(); player.socket = null;
       broadcast(room, { type: 'player-disconnected', seat: socket._seat, name: player.name, reconnectWindowSecs: 120 });
+      if (room.status === 'finished') {
+        room.rematchVotes.delete(socket._seat);
+        broadcastRematchTally(room); // keep the "needed" count honest — a dropped player can't block a rematch
+      }
     }
   });
 });
@@ -801,6 +1054,7 @@ async function resolveEloAuthoritative(token, clientElo, userId) {
   return resolveElo(token, clientElo);
 }
 
+
 setInterval(() => {
   const now = Date.now();
   rooms.forEach((room, code) => {
@@ -813,6 +1067,7 @@ setInterval(() => {
     });
     if ((room.status === 'finished' || room.players.every(p => !p || !p.connected)) && (now - room.createdAt > 3600000)) {
       clearRoomBotFallback(room);
+      clearRematchTimer(room);
       rooms.delete(code);
     }
   });
