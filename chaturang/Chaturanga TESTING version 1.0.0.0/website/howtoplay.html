@@ -199,30 +199,35 @@
     contain: layout paint style; /* isolate repaints to the board only */
     user-select:none;
     -webkit-user-select:none;
+    background-image: url('../game/images/board.png');
+    background-size: 127.68% 127.68%;
+    background-position: 49.55% 49.55%;
   }
   .lb-sq{
     position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:#211a0b;
+    background:transparent;
     cursor:pointer;
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
     -webkit-tap-highlight-color:transparent;
   }
-  .lb-sq.alt{background:#170f04;}
+  .lb-sq.alt{background:transparent;}
   .lb-sq.sel{box-shadow:inset 0 0 0 3px var(--gold-light);}
 
   /* Piece Image Styling — promoted to their own compositing layer so moving/
      swapping a piece never forces the browser to repaint the whole board */
   .lb-sq img.piece-img{
-    width: 100%;
-    height: 100%;
-    object-fit: fill; /* forcefully stretches every source image to fill the square, regardless of its natural aspect ratio */
+    width: 82%;
+    height: 82%;
+    object-fit: cover;
+    clip-path: circle(44% at center);
     position: absolute;
-    inset: 0;
+    top: 9%;
+    left: 9%;
     z-index: 2;
     pointer-events: none;
     filter: drop-shadow(0 3px 6px rgba(0,0,0,0.7));
@@ -1041,6 +1046,7 @@
 
   var botMatchGame = null;
   var pendingForced = null;
+  var pendingForcedDemo = null;
   var humanRollsCount = 0;
   // Player order in game.js: 0=Red, 1=Blue, 2=Green, 3=Yellow
   var botElosMap = { 1: 300, 2: 400, 3: 500 };
@@ -1304,6 +1310,7 @@
     if (!pasakaDieDisplayEl || !pasakaResultLabelEl) return;
     var roll = Math.floor(Math.random() * 6) + 1;
     var info = pasakaMap[roll];
+    pendingForcedDemo = info.type;
 
     pasakaDieDisplayEl.textContent = '🎲 ' + roll;
     pasakaResultLabelEl.textContent = info.label;
@@ -1342,6 +1349,7 @@
     selected = null;
     legalMoves = null;
     practice = { active:false, vulnerable:null, capturedType:null };
+    pendingForcedDemo = null;
     hideBoardToast();
     clearHints();
 
@@ -1442,6 +1450,23 @@
       if (!allowed) {
         showBoardToast(r, c, "The dice forces a different piece this turn — check the highlighted squares.");
         setFeedback("That piece can't move on this roll — pick a highlighted piece.", true);
+        return false;
+      }
+    }
+
+    if (lesson.isPasakaLesson && piece.side === 'friend') {
+      if (!pendingForcedDemo) {
+        showBoardToast(r, c, "Cast the Pāśaka first to see which piece you're allowed to touch.");
+        setFeedback("Roll the dice below before selecting a piece.", true);
+        return false;
+      }
+      var demoAllowed =
+        pendingForcedDemo === 'any' ||
+        (pendingForcedDemo === 'nara-raja' && (piece.type === 'nara' || piece.type === 'raja')) ||
+        piece.type === pendingForcedDemo;
+      if (!demoAllowed) {
+        showBoardToast(r, c, "That piece isn't allowed on this roll — only the glowing squares are.");
+        setFeedback("That piece can't move on this roll — pick a highlighted (glowing) piece.", true);
         return false;
       }
     }
