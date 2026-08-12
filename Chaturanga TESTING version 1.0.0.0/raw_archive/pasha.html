@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pāśa — The Loaded Dice · Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c96a;--dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;
+  --border:rgba(201,168,76,.18);--text:#f0e4c8;--muted:#8a7050;
+  --red:#e74c3c;--blue:#60a5fa;--sq:52px;
+  --crimson:#c0392b;--crimson2:#e74c3c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
+
+/* ── NAV ── */
+.nav{background:var(--dark2);border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:200}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;text-decoration:none}
+.nav-badge{font-size:.62rem;background:rgba(192,57,43,.15);color:#f87171;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(192,57,43,.3)}
+.proto-badge{font-size:.6rem;background:rgba(248,113,113,.08);color:#fca5a5;
+  padding:2px 8px;border-radius:10px;border:1px solid rgba(248,113,113,.15);margin-left:auto}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:calc(100vh - 52px)}
+.screen.active{display:flex}
+
+/* ════════════════════════════════════════
+   INTRO SCREEN
+════════════════════════════════════════ */
+#introScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+.intro-dice{font-size:5rem;margin-bottom:16px;
+  animation:diceSway 4s ease-in-out infinite}
+@keyframes diceSway{
+  0%,100%{transform:rotate(-8deg) scale(1)}
+  50%{transform:rotate(8deg) scale(1.08)}
+}
+.intro-eyebrow{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(201,168,76,.4);margin-bottom:10px}
+.intro-title{font-family:'Cinzel',serif;font-size:2.2rem;color:var(--gold2);
+  font-weight:700;margin-bottom:6px}
+.intro-sanskrit{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:rgba(201,168,76,.4);margin-bottom:20px}
+.intro-lore{
+  font-family:'Cormorant Garamond',serif;font-size:1rem;
+  color:#c4a97a;line-height:1.75;max-width:520px;margin-bottom:8px;font-style:italic;
+}
+.intro-lore-ref{font-size:.7rem;color:rgba(201,168,76,.3);margin-bottom:28px}
+.intro-rules{
+  background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.12);
+  border-radius:10px;padding:16px 20px;max-width:480px;width:100%;
+  text-align:left;margin-bottom:28px;
+}
+.rule-item{display:flex;gap:10px;margin-bottom:10px;font-size:.82rem;
+  color:var(--muted);line-height:1.5;align-items:flex-start}
+.rule-item:last-child{margin-bottom:0}
+.rule-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.rule-highlight{color:var(--gold2)}
+.intro-btn{
+  padding:13px 42px;background:linear-gradient(135deg,#9b2316,#5a0f0a);
+  color:#f5ead0;border:1px solid rgba(192,57,43,.5);border-radius:8px;
+  font-family:'Cinzel',serif;font-size:.95rem;font-weight:600;cursor:pointer;
+  transition:all .25s;letter-spacing:.05em;
+}
+.intro-btn:hover{background:linear-gradient(135deg,#c0392b,#7a1a10);
+  box-shadow:0 0 20px rgba(192,57,43,.3);transform:translateY(-1px)}
+
+/* ════════════════════════════════════════
+   PASHA SELECTION SCREEN
+   (private — shown per player)
+════════════════════════════════════════ */
+#pashaScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+.ps-step{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(201,168,76,.4);margin-bottom:8px}
+.ps-title{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold2);
+  font-weight:700;margin-bottom:4px}
+.ps-sub{font-size:.82rem;color:var(--muted);margin-bottom:24px;max-width:380px;line-height:1.55}
+
+.player-order{display:flex;flex-direction:column;gap:8px;width:100%;max-width:380px;margin-bottom:24px}
+.po-row{display:flex;align-items:center;gap:10px;
+  background:var(--dark2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px}
+.po-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.po-name-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--text);
+  padding:0;
+}
+.po-name-input::placeholder{color:rgba(201,168,76,.2)}
+.po-name-input:focus{color:var(--gold2)}
+
+.ps-confirm-btn{
+  padding:12px 36px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.ps-confirm-btn:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+
+/* ════════════════════════════════════════
+   PASHA HAND-OFF SCREEN
+   "Look away while player X checks"
+════════════════════════════════════════ */
+#handoffScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+.ho-icon{font-size:4rem;margin-bottom:16px}
+.ho-title{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold2);margin-bottom:8px}
+.ho-sub{font-size:.85rem;color:var(--muted);line-height:1.6;max-width:400px;margin-bottom:28px}
+.ho-player-name{color:var(--gold);font-weight:600}
+.ho-reveal-btn{
+  padding:12px 32px;background:var(--dark2);color:var(--gold);
+  border:1px solid var(--border);border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.85rem;cursor:pointer;transition:all .2s;
+}
+.ho-reveal-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
+
+/* ════════════════════════════════════════
+   SECRET SCREEN
+   (only shown to that one player)
+════════════════════════════════════════ */
+#secretScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+.secret-seal{
+  width:100px;height:100px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:3rem;
+  border:2px solid;transition:all .3s;
+}
+.secret-seal.has-pasha{
+  background:rgba(192,57,43,.12);border-color:rgba(192,57,43,.5);
+  box-shadow:0 0 30px rgba(192,57,43,.2);
+  animation:sealpulse 2s ease-in-out infinite;
+}
+.secret-seal.no-pasha{
+  background:rgba(201,168,76,.05);border-color:rgba(201,168,76,.15);
+}
+@keyframes sealpulse{
+  0%,100%{box-shadow:0 0 20px rgba(192,57,43,.2)}
+  50%{box-shadow:0 0 40px rgba(192,57,43,.4)}
+}
+.secret-verdict{
+  font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;margin-bottom:8px;
+}
+.secret-verdict.has{color:#f87171}
+.secret-verdict.no{color:var(--gold2)}
+.secret-instruction{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:#c4a97a;line-height:1.7;max-width:380px;margin-bottom:24px;
+}
+.secret-dismiss-btn{
+  padding:11px 28px;background:var(--dark2);color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.82rem;cursor:pointer;transition:all .2s;
+}
+.secret-dismiss-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ════════════════════════════════════════
+   GAME SCREEN
+════════════════════════════════════════ */
+#gameScreen{
+  flex-direction:column;align-items:center;padding:14px 16px 32px;gap:8px;
+}
+
+/* Turn bar */
+.turn-bar{
+  display:flex;gap:8px;width:100%;
+  max-width:calc(var(--sq)*8 + 18px);
+}
+.tb-card{
+  flex:1;border-radius:7px;padding:7px 10px;border:1px solid;
+  display:flex;align-items:center;gap:8px;transition:all .3s;font-size:.78rem;
+}
+.tb-card.active{box-shadow:0 0 14px -4px currentColor}
+.tb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tb-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-status{font-size:.6rem;color:rgba(201,168,76,.4);margin-left:auto;white-space:nowrap}
+/* Pasha indicator — hidden until revealed */
+.tb-pasha-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--crimson2);
+  display:none;flex-shrink:0;
+  box-shadow:0 0 6px var(--crimson2);
+}
+.tb-card.pasha-revealed .tb-pasha-dot{display:block}
+
+/* Dice area */
+.dice-area{
+  display:flex;align-items:center;gap:12px;
+  width:100%;max-width:calc(var(--sq)*8 + 18px);
+  background:var(--dark2);border:1px solid var(--border);
+  border-radius:8px;padding:8px 14px;
+}
+.dice-face{font-size:1.8rem;min-width:36px;text-align:center;
+  transition:transform .2s;cursor:default}
+.dice-face.spinning{animation:spinFace .3s ease-out}
+@keyframes spinFace{
+  0%{transform:rotate(0) scale(1.3)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+.dice-piece-name{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold)}
+.dice-info{flex:1}
+.dice-subtitle{font-size:.65rem;color:var(--muted);margin-top:1px}
+
+/* THE PASHA BUTTON — the heart of the feature */
+#pashaButton{
+  margin-left:auto;
+  padding:8px 14px;
+  border-radius:7px;
+  font-family:'Cinzel',serif;font-size:.75rem;font-weight:600;
+  cursor:pointer;transition:all .25s;
+  border:1px solid rgba(192,57,43,.4);
+  background:rgba(192,57,43,.1);color:#f87171;
+  display:none; /* shown only to pasha holder */
+  white-space:nowrap;
+}
+#pashaButton:hover{
+  background:rgba(192,57,43,.25);border-color:rgba(192,57,43,.7);
+  box-shadow:0 0 14px rgba(192,57,43,.25);
+}
+#pashaButton.used{
+  opacity:.25;cursor:default;pointer-events:none;
+  border-color:rgba(201,168,76,.1);color:var(--muted);background:transparent;
+}
+#pashaButton.pulsing{
+  animation:pashaPulse 1.5s ease-in-out infinite;
+}
+@keyframes pashaPulse{
+  0%,100%{box-shadow:0 0 6px rgba(192,57,43,.2)}
+  50%{box-shadow:0 0 18px rgba(192,57,43,.5);border-color:rgba(192,57,43,.8)}
+}
+
+/* Board */
+.board-labels-top{display:flex;width:calc(var(--sq)*8)}
+.blt{width:var(--sq);text-align:center;font-size:.6rem;color:var(--muted);padding-bottom:2px}
+.board-row{display:flex;align-items:center}
+.board-rank-labels{width:18px;display:flex;flex-direction:column}
+.board{display:grid;grid-template-columns:repeat(8,var(--sq));
+  border:2px solid rgba(201,168,76,.3);border-radius:2px}
+.sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background .1s}
+.sq.light{background:#e8d5b0}.sq.dark{background:#a07848}
+.sq.selected{background:rgba(201,168,76,.55)!important;outline:2px solid var(--gold);outline-offset:-2px}
+.sq.legal::after{content:'';width:28%;height:28%;background:rgba(0,0,0,.22);
+  border-radius:50%;display:block;pointer-events:none}
+.sq.legal-capture{outline:2px solid #f87171;outline-offset:-2px}
+.sq.last-from{background:rgba(201,168,76,.28)!important}
+.sq.last-to{background:rgba(201,168,76,.42)!important}
+/* Pasha square glow — on the forced piece after Pasha used */
+.sq.pasha-sq{
+  background:rgba(192,57,43,.35)!important;
+  outline:2px solid var(--crimson2);outline-offset:-2px;
+  animation:pashaSquare .6s ease-in-out 3;
+}
+@keyframes pashaSquare{
+  0%,100%{background:rgba(192,57,43,.35)!important}
+  50%{background:rgba(192,57,43,.6)!important}
+}
+.piece{font-size:calc(var(--sq)*.56);line-height:1;user-select:none;
+  pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.5);transition:transform .12s}
+.sq:hover .piece{transform:scale(1.08)}
+
+.status-bar{font-size:.8rem;color:var(--gold);padding:6px 10px;
+  background:rgba(201,168,76,.07);border-radius:6px;
+  width:calc(var(--sq)*8 + 18px);text-align:center;
+  border:1px solid var(--border);min-height:32px}
+.actions-row{display:flex;gap:8px;width:calc(var(--sq)*8 + 18px)}
+.action-btn{flex:1;padding:9px 12px;border-radius:7px;border:none;
+  font-family:'Outfit',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.roll-btn{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;font-weight:600}
+.roll-btn:hover:not(:disabled){background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.roll-btn:disabled{opacity:.35;cursor:default}
+.forfeit-btn{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.forfeit-btn:hover:not(:disabled){border-color:#f87171;color:#f87171}
+.forfeit-btn:disabled{opacity:.3;cursor:default}
+
+/* ════════════════════════════════════════
+   PASHA REVEAL OVERLAY
+   Dramatic full-screen moment
+════════════════════════════════════════ */
+#revealOverlay{
+  position:fixed;inset:0;z-index:5000;
+  background:rgba(5,2,0,.97);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+#revealOverlay.show{display:flex}
+
+.reveal-flicker{
+  animation:revealFlicker .15s steps(1) 6;
+}
+@keyframes revealFlicker{
+  0%,100%{background:rgba(5,2,0,.97)}
+  50%{background:rgba(30,8,4,.97)}
+}
+
+.reveal-dice-big{
+  font-size:5rem;margin-bottom:20px;
+  animation:revealDiceSpin .5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes revealDiceSpin{
+  from{transform:scale(0) rotate(-180deg);opacity:0}
+  to{transform:scale(1) rotate(0deg);opacity:1}
+}
+
+.reveal-eyebrow{
+  font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(192,57,43,.6);margin-bottom:10px;
+}
+.reveal-name{
+  font-family:'Cinzel',serif;font-size:2.2rem;font-weight:700;
+  color:#f87171;margin-bottom:4px;
+  text-shadow:0 0 30px rgba(192,57,43,.5);
+}
+.reveal-action{
+  font-family:'Cinzel',serif;font-size:1rem;color:rgba(201,168,76,.6);
+  margin-bottom:20px;
+}
+.reveal-quote{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.05rem;color:#c4a97a;line-height:1.75;
+  max-width:460px;margin-bottom:8px;
+}
+.reveal-verse{font-size:.7rem;color:rgba(201,168,76,.3);margin-bottom:32px}
+
+.reveal-forced{
+  background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);
+  border-radius:10px;padding:14px 24px;margin-bottom:28px;
+}
+.rf-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;
+  color:rgba(192,57,43,.6);margin-bottom:6px}
+.rf-piece{font-family:'Cinzel',serif;font-size:1.3rem;color:#f87171}
+.rf-desc{font-size:.75rem;color:rgba(201,168,76,.5);margin-top:4px}
+
+.reveal-btn{
+  padding:12px 36px;background:linear-gradient(135deg,#9b2316,#5a0f0a);
+  color:#f5ead0;border:1px solid rgba(192,57,43,.5);border-radius:8px;
+  font-family:'Cinzel',serif;font-size:.88rem;font-weight:600;cursor:pointer;
+  transition:all .2s;
+}
+.reveal-btn:hover{background:linear-gradient(135deg,#c0392b,#7a1a10)}
+
+/* ════════════════════════════════════════
+   RESULT SCREEN
+════════════════════════════════════════ */
+#resultScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+.result-icon{font-size:3.2rem;margin-bottom:12px}
+.result-title{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold2);
+  font-weight:700;margin-bottom:6px}
+.result-sub{font-size:.88rem;color:var(--muted);line-height:1.6;max-width:460px;margin-bottom:22px}
+
+.betrayal-verdict{
+  background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.25);
+  border-radius:10px;padding:16px 20px;max-width:440px;width:100%;margin-bottom:22px;
+}
+.bv-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;
+  color:rgba(192,57,43,.5);margin-bottom:6px}
+.bv-line{font-size:.85rem;color:#fca5a5;line-height:1.6;margin-bottom:4px}
+.bv-line.detail{font-size:.75rem;color:rgba(201,168,76,.4)}
+
+.no-betrayal-verdict{
+  background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.15);
+  border-radius:10px;padding:16px 20px;max-width:440px;width:100%;margin-bottom:22px;
+  font-size:.82rem;color:rgba(201,168,76,.45);line-height:1.6;
+}
+
+.result-btns{display:flex;gap:10px}
+.btn-primary{padding:11px 32px;background:linear-gradient(135deg,#c8960c,#7a5c08);
+  color:#1a0e00;border:none;border-radius:8px;font-family:'Cinzel',serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.btn-ghost{padding:11px 24px;background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.85rem;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* dharma collapse bar */
+.dharma-bar{
+  width:100%;max-width:440px;height:6px;border-radius:3px;
+  background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:6px;
+}
+.dharma-fill{height:100%;border-radius:3px;background:var(--gold);transition:width 1.5s ease}
+.dharma-fill.collapsed{background:var(--crimson2)}
+.dharma-labels{display:flex;justify-content:space-between;font-size:.6rem;
+  color:rgba(201,168,76,.3);width:100%;max-width:440px;margin-bottom:20px}
+
+@media(max-width:520px){:root{--sq:40px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="game.html" class="nav-logo">Chaturanga</a>
+  <span class="nav-badge">⚄ Pāśa — The Loaded Dice</span>
+  <span class="proto-badge">⚗ Prototype</span>
+</nav>
+
+<!-- ══ INTRO ══════════════════════════════════════════════════ -->
+<div id="introScreen" class="screen active">
+  <div class="intro-dice">⚄</div>
+  <div class="intro-eyebrow">Pāśa — The Dice Game</div>
+  <div class="intro-title">One Loaded Die</div>
+  <div class="intro-sanskrit">पाशा · The game within the game</div>
+  <div class="intro-lore">
+    "The Kauravas had a die that could not lose. Shakuni threw it for Duryodhana at the
+    Hastinapura court. Every roll was predetermined. The greatest war in history
+    began not with swords — but with a loaded die."
+  </div>
+  <div class="intro-lore-ref">— Sabha Parva, Mahabharata</div>
+
+  <div class="intro-rules">
+    <div class="rule-item">
+      <span class="rule-icon">⚄</span>
+      <span>One player secretly holds the <span class="rule-highlight">Pāśa</span> — a loaded die they can invoke once, at any moment.</span>
+    </div>
+    <div class="rule-item">
+      <span class="rule-icon">🎯</span>
+      <span>When invoked, they <span class="rule-highlight">choose the dice result</span> — any piece type, any face. No one can stop it.</span>
+    </div>
+    <div class="rule-item">
+      <span class="rule-icon">💥</span>
+      <span>The moment they use it, <span class="rule-highlight">every other player is told</span>. The betrayal is revealed. Their dharma collapses.</span>
+    </div>
+    <div class="rule-item">
+      <span class="rule-icon">⚖</span>
+      <span>They may have just won the game. Or given their enemies the fury of a righteous cause. <span class="rule-highlight">That is the Pāśa.</span></span>
+    </div>
+    <div class="rule-item">
+      <span class="rule-icon">🙈</span>
+      <span>The Pāśa holder is assigned secretly — even they don't know until they check privately. Pass the device around.</span>
+    </div>
+  </div>
+
+  <button class="intro-btn" onclick="showScreen('pashaScreen')">
+    Begin — Assign the Pāśa
+  </button>
+</div>
+
+<!-- ══ PLAYER SETUP ════════════════════════════════════════════ -->
+<div id="pashaScreen" class="screen">
+  <div class="ps-step">Step 1 of 3 — Players</div>
+  <div class="ps-title">Name Your Warriors</div>
+  <div class="ps-sub">Enter names for both players. The Pāśa will be assigned secretly after this.</div>
+
+  <div class="player-order">
+    <div class="po-row">
+      <div class="po-dot" style="background:#e74c3c"></div>
+      <input class="po-name-input" id="nameP1" type="text" maxlength="16" placeholder="Player 1 name…" value="Red"/>
+    </div>
+    <div class="po-row">
+      <div class="po-dot" style="background:#60a5fa"></div>
+      <input class="po-name-input" id="nameP2" type="text" maxlength="16" placeholder="Player 2 name…" value="Blue"/>
+    </div>
+  </div>
+
+  <button class="ps-confirm-btn" onclick="assignPasha()">
+    Assign the Pāśa Secretly →
+  </button>
+</div>
+
+<!-- ══ HAND-OFF P1 ═════════════════════════════════════════════ -->
+<div id="handoffScreen" class="screen">
+  <div class="ho-icon">🙈</div>
+  <div class="ho-title">Look Away</div>
+  <div class="ho-sub">
+    Everyone except <span class="ho-player-name" id="hoPlayerName">Player 1</span> must
+    look away from the screen.<br><br>
+    <span class="ho-player-name" id="hoPlayerName2">Player 1</span> — tap below to see
+    your Pāśa assignment. Do not react. Do not show anyone.
+  </div>
+  <button class="ho-reveal-btn" onclick="showSecret()">
+    I am alone — show me
+  </button>
+</div>
+
+<!-- ══ SECRET SCREEN ══════════════════════════════════════════ -->
+<div id="secretScreen" class="screen">
+  <div class="secret-seal" id="secretSeal">🎲</div>
+  <div class="secret-verdict" id="secretVerdict">—</div>
+  <div class="secret-instruction" id="secretInstruction">—</div>
+  <button class="secret-dismiss-btn" id="secretDismissBtn" onclick="afterSecret()">
+    I have seen this. Pass the device.
+  </button>
+</div>
+
+<!-- ══ GAME SCREEN ═════════════════════════════════════════════ -->
+<div id="gameScreen" class="screen">
+
+  <div class="turn-bar" id="turnBar"></div>
+
+  <div class="dice-area">
+    <div class="dice-face" id="diceFace">🎲</div>
+    <div class="dice-info">
+      <div class="dice-piece-name" id="dicePiece">Roll to begin</div>
+      <div class="dice-subtitle" id="diceSubtitle">—</div>
+    </div>
+    <button id="pashaButton" onclick="invokePasha()">
+      ⚄ Invoke Pāśa
+    </button>
+  </div>
+
+  <div class="board-labels-top" id="boardLabelsTop"></div>
+  <div class="board-row">
+    <div class="board-rank-labels" id="boardRanks"></div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="status-bar" id="statusBar">Roll the Pāśaka to begin.</div>
+  <div class="actions-row">
+    <button class="action-btn roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Pāśaka</button>
+    <button class="action-btn forfeit-btn" id="forfeitBtn" onclick="forfeitTurn()" disabled>🏳 Forfeit</button>
+  </div>
+
+</div>
+
+<!-- ══ REVEAL OVERLAY ═════════════════════════════════════════ -->
+<div id="revealOverlay">
+  <div class="reveal-dice-big" id="revealDice">⚄</div>
+  <div class="reveal-eyebrow">The Pāśa Has Been Invoked</div>
+  <div class="reveal-name" id="revealName">—</div>
+  <div class="reveal-action">has played the loaded die</div>
+
+  <div class="reveal-forced">
+    <div class="rf-label">Forced dice result</div>
+    <div class="rf-piece" id="rfPiece">—</div>
+    <div class="rf-desc" id="rfDesc">—</div>
+  </div>
+
+  <div class="reveal-quote" id="revealQuote">—</div>
+  <div class="reveal-verse" id="revealVerse">—</div>
+
+  <button class="reveal-btn" onclick="afterReveal()">
+    Continue — Dharma Has Its Own Dice
+  </button>
+</div>
+
+<!-- ══ RESULT SCREEN ══════════════════════════════════════════ -->
+<div id="resultScreen" class="screen">
+  <div class="result-icon" id="resultIcon">🏆</div>
+  <div class="result-title" id="resultTitle">—</div>
+  <div class="result-sub" id="resultSub">—</div>
+
+  <div class="dharma-bar">
+    <div class="dharma-fill" id="dharmaFill" style="width:50%"></div>
+  </div>
+  <div class="dharma-labels">
+    <span>Adharma</span>
+    <span id="dharmaScore">Dharma 50</span>
+    <span>Dharma</span>
+  </div>
+
+  <div id="betrayalBlock"></div>
+
+  <div class="result-btns">
+    <button class="btn-primary" onclick="resetGame()">Play Again</button>
+    <button class="btn-ghost" onclick="showScreen('introScreen')">Back</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// PASHA REVEAL QUOTES — what is said when the die is invoked
+// ═══════════════════════════════════════════════════════════════
+const PASHA_QUOTES = [
+  {
+    quote: 'Duryodhana smiled. Shakuni had thrown a seven when only six faces existed. No one at the court could explain it. No one dared to.',
+    verse: '— Sabha Parva, Mahabharata'
+  },
+  {
+    quote: 'The dice never lie — but the hand that throws them sometimes does. Today, the hand has revealed itself.',
+    verse: '— Kautilya, Arthashastra Book IX'
+  },
+  {
+    quote: 'Vidura warned them. He said a loaded die would bring ruin to the entire house. They played anyway.',
+    verse: '— Sabha Parva, Mahabharata'
+  },
+  {
+    quote: 'Even Dharma, son of Righteousness, was made to play with crooked dice. The outcome was just — but the method was not. Remember both.',
+    verse: '— Sabha Parva, Mahabharata'
+  },
+  {
+    quote: '"When the dice are loaded, the only true victory is refusing to play." — But you have already played.',
+    verse: '— Vidura Niti, Mahabharata'
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD ENGINE
+// ═══════════════════════════════════════════════════════════════
+class Board {
+  constructor(){ this.squares=new Map(); }
+  get(sq)       { return this.squares.get(sq)||null; }
+  set(sq,piece) { piece?this.squares.set(sq,piece):this.squares.delete(sq); }
+  delete(sq)    { this.squares.delete(sq); }
+  forEach(fn)   { this.squares.forEach(fn); }
+  static standard(){
+    const b=new Board();
+    const s={
+      'a1':'0:rook','b1':'0:horse','c1':'0:elephant','d1':'0:king',
+      'f1':'0:elephant','g1':'0:horse','h1':'0:rook',
+      'a2':'0:pawn','b2':'0:pawn','c2':'0:pawn','d2':'0:pawn',
+      'e2':'0:pawn','f2':'0:pawn','g2':'0:pawn','h2':'0:pawn',
+      'a8':'1:rook','b8':'1:horse','c8':'1:elephant','d8':'1:king',
+      'f8':'1:elephant','g8':'1:horse','h8':'1:rook',
+      'a7':'1:pawn','b7':'1:pawn','c7':'1:pawn','d7':'1:pawn',
+      'e7':'1:pawn','f7':'1:pawn','g7':'1:pawn','h7':'1:pawn',
+    };
+    Object.entries(s).forEach(([sq,v])=>{const[o,t]=v.split(':');b.set(sq,{owner:+o,type:t});});
+    return b;
+  }
+}
+
+function getLegalMoves(board,from,forcedPiece){
+  const piece=board.get(from);
+  if(!piece) return [];
+  const f=from.charCodeAt(0)-97, r=parseInt(from[1]);
+  const moves=[];
+  const addSq=(nf,nr)=>{
+    if(nf<0||nf>7||nr<1||nr>8) return false;
+    const ns=String.fromCharCode(97+nf)+nr;
+    const t=board.get(ns);
+    if(t&&t.owner===piece.owner) return false;
+    moves.push(ns); return !t;
+  };
+  const fp=forcedPiece;
+  if(fp&&fp!=='any'){
+    if(fp==='pawn-king'&&piece.type!=='pawn'&&piece.type!=='king') return [];
+    if(fp!=='pawn-king'&&piece.type!==fp) return [];
+  }
+  switch(piece.type){
+    case 'rook':
+      [[0,1],[0,-1],[1,0],[-1,0]].forEach(([df,dr])=>{
+        for(let i=1;i<8;i++){
+          const nf=f+df*i,nr=r+dr*i;
+          if(nf<0||nf>7||nr<1||nr>8) break;
+          const ns=String.fromCharCode(97+nf)+nr;
+          const t=board.get(ns);
+          if(t){if(t.owner!==piece.owner)moves.push(ns);break;}
+          moves.push(ns);
+        }
+      }); break;
+    case 'horse':
+      [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[2,-1],[-2,1],[-2,-1]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'elephant':
+      [[2,2],[2,-2],[-2,2],[-2,-2]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'king':
+      [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([df,dr])=>addSq(f+df,r+dr)); break;
+    case 'pawn':{
+      const dir=piece.owner===0?1:-1;
+      const fwd=String.fromCharCode(97+f)+(r+dir);
+      if(r+dir>=1&&r+dir<=8&&!board.get(fwd)) moves.push(fwd);
+      [[1,dir],[-1,dir]].forEach(([df,dr])=>{
+        const ns=String.fromCharCode(97+f+df)+(r+dr);
+        if(f+df>=0&&f+df<=7&&r+dr>=1&&r+dr<=8){const t=board.get(ns);if(t&&t.owner!==piece.owner)moves.push(ns);}
+      }); break;
+    }
+  }
+  return moves;
+}
+
+function getAllMoves(board,owner,fp){
+  const moves=[];
+  board.forEach((p,sq)=>{if(p.owner===owner) getLegalMoves(board,sq,fp).forEach(to=>moves.push({from:sq,to}));});
+  return moves;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════════════
+const DICE_TO_PIECE={1:'rook',2:'any',3:'horse',4:'elephant',5:'any',6:'pawn-king'};
+const DICE_FACES   =['—','⚀','⚁','⚂','⚃','⚄','⚅'];
+const PSYMBOLS     ={pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PNAMES       ={pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja'};
+const PCOLORS      =['#e74c3c','#60a5fa'];
+
+const PIECE_CHOICES = [
+  {piece:'rook',   label:'Ratha (Chariot)',  face:'⚀', value:1},
+  {piece:'horse',  label:'Ashwa (Horse)',    face:'⚂', value:3},
+  {piece:'elephant',label:'Danti (Elephant)',face:'⚃', value:4},
+  {piece:'pawn',   label:'Nara (Pawn)',      face:'⚅', value:6},
+  {piece:'any',    label:'Any piece (free)', face:'⚁', value:2},
+];
+
+let PLAYERS   = [{name:'Red',color:'#e74c3c'},{name:'Blue',color:'#60a5fa'}];
+let PASHA_HOLDER = -1; // index of player who holds the Pāśa
+let secretStep   = 0;  // which player's secret reveal we're on
+
+let G = {};
+
+function initGame(){
+  G = {
+    board:         Board.standard(),
+    currentPlayer: 0,
+    phase:         'roll',
+    selectedSq:    null,
+    legalMoves:    [],
+    forcedPiece:   null,
+    lastFrom:      null,
+    lastTo:        null,
+    gameOver:      false,
+    turnCount:     0,
+    pashaUsed:     false,      // has the Pāśa been invoked
+    pashaUsedBy:   -1,         // which player used it
+    pashaForcedPiece: null,    // what they forced
+    pashaUsedOnTurn: -1,
+    dharmaScores:  [50, 50],   // starts neutral
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SETUP FLOW
+// ═══════════════════════════════════════════════════════════════
+function assignPasha(){
+  const n1=(document.getElementById('nameP1').value||'Red').trim().slice(0,16);
+  const n2=(document.getElementById('nameP2').value||'Blue').trim().slice(0,16);
+  PLAYERS=[{name:n1,color:'#e74c3c'},{name:n2,color:'#60a5fa'}];
+
+  // Randomly assign Pāśa to one player
+  PASHA_HOLDER = Math.random() < 0.5 ? 0 : 1;
+  secretStep   = 0;
+  showNextHandoff();
+}
+
+function showNextHandoff(){
+  if(secretStep >= PLAYERS.length){
+    // All players have seen their secret — start game
+    startGame();
+    return;
+  }
+  const p = PLAYERS[secretStep];
+  document.getElementById('hoPlayerName').textContent  = p.name;
+  document.getElementById('hoPlayerName2').textContent = p.name;
+  showScreen('handoffScreen');
+}
+
+function showSecret(){
+  const p = PLAYERS[secretStep];
+  const hasPasha = (secretStep === PASHA_HOLDER);
+
+  const seal = document.getElementById('secretSeal');
+  const verdict = document.getElementById('secretVerdict');
+  const instruction = document.getElementById('secretInstruction');
+  const dismissBtn = document.getElementById('secretDismissBtn');
+
+  if(hasPasha){
+    seal.className='secret-seal has-pasha';
+    seal.textContent='⚄';
+    verdict.className='secret-verdict has';
+    verdict.textContent='You hold the Pāśa.';
+    instruction.innerHTML=
+      `You are <strong style="color:#f87171">Shakuni</strong> on this Ashtāpada.<br><br>
+      During the game, a button labelled <em>"⚄ Invoke Pāśa"</em> will appear in the dice area — 
+      but only on your turns, and only visible to you. When you press it, 
+      you choose the dice result. Every other player will be told immediately. 
+      Your dharma will collapse. But you may have just won the game.<br><br>
+      <span style="color:rgba(201,168,76,.4);font-size:.8rem">Use it wisely. Or recklessly. That is your choice.</span>`;
+    dismissBtn.textContent='I understand. Pass the device.';
+  } else {
+    seal.className='secret-seal no-pasha';
+    seal.textContent='🎲';
+    verdict.className='secret-verdict no';
+    verdict.textContent='You do not hold the Pāśa.';
+    instruction.innerHTML=
+      `The dice are fair for you. Roll as you always would.<br><br>
+      But someone at this table holds the Pāśa — a loaded die they can invoke once. 
+      You will know the moment they use it. Until then, watch the dice. 
+      Watch the hands.<br><br>
+      <span style="color:rgba(201,168,76,.4);font-size:.8rem">Play well. Play honestly.</span>`;
+    dismissBtn.textContent='Understood. Pass the device.';
+  }
+
+  showScreen('secretScreen');
+}
+
+function afterSecret(){
+  secretStep++;
+  showNextHandoff();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAME START
+// ═══════════════════════════════════════════════════════════════
+function startGame(){
+  initGame();
+  buildTurnBar();
+  showScreen('gameScreen');
+  renderBoard();
+  updateTurnBar();
+  enableRoll();
+  updatePashaButton();
+  setStatus(`${PLAYERS[0].name} begins — roll the Pāśaka.`);
+}
+
+function buildTurnBar(){
+  const bar=document.getElementById('turnBar');
+  bar.innerHTML=PLAYERS.map((p,i)=>`
+    <div class="tb-card" id="tbCard${i}"
+      style="border-color:${p.color}22;color:${p.color}">
+      <div class="tb-dot" style="background:${p.color}"></div>
+      <div class="tb-pasha-dot" id="tbPashaDot${i}"></div>
+      <div class="tb-name" style="color:${p.color}">${p.name}</div>
+      <div class="tb-status" id="tbStatus${i}"></div>
+    </div>`).join('');
+}
+
+function updateTurnBar(){
+  PLAYERS.forEach((_,i)=>{
+    const card=document.getElementById(`tbCard${i}`);
+    const status=document.getElementById(`tbStatus${i}`);
+    card.classList.toggle('active',i===G.currentPlayer);
+    card.style.boxShadow=i===G.currentPlayer?`0 0 14px -4px ${PLAYERS[i].color}44`:'none';
+    status.textContent=i===G.currentPlayer?'← playing':'';
+  });
+}
+
+// The Pāśa button — only visible to the holder, only on their turn, only if unused
+function updatePashaButton(){
+  const btn=document.getElementById('pashaButton');
+  const isHolder    = G.currentPlayer === PASHA_HOLDER;
+  const isRollPhase = G.phase === 'roll';
+  const unused      = !G.pashaUsed;
+
+  if(isHolder && isRollPhase && unused){
+    btn.style.display='block';
+    btn.classList.add('pulsing');
+    btn.classList.remove('used');
+    btn.textContent='⚄ Invoke Pāśa';
+  } else if(G.pashaUsed && G.pashaUsedBy===G.currentPlayer){
+    btn.style.display='block';
+    btn.classList.remove('pulsing');
+    btn.classList.add('used');
+    btn.textContent='⚄ Pāśa spent';
+  } else {
+    btn.style.display='none';
+    btn.classList.remove('pulsing','used');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASHA INVOCATION
+// ═══════════════════════════════════════════════════════════════
+function invokePasha(){
+  if(G.pashaUsed || G.currentPlayer !== PASHA_HOLDER) return;
+
+  // Show a piece-choice modal inline
+  const btn=document.getElementById('pashaButton');
+  btn.classList.remove('pulsing');
+
+  // Build choice overlay — inline beneath dice area
+  const existing=document.getElementById('pashaChoicePanel');
+  if(existing){existing.remove();return;}
+
+  const panel=document.createElement('div');
+  panel.id='pashaChoicePanel';
+  panel.style.cssText=`
+    position:fixed;inset:0;z-index:3000;background:rgba(10,7,2,.88);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;`;
+
+  panel.innerHTML=`
+    <div style="background:#1a1005;border:1px solid rgba(192,57,43,.3);border-radius:12px;
+      padding:24px;max-width:360px;width:100%;text-align:center">
+      <div style="font-size:2rem;margin-bottom:10px">⚄</div>
+      <div style="font-family:'Cinzel',serif;font-size:1rem;color:#f87171;margin-bottom:4px">
+        Choose Your Face
+      </div>
+      <div style="font-size:.75rem;color:#8a7050;margin-bottom:16px;line-height:1.5">
+        This is your one use of the Pāśa. All other players will be told immediately.<br>
+        Choose wisely.
+      </div>
+      ${PIECE_CHOICES.map(c=>`
+        <button onclick="confirmPasha('${c.piece}','${c.face}','${c.label}')"
+          style="width:100%;margin-bottom:8px;padding:10px 14px;
+          background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.25);
+          border-radius:7px;color:#fca5a5;font-family:'Cinzel',serif;font-size:.82rem;
+          cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;"
+          onmouseover="this.style.background='rgba(192,57,43,.2)'"
+          onmouseout="this.style.background='rgba(192,57,43,.08)'">
+          <span style="font-size:1.3rem">${c.face}</span>
+          <span>${c.label}</span>
+        </button>`).join('')}
+      <button onclick="document.getElementById('pashaChoicePanel').remove()"
+        style="margin-top:4px;background:transparent;border:none;color:#8a7050;
+        font-size:.78rem;cursor:pointer;font-family:'Outfit',sans-serif;">
+        Cancel — I will not use it yet
+      </button>
+    </div>`;
+
+  document.body.appendChild(panel);
+}
+
+function confirmPasha(piece, face, label){
+  const panel=document.getElementById('pashaChoicePanel');
+  if(panel) panel.remove();
+
+  G.pashaUsed       = true;
+  G.pashaUsedBy     = G.currentPlayer;
+  G.pashaForcedPiece= piece;
+  G.pashaUsedOnTurn = G.turnCount;
+
+  // Dharma collapse for the user
+  G.dharmaScores[G.currentPlayer] = Math.max(0, G.dharmaScores[G.currentPlayer] - 45);
+  // Dharma boost for the victim
+  G.dharmaScores[1 - G.currentPlayer] = Math.min(100, G.dharmaScores[1 - G.currentPlayer] + 20);
+
+  // Show the dramatic reveal overlay
+  const quote = PASHA_QUOTES[Math.floor(Math.random() * PASHA_QUOTES.length)];
+  document.getElementById('revealDice').textContent = face;
+  document.getElementById('revealName').textContent = PLAYERS[G.currentPlayer].name;
+  document.getElementById('rfPiece').textContent    = label;
+  document.getElementById('rfDesc').textContent     = `All pieces of this type are now legal to move this turn.`;
+  document.getElementById('revealQuote').textContent = `"${quote.quote}"`;
+  document.getElementById('revealVerse').textContent = quote.verse;
+
+  const overlay = document.getElementById('revealOverlay');
+  overlay.classList.add('show');
+  overlay.classList.add('reveal-flicker');
+  setTimeout(()=>overlay.classList.remove('reveal-flicker'), 1200);
+}
+
+function afterReveal(){
+  document.getElementById('revealOverlay').classList.remove('show');
+
+  // Mark the pasha holder's card as revealed
+  const dot = document.getElementById(`tbPashaDot${G.currentPlayer}`);
+  if(dot){
+    document.getElementById(`tbCard${G.currentPlayer}`).classList.add('pasha-revealed');
+  }
+
+  // Apply the forced piece and proceed to move phase
+  G.forcedPiece = G.pashaForcedPiece;
+  G.phase = 'move';
+
+  // Update dice display
+  const choice = PIECE_CHOICES.find(c=>c.piece===G.pashaForcedPiece);
+  document.getElementById('diceFace').textContent = choice?.face || '⚄';
+  document.getElementById('diceFace').classList.add('spinning');
+  setTimeout(()=>document.getElementById('diceFace').classList.remove('spinning'),400);
+  document.getElementById('dicePiece').textContent =
+    G.pashaForcedPiece==='any'?'Any piece':PNAMES[G.pashaForcedPiece]||G.pashaForcedPiece;
+  document.getElementById('diceSubtitle').textContent = '⚄ Pāśa — loaded die';
+
+  document.getElementById('rollBtn').disabled  = true;
+  document.getElementById('forfeitBtn').disabled = false;
+  updatePashaButton();
+  renderBoard();
+
+  const pName = PLAYERS[G.currentPlayer].name;
+  const victim= PLAYERS[1-G.currentPlayer].name;
+  const pieceName = PNAMES[G.pashaForcedPiece] || 'any piece';
+  setStatus(`⚄ ${pName} invoked the Pāśa! Forced: ${pieceName}. ${victim} — the dice were loaded.`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOARD RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderBoard(){
+  document.getElementById('boardLabelsTop').innerHTML=
+    ['a','b','c','d','e','f','g','h'].map(l=>`<div class="blt">${l}</div>`).join('');
+  document.getElementById('boardRanks').innerHTML=
+    Array.from({length:8},(_,i)=>`<div style="height:var(--sq);display:flex;align-items:center;
+      justify-content:center;font-size:.6rem;color:var(--muted)">${8-i}</div>`).join('');
+
+  const boardEl=document.getElementById('board');
+  boardEl.innerHTML='';
+  for(let r=8;r>=1;r--){
+    for(let fi=0;fi<8;fi++){
+      const sq=String.fromCharCode(97+fi)+r;
+      const piece=G.board.get(sq);
+      const isLight=(fi+r)%2===0;
+      let cls=`sq ${isLight?'light':'dark'}`;
+      if(sq===G.selectedSq) cls+=' selected';
+      if(G.legalMoves.includes(sq)) cls+=piece?' legal-capture':' legal';
+      if(sq===G.lastFrom) cls+=' last-from';
+      if(sq===G.lastTo)   cls+=' last-to';
+      // Highlight pasha-forced piece squares
+      if(G.pashaUsed && G.phase==='move' && piece &&
+         piece.owner===G.currentPlayer &&
+         (G.forcedPiece==='any'||piece.type===G.forcedPiece||
+          (G.forcedPiece==='pawn-king'&&(piece.type==='pawn'||piece.type==='king')))){
+        cls+=' pasha-sq';
+      }
+      const cell=document.createElement('div');
+      cell.className=cls;
+      if(piece){
+        const span=document.createElement('span');
+        span.className='piece';
+        span.textContent=PSYMBOLS[piece.type];
+        span.style.color=PCOLORS[piece.owner];
+        cell.appendChild(span);
+      }
+      cell.addEventListener('click',()=>onSquareClick(sq));
+      boardEl.appendChild(cell);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLICK & MOVE
+// ═══════════════════════════════════════════════════════════════
+function onSquareClick(sq){
+  if(G.phase!=='move'||G.gameOver) return;
+  const piece=G.board.get(sq);
+  if(G.selectedSq){
+    if(G.legalMoves.includes(sq)){ executeMove(G.selectedSq,sq); return; }
+    if(piece&&piece.owner===G.currentPlayer){
+      G.selectedSq=sq;
+      G.legalMoves=getLegalMoves(G.board,sq,G.forcedPiece);
+    } else { G.selectedSq=null; G.legalMoves=[]; }
+  } else {
+    if(piece&&piece.owner===G.currentPlayer){
+      const moves=getLegalMoves(G.board,sq,G.forcedPiece);
+      if(moves.length){ G.selectedSq=sq; G.legalMoves=moves;
+        setStatus(`${PNAMES[piece.type]} selected — ${moves.length} legal move${moves.length!==1?'s':''}.`);
+      } else setStatus(`No legal moves for this ${PNAMES[piece.type]}.`);
+    }
+  }
+  renderBoard();
+}
+
+function executeMove(from,to){
+  const piece=G.board.get(from);
+  const target=G.board.get(to);
+  G.lastFrom=from; G.lastTo=to;
+  G.board.set(to,piece); G.board.delete(from);
+  G.selectedSq=null; G.legalMoves=[]; G.forcedPiece=null;
+
+  // Pawn promotion
+  if(piece.type==='pawn'){
+    const ri=parseInt(to[1]);
+    if((piece.owner===0&&ri===8)||(piece.owner===1&&ri===1))
+      G.board.set(to,{owner:piece.owner,type:'rook'});
+  }
+
+  if(target&&target.type==='king'){
+    renderBoard();
+    setTimeout(()=>endGame(G.currentPlayer),400);
+    return;
+  }
+
+  G.turnCount++;
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  renderBoard();
+  updateTurnBar();
+  G.phase='roll';
+  enableRoll();
+  updatePashaButton();
+  setStatus(`${PLAYERS[G.currentPlayer].name} — roll the Pāśaka.`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DICE
+// ═══════════════════════════════════════════════════════════════
+function rollDice(){
+  if(G.gameOver||G.phase!=='roll') return;
+  const face=Math.ceil(Math.random()*6);
+  G.forcedPiece=DICE_TO_PIECE[face];
+
+  document.getElementById('diceFace').textContent=DICE_FACES[face];
+  document.getElementById('diceFace').classList.add('spinning');
+  setTimeout(()=>document.getElementById('diceFace').classList.remove('spinning'),300);
+
+  document.getElementById('dicePiece').textContent=
+    G.forcedPiece==='any'?'Any piece':
+    G.forcedPiece==='pawn-king'?'Nara or Raja':
+    PNAMES[G.forcedPiece];
+  document.getElementById('diceSubtitle').textContent=
+    G.pashaUsed && !G.pashaUsed ? '(fair roll)':'';
+
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('forfeitBtn').disabled=false;
+  G.phase='move';
+  updatePashaButton(); // hide Pasha button once dice rolled
+
+  const allMoves=getAllMoves(G.board,G.currentPlayer,G.forcedPiece);
+  if(allMoves.length===0) setStatus(`No ${PNAMES[G.forcedPiece]||'pieces'} can move — forfeit.`);
+  else {
+    const pn=G.forcedPiece==='any'?'Any piece':G.forcedPiece==='pawn-king'?'Nara or Raja':PNAMES[G.forcedPiece];
+    setStatus(`${PLAYERS[G.currentPlayer].name}: ${pn} — select a piece.`);
+  }
+}
+
+function forfeitTurn(){
+  if(G.gameOver) return;
+  G.forcedPiece=null; G.selectedSq=null; G.legalMoves=[];
+  G.turnCount++;
+  G.currentPlayer=G.currentPlayer===0?1:0;
+  renderBoard();
+  updateTurnBar();
+  G.phase='roll';
+  enableRoll();
+  updatePashaButton();
+  setStatus(`Turn forfeited. ${PLAYERS[G.currentPlayer].name} — roll the Pāśaka.`);
+}
+
+function enableRoll(){
+  document.getElementById('rollBtn').disabled=false;
+  document.getElementById('forfeitBtn').disabled=true;
+  document.getElementById('diceFace').textContent='🎲';
+  document.getElementById('dicePiece').textContent='Roll to begin your turn';
+  document.getElementById('diceSubtitle').textContent='';
+}
+
+function setStatus(t){ document.getElementById('statusBar').textContent=t; }
+
+// ═══════════════════════════════════════════════════════════════
+// END GAME
+// ═══════════════════════════════════════════════════════════════
+function endGame(winner){
+  G.gameOver=true;
+  showScreen('resultScreen');
+
+  const loser=1-winner;
+  const wName=PLAYERS[winner].name;
+  const lName=PLAYERS[loser].name;
+  const pashaWasUsed=G.pashaUsed;
+  const pashaByWinner=G.pashaUsedBy===winner;
+  const pashaByLoser =G.pashaUsedBy===loser;
+
+  document.getElementById('resultIcon').textContent=
+    pashaByWinner?'⚄':pashaByLoser?'⚖':'🏆';
+
+  document.getElementById('resultTitle').textContent=`${wName} Wins`;
+
+  let sub='';
+  if(pashaByWinner){
+    sub=`${wName} held the Pāśa and used it to win. Victory arrived — but at the cost of dharma. The chronicles remember both the triumph and the method.`;
+  } else if(pashaByLoser){
+    sub=`${lName} held the Pāśa and invoked it — but dharma prevailed anyway. ${wName} won despite the loaded die. This is the rarest outcome on the Ashtāpada.`;
+  } else {
+    sub=`The Pāśa was never used. Both players chose to let the dice fall honestly. ${wName} won a clean victory on the Ashtāpada.`;
+  }
+  document.getElementById('resultSub').textContent=sub;
+
+  // Dharma bar for winner
+  const winnerDharma=G.dharmaScores[winner];
+  const fill=document.getElementById('dharmaFill');
+  fill.style.width='0%';
+  setTimeout(()=>{
+    fill.style.width=winnerDharma+'%';
+    if(winnerDharma<40) fill.classList.add('collapsed');
+  },400);
+  document.getElementById('dharmaScore').textContent=`Dharma ${winnerDharma}`;
+
+  // Betrayal verdict block
+  const block=document.getElementById('betrayalBlock');
+  if(pashaWasUsed){
+    const invokerName=PLAYERS[G.pashaUsedBy].name;
+    const pieceName=PNAMES[G.pashaForcedPiece]||G.pashaForcedPiece;
+    block.innerHTML=`
+      <div class="betrayal-verdict">
+        <div class="bv-label">Pāśa Record</div>
+        <div class="bv-line">
+          ${invokerName} invoked the Pāśa on turn ${G.pashaUsedOnTurn+1},
+          forcing a ${pieceName} move.
+        </div>
+        <div class="bv-line detail">
+          ${pashaByWinner
+            ? `The loaded die decided the game. A win, but not a dharmic one.`
+            : `The Pāśa was used — and still lost. Adharma undoes itself.`}
+        </div>
+      </div>`;
+  } else {
+    block.innerHTML=`
+      <div class="no-betrayal-verdict">
+        The Pāśa was never invoked. Both players played with honest dice.
+        This battle will be remembered as a dharmic contest.
+      </div>`;
+  }
+}
+
+function resetGame(){
+  showScreen('pashaScreen');
+}
+</script>
+</body>
+</html>

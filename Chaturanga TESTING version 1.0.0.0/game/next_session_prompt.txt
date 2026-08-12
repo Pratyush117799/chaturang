@@ -1,0 +1,595 @@
+════════════════════════════════════════════════════════════════════════
+  CHATURANGA v1.0.4 — HANDOFF PROMPT FOR NEXT SESSION
+  Tasks: Daily Shubh Challenge + Akhara Training Dojo
+  Read every word before writing a single line of code.
+════════════════════════════════════════════════════════════════════════
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 1 — WHAT THIS PROJECT IS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Chaturanga v1.0.4 is a fully functional web-based ancient 4-player
+Indian chess game — the ancestor of all modern chess variants. It runs
+entirely in the browser, no framework, vanilla HTML/CSS/JS only.
+
+The game is culturally grounded in:
+  · Sanskrit piece names (Ratha/Rook, Ashwa/Horse, Danti/Elephant,
+    Nara/Pawn, Raja/King)
+  · Dice-driven movement (Pāśaka: face 1=Ratha, 2/5=any, 3=Ashwa,
+    4=Danti, 6=Nara or Raja)
+  · Mahabharata and Bhagavad Gita as cultural backdrop
+  · Acharya Drona as the in-game guide/narrator voice
+
+Aesthetic: dark background (#0f0c07), gold accents (#c9a84c),
+Cinzel (serif, titles) + Outfit (sans, body), Font Awesome icons.
+Every cultural reference must be authentic — not decorative.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 2 — WHAT IS ALREADY BUILT (do not rebuild any of this)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Core files in the project:
+  game.html           — main game page (8×8 board, 4-player, dice, bots)
+  game.js             — game engine (ChaturangaGame class)
+  ui.js               — UI layer (renders board, handles clicks, moves)
+  dice.js             — dice roll/display system
+  puzzles.html        — puzzle browser and solver
+  puzzle-data.js      — 200 puzzles P001–P200 (ELO 100–1000)
+                        Format: { id, title, type, rating, forcedDice,
+                          boardState, turnIndex, solution, hint, moralLesson }
+                        boardState keys: 'a1'–'h8', values: 'owner:pieceType'
+                        e.g. { 'e4':'0:rook', 'h8':'1:king' }
+  puzzle-engine.js    — ChaturangaPuzzleEngine (loadPuzzle, validateMove,
+                        calculateScore, saveProgress, getTotalProgress,
+                        isSolved, getHint)
+  seer.js             — old Seer analytics (live panel in game.html)
+  seer-engine.js      — new Seer engine (ChaturangaSeer, Vault, ELO est.)
+  seer.html           — standalone analysis page (vault, replay, move log)
+  chatbot-data.js     — ChaturangaChatbot (50+ regex intents, Drona voice)
+  tieredBots.js       — ChaturangaTieredBot (ELO 100–600)
+  advancedBots.js     — ChaturangaAdvancedBots (ELO 700–1000, alpha-beta)
+  anticheat.js        — fair play system
+  vyuha-engine.js     — 26 Vyuha formation renderer (14×14 grid)
+  ws-client.js        — WebSocket multiplayer client
+  ui-enhancements.js  — tooltips, king-danger glow, keyboard nav
+
+Recently built (in previous sessions) — these files exist and work:
+  post-game-analysis.js — post-game overlay (accuracy bars, ELO est.,
+                          turning point, Drona verdict). Requires
+                          globalThis._chaturangaGame = game in ui.js.
+  dharma-engine.js      — Dharma Score system (live badge + end panel).
+                          Watches _chaturangaGame, records dharmic events,
+                          injects into post-game overlay. Public API:
+                          ChaturangaDharma.startSession/recordEvent/finalize
+  kurukshetra.html      — Kurukshetra Campaign page (standalone, 1279 lines).
+                          Days 1, 13, 18 fully playable with cutscene +
+                          live Drona commentary + survival mode (Day 13).
+
+Key localStorage keys in use (do NOT collide):
+  chaturanga_puzzles    — puzzle progress (puzzle-engine.js)
+  chaturanga_vault      — old Seer vault (seer.js)
+  chaturanga_seer_vault — new Seer vault (seer-engine.js)
+  chaturanga_dharma     — dharma score history + streak + unlocks
+  chaturanga_campaign   — campaign progress (kurukshetra.html)
+  chaturanga_theme      — UI theme (classic/night/parchment)
+  chaturanga_muted      — sound muted state
+  chaturanga_boardSize  — board size preference
+
+Piece movement rules (critical — validate every puzzle/board):
+  Rook (dice 1):     slides orthogonal any distance, blocked by pieces
+  Horse (dice 3):    L-shape (±1,±2)|(±2,±1), jumps over pieces
+  Elephant (dice 4): exactly 2 squares diagonal ONLY, jumps over pieces
+                     colour-bound — cannot change diagonal colour complex
+  Pawn (dice 6):     1 forward, captures diagonal forward, promotes at
+                     rank 8 (player 0/1) — promotes to Rook
+  King (dice 6):     1 step any direction, cannot capture another King
+  Dice 2/5:          any piece of player's choice
+
+Capture rule: minor pieces (Nara/Ashwa/Danti) CANNOT capture other
+minor pieces in the full game. Only Ratha and Raja can capture minors.
+(Puzzle engine uses simplified rules — direct captures allowed in puzzles.)
+
+Players: 0=Red (Team 1), 1=Blue (Team 2), 2=Green (Team 1), 3=Yellow (Team 2)
+Pawns: players 0+2 move upward (rank increases), 1+3 move downward.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 3 — TASK 1: DAILY SHUBH CHALLENGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT IT IS
+──────────
+One puzzle released every day at 6:00 AM IST (UTC+5:30). The same
+puzzle is available to every player worldwide on that calendar day.
+First correct solve = #1 on the global leaderboard. Scoring is based
+on solve time + hints not used. A "Shubh streak" tracks consecutive
+daily solves.
+
+The feature is themed to the Hindu lunar calendar — puzzle difficulty
+and type vary based on the tithi (lunar day):
+  · Ekadashi (11th tithi)  — hardest puzzle of the month (ELO 700+)
+  · Amavasya (new moon)    — endgame / king-hunt specialisation
+  · Purnima (full moon)    — alliance/team combination puzzles
+  · Regular days           — rotating through all puzzle types
+
+Special puzzles release on major festivals:
+  Diwali, Janmashtami, Holi, Makar Sankranti, Navratri Day 9.
+
+FILES TO BUILD
+──────────────
+1. shubh-engine.js  — standalone engine, no dependencies except
+                      puzzle-data.js (already loaded on puzzles.html).
+2. shubh.html       — dedicated page for the daily challenge.
+                      Linked from game.html and puzzles.html navbars.
+
+ARCHITECTURE DECISION — NO SERVER REQUIRED
+───────────────────────────────────────────
+There is no backend. The leaderboard is simulated locally using
+localStorage. Here is how the "global" leaderboard works without a
+server:
+
+  · The daily puzzle is selected deterministically from the 200-puzzle
+    library using a seeded algorithm:
+      dayIndex = Math.floor(Date.now() / 86400000)  ← changes at UTC midnight
+      puzzleIndex = dayIndex % ChaturangaPuzzleData.length
+      The IST offset (UTC+5:30 = 19800 seconds) is applied:
+      dayIndex = Math.floor((Date.now() + 19800000) / 86400000)
+
+  · This guarantees every player worldwide gets the same puzzle on the
+    same calendar day (in IST). No server needed.
+
+  · The leaderboard is seeded with 8 realistic fake competitors whose
+    scores are deterministically generated from the same dayIndex seed.
+    Real player scores are stored locally and shown alongside the fakes.
+    This creates the illusion of a live leaderboard without a backend.
+    Each fake competitor has a Sanskrit name, a city, and a realistic
+    solve time (60–900 seconds, weighted by puzzle ELO).
+
+  · When the player solves the puzzle, their result is saved to
+    localStorage under key: chaturanga_shubh
+    Format: { [dateString]: { solved, time, hintsUsed, score, streak } }
+
+HINDU CALENDAR TITHI CALCULATION
+──────────────────────────────────
+The tithi (lunar day) cycles 1–30 approximately every 29.5 days.
+Use this simplified calculation (good enough for theming — does not
+need to be astronomically precise):
+
+  const LUNAR_EPOCH = 1704067200000; // Jan 1 2024 00:00 UTC (known new moon)
+  const LUNAR_CYCLE = 29.530588853 * 24 * 60 * 60 * 1000; // ms
+  function getTithi(now = Date.now()) {
+    const elapsed = ((now - LUNAR_EPOCH) % LUNAR_CYCLE + LUNAR_CYCLE) % LUNAR_CYCLE;
+    return Math.floor(elapsed / LUNAR_CYCLE * 30) + 1; // 1–30
+  }
+  // tithi 11 or 26 = Ekadashi
+  // tithi 15 = Purnima (full moon)
+  // tithi 30 or 1 = Amavasya (new moon)
+
+FESTIVAL DETECTION
+───────────────────
+Check the Gregorian date for known approximate festival dates:
+  { month:10, day:20, name:'Diwali',      type:'special' },   // approx Oct 20
+  { month:8,  day:26, name:'Janmashtami', type:'special' },   // approx Aug 26
+  { month:3,  day:25, name:'Holi',        type:'special' },   // approx Mar 25
+  { month:1,  day:14, name:'Makar Sankranti', type:'special' },
+  { month:10, day:2,  name:'Navratri Day 9', type:'special' },
+Month is 0-indexed (JavaScript Date.getMonth()).
+On festival days, use the highest-rated puzzle available that matches
+the festival's character (Holi = colourful/fun = lower ELO,
+Janmashtami = Krishna = combo puzzles, Diwali = hardest of the year).
+
+SCORING FORMULA
+────────────────
+  baseScore = puzzle.rating
+  timeBonus  = Math.max(0, 300 - Math.floor(solveTimeSeconds / 3))
+  hintPenalty = hintsUsed * 50
+  finalScore  = Math.max(10, baseScore + timeBonus - hintPenalty)
+
+LEADERBOARD FAKE SEED
+──────────────────────
+const COMPETITORS = [
+  { name:'Arjun Sharma',    city:'Mumbai'    },
+  { name:'Priya Nair',      city:'Chennai'   },
+  { name:'Vikram Iyer',     city:'Bangalore' },
+  { name:'Kavya Menon',     city:'Kochi'     },
+  { name:'Rohan Gupta',     city:'Delhi'     },
+  { name:'Ananya Singh',    city:'Varanasi'  },
+  { name:'Siddharth Rao',   city:'Hyderabad' },
+  { name:'Meera Pillai',    city:'Pune'      },
+];
+For each day, generate their solve times using:
+  seed = dayIndex * 31337
+  lcg(seed) → deterministic pseudo-random
+Scores are spread realistically: 2–3 solve before the player,
+the rest after, creating genuine competition.
+
+shubh-engine.js PUBLIC API
+───────────────────────────
+globalThis.ChaturangaShubh = {
+  getTodaysPuzzle()         // returns puzzle object from puzzle-data.js
+  getTithi()                // returns 1–30
+  getTithiName()            // returns 'Ekadashi', 'Purnima', 'Amavasya', or null
+  getTodaysFestival()       // returns festival object or null
+  getLeaderboard()          // returns array of {name, city, score, time, isPlayer}
+  getStreak()               // returns current daily streak
+  hasPlayedToday()          // returns boolean
+  saveResult(time, hintsUsed) // saves today's solve
+  getHistory()              // last 7 days: [{date, solved, score, time}]
+}
+
+shubh.html LAYOUT
+──────────────────
+3-column layout (same as puzzles.html structure):
+  LEFT PANEL (240px):
+    · Today's tithi badge (Ekadashi / Purnima / Amavasya / Regular)
+    · Festival banner if applicable
+    · Shubh streak counter with fire icon
+    · 7-day solve history grid (7 squares, green=solved, red=missed,
+      grey=future)
+    · "Come back tomorrow" countdown timer (HH:MM:SS to 6am IST)
+    · Brief description of why today's puzzle was chosen
+
+  CENTER:
+    · Title: "Today's Shubh Challenge" with date in Sanskrit style
+    · Puzzle board (reuse puzzles.html board rendering exactly)
+    · Status, hint button, Ask Acharya button
+    · On solve: confetti animation + score reveal
+
+  RIGHT PANEL (280px):
+    · Global leaderboard (top 8 + player's position)
+    · Each row: rank, name, city, score, time
+    · Player's row highlighted in gold
+    · "Shubh Muhurata" — auspicious timing note from Drona
+
+NAVIGATION
+───────────
+Add to game.html nav-right (after the puzzle icon link):
+  <a href="shubh.html" class="nav-icon-btn" title="Daily Shubh Challenge">
+    <i class="fa-solid fa-sun"></i>
+  </a>
+
+Add to puzzles.html nav similarly.
+
+IMPORTANT CONSTRAINTS
+──────────────────────
+  · Do NOT use fetch() or XMLHttpRequest for any leaderboard data.
+    Everything is local + seeded. Explaining this in comments is good.
+  · The puzzle board must use the EXACT same rendering logic as
+    puzzles.html — same square colors (#f0d9b5 light, #b58863 dark),
+    same piece symbols (♟♞♝♜♚), same click-to-select mechanic.
+  · Validate every board state: no overlapping squares, valid square
+    notation (a1–h8), horse moves (±1,±2)|(±2,±1) only, elephant
+    moves (±2,±2) only. Run a validation function before rendering.
+  · The localStorage key chaturanga_shubh must NOT conflict with any
+    existing key listed in Section 2.
+  · Styling must match the Chaturanga aesthetic exactly:
+    dark background, gold accents, Cinzel + Outfit fonts.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 4 — TASK 2: AKHARA TRAINING DOJO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT IT IS
+──────────
+The Akhara (Sanskrit: wrestling school/training ground) is a
+drill-based training mode that builds board vision — the ability to
+read a Chaturanga position instantly without calculating move by move.
+Board vision is the single skill that separates fast improvers from
+slow ones. Every drill is timed.
+
+This is a completely separate page: akhara.html
+
+DRONA'S RANKING SYSTEM (5 tiers, stored in localStorage)
+──────────────────────────────────────────────────────────
+  Shishya (Student)    — 0–199 Akhara ELO    — recognises basic captures
+  Yoddha (Warrior)     — 200–399              — sees one-move tactics
+  Sarathi (Charioteer) — 400–599              — reads full board threats
+  Arjuna               — 600–799              — spots combinations instantly
+  Brahmastra           — 800+                 — sees everything in one glance
+
+Akhara ELO is separate from puzzle ELO. It is stored under:
+  localStorage key: chaturanga_akhara
+  Format: { eloAkhara, rank, drillHistory: [{drillType, score, date}] }
+
+INTEGRATION WITH PUZZLE SYSTEM
+────────────────────────────────
+At the bottom of akhara.html, after computing the Akhara ELO:
+  · If Akhara ELO >= 400 (Sarathi), update puzzle difficulty suggestion:
+    localStorage.setItem('chaturanga_akhara_suggest', 'hard')
+  · puzzles.html reads this key and adjusts its default filter to
+    show ELO 500+ puzzles first for Sarathi+ players.
+  · This is a one-way signal only — puzzles.html checks it on load.
+
+THE FOUR DRILLS
+────────────────
+
+DRILL 1: FLASH DRILL
+  How it works:
+    A random board position is shown for exactly 3 seconds.
+    The board disappears. The player is asked 3 questions:
+      Q1: "How many of your pieces are hanging (undefended + threatened)?"
+         Answer is a number 0–8. Select via +/- buttons.
+      Q2: "How many enemy pieces can you capture right now?"
+         Answer is a number 0–8.
+      Q3: "Which piece is most threatened?" (multiple choice: Ratha/Ashwa/
+         Danti/Nara/Raja/None)
+    Each correct answer = 10 points. Max 30 per position.
+    10 positions per session. Total possible: 300 points.
+
+  Board generation:
+    Use 10 pre-built positions from puzzle-data.js boardStates (use
+    the boardState from random puzzles in the 200-puzzle library).
+    Do NOT randomly generate boards — pre-built positions guarantee
+    legal, meaningful positions.
+
+  Timing:
+    Show board for 3000ms exactly. Use a visible countdown bar that
+    depletes in real time (CSS animation, width 100%→0% in 3s).
+    After 3s, hide the board div (opacity: 0, pointer-events: none)
+    and show the question panel with a 15-second answer timer.
+
+DRILL 2: FORK FINDER
+  How it works:
+    Show a board position. The player must click the single square
+    where a Horse (Ashwa) of their colour could land to fork the
+    enemy Raja AND at least one other enemy piece.
+    Timer: 5 seconds visible countdown per position.
+    Correct click within time = +20 points.
+    Wrong click = 0 (no penalty, move to next).
+    10 positions per session. Max 200 points.
+
+  Board generation:
+    Use only puzzles of type 'ashwa-fork' from puzzle-data.js.
+    The fork square is the solution[0].to value.
+    Highlight valid pieces (the two pieces being forked) in the
+    question text only — NOT on the board.
+    Legal horse move validation: from candidate square, check if the
+    horse can reach both the Raja and at least one other enemy piece
+    in (±1,±2)|(±2,±1).
+
+  Visual feedback:
+    On correct click: flash the square green for 500ms.
+    On wrong click: flash the square red for 300ms.
+    After time expires with no click: show correct square in gold.
+
+DRILL 3: RATHA HUNT
+  How it works:
+    Show a board position. The player must click the enemy Ratha
+    that can be captured in ONE move by any of their pieces.
+    Timer: 8 seconds per position.
+    Correct = +15 points. 10 positions. Max 150 points.
+
+  Board generation:
+    Use puzzles of type 'ratha-hunt' from puzzle-data.js.
+    The target is always the piece at solution[0].to (the capture
+    destination in the first solution step).
+    Only show positions where exactly one enemy Ratha is capturable
+    in one move (keeps the drill unambiguous).
+
+  Visual feedback:
+    Player clicks a square. If that square contains the capturable
+    Ratha: green flash + next position.
+    If wrong piece: red flash, no penalty, timer continues.
+    On timeout: highlight correct Ratha in gold.
+
+DRILL 4: DICE DRILL
+  How it works:
+    Show a board position AND a dice face value (1–6).
+    The player must click the BEST move for that dice roll.
+    "Best" is defined as: captures the highest-value piece available,
+    or if no capture, moves toward the centre.
+    Timer: 10 seconds per position.
+    Correct = +25 points. 10 positions. Max 250 points.
+
+  Board generation:
+    Use any puzzle from puzzle-data.js where forcedDice[0] is defined.
+    The correct move is solution[0] (from→to).
+    The dice face shown is forcedDice[0].
+
+  Validation:
+    The player clicks a destination square. If from+to matches
+    solution[0], it is correct.
+    Allow selecting the piece first (click piece, then destination).
+    Show piece selection highlight as in puzzles.html.
+
+SCORING AND ELO UPDATE
+───────────────────────
+After a drill session (10 positions) completes:
+
+  drillScore = total points earned / max possible points × 100 (percent)
+
+  ELO adjustment per drill:
+    if drillScore >= 80: eloAkhara += 25
+    if drillScore >= 60: eloAkhara += 10
+    if drillScore >= 40: eloAkhara += 0  (no change)
+    if drillScore <  40: eloAkhara -= 10
+
+  eloAkhara is bounded 0–1000.
+  Rank is recomputed from eloAkhara after each session.
+  Display the rank change with an animation if tier changes.
+
+akhara.html LAYOUT
+───────────────────
+Single-page app with four sections rendered via JS show/hide:
+
+SECTION A — HOME SCREEN
+  · Large "Akhara" title (Cinzel serif)
+  · Current Akhara ELO + rank badge
+  · 4 drill cards in a 2×2 grid, each showing:
+    - Drill name + Sanskrit description
+    - Best score this week
+    - Estimated time (all are ~3 minutes)
+    - "Begin Drill" button
+  · ELO progress bar showing position between current and next rank
+  · Last 5 drill results in a table (drill type, score, date)
+
+SECTION B — DRILL SCREEN (shared by all 4 drills)
+  · Drill name + position counter (e.g. "Position 3 of 10")
+  · Countdown bar (depletes in real time, gold → red)
+  · Board (544px × 544px, 8×8, square size 68px)
+  · Board labels (a–h top, 1–8 side)
+  · Question panel (shown after flash, or always for other drills)
+  · Answer input appropriate to drill type
+  · Running score display (right panel)
+  · "Skip" button (0 points for position, no penalty to ELO)
+
+SECTION C — RESULTS SCREEN
+  · Score breakdown: X/Y correct, Z points
+  · ELO change animation (+25 shown in green, or −10 in red)
+  · Rank badge (shown prominently if tier changed)
+  · Drona's verdict (different text per drill type and score tier)
+  · "Drill Again" button + "Back to Akhara" button
+
+SECTION D — RANK SCROLL (accessible from home screen)
+  · Shows all 5 ranks with their requirements
+  · Player's current position highlighted
+  · Each rank has a description from the Mahabharata context:
+    Shishya = Arjuna before Drona's teaching
+    Yoddha = an ordinary Kuru soldier
+    Sarathi = Sanjaya, who could read the entire battlefield
+    Arjuna = the archer who could see only the eye of the bird
+    Brahmastra = "He sees the board as Krishna sees the universe"
+
+DRONA'S VERDICT TEXTS (per drill, per tier)
+────────────────────────────────────────────
+Flash Drill:
+  80%+: "Your eye reads the Ashtāpada as Sanjaya read Kurukshetra
+         from a thousand miles — every piece's danger visible at once."
+  60%+: "You see most of what the board shows. The threats you missed
+         will be your teachers. Return tomorrow."
+  below: "The battlefield appeared to you as a blur. This is where
+          training begins — not where it ends."
+
+Fork Finder:
+  80%+: "The Ashwa fork is your weapon. You found the killing square
+         before your enemy could breathe. This is Arjuna's eye."
+  60%+: "You found the fork. Not always in time — but you found it.
+         Speed comes with repetition. The Arthashastra agrees."
+  below: "The horse leaped. You did not see where it would land.
+          Study the L-shape until it becomes instinct."
+
+Ratha Hunt:
+  80%+: "The Ratha cannot hide from you. Your eyes sweep the rank
+         and file as the chariot sweeps the battlefield."
+  60%+: "Most Rathas fell to your eye. The one you missed was waiting
+         in the corner. Watch the edges of the Ashtāpada."
+  below: "The enemy chariot stood in plain sight. This is the first
+          lesson — learn to see what is already there."
+
+Dice Drill:
+  80%+: "You read the Pāśaka and the position simultaneously. This
+         is the Chaturanga mind — force and circumstance unified."
+  60%+: "The dice and the board spoke to you on most turns. The
+         turns you missed reveal a pattern — find it."
+  below: "The dice decided. The board waited. You hesitated. Next
+          time — decide first, then move."
+
+NAVIGATION
+───────────
+Add to game.html nav-right (after the shubh.html sun icon):
+  <a href="akhara.html" class="nav-icon-btn" title="Akhara Training">
+    <i class="fa-solid fa-dumbbell"></i>
+  </a>
+
+localStorage key: chaturanga_akhara (do NOT collide with others listed).
+
+IMPORTANT CONSTRAINTS
+──────────────────────
+  · Both drills and the Shubh Challenge use puzzle-data.js boards.
+    Before using any boardState as a drill position, validate:
+    1. No two pieces on the same square
+    2. All square names are valid (a1–h8)
+    3. Horse moves validated with (±1,±2)|(±2,±1)
+    4. Elephant moves validated with (±2,±2) ONLY
+  · The countdown bar must use a CSS animation (not setInterval).
+    Use @keyframes to shrink width from 100% to 0% in the given time.
+    JS only controls when the animation starts and reads completion.
+  · All board rendering must use the same color scheme as puzzles.html:
+    light squares: #f0d9b5, dark squares: #b58863
+    piece symbols: pawn=♟, horse=♞, elephant=♝, rook=♜, king=♚
+    player 0 (Red) pieces: color #e74c3c
+    player 1 (Blue) pieces: color #60a5fa
+    player 2 (Green) pieces: color #4ade80
+    player 3 (Yellow) pieces: color #fbbf24
+  · Akhara ELO must never go below 0 or above 1000.
+  · The integration with puzzles.html (difficulty suggestion) must be
+    a passive one-way signal only — puzzles.html reads one key on load
+    and adjusts its initial filter. Do not modify puzzle-engine.js.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 5 — OUTPUT REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Build in this exact order. Do not skip ahead.
+
+TASK 1 OUTPUT (Daily Shubh Challenge):
+  File 1: shubh-engine.js
+    · Complete standalone JS file
+    · All functions documented with comments
+    · ChaturangaShubh public API fully exported
+    · Fake leaderboard seeding algorithm
+    · Tithi + festival detection
+    · Streak tracking + localStorage I/O
+    · No dependencies except puzzle-data.js being loaded first
+
+  File 2: shubh.html
+    · Complete standalone HTML page
+    · Loads puzzle-data.js, puzzle-engine.js, shubh-engine.js
+    · Full 3-column layout
+    · Working puzzle board (copy render logic from puzzles.html)
+    · Countdown timer to next day's puzzle
+    · Leaderboard with player highlighted in gold
+    · Confetti animation on solve (CSS only, no canvas)
+    · Mobile responsive (below 700px: single column)
+
+TASK 2 OUTPUT (Akhara):
+  File 1: akhara.html
+    · Complete standalone HTML page (~800–1200 lines expected)
+    · All 4 drills fully functional
+    · All 4 sections (Home / Drill / Results / Rank Scroll)
+    · Countdown bars using CSS animations
+    · ELO + rank system with localStorage persistence
+    · Drona's verdict texts per drill per score tier
+    · All board rendering consistent with puzzles.html
+
+QUALITY BAR FOR EACH FILE
+───────────────────────────
+Before delivering any file, check:
+  1. No two pieces on the same square in any board state used
+  2. Every horse move validated: (±1,±2)|(±2,±1) only
+  3. Every elephant move validated: (±2,±2) only
+  4. No localStorage key collisions (see Section 2)
+  5. The page loads and functions with ONLY puzzle-data.js available
+     (no server, no API calls, no external data dependencies)
+  6. Styling matches the Chaturanga dark/gold aesthetic exactly
+  7. Every cultural reference (Sanskrit, Mahabharata, Gita) is used
+     correctly and in context — not as decoration
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SECTION 6 — WHAT NOT TO DO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  · Do NOT use any JS framework (no React, Vue, Svelte, jQuery)
+  · Do NOT use any CSS framework (no Tailwind, Bootstrap)
+  · Do NOT make any fetch() or XHR calls — everything is local
+  · Do NOT modify game.js, ui.js, puzzle-engine.js, or puzzle-data.js
+  · Do NOT add a <body> background color — use CSS variables only
+  · Do NOT use Inter, Roboto, or Arial fonts — use Cinzel + Outfit
+    (load from Google Fonts CDN as in existing pages)
+  · Do NOT use emoji in code — use Font Awesome icons or Unicode
+    chess symbols (♟♞♝♜♚) specifically
+  · Do NOT randomly generate board positions — always use
+    puzzle-data.js boardStates as the source
+  · Do NOT hardcode today's puzzle — always derive it from the
+    deterministic dayIndex formula
+  · Do NOT output skeleton code or placeholders — every function
+    must be fully implemented and working
+
+════════════════════════════════════════════════════════════════════════
+  END OF HANDOFF PROMPT
+════════════════════════════════════════════════════════════════════════

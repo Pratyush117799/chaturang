@@ -16,6 +16,71 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/animations.css" />
   <link rel="stylesheet" href="css/chatbot.css" />
+  <style>
+    /* How to Play — nav pill */
+    .howto-nav-link{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:8px 16px;
+      margin-left:6px;
+      border:1.5px solid rgba(200,150,12,0.5);
+      border-radius:999px;
+      background:rgba(200,150,12,0.07);
+      color:#eab308 !important;
+      font-weight:600;
+      font-size:0.85rem;
+      white-space:nowrap;
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      transition:background .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+    }
+    .howto-nav-link::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background:linear-gradient(120deg, transparent, rgba(234,179,8,0.4), transparent);
+      transform:translateX(-130%);
+      transition:transform .7s ease;
+    }
+    .howto-nav-link:hover::before{ transform:translateX(130%); }
+    .howto-nav-link:hover{
+      background:rgba(200,150,12,0.18);
+      border-color:#eab308;
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(200,150,12,0.28);
+    }
+    .howto-nav-link i{
+      animation:howtoIconTilt 2.6s ease-in-out infinite;
+    }
+    @keyframes howtoIconTilt{
+      0%,100%{ transform:rotate(0deg); }
+      50%{ transform:rotate(-10deg); }
+    }
+
+    /* How to Play — hero CTA (reuses .btn-secondary shape, adds its own glow) */
+    .btn-howto{
+      position:relative;
+      border-color:rgba(234,179,8,0.55) !important;
+      animation:howtoGlow 3.2s ease-in-out infinite;
+    }
+    .btn-howto:hover{
+      animation-play-state:paused;
+    }
+    @keyframes howtoGlow{
+      0%,100%{ box-shadow:0 0 0 rgba(234,179,8,0); }
+      50%{ box-shadow:0 0 24px rgba(234,179,8,0.38); }
+    }
+    .btn-howto i{
+      animation:howtoIconTilt 2.6s ease-in-out infinite;
+    }
+    @media (max-width:880px){
+      .howto-nav-link span{ display:none; }
+      .howto-nav-link{ padding:8px 12px; }
+    }
+  </style>
 </head>
 
 <body>
@@ -37,6 +102,9 @@
       <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
         <i class="fa-solid fa-chess-king"></i> Play Now
       </button>
+      <a href="howtoplay.html" class="howto-nav-link">
+        <i class="fa-solid fa-graduation-cap"></i> <span>How to Play</span>
+      </a>
       <button class="features-btn" id="featuresToggle" aria-label="Open Features">
         <i class="fa-solid fa-bars"></i>
         <span>Features</span>
@@ -140,6 +208,9 @@
         <a href="#play" class="btn-primary"
           onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'}); return false;">
           <i class="fa-solid fa-swords"></i> Enter the Battlefield
+        </a>
+        <a href="howtoplay.html" class="btn-secondary btn-howto">
+          <i class="fa-solid fa-graduation-cap"></i> How to Play
         </a>
         <a href="#about" class="btn-secondary"
           onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'}); return false;">
@@ -797,6 +868,7 @@ const weights = {
           <h5>Game Files</h5>
           <ul>
             <li><a href="../game/game.html">Game (v1.0.5.2)</a></li>
+            <li><a href="howtoplay.html">How to Play</a></li>
             <li><a href="../game/game.html?botCount=1">1 Bot Mode</a></li>
             <li><a href="../game/game.html?botCount=3">3 Bots Mode</a></li>
             <li><a href="../Chaturanga-version-1.0.3.2/game.html">v1.0.3.2 (Legacy)</a></li>

@@ -1,0 +1,67 @@
+Today is Purnima (full moon), Ravivara (Sunday). The calculations are accurate. Now building the full page.
+Design direction: Illuminated almanac — the page feels like a living sacred text. The central Panchanga wheel shows all five limbs (pancha anga) radiating from today's date. Below: today's game significance, the year's festival calendar, and special content unlocks. Gold on near-black, Sanskrit terms dominant, Cormorant Garamond for body text.Ran 2 commands, created a fileRan 2 commands, created a fileBuilding panchanga.html — complete Hindu sacred calendar integration with full Panchanga computation, 5 limbs, festival calendar, game unlocks, daily significancepanchanga.htmlValidate all Panchanga systemsScriptValidate Panchanga with fixed testScriptDone31/31. Copy to outputs:Ran a command, read a fileRan a command, read a filepanchanga.html — 956 lines, 60 KB.
+
+What was built — the complete Panchanga system:
+All five limbs (Pancha Anga) computed in IST:
+LimbWhat it showsTithi (I)Lunar day 1–30, Shukla/Krishna Paksha, presiding deityVara (II)Day of week in Sanskrit, planet, deity, game significanceNakshatra (III)Lunar mansion (1 of 27), deity, game connectionYoga (IV)One of 27 yogas, auspicious/mixed/inauspicious, descriptionKarana (V)Half-tithi (simplified)
+All data fully authored:
+
+30 Tithi descriptions — each with a specific game principle (Ekadashi = hardest puzzle/no hints, Purnima = alliance puzzles, Amavasya = endgame pool, Chaturthi = Ganesha removes obstacles)
+27 Nakshatras — each with deity, icon, and specific tactical advice tied to the Ashtāpada
+7 Varas — Sanskrit names, planetary rulers, specific game philosophy per day (Guruvara = study not play, Mangalavara = aggressive tactics, Shanivara = calculate one move deeper)
+27 Yogas — auspicious/mixed/inauspicious quality, game significance
+6 Ritus (seasons) — Vasanta to Shishira, each with a seasonal game principle
+Vikram Samvat year + Samvatsara name (60-year cycle)
+
+14 Festival events for 2026 with exact dates, descriptions, and specific game unlocks:
+
+Makar Sankranti, Vasant Panchami, Maha Shivratri, Holi, Ram Navami, Guru Purnima, Mahabharata Jayanti (all 18 campaign days unlocked), Janmashtami (Chakravyuha featured), Navratri, Dussehra, Diwali (hardest puzzle, no hints), Dev Deepawali, Gita Jayanti (extended Day 18 cutscene)
+
+Three localStorage keys written when their festival fires: chaturanga_mb_jayanti, chaturanga_guru_purnima, chaturanga_vasant_panchami — other pages can read these to activate their special content.
+Visual tithi bar — 30 coloured cells (Purnima = gold, Ekadashi = red-tinted, Amavasya = dark, current = highlighted). Moon phase SVG drawn from tithi value. Festival calendar shows past/today/upcoming with colour states.PanchangaCode · PMAssessed progress and sought clarification on next stepsAssessed progress and sought clarification on next steps
+
+(Panchanga html file claude response)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Full v1.0.5 build state:
+FileStatuskurukshetra.htmlDays 1, 13–18 + progressive unlock + Granth wiredakhara.html4 drills, ELO, 5 ranks, Granth wiredgranth.html18 achievements, Canvas share, auto-detectshubh.htmlIST, LCG leaderboard, festivals, confetti, Granthboard-forge.htmlForge/Play/Analyse/Community, URL sharinglobby.html + server-ws.jsReconnect, server-side validation, ELO, chat, rematchshastra-kosh.html20 Sanskrit tactical concepts, discovery systempanchanga.htmlFull 5-limb calendar, 14 festivals, game unlocks
+Remaining (not yet built this session):
+
+Rashtra Map — interactive SVG of 18 Mahabharata kingdoms
+Yuddha Gatha — replay theater with decision points
+Vyuha formations improvements — animated, historical, interactive
+Post-game Seer replay page — standalone seer-replay.html
+Days 2–12 integration — paste + wire the existing data file into kurukshetra.html
+Wire post-game-analysis.js — 2-line fix in game.html
+
+Also noted as pending:
+
+Website integration (needs your site files)
+Custom Chaturanga piece SVGs (design work)
+Dharma engine integration into kurukshetra
+Q: What do you want to build next?
+A: Build Rashtra Map (interactive Mahabharata geography)12:30 PMArchitected interactive ancient India map with eighteen kingdomsArchitected interactive ancient India map with eighteen kingdomsLet me research the exact positions and data for all 18 kingdoms before writing a line.Recognized prior completion and prepared deliveryRecognized prior completion and prepared deliveryAlready built — let me validate and deliver it.Diagnosed quote formatting discrepancy in test validationDiagnosed quote formatting discrepancy in test validation27/28 — the one "failure" is a false positive: the test searched for text-anchor='middle' (single quotes) but the SVG uses double quotes, as it should. The compass rose is on line 307. All 28 features are present.Ran a command, read a fileRan a command, read a filerashtra-map.html — 738 lines, 45 KB.
+
+What was built:
+The map itself — a stylized SVG of ancient Bharatavarsha (approx. 3100 BCE) with a hand-drawn India landmass path, Himalayan ridge with snow peaks, five major rivers (Sindhu/Indus, Saraswati, Yamuna, Ganga, Narmada) drawn as dashed blue lines with labels, ocean labels for Arabian Sea, Bay of Bengal, and Indian Ocean, a compass rose, and a scale note. The Kurukshetra battlefield pulses gold with a crossed-swords marker.
+18 kingdoms placed geographically:
+SideKingdomsPandava (blue)Panchala, Matsya, Chedi, Kashi, Kekaya, Vrishni/Dwarka, MagadhaKaurava (red)Hastinapura, Gandhara, Sindhu, Trigarta, Pragjyotisha, Avanti, Kalinga, Madra, Shalva, NishadhaNeutral (purple)Vidarbha
+Each kingdom opens a full info panel with:
+
+Side badge (Pandava/Kaurava/Neutral) in the appropriate colour
+Region (modern geographic equivalent)
+Commander with their full title
+Role at Kurukshetra
+Formation specialty (with Vyuha name)
+Army size in Akshauhinis
+Historical description of the kingdom
+Narrative fate — exactly what happened to each kingdom and commander
+Authentic Mahabharata quote with Parva source
+Campaign link when the kingdom appears in a specific day (Sindhu → Day 14, Madra → Day 17, Hastinapura → Day 18, Panchala → Day 2)
+
+Interaction — click to select, hover to highlight, markers scale up on hover. Auto-selects Hastinapura on load so the panel is never empty.
+
+
+(Rashtra map html was built by claude in this response)

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Samara Shastra · Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────────────────── */
+:root {
+  --ink:   #c9a84c;  --ink2: #e8c96a;  --ink3: #f5e4a0;
+  --vel:   #0c0804;  --vel2: #120c04;  --vel3: #1c1508;
+  --border: rgba(201,168,76,.2);
+  --text:  #f0e4c8;  --muted: #8a7050;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+
+/* ── FULL OVERLAY ───────────────────────────────────────────── */
+body {
+  background: var(--vel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  position: relative;
+}
+
+/* Grain */
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.7;
+}
+
+/* Starfield canvas */
+#stars{
+  position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
+}
+
+/* ── CARD ───────────────────────────────────────────────────── */
+.samara-card {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+  width: 100%;
+  padding: 0 20px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: cardIn .8s .1s cubic-bezier(.2,0,0,1) forwards;
+}
+@keyframes cardIn {
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* ── DRONA AVATAR ───────────────────────────────────────────── */
+.drona-avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.drona-avatar svg {
+  width: 80px; height: 80px;
+  filter: drop-shadow(0 0 20px rgba(201,168,76,.3));
+}
+
+/* ── EYEBROW ────────────────────────────────────────────────── */
+.samara-eyebrow {
+  text-align: center;
+  font-size: .62rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,.4);
+  margin-bottom: 10px;
+}
+
+/* ── ORNAMENT ───────────────────────────────────────────────── */
+.samara-ornament {
+  text-align: center;
+  font-size: 1rem;
+  color: rgba(201,168,76,.2);
+  letter-spacing: .6em;
+  margin-bottom: 20px;
+}
+
+/* ── PANCHANGA STRIP ────────────────────────────────────────── */
+.panchanga-strip {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.panch-pill {
+  background: rgba(201,168,76,.07);
+  border: 1px solid rgba(201,168,76,.18);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: .7rem;
+  color: rgba(201,168,76,.65);
+  font-family: 'Outfit', sans-serif;
+}
+.panch-pill strong {
+  color: var(--ink2);
+  font-weight: 500;
+}
+
+/* ── BRIEFING TEXT ──────────────────────────────────────────── */
+.briefing-wrap {
+  background: linear-gradient(160deg, rgba(28,21,8,.6), rgba(20,14,6,.4));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  position: relative;
+  margin-bottom: 28px;
+}
+/* Corner ornaments */
+.briefing-wrap::before,.briefing-wrap::after {
+  content:'';position:absolute;width:20px;height:20px;
+  border-color:var(--ink);border-style:solid;opacity:.35;
+}
+.briefing-wrap::before{top:10px;left:10px;border-width:1px 0 0 1px}
+.briefing-wrap::after{top:10px;right:10px;border-width:1px 1px 0 0}
+.briefing-bl,.briefing-br {
+  position:absolute;bottom:10px;width:20px;height:20px;
+  border-color:var(--ink);border-style:solid;opacity:.35;
+}
+.briefing-bl{left:10px;border-width:0 0 1px 1px}
+.briefing-br{right:10px;border-width:0 1px 1px 0}
+
+.briefing-prefix {
+  font-size: .65rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,.35);
+  margin-bottom: 14px;
+  display: block;
+  font-family: 'Outfit', sans-serif;
+}
+#briefing-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem;
+  line-height: 1.85;
+  color: var(--text);
+  min-height: 4em;
+}
+#briefing-cursor {
+  display: inline-block;
+  width: 2px; height: 1.1em;
+  background: var(--ink2);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink .9s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* Highlighted words */
+#briefing-text .hl-vara    { color: var(--ink2); font-style: italic; }
+#briefing-text .hl-naksh   { color: #a5b4fc; font-style: italic; }
+#briefing-text .hl-tactic  { color: #4ade80; font-style: italic; }
+#briefing-text .hl-form    { color: var(--ink3); font-style: italic; }
+#briefing-text .hl-drona   { color: var(--ink); }
+
+/* ── GRANTH BADGES ──────────────────────────────────────────── */
+.granth-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.granth-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201,168,76,.06);
+  border: 1px solid rgba(201,168,76,.18);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: .72rem;
+}
+.granth-badge-icon { font-size: .9rem; }
+.granth-badge-name { color: var(--ink2); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+.granth-badge-label { color: var(--muted); font-size: .62rem; }
+
+/* ── BUTTONS ────────────────────────────────────────────────── */
+.samara-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-enter {
+  flex: 1;
+  background: linear-gradient(135deg, #c8960c, #7a5c08);
+  color: #1a0e00;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-family: 'Cinzel', serif;
+  font-size: .88rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-enter:hover {
+  background: linear-gradient(135deg, #e8b52a, #c8960c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(201,168,76,.2);
+}
+.btn-skip {
+  font-size: .72rem;
+  color: rgba(201,168,76,.3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: color .2s;
+  white-space: nowrap;
+  padding: 8px;
+}
+.btn-skip:hover { color: rgba(201,168,76,.6); }
+
+/* ── IFRAME MODE: hide button (parent window controls it) ─── */
+body.iframe-mode .samara-buttons { display: none; }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="samara-card">
+  <div class="drona-avatar">
+    <!-- Drona silhouette SVG -->
+    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="dg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#e8c96a" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#c9a84c" stop-opacity=".2"/>
+        </radialGradient>
+      </defs>
+      <!-- Glow ring -->
+      <circle cx="40" cy="40" r="36" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".25"/>
+      <circle cx="40" cy="40" r="30" fill="none" stroke="#c9a84c" stroke-width=".5" opacity=".15"/>
+      <!-- Guru robes — simplified silhouette -->
+      <!-- Body -->
+      <ellipse cx="40" cy="58" rx="16" ry="14" fill="url(#dg)" opacity=".6"/>
+      <!-- Head -->
+      <circle cx="40" cy="30" r="9" fill="url(#dg)" opacity=".75"/>
+      <!-- Turban wrap -->
+      <ellipse cx="40" cy="24" rx="10" ry="4" fill="#c9a84c" opacity=".4"/>
+      <ellipse cx="40" cy="22" rx="7"  ry="3" fill="#e8c96a" opacity=".35"/>
+      <!-- Bow in hand -->
+      <path d="M28,50 Q22,38 28,26" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".5"/>
+      <line x1="28" y1="26" x2="28" y2="50" stroke="#c9a84c" stroke-width=".8" stroke-dasharray="2,2" opacity=".3"/>
+      <!-- Sacred thread -->
+      <path d="M32,36 Q40,44 48,36" fill="none" stroke="#f5e4a0" stroke-width=".8" opacity=".4"/>
+    </svg>
+  </div>
+
+  <div class="samara-eyebrow">Acharya Drona speaks</div>
+  <div class="samara-ornament">❧ ✦ ❧</div>
+
+  <div class="panchanga-strip" id="panchangaStrip">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="briefing-wrap">
+    <div class="briefing-bl"></div>
+    <div class="briefing-br"></div>
+    <span class="briefing-prefix">Pre-Battle Counsel · समर शास्त्र</span>
+    <div id="briefing-text"><span id="briefing-cursor"></span></div>
+  </div>
+
+  <div class="granth-badges" id="granthBadges">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="samara-buttons">
+    <button class="btn-enter" id="btn-enter" onclick="enterBattle()">
+      ⚔ Enter Battle
+    </button>
+    <button class="btn-skip" id="btn-skip" onclick="skipBriefing()">
+      Skip counsel ›
+    </button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// STARFIELD
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const stars = Array.from({length:80}, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 1.2 + .3,
+    a: Math.random(),
+    speed: Math.random() * .003 + .001,
+  }));
+
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s => {
+      s.a += s.speed;
+      const opacity = (Math.sin(s.a) + 1) / 2 * .6 + .1;
+      ctx.beginPath();
+      ctx.arc(s.x * c.width, s.y * c.height, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(245,228,160,${opacity})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════════════
+
+// 27 Nakshatras → tactical advice
+const NAKSHATRA_ADVICE = {
+  Ashwini:     { adj:'swift',      advice:'Strike early — hesitation is defeat.' },
+  Bharani:     { adj:'fierce',     advice:'The Ratha must lead. Hold nothing back.' },
+  Krittika:    { adj:'sharp',      advice:'Cut through the centre. Fire favours the bold.' },
+  Rohini:      { adj:'fertile',    advice:'Build your position before you strike.' },
+  Mrigashira:  { adj:'searching',  advice:'Seek the fork. The horse finds what the eye misses.' },
+  Ardra:       { adj:'stormy',     advice:'Chaos is your ally today. Sacrifice to win the storm.' },
+  Punarvasu:   { adj:'restoring',  advice:'Recapture what was lost. Patience wins today.' },
+  Pushya:      { adj:'nourishing', advice:'Protect your allies first. Strength in alliance.' },
+  Ashlesha:    { adj:'cunning',    advice:'The serpent coils — indirect approaches win.' },
+  Magha:       { adj:'royal',      advice:'Your Raja must command. Keep him central and safe.' },
+  Purva_Phalguni: { adj:'joyful',  advice:'Combination play — link your pieces in joy.' },
+  Uttara_Phalguni:{ adj:'steadfast',advice:'Hold your formation. Discipline defeats brilliance.' },
+  Hasta:       { adj:'skilled',    advice:'Precision captures — waste no move today.' },
+  Chitra:      { adj:'brilliant',  advice:'Create — the unexpected move will decide this game.' },
+  Swati:       { adj:'independent',advice:'Spread your pieces wide. Space wins today.' },
+  Vishakha:    { adj:'fork-bearing',advice:'The fork nakshatra — the Ashwa\'s L will decide this.' },
+  Anuradha:    { adj:'devotional', advice:'Defend as an act of honour. The shield is the sword.' },
+  Jyeshtha:    { adj:'elder',      advice:'Experience over instinct. Calculate before moving.' },
+  Mula:        { adj:'rooted',     advice:'Destroy the foundation — attack the base rank.' },
+  Purva_Ashadha:{ adj:'invincible',advice:'Press every advantage without mercy.' },
+  Uttara_Ashadha:{ adj:'victorious',advice:'You have the winning position — do not release it.' },
+  Shravana:    { adj:'listening',  advice:'Read the board twice before each move.' },
+  Dhanishtha:  { adj:'wealthy',    advice:'Accumulate small advantages. They compound.' },
+  Shatabhisha: { adj:'veiled',     advice:'The hidden piece will decide this game.' },
+  Purva_Bhadrapada:{ adj:'fierce', advice:'Sacrifice to open the line. Pain for victory.' },
+  Uttara_Bhadrapada:{ adj:'deep',  advice:'Play for the endgame from the first move.' },
+  Revati:      { adj:'complete',   advice:'Every piece has a role. Use them all.' },
+};
+
+// 7 Varas (days) → piece modifier hint
+const VARA_HINTS = {
+  0: { name:'Ravivara',   planet:'Sun',    hint:'The Raja shines — honour him with activity.' },
+  1: { name:'Somavara',   planet:'Moon',   hint:'The Ashwa flows like water — cavalry opens.' },
+  2: { name:'Mangalvara', planet:'Mars',   hint:'The Ratha charges — attack with your chariots.' },
+  3: { name:'Budhavara',  planet:'Mercury',hint:'The Nara is cleverer today — Pawn tactics reward.' },
+  4: { name:'Guruvara',   planet:'Jupiter',hint:'The Danti sees farther — diagonal mastery wins.' },
+  5: { name:'Shukravara', planet:'Venus',  hint:'Alliance wins today — protect your partners.' },
+  6: { name:'Shanivara',  planet:'Saturn', hint:'Patience. Slow pressure. Time is your piece.' },
+};
+
+// 30 Tithis (lunar days) → mood
+const TITHI_MOODS = {
+  1:'The first breath of the lunar month.',
+  2:'A day of building foundation.',
+  3:'Agni tithi — decisive action favoured.',
+  4:'The fourth — seek stability in your centre.',
+  5:'Naga tithi — the coiled approach.',
+  6:'Kumar tithi — youthful aggression.',
+  7:'Victory favours the prepared.',
+  8:'Rahu looms — beware the trap.',
+  9:'The ninth — complete what you began.',
+  10:'Full half-cycle — balance is the weapon.',
+  11:'Ekadashi — hardest position of the month. No hints.',
+  12:'The twelfth — guard your flanks.',
+  13:'Trayodashi — combination play is blessed.',
+  14:'The Pāśa faces its sharpest turn.',
+  15:'Purnima — full moon. Alliance combos are auspicious.',
+  16:'The moon wanes — defend before attacking.',
+  17:'Consolidate your gains.',
+  18:'The eighteenth — Kurukshetra echoes today.',
+  19:'Patience through the waning.',
+  20:'Re-evaluate your formation.',
+  21:'The Ashwa seeks new ground.',
+  22:'Two moves ahead — no less.',
+  23:'The sacrifice may win what aggression cannot.',
+  24:'Guard the diagonals carefully.',
+  25:'The endgame approaches — simplify.',
+  26:'Material counts now more than position.',
+  27:'The clock nears zero — decide.',
+  28:'Near Amavasya — endgame specialisation.',
+  29:'Amavasya — the dark moon. Raja safety above all.',
+  30:'The cycle completes. Begin again with clarity.',
+};
+
+// Granth tactical patterns → readable label + emoji
+const GRANTH_LABELS = {
+  'ashwa-mudra':         { label:'Horse Fork', icon:'♞' },
+  'avyakta-astra':       { label:'Discovered Attack', icon:'⚡' },
+  'nara-uttarayan':      { label:'Pawn Ascent', icon:'♟' },
+  'prithvi-vijaya':      { label:'Back-Rank Strike', icon:'🏰' },
+  'ashani-pata':         { label:'Ratha Capture', icon:'⚔' },
+  'raja-mukha':          { label:'Campaign Victory', icon:'👑' },
+  'yoddha-prapti':       { label:'Warrior Rank', icon:'🔥' },
+  'arjuna-drshti':       { label:"Arjuna's Eye", icon:'🎯' },
+  'brahmastra-prapti':   { label:'Brahmastra', icon:'✦' },
+  'shubh-sapta':         { label:'Seven Dawns', icon:'🌅' },
+  'chakravyuha-survivor':{ label:'Chakravyuha Entered', icon:'🌀' },
+  'chakravyuha-arjuna':  { label:'Equal to Arjuna', icon:'⚔' },
+  'dharma-samapti':      { label:"Dharma's Completion", icon:'🪷' },
+};
+
+// Formation strengths (from vyuha-data)
+const FORMATION_STRENGTHS = {
+  Garuda:     'your cavalry wings spread wide',
+  Chakra:     'a rotating spiral of force',
+  Kurma:      'an impenetrable tortoise shell',
+  Makara:     'a crocodile jaw of aggression',
+  Vajra:      'a thunderbolt wedge at centre',
+  Padma:      'a lotus opening from the middle',
+  Krauncha:   'a heron\'s precision thrust',
+  Sarvatobhadra: 'a formation that faces all directions',
+  Shakata:    'a cart that resists the charge',
+  Mandala:    'a circular force without weakness',
+};
+
+// ═══════════════════════════════════════════════════════════════
+// PANCHANGA (live computation, copied from panchanga.html logic)
+// ═══════════════════════════════════════════════════════════════
+function getPanchangaToday() {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const ist = new Date(now.getTime() + istOffset);
+
+  // Vara (0=Sun, 1=Mon, ... 6=Sat)
+  const vara = ist.getUTCDay();
+
+  // Tithi (simplified — lunar day approximation)
+  // Full moon near 15 Ashadha etc — we use a simplified cycle
+  const J = function(year, month, day) {
+    const a = Math.floor((14 - month) / 12);
+    const y = year + 4800 - a;
+    const m = month + 12 * a - 3;
+    return day + Math.floor((153 * m + 2) / 5) + 365 * y +
+           Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+  };
+  const jd = J(ist.getUTCFullYear(), ist.getUTCMonth() + 1, ist.getUTCDate());
+  const newMoonBase = 2451550.09766; // J2000 first new moon
+  const synodicMonth = 29.530588853;
+  const phase = ((jd - newMoonBase) % synodicMonth + synodicMonth) % synodicMonth;
+  const tithi = Math.min(30, Math.ceil(phase / (synodicMonth / 30)));
+
+  // Nakshatra (27-fold cycle, ~13.33 days each)
+  const nakshatraNames = Object.keys(NAKSHATRA_ADVICE);
+  const nakshatraIndex = Math.floor(((jd - 2451549.5) % 27.32) / 27.32 * 27);
+  const nakshatra = nakshatraNames[((nakshatraIndex % 27) + 27) % 27];
+
+  // Yoga (27 yogas, positive/inauspicious cycle)
+  const GOOD_YOGAS  = ['Vishkambha','Priti','Ayushman','Saubhagya','Shobhana','Sukarman',
+                       'Dhrti','Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana',
+                       'Vajra','Siddhi','Vyatipata','Variyan','Parigha','Shiva','Siddha',
+                       'Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti','Atiganda'];
+  const yogaIdx = Math.floor(((jd - 2451549.5) % 27) + 27) % 27;
+  const yoga = GOOD_YOGAS[yogaIdx];
+  const isAuspicious = ![3,6,8,11,15,16,17,25,26].includes(yogaIdx);
+
+  return { vara, tithi, nakshatra, yoga, isAuspicious, ist };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DATA LOADING
+// ═══════════════════════════════════════════════════════════════
+function loadGranthInscriptions() {
+  try {
+    const g = JSON.parse(localStorage.getItem('chaturanga_granth') || '{}');
+    const inscriptions = g.inscriptions || {};
+    // Return last 3 (most recent first)
+    const sorted = Object.entries(inscriptions)
+      .sort((a,b) => (b[1].ts || 0) - (a[1].ts || 0))
+      .slice(0, 3)
+      .map(([id]) => id);
+    return sorted;
+  } catch { return []; }
+}
+
+function loadFormation() {
+  try {
+    const raw = localStorage.getItem('chaturanga_vyuha') ||
+                localStorage.getItem('chaturanga_formation') || '{}';
+    const v = JSON.parse(raw);
+    return v.name || v.selected || v.vyuha || null;
+  } catch { return null; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BRIEFING GENERATION
+// ═══════════════════════════════════════════════════════════════
+function generateBriefing(panch, recentInscriptions, formation) {
+  const varaData  = VARA_HINTS[panch.vara] ?? VARA_HINTS[0];
+  const nakData   = NAKSHATRA_ADVICE[panch.nakshatra] ?? NAKSHATRA_ADVICE['Vishakha'];
+  const tithiText = TITHI_MOODS[panch.tithi] ?? TITHI_MOODS[1];
+  const formStrength = formation ? (FORMATION_STRENGTHS[formation] ?? `the ${formation} formation's force`) : null;
+  const topInscription = recentInscriptions[0];
+  const tacticLabel = topInscription ? GRANTH_LABELS[topInscription]?.label : null;
+  const inscCount = recentInscriptions.length;
+
+  // Build sentence fragments
+  const lines = [];
+
+  // Line 1: Day + Nakshatra
+  lines.push(
+    `Today is <span class="hl-vara">${varaData.name}</span> ` +
+    `— the day of <span class="hl-vara">${varaData.planet}</span>, ` +
+    `under the <span class="hl-naksh">${panch.nakshatra}</span> nakshatra ` +
+    `(${nakData.adj}).`
+  );
+
+  // Line 2: Tithi + yoga flavour
+  const yogaWord = panch.isAuspicious ? 'auspicious' : 'testing';
+  lines.push(
+    `The lunar day is ${panch.tithi} — ${tithiText} ` +
+    `The ${panch.yoga} yoga makes this a <span class="hl-vara">${yogaWord}</span> moment.`
+  );
+
+  // Line 3: Granth reading
+  if (tacticLabel && inscCount > 0) {
+    lines.push(
+      `Your Granth carries <span class="hl-tactic">${inscCount === 1 ? 'one' : inscCount} inscription${inscCount > 1 ? 's' : ''}</span> ` +
+      `— the most recent: <span class="hl-tactic">${tacticLabel}</span>. ` +
+      `Your hands remember this move.`
+    );
+  } else {
+    lines.push(
+      `Your Granth is <span class="hl-tactic">still forming</span>. ` +
+      `Let this game write its first inscription.`
+    );
+  }
+
+  // Line 4: Formation + combined tactic
+  if (formation && formStrength) {
+    lines.push(
+      `You enter with <span class="hl-form">${formation}</span> — ${formStrength}. ` +
+      `${nakData.advice}`
+    );
+  } else {
+    lines.push(nakData.advice);
+  }
+
+  // Line 5: Vara tactical modifier
+  lines.push(
+    `<span class="hl-drona">${varaData.hint}</span>`
+  );
+
+  // Line 6: Drona's closing word
+  const CLOSINGS = [
+    'Now — go. The board does not wait.',
+    'The Ashtāpada reveals all. Step forward.',
+    'Your pieces are ready. Are you?',
+    'Dharma watches every move. Play accordingly.',
+    'Sixty-four squares. Infinite choices. One right move.',
+    'Enter as Arjuna entered — focused on the eye alone.',
+  ];
+  const closing = CLOSINGS[panch.tithi % CLOSINGS.length];
+  lines.push(`<span class="hl-drona">"${closing}"</span>`);
+
+  return lines;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TYPEWRITER EFFECT
+// ═══════════════════════════════════════════════════════════════
+function typewriterHTML(el, htmlLines, onDone) {
+  const cursor = document.getElementById('briefing-cursor');
+  el.innerHTML = '';
+
+  let lineIdx = 0;
+  let charIdx = 0;
+  let currentText = '';
+  let currentHTML = '';
+  let allLines = htmlLines;
+  const SPEED = 22; // ms per character
+
+  // Strip HTML for typewriter, keep structure for replacement
+  function stripHTML(html) { const d = document.createElement('div'); d.innerHTML = html; return d.textContent; }
+
+  function typeLine() {
+    if (lineIdx >= allLines.length) {
+      if (cursor) cursor.style.display = 'none';
+      if (onDone) onDone();
+      return;
+    }
+
+    const rawHTML  = allLines[lineIdx];
+    const rawText  = stripHTML(rawHTML);
+
+    if (charIdx < rawText.length) {
+      charIdx++;
+      // Find how many chars of the real text we've typed
+      // We reveal the whole HTML at once when we'd reach that character
+      const progress = charIdx / rawText.length;
+      const charsToShow = Math.floor(progress * rawText.length);
+
+      // Show partial: we reconstruct partial HTML
+      // Simple approach: character-by-character of text, swap in full HTML when done
+      const partialText = rawText.substring(0, charIdx);
+      const isLastChar = charIdx >= rawText.length;
+
+      // Build display: all completed lines in full HTML + current line as plain text
+      let display = '';
+      for (let i = 0; i < lineIdx; i++) {
+        display += allLines[i] + '<br><br>';
+      }
+      display += isLastChar ? rawHTML : partialText;
+
+      el.innerHTML = display;
+      if (cursor) el.appendChild(cursor);
+      setTimeout(typeLine, SPEED + (rawText[charIdx-1] === '.' || rawText[charIdx-1] === ',' ? 180 : 0));
+    } else {
+      // Line complete
+      lineIdx++;
+      charIdx = 0;
+      if (lineIdx < allLines.length) {
+        setTimeout(typeLine, 350); // pause between lines
+      } else {
+        el.innerHTML = allLines.map(l => l).join('<br><br>');
+        if (cursor) { cursor.style.display = 'none'; }
+        if (onDone) onDone();
+      }
+    }
+  }
+
+  if (cursor) cursor.style.display = 'inline-block';
+  typeLine();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANCHANGA STRIP RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderPanchangaStrip(panch) {
+  const strip = document.getElementById('panchangaStrip');
+  const varaData = VARA_HINTS[panch.vara];
+  const items = [
+    { label: 'Vara',     value: varaData.name },
+    { label: 'Tithi',    value: panch.tithi },
+    { label: 'Nakshatra',value: panch.nakshatra.replace('_', ' ') },
+    { label: 'Yoga',     value: panch.yoga },
+  ];
+  strip.innerHTML = items.map(({ label, value }) =>
+    `<span class="panch-pill">${label}: <strong>${value}</strong></span>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GRANTH BADGES
+// ═══════════════════════════════════════════════════════════════
+function renderGranthBadges(inscriptions) {
+  const container = document.getElementById('granthBadges');
+  if (!inscriptions.length) { container.style.display = 'none'; return; }
+
+  container.innerHTML = inscriptions.map(id => {
+    const info = GRANTH_LABELS[id];
+    if (!info) return '';
+    return `
+      <div class="granth-badge">
+        <span class="granth-badge-icon">${info.icon}</span>
+        <div>
+          <div class="granth-badge-name">${info.label}</div>
+          <div class="granth-badge-label">Recent inscription</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ENTER / SKIP
+// ═══════════════════════════════════════════════════════════════
+function enterBattle() {
+  // If embedded in an iframe from game.html, post message to parent
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'samara:enter' }, '*');
+    return;
+  }
+  // Otherwise navigate to game
+  const dest = localStorage.getItem('chaturanga_samara_returnUrl') || 'game.html';
+  window.location.href = dest;
+}
+
+function skipBriefing() {
+  enterBattle();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN INIT
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const panch        = getPanchangaToday();
+  const inscriptions = loadGranthInscriptions();
+  const formation    = loadFormation();
+
+  renderPanchangaStrip(panch);
+  renderGranthBadges(inscriptions);
+
+  const lines = generateBriefing(panch, inscriptions, formation);
+  const textEl = document.getElementById('briefing-text');
+
+  // Small delay for atmosphere
+  setTimeout(() => {
+    typewriterHTML(textEl, lines, () => {
+      // Enable enter button fully after text completes
+      document.getElementById('btn-enter').style.boxShadow = '0 0 20px rgba(201,168,76,.2)';
+    });
+  }, 600);
+
+  // Iframe detection
+  if (window.parent !== window) {
+    document.body.classList.add('iframe-mode');
+  }
+});
+</script>
+</body>
+</html>

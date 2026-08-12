@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Rashtra Map — The 18 Kingdoms of Kurukshetra · Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c96a;--gold3:#f5e4a0;
+  --vellum:#0c0804;--vel2:#140e06;--vel3:#1c1508;
+  --border:rgba(201,168,76,.16);--border2:rgba(201,168,76,.30);
+  --text:#f0e4c8;--muted:#8a7050;--muted2:#5a4830;
+  --pandava:#60a5fa;--kaurava:#e74c3c;--neutral:#a099ee;
+  --kurukshetra:#e8c96a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--vellum);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;min-height:100vh}
+
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E")}
+
+.nav{background:rgba(12,8,4,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700;
+  text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-badge{font-size:.65rem;background:rgba(201,168,76,.1);color:var(--muted);
+  padding:2px 8px;border-radius:10px;border:1px solid var(--border)}
+.nav-links{margin-left:auto;display:flex;gap:4px}
+.nav-link{padding:5px 12px;border-radius:6px;font-size:.8rem;color:var(--muted);
+  text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px}
+.nav-link:hover{background:rgba(201,168,76,.08);color:var(--gold)}
+
+/* HERO */
+.hero{text-align:center;padding:44px 20px 28px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.hero-ornament{font-size:1.4rem;color:rgba(201,168,76,.2);letter-spacing:.5em;margin-bottom:14px;display:block}
+.hero-eyebrow{font-size:.65rem;letter-spacing:.26em;text-transform:uppercase;color:rgba(201,168,76,.45);margin-bottom:10px}
+.hero-title{font-family:'Cinzel',serif;font-size:2.4rem;font-weight:700;color:var(--gold2);margin-bottom:6px;line-height:1.1}
+.hero-deva{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:rgba(201,168,76,.45);margin-bottom:14px}
+.hero-desc{font-size:.86rem;color:var(--muted);line-height:1.75;max-width:500px;margin:0 auto 20px}
+
+/* LEGEND */
+.legend{display:flex;gap:16px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* MAIN LAYOUT */
+.map-layout{
+  display:flex;gap:0;align-items:flex-start;
+  max-width:1100px;margin:0 auto;padding:0 16px 48px;
+  position:relative;z-index:1;
+}
+
+/* MAP CONTAINER */
+.map-container{flex:1;min-width:0;position:relative}
+.map-svg-wrap{
+  width:100%;
+  background:linear-gradient(160deg,#0e0c06,#0a0802);
+  border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;position:relative;
+}
+#rashtraMap{width:100%;height:auto;display:block;cursor:default}
+
+/* Kingdom markers */
+.k-marker{cursor:pointer;transition:all .2s}
+.k-marker circle.k-bg{transition:r .15s,opacity .15s}
+.k-marker:hover circle.k-bg{r:14;opacity:1}
+.k-marker.active circle.k-bg{r:16;opacity:1;filter:drop-shadow(0 0 8px currentColor)}
+.k-marker text.k-label{font-family:'Cinzel',serif;font-size:9px;pointer-events:none;
+  transition:opacity .15s}
+.k-marker:hover text.k-label{opacity:1}
+
+/* Kurukshetra star */
+.kurukshetra-star{animation:kPulse 2s ease-in-out infinite}
+@keyframes kPulse{0%,100%{opacity:.8;r:8}50%{opacity:1;r:10}}
+
+/* INFO PANEL */
+.info-panel{
+  width:320px;flex-shrink:0;
+  background:linear-gradient(160deg,var(--vel3),var(--vel2));
+  border:1px solid var(--border);border-radius:12px;
+  margin-left:16px;
+  position:sticky;top:72px;
+  max-height:calc(100vh - 88px);
+  overflow-y:auto;
+  transition:all .3s;
+}
+.info-panel::-webkit-scrollbar{width:3px}
+.info-panel::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2)}
+.ip-empty{padding:28px 20px;text-align:center}
+.ip-empty-icon{font-size:2rem;color:var(--muted2);margin-bottom:10px}
+.ip-empty-title{font-family:'Cinzel',serif;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.ip-empty-desc{font-size:.75rem;color:var(--muted2);line-height:1.6}
+.ip-content{padding:20px;display:none}
+.ip-content.visible{display:block}
+
+/* Panel header */
+.ip-side-badge{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:2px 10px;border-radius:8px;margin-bottom:10px;display:inline-block}
+.ip-side-pandava{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
+.ip-side-kaurava{background:rgba(231,76,60,.1);color:#e74c3c;border:1px solid rgba(231,76,60,.2)}
+.ip-side-neutral{background:rgba(160,153,238,.1);color:#a099ee;border:1px solid rgba(160,153,238,.2)}
+.ip-name{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--gold2);line-height:1.2;margin-bottom:2px}
+.ip-deva{font-family:'Cormorant Garamond',serif;font-size:.9rem;font-style:italic;
+  color:rgba(201,168,76,.45);margin-bottom:14px}
+.ip-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:12px 0}
+
+.ip-row{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start;font-size:.8rem}
+.ip-row-label{color:var(--muted2);min-width:72px;flex-shrink:0;font-size:.7rem;
+  text-transform:uppercase;letter-spacing:.07em;padding-top:1px}
+.ip-row-val{color:var(--text);line-height:1.4}
+.ip-row-val strong{color:var(--gold2)}
+
+.ip-section-label{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(201,168,76,.4);margin-bottom:6px;margin-top:12px}
+.ip-desc{font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--muted);
+  line-height:1.7;margin-bottom:10px}
+.ip-fate{font-family:'Cormorant Garamond',serif;font-size:.88rem;color:var(--text);
+  line-height:1.65;background:rgba(201,168,76,.05);border-left:2px solid var(--gold);
+  border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:12px}
+.ip-quote{font-family:'Cormorant Garamond',serif;font-size:.82rem;font-style:italic;
+  color:#d4b87a;line-height:1.65}
+.ip-source{font-size:.65rem;color:var(--muted);margin-top:4px;text-align:right}
+.ip-campaign-link{
+  display:flex;align-items:center;gap:7px;margin-top:14px;
+  padding:9px 14px;border-radius:7px;
+  background:rgba(201,168,76,.08);border:1px solid var(--border2);
+  color:var(--gold2);text-decoration:none;font-family:'Cinzel',serif;font-size:.75rem;
+  transition:all .2s;
+}
+.ip-campaign-link:hover{background:rgba(201,168,76,.15);border-color:var(--gold)}
+.army-size{font-size:.7rem;padding:2px 8px;border-radius:6px;
+  background:rgba(201,168,76,.08);border:1px solid var(--border);color:var(--muted);
+  display:inline-block;margin-top:4px}
+
+/* RESPONSIVE */
+@media(max-width:760px){
+  .map-layout{flex-direction:column}
+  .info-panel{width:100%;margin-left:0;margin-top:12px;position:static;max-height:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../../" class="nav-logo">
+    <i class="fa-solid fa-chess-king" style="color:var(--gold)"></i>
+    <span>Chaturanga</span>
+  </a>
+  <span class="nav-badge">Rashtra Map</span>
+  <div class="nav-links">
+    <a href="../../" class="nav-link"><i class="fa-solid fa-scroll fa-xs"></i> Campaign</a>
+    <a href="../../"        class="nav-link"><i class="fa-solid fa-chess-board fa-xs"></i> Game</a>
+    <a href="panchanga.html"   class="nav-link"><i class="fa-solid fa-calendar fa-xs"></i> Panchanga</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <span class="hero-ornament">⚔ ✦ ⚔</span>
+  <div class="hero-eyebrow">The Geography of the Mahabharata War</div>
+  <div class="hero-title">राष्ट्र मानचित्र</div>
+  <div class="hero-deva">Rashtra Manchitra — The Kingdom Map</div>
+  <div class="hero-desc">
+    Eighteen kingdoms sent their armies to Kurukshetra. Each carried its own commander,
+    its own formation, and its own destiny. Click any kingdom to read its story.
+  </div>
+</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#60a5fa"></div> Pandava Alliance</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#e74c3c"></div> Kaurava Alliance</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#a099ee"></div> Neutral / Refused both</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#e8c96a;box-shadow:0 0 6px #e8c96a"></div> Kurukshetra (battlefield)</div>
+</div>
+
+<div class="map-layout">
+  <div class="map-container">
+    <div class="map-svg-wrap">
+      <svg id="rashtraMap" viewBox="0 0 740 680" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Ocean gradient -->
+          <radialGradient id="oceanGrad" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#0a0e14" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#060a0e" stop-opacity="1"/>
+          </radialGradient>
+          <!-- Land gradient -->
+          <radialGradient id="landGrad" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#1a1608"/>
+            <stop offset="100%" stop-color="#0e0c06"/>
+          </radialGradient>
+          <!-- Himalaya gradient -->
+          <linearGradient id="himalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f0e4c8" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#c9a84c" stop-opacity=".05"/>
+          </linearGradient>
+          <!-- Glow filters -->
+          <filter id="panGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <filter id="kauGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <filter id="starGlow">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Ocean background -->
+        <rect width="740" height="680" fill="url(#oceanGrad)"/>
+
+        <!-- ── INDIA LANDMASS (stylized outline) ── -->
+        <path d="
+          M 130 80
+          L 680 80
+          L 700 110
+          C 720 130 730 160 720 195
+          L 705 230
+          C 695 250 685 265 670 270
+          L 650 280
+          C 635 290 625 310 630 335
+          L 635 360
+          C 640 385 635 405 618 420
+          L 595 440
+          C 575 460 560 480 548 505
+          L 535 530
+          C 520 555 505 575 490 590
+          L 470 610
+          C 450 630 425 645 400 650
+          C 375 655 350 645 330 630
+          L 310 610
+          C 290 588 275 560 265 535
+          L 255 505
+          C 245 478 235 455 215 435
+          L 195 415
+          C 170 392 150 365 135 340
+          L 118 310
+          C 100 280 88 248 85 218
+          L 82 190
+          C 80 165 85 142 98 122
+          Z
+        " fill="url(#landGrad)" stroke="rgba(201,168,76,.22)" stroke-width="1.5"/>
+
+        <!-- ── HIMALAYAS (top ridge) ── -->
+        <path d="M 130 80 Q 200 68 280 74 Q 360 62 440 68 Q 520 58 600 70 Q 650 76 680 80"
+          fill="none" stroke="rgba(240,228,200,.25)" stroke-width="3"/>
+        <!-- Snow peaks -->
+        <path d="M 200 80 L 210 65 L 220 80 M 290 74 L 300 59 L 310 74 M 390 66 L 400 51 L 410 66 M 500 63 L 510 48 L 520 63 M 590 70 L 600 55 L 610 70"
+          fill="none" stroke="rgba(240,228,200,.35)" stroke-width="1.2"/>
+        <text x="400" y="62" text-anchor="middle" font-family="'Outfit',sans-serif" font-size="8" fill="rgba(240,228,200,.4)" letter-spacing="3">HIMALAYA</text>
+
+        <!-- ── RIVERS ── -->
+        <!-- Sindhu/Indus (west) -->
+        <path d="M 155 95 Q 145 130 138 165 Q 132 200 125 240 Q 118 270 110 300"
+          fill="none" stroke="rgba(96,165,250,.35)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="104" y="178" font-family="'Cormorant Garamond',serif" font-size="8" fill="rgba(96,165,250,.4)" font-style="italic" transform="rotate(-80,104,178)">Sindhu</text>
+
+        <!-- Saraswati (near Kurukshetra) -->
+        <path d="M 290 110 Q 330 120 365 130 Q 390 138 410 145"
+          fill="none" stroke="rgba(201,168,76,.3)" stroke-width="1.2" stroke-dasharray="3,3"/>
+        <text x="340" y="116" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="rgba(201,168,76,.4)" font-style="italic">Saraswati</text>
+
+        <!-- Yamuna -->
+        <path d="M 400 95 Q 415 135 420 175 Q 428 215 435 255 Q 440 280 442 310"
+          fill="none" stroke="rgba(96,165,250,.28)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="437" y="195" font-family="'Cormorant Garamond',serif" font-size="8" fill="rgba(96,165,250,.35)" font-style="italic" transform="rotate(80,437,195)">Yamuna</text>
+
+        <!-- Ganga (main) -->
+        <path d="M 440 140 Q 460 165 478 195 Q 498 228 520 255 Q 545 280 575 295 Q 605 305 640 300"
+          fill="none" stroke="rgba(96,165,250,.4)" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="520" y="244" font-family="'Cormorant Garamond',serif" font-size="8.5" fill="rgba(96,165,250,.45)" font-style="italic">Ganga</text>
+
+        <!-- Narmada -->
+        <path d="M 185 375 Q 230 365 280 360 Q 340 355 390 358 Q 430 360 470 368"
+          fill="none" stroke="rgba(96,165,250,.25)" stroke-width="1.2" stroke-dasharray="4,3"/>
+        <text x="330" y="352" font-family="'Cormorant Garamond',serif" font-size="7.5" fill="rgba(96,165,250,.3)" font-style="italic">Narmada</text>
+
+        <!-- ── OCEAN LABELS ── -->
+        <text x="90" y="490" font-family="'Cormorant Garamond',serif" font-size="11" fill="rgba(96,165,250,.2)" font-style="italic" transform="rotate(-15,90,490)">Arabian Sea</text>
+        <text x="600" y="460" font-family="'Cormorant Garamond',serif" font-size="11" fill="rgba(96,165,250,.2)" font-style="italic" transform="rotate(15,600,460)">Bay of Bengal</text>
+        <text x="380" y="665" font-family="'Cormorant Garamond',serif" font-size="11" fill="rgba(96,165,250,.2)" font-style="italic" text-anchor="middle">Indian Ocean</text>
+
+        <!-- ── KURUKSHETRA MARKER ── -->
+        <g id="kurukshetra-marker" transform="translate(342, 148)">
+          <circle r="18" fill="rgba(232,201,106,.06)" stroke="rgba(232,201,106,.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <circle class="kurukshetra-star" r="8" fill="rgba(232,201,106,.15)" stroke="#e8c96a" stroke-width="1.5" filter="url(#starGlow)"/>
+          <circle r="3.5" fill="#e8c96a" opacity=".9"/>
+          <!-- Crossed swords -->
+          <line x1="-6" y1="-6" x2="6" y2="6" stroke="#e8c96a" stroke-width="1.2" opacity=".7"/>
+          <line x1="6" y1="-6" x2="-6" y2="6" stroke="#e8c96a" stroke-width="1.2" opacity=".7"/>
+          <text y="28" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#e8c96a" opacity=".85" letter-spacing=".5">Kurukshetra</text>
+        </g>
+
+        <!-- ── KINGDOM MARKERS (rendered by JS) ── -->
+        <g id="kingdomMarkers"></g>
+
+        <!-- Compass rose (bottom right) -->
+        <g transform="translate(680, 600)">
+          <circle r="22" fill="rgba(12,8,4,.6)" stroke="rgba(201,168,76,.2)" stroke-width="1"/>
+          <line x1="0" y1="-16" x2="0" y2="16" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
+          <line x1="-16" y1="0" x2="16" y2="0" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
+          <polygon points="0,-18 3,-10 0,-14 -3,-10" fill="rgba(201,168,76,.7)"/>
+          <text y="-20" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="rgba(201,168,76,.6)">N</text>
+          <text y="26" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="rgba(201,168,76,.4)">S</text>
+          <text x="22" y="3" font-family="'Cinzel',serif" font-size="7" fill="rgba(201,168,76,.4)">E</text>
+          <text x="-28" y="3" font-family="'Cinzel',serif" font-size="7" fill="rgba(201,168,76,.4)">W</text>
+        </g>
+
+        <!-- Scale note -->
+        <text x="20" y="668" font-family="'Outfit',sans-serif" font-size="7.5" fill="rgba(201,168,76,.25)">Ancient Bharatavarsha — c. 3100 BCE (approximate)</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- INFO PANEL -->
+  <div class="info-panel" id="infoPanel">
+    <div class="ip-empty" id="ipEmpty">
+      <div class="ip-empty-icon"><i class="fa-solid fa-location-dot"></i></div>
+      <div class="ip-empty-title">Click any kingdom</div>
+      <div class="ip-empty-desc">Select a kingdom on the map to read its commander, formation, army, and narrative fate at Kurukshetra.</div>
+    </div>
+    <div class="ip-content" id="ipContent">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// KINGDOM DATA — 18 kingdoms
+// ═══════════════════════════════════════════════════════════════
+const KINGDOMS = [
+
+  // ── PANDAVA ALLIANCE ──────────────────────────────────────────
+
+  { id:'panchala', name:'Panchala', deva:'पांचाल', side:'pandava',
+    region:'Northern India (modern Uttar Pradesh / Haryana)',
+    cx:378, cy:192,
+    commander:'Dhrishtadyumna, son of Drupada',
+    role:'Supreme Commander of the Pandava forces — the Senapati',
+    formation:'Krauncha Vyuha — the heron formation, narrow spear aimed at the centre',
+    armySize:'1 Akshauhini',
+    campaignDay:2, campaignDayTitle:'Day 2 — Garuda vs Krauncha',
+    desc:'Panchala was the kingdom of Drupada, father of Draupadi. The humiliation of Drupada by Drona — who ordered his students to conquer half of Panchala as guru-dakshina — was a seed of the Kurukshetra war. Dhrishtadyumna was born from the sacred fire specifically to kill Drona.',
+    fate:'Dhrishtadyumna commanded the Pandava army through all 18 days. On Day 15 he killed Dronacharya — fulfilling his birth purpose — by beheading him while Drona sat in meditation after hearing of his son Ashvatthama\'s supposed death. Ashvatthama killed Dhrishtadyumna on Night 18 in the sleeping camp.',
+    quote:'"He who is born for a single purpose cannot die until that purpose is fulfilled — and cannot live long after it is."',
+    source:'— Drona Parva, Mahabharata' },
+
+  { id:'matsya', name:'Matsya', deva:'मत्स्य', side:'pandava',
+    region:'Modern Rajasthan (Jaipur region)',
+    cx:286, cy:232,
+    commander:'Virata, King of Matsya',
+    role:'Host of the Pandavas during their 13th year of exile (incognito)',
+    formation:'Standard defensive formation',
+    armySize:'1 Akshauhini',
+    campaignDay:null,
+    desc:'The Pandavas spent their final year of exile in Virata\'s kingdom in disguise — Yudhishthira as a court gambler, Bhima as a cook, Arjuna as a dance teacher, the twins as stable hands, and Draupadi as a maidservant. Virata\'s discovery of their true identity during a cattle raid led to the declaration of war.',
+    fate:'Virata was killed by Shalya of Madra on Day 1 of the battle. His son Uttara — whose chariot Arjuna briefly drove when he revealed himself — was killed by Ashvatthama on Day 1 as well. The line of Matsya ended at Kurukshetra.',
+    quote:'"The king who shelters the righteous in their darkest year earns a place alongside them in their moment of triumph — but also shares their sacrifice."',
+    source:'— Virata Parva, Mahabharata' },
+
+  { id:'chedi', name:'Chedi', deva:'चेदि', side:'pandava',
+    region:'Central India (Bundelkhand, modern Madhya Pradesh)',
+    cx:432, cy:295,
+    commander:'Dhrishtaketu, King of Chedi',
+    role:'Flanking force on the Pandava left',
+    formation:'Makara Vyuha (Crocodile) — patient ambush formation',
+    armySize:'1 Akshauhini',
+    campaignDay:null,
+    desc:'Chedi was the kingdom of Shishupala, Krishna\'s cousin, who was famously killed by Krishna at Yudhishthira\'s Rajasuya sacrifice after uttering his hundredth insult. Dhrishtaketu, Shishupala\'s son, chose to fight for the Pandavas despite his father\'s enmity with Krishna — honouring the blood bond with Draupadi\'s family over personal grievance.',
+    fate:'Dhrishtaketu was killed in battle. The Chedi kingdom, already weakened by the loss of Shishupala and the Rajasuya tribute, did not survive the war as an independent power.',
+    quote:'"He chose justice over kinship, dharma over dynasty. The son of Shishupala fought alongside Krishna\'s own allies."',
+    source:'— Drona Parva, Mahabharata' },
+
+  { id:'kashi', name:'Kashi', deva:'काशी', side:'pandava',
+    region:'Varanasi — sacred city on the Ganges (modern UP)',
+    cx:475, cy:252,
+    commander:'Kashi-raja (King of Kashi), his two brothers',
+    role:'Eastern flank support, archer corps',
+    formation:'Shakata Vyuha (Cart) — defensive protection of Varanasi archers',
+    armySize:'1 Akshauhini (combined with Kekaya)',
+    campaignDay:null,
+    desc:'Kashi — the city of Shiva, the eternal city — was among the most sacred kingdoms of ancient India. Varanasi on the Ganges was already ancient when the Mahabharata war was fought. The King of Kashi and his brothers were skilled archers who formed part of the Pandava eastern flank.',
+    fate:'All three Kashi brothers were killed by Ashvatthama in a single engagement. The sacred city survived the war but its royal line was extinguished on the battlefield.',
+    quote:'"Even the city of Shiva sent its sons to Kurukshetra. No kingdom was untouched by this war."',
+    source:'— Karna Parva, Mahabharata' },
+
+  { id:'kekaya', name:'Kekaya', deva:'केकय', side:'pandava',
+    region:'Northwest Punjab (modern Punjab/Himachal border)',
+    cx:238, cy:163,
+    commander:'Yudhamanyu and Uttamaujas — the five Kekaya princes',
+    role:'Right-wing cavalry — the fastest arm of the Pandava force',
+    formation:'Vajra Vyuha (Thunderbolt) — lightning cavalry assault',
+    armySize:'Partial Akshauhini',
+    campaignDay:null,
+    desc:'The five princes of Kekaya were among the most aggressive fighters in the Pandava army. Their kingdom in the northwestern hills produced exceptional cavalry, and they were assigned to guard Arjuna\'s chariot on several critical days.',
+    fate:'Yudhamanyu and Uttamaujas survived most of the 18 days but were killed in Ashvatthama\'s night attack on Day 18 while guarding the Pandava camp.',
+    quote:'"The Kekaya cavalry rode like the wind of the hills they came from — but the night of Ashvatthama had no answer."',
+    source:'— Sauptika Parva, Mahabharata' },
+
+  { id:'vrishni', name:'Vrishni / Dwarka', deva:'वृष्णि / द्वारका', side:'pandava',
+    region:'Dwarka — Gujarat coast (modern Saurashtra)',
+    cx:128, cy:322,
+    commander:'Satyaki (Yuyudhana), great archer of the Vrishni clan',
+    role:'Arjuna\'s second charioteer and personal bodyguard',
+    formation:'Garuda Vyuha wing — matching Bhishma\'s eagle',
+    armySize:'1 Akshauhini (Satyaki\'s Vrishni contingent)',
+    campaignDay:3, campaignDayTitle:'Day 3 — The Left Flank',
+    desc:'The Vrishni were Krishna\'s own clan. Krishna himself drove Arjuna\'s chariot as a non-combatant, but gave his Narayani Sena (a full division of Vrishni warriors) to Duryodhana — and himself to Arjuna. Satyaki, the great Vrishni archer, fought for the Pandavas and was one of the few warriors to survive all 18 days.',
+    fate:'Satyaki was one of only three Pandava-side survivors. After the war, he lived in the ruins of Dwarka until a fratricidal war among the Vrishnis themselves destroyed the entire clan — fulfilling Gandhari\'s curse.',
+    quote:'"Krishna gave his army to one side and himself to the other. The army was formidable — but the charioteer was Krishna."',
+    source:'— Udyoga Parva, Mahabharata' },
+
+  { id:'magadha', name:'Magadha', deva:'मगध', side:'pandava',
+    region:'Modern Bihar — the Gangetic plain',
+    cx:538, cy:252,
+    commander:'Sahadeva of Magadha (not the Pandava twin)',
+    role:'Eastern flank — heavy elephant corps',
+    formation:'Kurma Vyuha (Tortoise) — the defended elephant square',
+    armySize:'1 Akshauhini',
+    campaignDay:null,
+    desc:'Magadha — later the empire of Chandragupta Maurya and Ashoka — was already a major power in the Mahabharata era. Its specialty was war elephants, the Danti of the Ashtāpada. Magadha\'s king Sahadeva (distinct from the Pandava twin) brought the eastern elephant corps to support the Pandava alliance.',
+    fate:'Magadha\'s forces suffered heavily against the Kaurava cavalry. The kingdom went on to become the greatest empire in Indian history a generation later, but its Kurukshetra army was decimated.',
+    quote:'"The elephant corps of Magadha filled the eastern flank like a moving fortress. But fortresses can be outflanked."',
+    source:'— Bhishma Parva, Mahabharata' },
+
+  // ── KAURAVA ALLIANCE ──────────────────────────────────────────
+
+  { id:'hastinapura', name:'Hastinapura / Kuru', deva:'हस्तिनापुर', side:'kaurava',
+    region:'Hastinapura — near modern Meerut, Uttar Pradesh',
+    cx:355, cy:162,
+    commander:'Duryodhana, Crown Prince of the Kuru dynasty',
+    role:'Supreme commander of the Kaurava alliance',
+    formation:'Multiple — commanded all 11 Akshauhinis',
+    armySize:'11 Akshauhinis — the largest force in the history of Bharatavarsha',
+    campaignDay:18, campaignDayTitle:'Day 18 — The Final Duel',
+    desc:'Hastinapura was the Kuru capital — the throne whose succession dispute caused the entire war. The dice game, Draupadi\'s humiliation, the thirteen years of exile, and the failed peace mission of Krishna all circled back to the question of who would sit on this throne. Duryodhana chose war over justice.',
+    fate:'Duryodhana fought the final duel with Bhima on Day 18, at the lake Dvaipayana. Bhima struck below the waist — technically violating the rules of mace combat — and shattered Duryodhana\'s thigh. He died at sunset on the 18th day. The Kuru dynasty survived only through the Pandavas.',
+    quote:'"He was not evil — he was proud. There is a difference. But pride that refuses every offer of peace is indistinguishable from evil in its consequences."',
+    source:'— Shalya Parva, Mahabharata' },
+
+  { id:'gandhara', name:'Gandhara', deva:'गान्धार', side:'kaurava',
+    region:'Modern Afghanistan / Pakistan (Kandahar / Taxila region)',
+    cx:92, cy:142,
+    commander:'Shakuni, King of Gandhara — maternal uncle of Duryodhana',
+    role:'Strategic advisor, dice master, architect of the Pandavas\' exile',
+    formation:'Suchimukha Vyuha (Needle) — the long-range infiltration formation',
+    armySize:'1 Akshauhini',
+    campaignDay:null,
+    desc:'Gandhara was the birthplace of Gandhari — Dhritarashtra\'s queen — and of her brother Shakuni. When Gandhari was given in marriage to the blind king, Shakuni vowed to destroy the Kuru dynasty from within. He is considered the primary architect of the war — it was his crooked dice in the gambling hall that sent the Pandavas to exile.',
+    fate:'Shakuni was killed by Sahadeva — the Pandava twin — on Day 18. Sahadeva had sworn to kill the man responsible for his mother Madri\'s death and the dice game\'s humiliation. The needle formation he commanded was broken apart by Arjuna\'s arrows on Day 14.',
+    quote:'"He played the longest game of all — not at the dice table, but the game of keeping the Kauravas' hatred alive and sharp for eighteen years."',
+    source:'— Shalya Parva, Mahabharata' },
+
+  { id:'sindhu', name:'Sindhu', deva:'सिन्धु', side:'kaurava',
+    region:'Modern Sindh and Balochistan — lower Indus valley',
+    cx:112, cy:225,
+    commander:'Jayadratha, King of Sindhu — husband of Duhshala (Duryodhana\'s sister)',
+    role:'Sealed the Chakravyuha exit against the Pandavas on Day 13',
+    formation:'Vyuha gate guardian — sealed the outer ring',
+    armySize:'Partial Akshauhini',
+    campaignDay:14, campaignDayTitle:'Day 14 — Arjuna\'s Fury',
+    desc:'Jayadratha was the king who sealed the outer ring of the Chakravyuha on Day 13, preventing the other Pandavas from entering to rescue Abhimanyu. He had a boon from Shiva that he could once hold all the Pandavas at bay except Arjuna. He used this boon precisely on Day 13.',
+    fate:'Arjuna swore on the night of Abhimanyu\'s death that he would kill Jayadratha before the next sunset or walk into fire. On Day 14, Krishna darkened the sun with his Sudarshana Chakra to make the Kauravas think the day was over — Jayadratha emerged to gloat. The "darkness" lifted. Arjuna\'s arrow took his head.',
+    quote:'"His boon gave him one day of power over the mightiest warriors on earth. He used it to seal a sixteen-year-old boy inside a formation with six maharathis."',
+    source:'— Drona Parva, Mahabharata' },
+
+  { id:'trigarta', name:'Trigarta', deva:'त्रिगर्त', side:'kaurava',
+    region:'Northwest Punjab — three rivers\' land (modern Kangra valley)',
+    cx:208, cy:152,
+    commander:'Susharma, King of Trigarta — led the Samsaptakas (oath-bound warriors)',
+    role:'Samsaptakas — "those who will not retreat" — sworn to kill Arjuna or die',
+    formation:'Continuous assault in waves — no defensive formation',
+    armySize:'1+ Akshauhinis of Samsaptakas',
+    campaignDay:null,
+    desc:'The Samsaptakas were warriors who swore a death oath — they would kill Arjuna or die trying. Trigarta contributed thousands of these oath-bound fighters who were used as a decoy to draw Arjuna away from the main battle on multiple days. Their sacrifice was calculated to create tactical windows for Drona.',
+    fate:'Susharma and the Samsaptakas were killed by Arjuna over the course of several days. They accomplished their tactical purpose — drawing Arjuna away on Day 13 created the conditions for the Chakravyuha — but they paid for it with their lives.',
+    quote:'"They chose death before dishonour and found both. No chronicle records the number of Samsaptakas Arjuna killed — only that they kept coming."',
+    source:'— Drona Parva, Mahabharata' },
+
+  { id:'pragjyotisha', name:'Pragjyotisha', deva:'प्राग्ज्योतिष', side:'kaurava',
+    region:'Assam — northeastern India (modern Guwahati region)',
+    cx:635, cy:182,
+    commander:'Bhagadatta, King of Pragjyotisha — old ally of Pandu',
+    role:'Elephant corps commander — commanded the Supratika war elephant',
+    formation:'Gajasena (elephant division) — frontal charge formation',
+    armySize:'1 Akshauhini with exceptional elephant corps',
+    campaignDay:null,
+    desc:'Bhagadatta was the king of the far northeast — a land known for its war elephants. He had been a friend of Pandu (the Pandavas\' father) but chose the Kaurava side out of loyalty to Duryodhana. He was considered the greatest elephant warrior in the world, commanding the divine elephant Supratika.',
+    fate:'On Day 12, Bhagadatta\'s elephant Supratika was rampaging through the Pandava army. Arjuna killed Supratika and then Bhagadatta himself with the Vaishnavastra — a weapon given to him by Indra. Bhagadatta, old and nearly blind, died in battle with his eyes taped open.',
+    quote:'"An old king, half-blind, commanding the greatest elephant in the world. He came from the edge of the world to die on the plain of Kurukshetra."',
+    source:'— Drona Parva, Mahabharata' },
+
+  { id:'avanti', name:'Avanti', deva:'अवन्ति', side:'kaurava',
+    region:'Modern Madhya Pradesh (Ujjain region)',
+    cx:282, cy:338,
+    commander:'Vinda and Anuvinda — the twin princes of Avanti',
+    role:'South-western flank — the furthest allies of the Kauravas',
+    formation:'Makaravyuha wing — crocodile flanking',
+    armySize:'Partial Akshauhini',
+    campaignDay:null,
+    desc:'Avanti — centred on the sacred city of Ujjain — was a major ancient kingdom. Its twin princes Vinda and Anuvinda both sought Draupadi\'s hand at her Swayamvara but lost to Arjuna. They chose the Kaurava side — whether from resentment or genuine loyalty is unrecorded.',
+    fate:'Vinda was killed by Arjuna. Anuvinda was killed by Satyaki. They died on the same day, as they had lived together. Avanti was one of the kingdoms absorbed into Magadha\'s later empire.',
+    quote:'"Twin princes who sought the same woman, fought on the same side, and died on the same day. The symmetry was the only mercy the battle offered them."',
+    source:'— Drona Parva, Mahabharata' },
+
+  { id:'kalinga', name:'Kalinga', deva:'कलिंग', side:'kaurava',
+    region:'Modern Odisha — eastern coast',
+    cx:562, cy:358,
+    commander:'Shrutayudha — the king of Kalinga, wielder of the divine mace',
+    role:'Eastern flank — naval-trained land infantry and elephant corps',
+    formation:'Sarvatomukha (all-facing) — surrounded formation',
+    armySize:'1 Akshauhini',
+    campaignDay:null,
+    desc:'Kalinga was the great eastern coastal kingdom — the same kingdom that Ashoka would conquer three centuries later, whose massacre would convert him to Buddhism. At Kurukshetra, Kalinga\'s fighters were trained in coastal warfare. Shrutayudha possessed a divine mace that would kill whoever it was used against — except that it would kill its owner if hurled at a non-combatant.',
+    fate:'Shrutayudha in rage hurled his divine mace at Krishna — a non-combatant charioteer. The mace reversed and killed Shrutayudha himself. Bhima then killed the Kalinga king\'s son Ketuman.',
+    quote:'"He forgot the condition of the boon in his fury. The weapon that could kill anyone instead killed its owner."',
+    source:'— Bhishma Parva, Mahabharata' },
+
+  { id:'madra', name:'Madra', deva:'मद्र', side:'kaurava',
+    region:'Northwest Punjab / Pakistan (Sialkot region)',
+    cx:174, cy:170,
+    commander:'Shalya, King of Madra — maternal uncle of the Pandava twins',
+    role:'Karna\'s charioteer on Day 17 — and the last Kaurava commander',
+    formation:'Vajra Vyuha — the thunderbolt assault',
+    armySize:'1 Akshauhini',
+    campaignDay:17, campaignDayTitle:'Day 17 — Karna\'s Wheel',
+    desc:'Shalya was the maternal uncle of Nakula and Sahadeva — the Pandava twins. Duryodhana tricked him into joining the Kaurava side by hosting him with extraordinary hospitality before he could reach the Pandava camp. As compensation, Yudhishthira asked Shalya to demoralise Karna while serving as his charioteer by constantly praising Arjuna.',
+    fate:'Shalya became the last commander of the Kaurava forces after Karna\'s death on Day 17. He was killed by Yudhishthira — the eldest Pandava, who almost never fought directly — on Day 18. It was one of Yudhishthira\'s only kills of the entire war.',
+    quote:'"He served as Karna\'s charioteer while secretly working against him. He was trapped between loyalty to the Kauravas and love for his nephews — and served neither fully."',
+    source:'— Shalya Parva, Mahabharata' },
+
+  { id:'shalva', name:'Shalva', deva:'शाल्व', side:'kaurava',
+    region:'Northwest India (modern Haryana / Rajasthan border)',
+    cx:263, cy:193,
+    commander:'The King of Shalva',
+    role:'Close support for the Kuru forces — cavalry wing',
+    formation:'Standard cavalry assault — Turaga Vyuha (horse formation)',
+    armySize:'Partial Akshauhini',
+    campaignDay:null,
+    desc:'Shalva was a kingdom close to Kurukshetra itself. Its king had sought Amba\'s hand at her swayamvara before Bhishma abducted her — and Amba had loved Shalva. But Shalva refused to marry Amba after her abduction, citing honour. This refusal led to Amba\'s lifelong vow of vengeance against Bhishma — and her eventual rebirth as Shikhandi.',
+    fate:'The Shalva forces were broken early in the battle. The kingdom\'s king was killed in the first days of fighting. Shalva had already been destroyed as a kingdom when Krishna killed the Shalva king before the main war, in retaliation for the attack on Dwarka.',
+    quote:'"His refusal of one woman set in motion the chain that brought down the greatest warrior who ever lived."',
+    source:'— Adi Parva, Mahabharata' },
+
+  { id:'nishadha', name:'Nishadha', deva:'निषाद', side:'kaurava',
+    region:'Central India — forest kingdoms of the Vindhya range',
+    cx:388, cy:352,
+    commander:'Ekalavya — the greatest student Drona never formally taught',
+    role:'Forest archer corps — guerrilla flank',
+    formation:'Aranya Vyuha (Forest) — concealment and ambush',
+    armySize:'Partial Akshauhini',
+    campaignDay:null,
+    desc:'Ekalavya was the Nishadha prince who learned archery by building a clay statue of Drona and training before it. When Drona discovered his skill, he demanded Ekalavya\'s right thumb as guru-dakshina — to protect Arjuna\'s status as the greatest archer. Ekalavya gave it. He fought for the Kauravas at Kurukshetra with the nine remaining fingers of his hands.',
+    fate:'Ekalavya was killed by Krishna before the main battle — during an earlier conflict. He did not live to fight at Kurukshetra. His legacy is the greatest injustice the Mahabharata records: a student robbed of his gift by the teacher who refused to teach him.',
+    quote:'"He gave his thumb without a word of protest. The guru-dakshina of devotion to a teacher who was never his teacher."',
+    source:'— Adi Parva, Mahabharata' },
+
+  // ── NEUTRAL ───────────────────────────────────────────────────
+
+  { id:'vidarbha', name:'Vidarbha', deva:'विदर्भ', side:'neutral',
+    region:'Modern Maharashtra (Nagpur / Amravati region)',
+    cx:340, cy:418,
+    commander:'Rukmi — the brother of Rukmini (Krishna\'s principal wife)',
+    role:'Refused both sides. Offered help; rejected by both Arjuna and Duryodhana',
+    formation:'None deployed — Vidarbha did not fight',
+    armySize:'Refused to commit',
+    campaignDay:null,
+    desc:'Rukmi was the brother of Rukmini, who Krishna had abducted in her own swayamvara. He nursed a lifelong hatred of Krishna but also sought alliance with the Pandavas. Before the battle, he offered his army first to Arjuna and then to Duryodhana — both refused him for different reasons. He stood on the edge of Kurukshetra with a fully assembled army and watched.',
+    fate:'Rukmi watched the entire war from the sidelines. He survived it. He was later killed by Balarama — Krishna\'s brother — in a dice quarrel at the marriage of Aniruddha. His refusal to fight may have been wisdom or cowardice; the Mahabharata leaves it ambiguous.',
+    quote:'"He brought an army no one wanted to the largest war in history and came home with it intact. Whether that was wisdom or failure, the text does not say."',
+    source:'— Udyoga Parva, Mahabharata' },
+
+];
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER MARKERS
+// ═══════════════════════════════════════════════════════════════
+const SIDE_COLOR = { pandava:'#60a5fa', kaurava:'#e74c3c', neutral:'#a099ee' };
+const SIDE_CLASS = { pandava:'ip-side-pandava', kaurava:'ip-side-kaurava', neutral:'ip-side-neutral' };
+const SIDE_LABEL = { pandava:'Pandava Alliance', kaurava:'Kaurava Alliance', neutral:'Neutral Kingdom' };
+
+let activeId = null;
+
+function renderMarkers() {
+  const g = document.getElementById('kingdomMarkers');
+  g.innerHTML = '';
+
+  KINGDOMS.forEach(k => {
+    const color = SIDE_COLOR[k.side];
+    const grp = document.createElementNS('http://www.w3.org/2000/svg','g');
+    grp.setAttribute('class','k-marker');
+    grp.setAttribute('id','km-'+k.id);
+    grp.setAttribute('transform',`translate(${k.cx},${k.cy})`);
+
+    // Outer glow ring (shown on hover/active)
+    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ring.setAttribute('r','18');
+    ring.setAttribute('fill','none');
+    ring.setAttribute('stroke',color);
+    ring.setAttribute('stroke-width','1');
+    ring.setAttribute('opacity','.15');
+    ring.classList.add('k-ring');
+
+    // Main dot
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('class','k-bg');
+    dot.setAttribute('r','8');
+    dot.setAttribute('fill', color);
+    dot.setAttribute('opacity','.75');
+
+    // Inner dot
+    const inner = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    inner.setAttribute('r','3');
+    inner.setAttribute('fill', color);
+    inner.setAttribute('opacity','.95');
+
+    // Label
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('class','k-label');
+    txt.setAttribute('y','22');
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('font-family',"'Cinzel',serif");
+    txt.setAttribute('font-size','8.5');
+    txt.setAttribute('fill',color);
+    txt.setAttribute('opacity','.8');
+    txt.textContent = k.name;
+
+    grp.appendChild(ring);
+    grp.appendChild(dot);
+    grp.appendChild(inner);
+    grp.appendChild(txt);
+    grp.addEventListener('click', () => selectKingdom(k.id));
+    grp.addEventListener('mouseenter', () => { dot.setAttribute('r','11'); ring.setAttribute('opacity','.3'); });
+    grp.addEventListener('mouseleave', () => {
+      if (activeId !== k.id) { dot.setAttribute('r','8'); ring.setAttribute('opacity','.15'); }
+    });
+    g.appendChild(grp);
+  });
+}
+
+function selectKingdom(id) {
+  // Deselect previous
+  if (activeId) {
+    const prev = KINGDOMS.find(k=>k.id===activeId);
+    if (prev) {
+      const pg = document.getElementById('km-'+prev.id);
+      if (pg) {
+        const [r,ring] = [pg.querySelector('.k-bg'), pg.querySelector('.k-ring')];
+        if (r)   r.setAttribute('r','8');
+        if (ring) ring.setAttribute('opacity','.15');
+      }
+    }
+  }
+
+  activeId = id;
+  const k = KINGDOMS.find(x=>x.id===id);
+  if (!k) return;
+
+  // Highlight active
+  const ag = document.getElementById('km-'+id);
+  if (ag) {
+    const [r,ring] = [ag.querySelector('.k-bg'), ag.querySelector('.k-ring')];
+    if (r)   { r.setAttribute('r','13'); r.setAttribute('opacity','1'); }
+    if (ring) ring.setAttribute('opacity','.45');
+  }
+
+  // Fill panel
+  const color = SIDE_COLOR[k.side];
+  const sideClass = SIDE_CLASS[k.side];
+  const sideLabel = SIDE_LABEL[k.side];
+
+  document.getElementById('ipEmpty').style.display = 'none';
+  const content = document.getElementById('ipContent');
+  content.style.display = 'block';
+  content.innerHTML = `
+    <span class="ip-side-badge ${sideClass}">${sideLabel}</span>
+    <div class="ip-name" style="color:${color}">${k.name}</div>
+    <div class="ip-deva">${k.deva}</div>
+
+    <div class="ip-row">
+      <span class="ip-row-label">Region</span>
+      <span class="ip-row-val">${k.region}</span>
+    </div>
+    <div class="ip-row">
+      <span class="ip-row-label">Commander</span>
+      <span class="ip-row-val"><strong>${k.commander}</strong></span>
+    </div>
+    <div class="ip-row">
+      <span class="ip-row-label">Role</span>
+      <span class="ip-row-val">${k.role}</span>
+    </div>
+    <div class="ip-row">
+      <span class="ip-row-label">Formation</span>
+      <span class="ip-row-val">${k.formation}</span>
+    </div>
+    <div class="ip-row">
+      <span class="ip-row-label">Army</span>
+      <span class="ip-row-val"><span class="army-size">${k.armySize}</span></span>
+    </div>
+
+    <div class="ip-divider"></div>
+
+    <div class="ip-section-label">About this kingdom</div>
+    <div class="ip-desc">${k.desc}</div>
+
+    <div class="ip-section-label">Fate at Kurukshetra</div>
+    <div class="ip-fate">${k.fate}</div>
+
+    <div class="ip-section-label">From the Mahabharata</div>
+    <div class="ip-quote">${k.quote}</div>
+    <div class="ip-source">${k.source}</div>
+
+    ${k.campaignDay ? `
+    <a href="../../" class="ip-campaign-link">
+      <i class="fa-solid fa-scroll fa-xs"></i>
+      ${k.campaignDayTitle}
+    </a>` : ''}
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderMarkers();
+  // Auto-select Kurukshetra / Hastinapura on load
+  setTimeout(() => selectKingdom('hastinapura'), 400);
+});
+</script>
+</body>
+</html>
