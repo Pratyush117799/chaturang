@@ -15,9 +15,15 @@ app.use(express.json());
 // MongoDB connection
 // ---------------------------------------------------------
 const MONGO_URI = process.env.MONGO_URL;
+
+
+console.log(MONGO_URI)
 if (!MONGO_URI) {
   console.error('MONGO_URL is not set — check your .env.local file.');
 }
+
+
+
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB Cluster'))
   .catch((err) => console.error('MongoDB Connection Error:', err.message));
@@ -80,7 +86,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, trim: true, lowercase: true },
   password: { type: String, required: true },
-  elo: { type: Number, default: 1200 }, // matches the WS server's starting elo assumption
+  elo: { type: Number}, // matches the WS server's starting elo assumption
   resetOtp: { type: String, default: null },
   resetOtpExpires: { type: Date, default: null },
   friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -95,7 +101,14 @@ const userSchema = new mongoose.Schema({
     endedAt: { type: Date, default: Date.now },
     type: { type: String, enum: ['1bot', '2bot', '3bot', 'pvp'] },
     result: { type: String, enum: ['win', 'defeat', 'quitted'] }
-  }]
+  }], 
+
+  puzzleProgress: {
+    elo: { type: Number, default: 0 },
+    streak: { type: Number, default: 0 },
+    lastSolvedDate: { type: Date, default: null },
+    solved: { type: [String], default: [] }
+  }
 }, { timestamps: true });
 
 // Hash on create AND on update — anywhere .save() runs with a modified password.
@@ -123,6 +136,55 @@ const User = mongoose.model('User', userSchema);
 // ---------------------------------------------------------
 
 // CREATE
+
+
+// GET current progress
+app.get('/api/puzzles/progress/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).select('puzzleProgress');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.json({ success: true, progress: user.puzzleProgress || { elo: 1200, streak: 0, solved: [] } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error retrieving progress' });
+  }
+});
+
+// POST — record a solve (upserts by puzzleId, recalculates streak/elo server-side)
+app.post('/api/puzzles/progress/:userId/solve', async (req, res) => {
+  try {
+    const { puzzleId, score, hintsUsed, eloDelta } = req.body;
+    if (!puzzleId) return res.status(400).json({ success: false, message: 'puzzleId required' });
+
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (!user.puzzleProgress) user.puzzleProgress = { elo: 1200, streak: 0, solved: [] };
+
+    const alreadySolved = user.puzzleProgress.solved.includes(puzzleId);
+    if (!alreadySolved) {
+      user.puzzleProgress.solved.push(puzzleId);
+
+      const today = new Date().toDateString();
+      const lastDay = user.puzzleProgress.lastSolvedDate ? new Date(user.puzzleProgress.lastSolvedDate).toDateString() : null;
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      if (lastDay === today) { /* same day, streak unchanged */ }
+      else if (lastDay === yesterday) { user.puzzleProgress.streak += 1; }
+      else { user.puzzleProgress.streak = 1; }
+      user.puzzleProgress.lastSolvedDate = new Date();
+
+      if (typeof eloDelta === 'number') {
+        user.puzzleProgress.elo = Math.max(0, (user.puzzleProgress.elo || 1200) + eloDelta);
+      }
+    }
+
+    await user.save();
+    res.json({ success: true, progress: user.puzzleProgress });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error saving progress' });
+  }
+});
+
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -276,6 +338,8 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 app.get('/api/user/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
+
+    console.log(user);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     res.json({ success: true, user });
   } catch (err) {

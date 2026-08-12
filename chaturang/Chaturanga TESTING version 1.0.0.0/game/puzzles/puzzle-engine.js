@@ -1,60 +1,64 @@
 globalThis.ChaturangaPuzzleEngine = (function() {
   'use strict';
 
-  const STORAGE_KEY = 'chaturanga_puzzles';
+  const API_BASE = 'http://localhost:5000';
+  let userId = null;
+  let cache = null; // { elo, streak, lastSolvedDate, solved: [...] }
+  let ready = false;
+ let Elo  = 3;
+  async function init(uid) {
+    userId = uid;
+    ready = false;
+    try {
+      const res = await fetch(`${API_BASE}/api/puzzles/progress/${uid}`);
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to load progress');
+      Elo = data.elo;
 
-  function loadProgress() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
-  }
-  function saveProgress(puzzleId, score, solved) {
-    const data = loadProgress();
-    if (!data.solved) data.solved = [];
-    if (!data.scores) data.scores = {};
-    if (!data.streak) data.streak = 0;
-    if (data.elo === undefined) data.elo = 100; // Default starting ELO
-
-    if (solved && !data.solved.includes(puzzleId)) {
-      data.solved.push(puzzleId);
-      data.elo += Math.max(5, Math.floor((score || 10) / 10)); // Increase ELO on first solve
-
-      // BUG #11 FIX: streak is a DAILY streak, not a per-puzzle counter.
-      // Old code incremented streak whenever last solve was within 24h, so
-      // solving 5 puzzles in one day gave a 5-day streak. Completely wrong.
-      //
-      // Correct rules:
-      //   Same calendar day as last solve → already counted today, no increment
-      //   Yesterday → consecutive day → increment streak
-      //   2+ days ago or first ever solve → streak broken → reset to 1
-      const now        = new Date();
-      const todayStr   = now.toDateString();
-
-      if (data.lastSolvedAt) {
-        const lastDate     = new Date(data.lastSolvedAt);
-        const lastStr      = lastDate.toDateString();
-        const yesterday    = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toDateString();
-
-        if (lastStr === todayStr) {
-          // Already solved a puzzle today — streak unchanged, just save
-        } else if (lastStr === yesterdayStr) {
-          // Last solve was yesterday → consecutive → increment
-          data.streak = (data.streak || 0) + 1;
-        } else {
-          // Gap of 2+ days → streak broken → restart
-          data.streak = 1;
-        }
-      } else {
-        // First ever puzzle solved
-        data.streak = 1;
-      }
-
-      data.lastSolvedAt = now.toISOString();
+      cache = data.progress;
+    } catch (err) {
+      console.error('PuzzleEngine.init: failed to load progress', err);
+      cache = { elo: 1200, streak: 0, lastSolvedDate: null, solved: [] };
     }
-    if (score !== undefined) data.scores[puzzleId] = Math.max(data.scores[puzzleId] || 0, score);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    return data;
+    ready = true;
+    return cache;
   }
+
+  function isReady() { return ready; }
+
+  function isSolved(puzzleId) {
+    if (!cache || !cache.solved) return false;
+    return cache.solved.includes(puzzleId);
+  }
+
+  function getTotalProgress() {
+    if (!cache) return { elo: 1200, streak: 0, solved: 0, solvedList: [] };
+    return { elo: Elo, streak: cache.streak, solved: cache.solved.length, solvedList: cache.solved };
+  }
+
+  async function saveProgress(puzzleId, score, hintsUsed, eloDelta) {
+    if (!userId) return null;
+    // optimistic local update so the UI feels instant
+    if (cache && !isSolved(puzzleId)) {
+      cache.solved.push(puzzleId);
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/puzzles/progress/${userId}/solve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ puzzleId, score, hintsUsed, eloDelta })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        cache = data.progress; // reconcile with server-computed streak/elo
+      }
+      return cache;
+    } catch (err) {
+      console.error('PuzzleEngine.saveProgress: failed to sync', err);
+      return cache; // keep optimistic value; will retry on next init
+    }
+  }
+
 
   function loadPuzzle(puzzle) {
     return {
@@ -103,21 +107,5 @@ globalThis.ChaturangaPuzzleEngine = (function() {
     return Math.max(10, Math.round(score));
   }
 
-  function getTotalProgress() {
-    const data = loadProgress();
-    if (data.elo === undefined) data.elo = 100; // migrate older saves
-    return {
-      solved: (data.solved || []).length,
-      streak: data.streak || 0,
-      scores: data.scores || {},
-      elo: data.elo || 100
-    };
-  }
-
-  function isSolved(puzzleId) {
-    const data = loadProgress();
-    return (data.solved || []).includes(puzzleId);
-  }
-
-  return { loadPuzzle, validateMove, getHint, calculateScore, saveProgress, getTotalProgress, isSolved };
+  return { init, loadPuzzle, validateMove, getHint, calculateScore, saveProgress, getTotalProgress, isSolved };
 })();

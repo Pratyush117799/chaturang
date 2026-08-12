@@ -9,8 +9,7 @@ const onlineUsers = new Map();     // userId -> { sockets:Set<Socket>, name, elo
 const pendingInvites = new Map();  // inviteId -> { fromUserId, fromSocket, fromName, toUserId, roomCode, mode, timer }
 const INVITE_TIMEOUT_MS = 30000;
 
-// ── Real rules engine + bot AI ────────────────────────────────────────────
-// game.js's Game constructor touches localStorage (browser-only custom-army
+
 // feature) — stub it before requiring so construction doesn't throw in Node.
 if (typeof globalThis.localStorage === 'undefined') {
   globalThis.localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
@@ -18,14 +17,7 @@ if (typeof globalThis.localStorage === 'undefined') {
 const Game = require('./js/game.js');            // exports the Game class (globalThis.ChaturangaGame)
 require('./js/bot/tieredBots.js');                // attaches globalThis.ChaturangaTieredBot
 const TieredBot = globalThis.ChaturangaTieredBot;
-const BOT_ELO_TIER = 300; // Paranoid Strategist (~600 ELO)
-// NOTE: if bots ever seem to "freeze" the whole server (all rooms stall at
-// once, not just one), check that tieredBots.js's search has a wall-clock
-// deadline inside its recursive eval — an unbounded minimax/expectimax at
-// depth 3+ can block Node's single event loop for seconds, which looks like
-// random disconnects/reconnects to every connected client, not just one bot's
-// room. Ask me to patch that file directly if you hit this.
-
+const BOT_ELO_TIER = 300; 
 const BOT_NAMES = ['Kausalya', 'Arjun', 'Meera', 'Rohan', 'Priya', 'Devan'];
 function randomBotBaseName() { return BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)]; }
 
@@ -36,7 +28,15 @@ const mimeTypes = {
 };
 
 // ── Guest ELO ledger (flat JSON, server-authoritative, atomic writes) ─────
-const LEDGER_PATH = path.join(__dirname, 'elo-ledger.json');
+// Keep game-data OUTSIDE the watched source tree so writing to it can never
+// trigger a nodemon/ts-node-dev restart mid-game.
+const DATA_DIR = path.join(__dirname, 'data');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+const LEDGER_PATH  = path.join(DATA_DIR, 'elo-ledger.json');
+const HISTORY_PATH = path.join(DATA_DIR, 'game-history.json');
+
+
 const MIN_ELO = 100, MAX_ELO = 3000, PROVISIONAL_GAMES = 10;
 
 function atomicWriteJSON(filePath, data) {
@@ -139,7 +139,7 @@ function getLeaderboard() {
     .slice(0, 100);
 }
 
-const HISTORY_PATH = path.join(__dirname, 'game-history.json');
+
 function appendGameHistory(entry) {
   let history = loadJSONSelfHealing(HISTORY_PATH, 'History', []);
   history.push(entry);
@@ -463,7 +463,7 @@ function startGame(room) {
   room.lastGameOver = null;
   room.status = 'playing';
 
-
+room.rematchVotes.clear();
   
   room.engine = createEngineForRoom();
   syncRoomFromEngine(room);
@@ -472,6 +472,9 @@ function startGame(room) {
   broadcast(room, { type: 'game-start', snapshot: getRoomSnapshot(room) });
   broadcastLobby();
   scheduleBotTurn(room);
+
+
+  console.log(rooms);
 }
 
 function checkEngineGameEnd(room) {
@@ -880,8 +883,11 @@ case 'check-friends-online': {
           }
         }
 
-        if (room.status !== 'finished' || seat === null || seat === undefined) break;
 
+
+      
+        if (room.status !== 'finished' || seat === null || seat === undefined) break;
+         
         room.rematchVotes.add(seat);
 
         if (!room._rematchTimer) {
