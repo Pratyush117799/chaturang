@@ -62,11 +62,10 @@ p{color:#9a8e78;font-size:15px;line-height:1.7;max-width:340px;margin:0 auto 32p
 <script>
 // Auto-redirect when connection restores
 window.addEventListener('online', () => {
-  document.getElementById('statusLine').textContent = 'Connection restored — redirecting…';
-  setTimeout(() => { window.location.href = 'game.html'; }, 1200);
+  document.getElementById('statusLine').textContent = 'Connection restored — tap Play to continue';
 });
 document.getElementById('statusLine').textContent = navigator.onLine
-  ? 'Connection restored — tap Play to continue'
+  ? 'Connected — tap Play to continue'
   : 'No connection detected';
 </script>
 </body>

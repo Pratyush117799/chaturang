@@ -84,8 +84,8 @@ class Game {
     this.players = [
       new Player(0, 'red', 0),
       new Player(1, 'blue', 1),
-      new Player(2, 'green', 0),
-      new Player(3, 'yellow', 1)
+      new Player(2, 'green', 2),
+      new Player(3, 'yellow', 3)
     ];
     this.turnIndex = 0;
     this.moveHistory = [];
@@ -98,7 +98,7 @@ class Game {
     this.gameOver = false;
     this.winner = null;
     this.winnerPlayerId = null;
-    this.gameMode = 'team';
+    this.gameMode = 'single';
     this.initWarnings = [];
     this.playerLastDice = [null, null, null, null];
     this.initPosition();
@@ -228,11 +228,6 @@ class Game {
 
   canCapture(piece, target) {
     if (!target || target.owner === piece.owner) return false;
-    if (piece.type === 'king' && target.type === 'king') return false;
-    if (piece.isMinor()) {
-      if (target.isMinor()) return true;
-      if (target.isMajor()) return false;
-    }
     return true;
   }
 
@@ -628,6 +623,8 @@ class Game {
 // ═══════════════════════════════════════════════════════════
 
 Game.prototype.loadCustomArmyIfPresent = function() {
+
+  if (typeof localStorage === 'undefined') return false;
   try {
     const raw = localStorage.getItem('chaturanga_custom_army');
     if (!raw) return false;
@@ -688,4 +685,8 @@ Game.prototype.loadCustomArmyIfPresent = function() {
   }
 };
 
+
+
+
 globalThis.ChaturangaGame = Game;
+if (typeof module !== 'undefined' && module.exports) module.exports = Game; // NEW

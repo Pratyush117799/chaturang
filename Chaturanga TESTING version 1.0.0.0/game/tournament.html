@@ -128,8 +128,19 @@
   <div id="historyList"><p style="color:#888;font-size:.82rem">No tournaments yet.</p></div>
 </div>
 
+
+
+<script src="session.js"></script>
+
 <script src="tournament/tournament-engine.js"></script>
 <script>
+
+
+ if (!Session.isLoggedIn()) {
+    window.location.href = 'loginpage.html'; // gate a protected page
+  }
+  const user = Session.get(); // { id, name, email } or null
+  // e.g. show user.name in a navbar greeting
 let activeTrnId=null, participants=[];
 
 function showTab(name){

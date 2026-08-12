@@ -88,32 +88,31 @@
   <!-- NAVBAR -->
   <nav id="navbar" class="navbar">
     <div class="nav-container">
-  <a href="#hero" class="nav-logo">
-    <span class="logo-devanagari">चतुरंग</span>
-    <span class="logo-divider">·</span>
-    <span class="logo-latin">Chaturanga</span>
-  </a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#about" class="nav-link">About</a></li>
-    <li><a href="#play" class="nav-link">Play</a></li>
-    <li><a href="#docs" class="nav-link">Documentation</a></li>
-    <li><a href="#contribute" class="nav-link">Contribute</a></li>
-  </ul>
-  <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
-    <i class="fa-solid fa-chess-king"></i> Play Now
-  </button>
-  
-  <div class="nav-user" id="navUser">
-    <!-- filled in by JS below: either a "Sign In" link or a logged-in badge -->
-  </div>
-  <button class="features-btn" id="featuresToggle" aria-label="Open Features">
-    <i class="fa-solid fa-bars"></i>
-    <span>Features</span>
-  </button>
-  <button class="hamburger" id="hamburger" aria-label="Open menu">
-    <span></span><span></span><span></span>
-  </button>
-</div>
+      <a href="#hero" class="nav-logo">
+        <span class="logo-devanagari">चतुरंग</span>
+        <span class="logo-divider">·</span>
+        <span class="logo-latin">Chaturanga</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#play" class="nav-link">Play</a></li>
+        <li><a href="#docs" class="nav-link">Documentation</a></li>
+        <li><a href="#contribute" class="nav-link">Contribute</a></li>
+      </ul>
+      <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
+        <i class="fa-solid fa-chess-king"></i> Play Now
+      </button>
+      <a href="howtoplay.html" class="howto-nav-link">
+        <i class="fa-solid fa-graduation-cap"></i> <span>How to Play</span>
+      </a>
+      <button class="features-btn" id="featuresToggle" aria-label="Open Features">
+        <i class="fa-solid fa-bars"></i>
+        <span>Features</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
 
   <!-- FEATURES SIDEBAR -->
@@ -125,30 +124,6 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
-
-    <!-- ACCOUNT -->
-<div class="sidebar-account" id="sidebarAccount">
-  <button class="account-toggle" id="accountToggle" aria-haspopup="true" aria-expanded="false">
-    <span class="account-avatar"><i class="fa-solid fa-user"></i></span>
-    <span class="account-info">
-      <span class="account-name" id="accountName">Guest</span>
-      <span class="account-sub" id="accountSub">Not signed in</span>
-    </span>
-    <i class="fa-solid fa-chevron-down account-chevron"></i>
-  </button>
-  <div class="account-dropdown" id="accountDropdown">
-    <button class="account-action profile" id="profileBtn" onclick="window.location.href='userprofile.html'" >
-      <i class="fa-solid fa-user-gear"></i> View Profile
-    </button>
-    <button class="account-action logout" id="logoutBtn" style="display:none">
-      <i class="fa-solid fa-right-from-bracket"></i> Logout
-    </button>
-    <button class="account-action signin" id="signinBtn" style="display:none">
-      <i class="fa-solid fa-right-to-bracket"></i> Sign In
-    </button>
-  </div>
-</div>
-
     <div class="features-sidebar-content">
       <ul class="features-list">
         <li><a href="../game/features/acharya/acharya.html"><i class="fa-solid fa-chalkboard-user"></i> Acharya</a></li>
@@ -217,16 +192,16 @@
       </p>
       <div class="hero-army-icons">
         <div class="hero-piece" data-name="Raja · King">
-          <img src="images-webp/raja.webp" alt="Raja" />
+          <img src="images/raja.png" alt="Raja" />
         </div>
         <div class="hero-piece" data-name="Hathi · Elephant">
-          <img src="images-webp/elephant.webp" alt="Hathi" />
+          <img src="images/elephant.png" alt="Hathi" />
         </div>
         <div class="hero-piece" data-name="Ashva · Horse">
-          <img src="images-webp/horse.webp" alt="Ashva" />
+          <img src="images/horse.png" alt="Ashva" />
         </div>
         <div class="hero-piece" data-name="Ratha · Chariot">
-          <img src="images-webp/chariot.webp" alt="Ratha" />
+          <img src="images/chariot.png" alt="Ratha" />
         </div>
       </div>
       <div class="hero-actions">
@@ -298,7 +273,7 @@
         <h3 class="showcase-title">The Chaturanga Army</h3>
         <div class="army-units">
           <div class="unit-card">
-            <img src="images-webp/raja.webp" alt="Raja" class="unit-img" />
+            <img src="images/raja.png" alt="Raja" class="unit-img" />
             <div class="unit-info">
               <span class="unit-name">राजा · Raja</span>
               <span class="unit-role">King · Moves one step any direction · ∞ pts</span>
@@ -306,7 +281,7 @@
             </div>
           </div>
           <div class="unit-card">
-            <img src="images-webp/chariot.webp" alt="Ratha" class="unit-img" />
+            <img src="images/chariot.png" alt="Ratha" class="unit-img" />
             <div class="unit-info">
               <span class="unit-name">रथ · Ratha</span>
               <span class="unit-role">Chariot · Moves like Rook · 5 pts</span>
@@ -314,7 +289,7 @@
             </div>
           </div>
           <div class="unit-card">
-            <img src="images-webp/horse.webp" alt="Ashva" class="unit-img" />
+            <img src="images/horse.png" alt="Ashva" class="unit-img" />
             <div class="unit-info">
               <span class="unit-name">अश्व · Ashva</span>
               <span class="unit-role">Horse · L-shape like Knight · 3 pts</span>
@@ -322,7 +297,7 @@
             </div>
           </div>
           <div class="unit-card">
-            <img src="images-webp/elephant.webp" alt="Danti" class="unit-img" />
+            <img src="images/elephant.png" alt="Danti" class="unit-img" />
             <div class="unit-info">
               <span class="unit-name">हाथी · Danti</span>
               <span class="unit-role">Elephant · 2 diagonals, leaps · 2 pts</span>
@@ -435,30 +410,9 @@
             <h3>Online Multiplayer</h3>
             <p>Challenge warriors from across the realm. Form alliances with friends or meet new opponents in the global
               Ashtāpada.</p>
-                <button 
-  onclick="window.location.href = '../game/lobby.html'" 
-  style="
-    padding: 14px 42px;
-    font-family: 'Cinzel', 'Georgia', serif;
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 3px;
-    color: #2a1800;
-    background: linear-gradient(180deg, #ffe57f 0%, #d4af37 60%, #aa7c11 100%);
-    border: 1px solid #ffe89e;
-    border-radius: 6px;
-    cursor: pointer;
-    text-transform: uppercase;
-    box-shadow: 0 5px 0 #5c4000, 0 10px 20px rgba(0, 0, 0, 0.5);
-    transition: all 0.1s ease;
-  "
-  onmouseover="this.style.filter='brightness(1.15)';"
-  onmouseout="this.style.filter='brightness(1)';"
-  onmousedown="this.style.transform='translateY(4px)'; this.style.boxShadow='0 1px 0 #5c4000, 0 4px 10px rgba(0,0,0,0.5)';"
-  onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 0 #5c4000, 0 10px 20px rgba(0,0,0,0.5)';"
->
-  ⚔️ PLAY
-</button>
+            <div class="coming-soon-banner">
+               <button onclick="{window.location.href = '../game/lobby.html' }"> PLAY </button>
+            </div>
           </div>
         </div>
       </div>
@@ -978,169 +932,6 @@ const weights = {
 
   <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
-  <script src="session.js"></script>
-
-
-<script>
-
-
-  (function(){
-  var accountEl = document.getElementById('sidebarAccount');
-  var toggleBtn = document.getElementById('accountToggle');
-  var nameEl = document.getElementById('accountName');
-  var subEl = document.getElementById('accountSub');
-  var logoutBtn = document.getElementById('logoutBtn');
-  var signinBtn = document.getElementById('signinBtn');
-
-  if (!accountEl || typeof Session === 'undefined') return;
-
-  function renderAccount(){
-    var user = Session.get();
-    if (user){
-      nameEl.textContent = user.name || user.email || 'Player';
-      subEl.textContent = (user.name && user.email) ? user.email : 'Signed in';
-      logoutBtn.style.display = '';
-      signinBtn.style.display = 'none';
-    } else {
-      nameEl.textContent = 'Guest';
-      subEl.textContent = 'Not signed in';
-      logoutBtn.style.display = 'none';
-      signinBtn.style.display = '';
-    }
-  }
-
-  function closeDropdown(){
-    accountEl.classList.remove('open');
-    toggleBtn.setAttribute('aria-expanded', 'false');
-  }
-
-  toggleBtn.addEventListener('click', function(e){
-    e.stopPropagation();
-    var isOpen = accountEl.classList.toggle('open');
-    toggleBtn.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  // Close on any click outside the account block
-  document.addEventListener('click', function(e){
-    if (!accountEl.contains(e.target)) closeDropdown();
-  });
-
-  // Close on Escape
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') closeDropdown();
-  });
-
-  logoutBtn.addEventListener('click', function(){
-    Session.clear();
-    renderAccount();
-    closeDropdown();
-  });
-
-  signinBtn.addEventListener('click', function(){
-    window.location.href = 'loginpage.html';
-  });
-
-  // If the session changes in another tab (e.g. logout elsewhere),
-  // reflect it here too — this is exactly what Session.onChange is for.
-  Session.onChange(function(){ renderAccount(); });
-
-  renderAccount();
-})();
-
-function renderNavUser() {
-    const navUser = document.getElementById('navUser');
-    if (!navUser) return;
-    navUser.innerHTML = '';
-
-    const user = Session.get();
-
-    if (!user) {
-      const link = document.createElement('a');
-      link.href = 'loginpage.html';
-      link.className = 'nav-signin-link';
-      link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
-      navUser.appendChild(link);
-      return;
-    }
-
-    // --- Trigger (the avatar + name button) ---
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'nav-user-badge';
-    trigger.setAttribute('aria-haspopup', 'true');
-    trigger.setAttribute('aria-expanded', 'false');
-
-    const avatar = document.createElement('span');
-    avatar.className = 'nav-user-avatar';
-    avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
-
-    const name = document.createElement('span');
-    name.className = 'nav-user-name';
-    name.textContent = user.name || user.email;
-    name.title = user.name || user.email;
-
-    const caret = document.createElement('i');
-    caret.className = 'fa-solid fa-chevron-down nav-user-caret';
-    caret.setAttribute('aria-hidden', 'true');
-
-    trigger.append(avatar, name, caret);
-
-    // --- Dropdown panel ---
-    const dropdown = document.createElement('div');
-    dropdown.className = 'nav-user-dropdown';
-    dropdown.setAttribute('role', 'menu');
-
-    const profileLink = document.createElement('a');
-    profileLink.href = '../website/userprofile.html';
-    profileLink.className = 'nav-dropdown-item';
-    profileLink.setAttribute('role', 'menuitem');
-    profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
-
-    const logoutBtn = document.createElement('button');
-    logoutBtn.type = 'button';
-    logoutBtn.className = 'nav-dropdown-item nav-dropdown-logout';
-    logoutBtn.setAttribute('role', 'menuitem');
-    logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
-
-    dropdown.append(profileLink, logoutBtn);
-    navUser.append(trigger, dropdown);
-
-    // --- Open/close behavior ---
-    function openDropdown() {
-      dropdown.classList.add('open');
-      trigger.setAttribute('aria-expanded', 'true');
-      document.addEventListener('click', onOutsideClick);
-      document.addEventListener('keydown', onKeydown);
-    }
-    function closeDropdown() {
-      dropdown.classList.remove('open');
-      trigger.setAttribute('aria-expanded', 'false');
-      document.removeEventListener('click', onOutsideClick);
-      document.removeEventListener('keydown', onKeydown);
-    }
-    function onOutsideClick(e) {
-      if (!navUser.contains(e.target)) closeDropdown();
-    }
-    function onKeydown(e) {
-      if (e.key === 'Escape') closeDropdown();
-    }
-
-    trigger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
-    });
-
-    logoutBtn.addEventListener('click', function () {
-      closeDropdown();
-      Session.clear();
-      renderNavUser();
-    });
-  }
-
-  renderNavUser();
-  Session.onChange(renderNavUser);
-
- </script>
 </body>
 
 </html>

@@ -73,6 +73,18 @@ select { font-family: inherit; }
   backdrop-filter: blur(8px);
 }
 
+
+.nav-user-profile {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
 .nav-left { display: flex; align-items: center; gap: 10px; }
 .nav-logo {
   display: flex; align-items: center; gap: 8px;
@@ -111,6 +123,29 @@ select { font-family: inherit; }
   border: 1px solid var(--border);
   min-width: 160px; justify-content: center;
 }
+
+.standalone-turn-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 50px;
+    width: 100%;
+    padding: 10px 0;
+    
+    /* Keeps it above the game board/background */
+    position: relative; 
+    z-index: 10;
+    
+    /* Optional: Add a subtle background or text shadow if it's hard to read against the board */
+    background: rgba(0, 0, 0, 0.3); /* Remove this if you just want floating text */
+    color: var(--text-primary, #ffffff);
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+
+
 .turn-color-dot {
   width: 10px; height: 10px;
   border-radius: 50%;
