@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Chaturanga Board Prototypes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --page:#0c0804;--gold:#c9a84c;--gold2:#e8c96a;
+  --text:#f0e4c8;--muted:#8a7050;--border:rgba(201,168,76,.18)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--page);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh}
+.pg{max-width:1400px;margin:0 auto;padding:32px 24px 80px}
+
+.hdr{text-align:center;padding:48px 0 40px;border-bottom:1px solid var(--border);margin-bottom:56px}
+.hdr-title{font-family:'Cinzel',serif;font-size:2.4rem;color:var(--gold2);letter-spacing:.06em;margin-bottom:8px}
+.hdr-sub{font-size:.9rem;color:var(--muted);letter-spacing:.08em;margin-bottom:14px}
+.hdr-p{font-size:.82rem;color:var(--muted);line-height:1.8;max-width:620px;margin:0 auto}
+
+.section{margin-bottom:72px}
+.section-title{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold);letter-spacing:.08em;
+  margin-bottom:8px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.section-sub{font-size:.78rem;color:var(--muted);margin-bottom:36px;line-height:1.7}
+
+/* 8×8 two-column layout */
+.boards-2col{display:grid;grid-template-columns:1fr 1fr;gap:56px 48px}
+.board-proto{display:flex;flex-direction:column;gap:14px}
+.board-proto-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold2)}
+.board-proto-sub{font-size:.72rem;color:var(--muted);line-height:1.65;max-width:420px}
+
+/* Extended boards row */
+.boards-row{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+.board-ext-wrap{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.board-ext-label{font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold2)}
+.board-ext-sub{font-size:.65rem;color:var(--muted);line-height:1.5;max-width:200px}
+
+/* Board container shared */
+.board-wrap{position:relative;display:inline-block}
+.board-grid{display:grid;position:relative}
+.board-cell{position:relative;background-size:62% 62%;background-repeat:no-repeat;background-position:center}
+
+/* Corner ornament absolute positions */
+.corner-orn{position:absolute;width:22px;height:22px;z-index:10;pointer-events:none}
+.c-tl{top:-11px;left:-11px}
+.c-tr{top:-11px;right:-11px}
+.c-bl{bottom:-11px;left:-11px}
+.c-br{bottom:-11px;right:-11px}
+
+/* Army zone faint glow on corner cells */
+.army-red   .board-cell:nth-last-child(-n+16):nth-last-child(n+1){} /* handled in JS */
+
+/* Integration guide section */
+.guide-section{background:#17110a;border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:36px}
+.guide-title{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);margin-bottom:16px}
+.guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.guide-block{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:16px}
+.guide-block-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:10px}
+pre{font-family:monospace;font-size:.72rem;color:#b8d8b8;line-height:1.65;overflow-x:auto;white-space:pre-wrap}
+.note{font-size:.74rem;color:var(--muted);line-height:1.7;margin-top:12px}
+.note strong{color:var(--gold)}
+
+/* Config table */
+.cfg-table{width:100%;border-collapse:collapse;font-size:.74rem;margin-top:8px}
+.cfg-table th{text-align:left;padding:6px 10px;color:var(--gold);border-bottom:1px solid var(--border);font-weight:500;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.06em}
+.cfg-table td{padding:6px 10px;color:var(--muted);border-bottom:1px solid rgba(201,168,76,.08)}
+.cfg-table tr:last-child td{border-bottom:none}
+.cfg-table .val{color:#b8d8b8;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="pg">
+
+<div class="hdr">
+  <div class="hdr-title">Chaturanga — Board Prototypes</div>
+  <div class="hdr-sub">युद्ध क्षेत्र &nbsp;·&nbsp; The Field of War &nbsp;·&nbsp; Four Armies, One Board</div>
+  <div class="hdr-p">Four unique 8×8 Ashtapada boards with authentic Indian warfare aesthetic — each with a distinct visual personality and watermarked tile patterns. Plus five extended board sizes: Dasapada (10×10) through 18×18. Each board is a pure SVG/CSS grid with no external assets required.</div>
+</div>
+
+<!-- ═══════════════════ 8×8 BOARDS ═══════════════════════════ -->
+<div class="section">
+  <div class="section-title">Ashtapada — अष्टपद &nbsp; 8×8</div>
+  <div class="section-sub">Four prototypes, each unique in color palette, tile watermark motif, and border character. All boards share the same 70 px square size and grid structure — drop-in swappable in the same <code>renderBoardGrid()</code> call. Army corner zones (2 rows × 4 cols each) carry a very subtle tint matching their army colour.</div>
+  <div class="boards-2col">
+
+    <!-- Board 1 -->
+    <div class="board-proto">
+      <div class="board-proto-title">1 · Kurukshetra Kshetra — कुरुक्षेत्र</div>
+      <div class="board-wrap" id="b8-wrap-1">
+        <div class="board-grid" id="b8-1"></div>
+      </div>
+      <div class="board-proto-sub">Deep blood crimson and aged amber-gold. Lotus mandala on light squares, 8-spoke Ashoka Chakra on dark. Double gold frame with corner lotus ornaments. The darkest and most battle-worn of the four — evokes the stained stone of Kurukshetra after the 18-day war.</div>
+    </div>
+
+    <!-- Board 2 -->
+    <div class="board-proto">
+      <div class="board-proto-title">2 · Pushkar Mandala — पुष्कर मण्डल</div>
+      <div class="board-wrap" id="b8-wrap-2">
+        <div class="board-grid" id="b8-2"></div>
+      </div>
+      <div class="board-proto-sub">Saffron gold and midnight indigo. Trishul trident on light squares, radiant Surya sun disc on dark. Ornate jewelled frame. The most spiritual — the board as a sacred yantra, the game as cosmic ritual. Strongest contrast of the four.</div>
+    </div>
+
+    <!-- Board 3 -->
+    <div class="board-proto">
+      <div class="board-proto-title">3 · Mauryan Rajya — मौर्य राज्य</div>
+      <div class="board-wrap" id="b8-wrap-3">
+        <div class="board-grid" id="b8-3"></div>
+      </div>
+      <div class="board-proto-sub">Warm sandstone and dark granite slate. Elephant silhouette on light squares, Dharmachakra on dark. Stone-cut linear frame. The imperial board — referencing Ashoka's carved Sanchi pillars and the great stone chess pieces unearthed at Taxila.</div>
+    </div>
+
+    <!-- Board 4 -->
+    <div class="board-proto">
+      <div class="board-proto-title">4 · Vana Samragya — वन साम्राज्य</div>
+      <div class="board-wrap" id="b8-wrap-4">
+        <div class="board-grid" id="b8-4"></div>
+      </div>
+      <div class="board-proto-sub">Sage jungle green and deep forest dark. Peacock feather eye on light squares, lotus bud on dark. Vine-leaf border. The most organic — inspired by the forest kingdoms of ancient India, where armies trained under jungle canopy before marching to Kurukshetra.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════ EXTENDED BOARDS ══════════════════════ -->
+<div class="section">
+  <div class="section-title">Extended Board Sizes</div>
+  <div class="section-sub">Five larger board variants for extended Chaturanga rulesets. Each maintains the Kurukshetra color palette as a base (for visual consistency across ruleset variants) but with adjusted square sizes. The grid structure scales identically — only <code>cols</code>, <code>rows</code>, and <code>squarePx</code> change.</div>
+  <div class="boards-row">
+
+    <div class="board-ext-wrap">
+      <div class="board-ext-label">Dasapada — दशपद &nbsp; 10×10</div>
+      <div class="board-grid" id="b10"></div>
+      <div class="board-ext-sub">56 px squares · 560 px total. Adds 2 outer rows/cols — allows wider army deployments and richer opening formations.</div>
+    </div>
+
+    <div class="board-ext-wrap">
+      <div class="board-ext-label">Vrihadapada — बृहदपद &nbsp; 12×12</div>
+      <div class="board-grid" id="b12"></div>
+      <div class="board-ext-sub">47 px squares · 564 px total. Referenced in some Puranic texts as the board of the celestial war game played between Devas and Asuras.</div>
+    </div>
+
+    <div class="board-ext-wrap">
+      <div class="board-ext-label">14×14 — चतुर्दश</div>
+      <div class="board-grid" id="b14"></div>
+      <div class="board-ext-sub">40 px squares · 560 px total. Each army occupies 3 rows × 5 cols. Ratha movement advantage greatly increases at this size.</div>
+    </div>
+
+    <div class="board-ext-wrap">
+      <div class="board-ext-label">16×16 — षोडश</div>
+      <div class="board-grid" id="b16"></div>
+      <div class="board-ext-sub">36 px squares · 576 px total. Two additional piece types per army possible at this scale — historical "Maha-Chaturanga" variant.</div>
+    </div>
+
+    <div class="board-ext-wrap">
+      <div class="board-ext-label">18×18 — अष्टादश</div>
+      <div class="board-grid" id="b18"></div>
+      <div class="board-ext-sub">32 px squares · 576 px total. Largest historical board variant — 4 armies of 18 pieces each. Epic campaign format.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════ INTEGRATION GUIDE ════════════════════ -->
+<div class="section">
+  <div class="section-title">Integration Guide</div>
+  <div class="section-sub">How to drop these boards into your existing game code — including piece positioning, square-size configuration, and the enhanced alignment utility.</div>
+
+  <!-- Config table -->
+  <div class="guide-section">
+    <div class="guide-title">Board Size Reference</div>
+    <table class="cfg-table">
+      <thead><tr>
+        <th>Board</th><th>Grid</th><th>Square px</th><th>Board px</th><th>Pieces / Army</th><th>CSS var name</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Ashtapada</td><td class="val">8×8</td><td class="val">70</td><td class="val">560</td><td>8</td><td class="val">--sq:70px</td></tr>
+        <tr><td>Dasapada</td><td class="val">10×10</td><td class="val">56</td><td class="val">560</td><td>10</td><td class="val">--sq:56px</td></tr>
+        <tr><td>Vrihadapada</td><td class="val">12×12</td><td class="val">47</td><td class="val">564</td><td>12</td><td class="val">--sq:47px</td></tr>
+        <tr><td>14×14</td><td class="val">14×14</td><td class="val">40</td><td class="val">560</td><td>14</td><td class="val">--sq:40px</td></tr>
+        <tr><td>16×16</td><td class="val">16×16</td><td class="val">36</td><td class="val">576</td><td>16</td><td class="val">--sq:36px</td></tr>
+        <tr><td>18×18</td><td class="val">18×18</td><td class="val">32</td><td class="val">576</td><td>18</td><td class="val">--sq:32px</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="guide-grid">
+
+    <div class="guide-block">
+      <div class="guide-block-title">1 · Board Configuration Object</div>
+<pre>// Drop into ui.js / game.js
+const BOARD_CFG = {
+  cols: 8, rows: 8,
+  squarePx: 70,
+  // Inner grid area (no frame offset needed
+  // when using CSS-grid board — origin is 0,0)
+  originX: 0,
+  originY: 0,
+
+  // Convert game coords → pixel position
+  toPixel(row, col) {
+    return {
+      x: this.originX + col * this.squarePx,
+      y: this.originY + row * this.squarePx,
+    };
+  },
+  // Convert pixel click → game coords
+  toCell(px, py) {
+    return {
+      col: Math.floor((px - this.originX) / this.squarePx),
+      row: Math.floor((py - this.originY) / this.squarePx),
+    };
+  },
+};</pre>
+    </div>
+
+    <div class="guide-block">
+      <div class="guide-block-title">2 · renderBoardGrid() — Replace Existing</div>
+<pre>function renderBoardGrid(boardId, cfg = BOARD_CFG) {
+  const el = document.getElementById(boardId);
+  el.innerHTML = '';
+  el.style.cssText = `
+    display: grid;
+    grid-template-columns: repeat(${cfg.cols}, ${cfg.squarePx}px);
+    grid-template-rows: repeat(${cfg.rows}, ${cfg.squarePx}px);
+    position: relative;
+    width: ${cfg.cols * cfg.squarePx}px;
+    height: ${cfg.rows * cfg.squarePx}px;
+  `;
+  for (let r = 0; r < cfg.rows; r++) {
+    for (let c = 0; c < cfg.cols; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'board-cell '
+        + ((r + c) % 2 === 0 ? 'light' : 'dark');
+      cell.dataset.row = r;
+      cell.dataset.col = c;
+      cell.style.width = cfg.squarePx + 'px';
+      cell.style.height = cfg.squarePx + 'px';
+      cell.style.position = 'relative';
+      cell.addEventListener('click', e => onCellClick(r, c, e));
+      el.appendChild(cell);
+    }
+  }
+}</pre>
+    </div>
+
+    <div class="guide-block">
+      <div class="guide-block-title">3 · Placing Pieces on the Board</div>
+<pre>// Place an SVG piece element on the board
+function placePiece(boardEl, pieceSvgStr, row, col, cfg) {
+  const wrap = document.createElement('div');
+  const { x, y } = cfg.toPixel(row, col);
+  const pad = cfg.squarePx * 0.08; // 8% padding
+  const sz  = cfg.squarePx - pad * 2;
+  wrap.style.cssText = `
+    position: absolute;
+    left: ${x + pad}px;
+    top:  ${y + pad}px;
+    width: ${sz}px;
+    height: ${sz}px;
+    pointer-events: none;
+    z-index: 5;
+  `;
+  wrap.innerHTML = pieceSvgStr;
+  const svg = wrap.querySelector('svg');
+  if (svg) {
+    svg.setAttribute('width', sz);
+    svg.setAttribute('height', sz);
+  }
+  boardEl.appendChild(wrap);
+  return wrap;
+}
+
+// Usage:
+// const sq = document.getElementById('game-board');
+// placePiece(sq, rajaSvg, 7, 3, BOARD_CFG);</pre>
+    </div>
+
+    <div class="guide-block">
+      <div class="guide-block-title">4 · Board PNG Alignment (align.html upgrade)</div>
+<pre>// For board.png background-image boards:
+// Use the sliders in align.html to find these values,
+// then hardcode them here.
+const PNG_ALIGN = {
+  // Set these via the align.html sliders:
+  bgSize:  '102%',   // sz slider value + '%'
+  bgPosX:  '49%',    // px slider value + '%'
+  bgPosY:  '49%',    // py slider value + '%'
+
+  // Then measure a single square in px at 800px container:
+  squarePx: 78,        // approx for board.png
+  gridLeft: 88,        // px from container left edge
+  gridTop:  88,        // px from container top edge
+
+  toPixel(row, col) {
+    return {
+      x: this.gridLeft + col * this.squarePx,
+      y: this.gridTop  + row * this.squarePx,
+    };
+  },
+};
+// Tip: overlay the CSS-grid board on top of the
+// board.png at 0.5 opacity to verify alignment.</pre>
+    </div>
+
+  </div>
+
+  <!-- Extended board config -->
+  <div class="guide-section" style="margin-top:24px">
+    <div class="guide-title">Switching Board Sizes at Runtime</div>
+<pre style="background:rgba(0,0,0,.3);padding:14px;border-radius:6px;margin-top:8px">
+const BOARD_SIZES = {
+  '8x8':   { cols:8,  rows:8,  squarePx:70, name:'Ashtapada'  },
+  '10x10': { cols:10, rows:10, squarePx:56, name:'Dasapada'   },
+  '12x12': { cols:12, rows:12, squarePx:47, name:'Vrihadapada'},
+  '14x14': { cols:14, rows:14, squarePx:40, name:'14×14'      },
+  '16x16': { cols:16, rows:16, squarePx:36, name:'16×16'      },
+  '18x18': { cols:18, rows:18, squarePx:32, name:'18×18'      },
+};
+
+// In your game init:
+function initGame(sizeKey) {
+  const cfg = { ...BOARD_SIZES[sizeKey], originX:0, originY:0,
+    toPixel(r,c){ return {x:c*this.squarePx, y:r*this.squarePx}; },
+    toCell(px,py){ return {col:Math.floor(px/this.squarePx), row:Math.floor(py/this.squarePx)}; }
+  };
+  window.BOARD_CFG = cfg;
+  renderBoardGrid('game-board', cfg);
+  setupArmies(cfg);  // place pieces according to board size
+}
+</pre>
+    <div class="note"><strong>Army placement note:</strong> For all board sizes, each of the 4 armies occupies the 2 rows closest to their corner × 4 columns wide. For 8×8 that's rows 0–1 cols 0–3 (top-left army), rows 0–1 cols 4–7 (top-right), rows 6–7 cols 0–3 (bottom-left), rows 6–7 cols 4–7 (bottom-right). For larger boards, extend army deployment zones proportionally: 3 rows × 5 cols for 14×14+.</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ═══════════════════ SVG WATERMARK GENERATORS ════════════════
+// All use single quotes inside so encodeURIComponent works cleanly
+
+function mkLotus(stroke, op) {
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g fill='none' stroke='${stroke}' stroke-width='2.8' stroke-linecap='round' opacity='${op}'>
+      <path d='M50,76 Q28,60 28,42 Q38,20 50,30 Q62,20 72,42 Q72,60 50,76Z'/>
+      <path d='M50,76 Q16,68 10,50 Q16,26 36,34 Q46,56 50,76Z'/>
+      <path d='M50,76 Q84,68 90,50 Q84,26 64,34 Q54,56 50,76Z'/>
+      <path d='M50,76 Q14,76 8,60 Q8,40 28,42 Q42,60 50,76Z'/>
+      <path d='M50,76 Q86,76 92,60 Q92,40 72,42 Q58,60 50,76Z'/>
+      <circle cx='50' cy='57' r='10'/>
+      <circle cx='50' cy='57' r='4' fill='${stroke}' stroke='none'/>
+    </g>
+  </svg>`;
+}
+
+function mkChakra(stroke, op) {
+  const spokes = Array.from({length:8},(_,i)=>{
+    const a=i*45*Math.PI/180;
+    const x1=(50+14*Math.cos(a)).toFixed(1), y1=(50+14*Math.sin(a)).toFixed(1);
+    const x2=(50+35*Math.cos(a)).toFixed(1), y2=(50+35*Math.sin(a)).toFixed(1);
+    return `<line x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}'/>`;
+  }).join('');
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g stroke='${stroke}' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='${op}'>
+      <circle cx='50' cy='50' r='36'/>
+      <circle cx='50' cy='50' r='14'/>
+      ${spokes}
+      <circle cx='50' cy='50' r='5' fill='${stroke}' stroke='none'/>
+    </g>
+  </svg>`;
+}
+
+function mkTrishul(stroke, op) {
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g fill='none' stroke='${stroke}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='${op}'>
+      <line x1='50' y1='38' x2='50' y2='88'/>
+      <polygon points='50,14 44,24 50,34 56,24' fill='${stroke}'/>
+      <path d='M50,44 Q32,36 28,22 Q36,34 44,40'/>
+      <path d='M50,44 Q68,36 72,22 Q64,34 56,40'/>
+      <line x1='36' y1='56' x2='64' y2='56'/>
+      <circle cx='36' cy='56' r='3.5' fill='${stroke}' stroke='none'/>
+      <circle cx='64' cy='56' r='3.5' fill='${stroke}' stroke='none'/>
+      <circle cx='50' cy='72' r='4' fill='none'/>
+    </g>
+  </svg>`;
+}
+
+function mkSun(stroke, op) {
+  const rays = Array.from({length:12},(_,i)=>{
+    const a=(i*30-90)*Math.PI/180;
+    const x1=(50+22*Math.cos(a)).toFixed(1), y1=(50+22*Math.sin(a)).toFixed(1);
+    const x2=(50+38*Math.cos(a)).toFixed(1), y2=(50+38*Math.sin(a)).toFixed(1);
+    return `<line x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}'/>`;
+  }).join('');
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g stroke='${stroke}' stroke-width='2.5' stroke-linecap='round' opacity='${op}'>
+      <circle cx='50' cy='50' r='19' fill='${stroke}' fill-opacity='0.25' stroke-width='2.5'/>
+      ${rays}
+      <circle cx='50' cy='50' r='9' fill='${stroke}' stroke='none'/>
+      <circle cx='50' cy='50' r='14' fill='none'/>
+    </g>
+  </svg>`;
+}
+
+function mkElephant(stroke, op) {
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g fill='none' stroke='${stroke}' stroke-width='2.5' stroke-linecap='round' opacity='${op}'>
+      <!-- ear -->
+      <path d='M23,40 Q12,33 10,45 Q11,56 20,54 Q22,46 23,40Z'/>
+      <!-- neck bridge -->
+      <path d='M26,48 Q30,40 36,40 Q41,46 40,55 Q33,57 26,55Z'/>
+      <!-- body -->
+      <ellipse cx='55' cy='57' rx='24' ry='17'/>
+      <!-- head -->
+      <ellipse cx='21' cy='48' rx='11' ry='14'/>
+      <!-- eye -->
+      <circle cx='15.5' cy='43' r='2' fill='${stroke}' stroke='none'/>
+      <!-- trunk down-curled -->
+      <path d='M14,57 Q8,64 10,72 Q13,75 16,70 Q15,64 14,57'/>
+      <!-- tusk -->
+      <path d='M15,57 Q9,62 10,70'/>
+      <!-- howdah -->
+      <rect x='39' y='30' width='28' height='16' rx='2'/>
+      <rect x='38' y='26' width='30' height='5' rx='2' fill='${stroke}' fill-opacity='0.3'/>
+      <!-- legs -->
+      <line x1='34' y1='73' x2='32' y2='88'/><line x1='44' y1='73' x2='43' y2='88'/>
+      <line x1='57' y1='72' x2='57' y2='88'/><line x1='68' y1='70' x2='70' y2='86'/>
+      <!-- tail -->
+      <path d='M78,52 Q84,58 82,65'/>
+    </g>
+  </svg>`;
+}
+
+function mkPeacock(stroke, op) {
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g fill='none' stroke='${stroke}' stroke-width='2.5' stroke-linecap='round' opacity='${op}'>
+      <!-- Feather eye — concentric ovals with stalk -->
+      <ellipse cx='50' cy='42' rx='22' ry='32'/>
+      <ellipse cx='50' cy='38' rx='14' ry='21'/>
+      <ellipse cx='50' cy='34' rx='7' ry='11'/>
+      <circle cx='50' cy='30' r='6' fill='${stroke}' stroke='none'/>
+      <circle cx='50' cy='30' r='3' fill='none' stroke='${stroke}' stroke-width='1.5'/>
+      <!-- Barb lines radiating from stalk -->
+      <line x1='50' y1='74' x2='50' y2='88'/>
+      <path d='M50,78 Q32,72 24,60'/><path d='M50,78 Q68,72 76,60'/>
+      <path d='M50,80 Q28,76 20,65'/><path d='M50,80 Q72,76 80,65'/>
+      <path d='M50,82 Q34,80 28,72'/><path d='M50,82 Q66,80 72,72'/>
+    </g>
+  </svg>`;
+}
+
+function mkLotusBud(stroke, op) {
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <g fill='none' stroke='${stroke}' stroke-width='2.8' stroke-linecap='round' opacity='${op}'>
+      <path d='M50,80 Q32,68 32,52 Q40,30 50,38 Q60,30 68,52 Q68,68 50,80Z'/>
+      <path d='M50,80 Q22,74 16,56 Q20,34 38,44 Q48,64 50,80Z'/>
+      <path d='M50,80 Q78,74 84,56 Q80,34 62,44 Q52,64 50,80Z'/>
+      <line x1='50' y1='80' x2='50' y2='90'/>
+      <line x1='40' y1='86' x2='60' y2='86'/>
+      <ellipse cx='50' cy='56' rx='9' ry='8'/>
+    </g>
+  </svg>`;
+}
+
+// ═══════════════════ SVG DATA URI ════════════════════════════
+function enc(svg) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+// ═══════════════════ CORNER ORNAMENT ═════════════════════════
+function cornSVG(color) {
+  const pts = Array.from({length:8},(_,i)=>{
+    const a=i*45*Math.PI/180;
+    return `<ellipse cx='${(30+14*Math.cos(a)).toFixed(1)}' cy='${(30+14*Math.sin(a)).toFixed(1)}' rx='5.5' ry='9' transform='rotate(${i*45} ${(30+14*Math.cos(a)).toFixed(1)} ${(30+14*Math.sin(a)).toFixed(1)})'/>`;
+  }).join('');
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' width='24' height='24'>
+    <g fill='none' stroke='${color}' stroke-width='1.8' opacity='.92'>${pts}
+      <circle cx='30' cy='30' r='8' fill='${color}' fill-opacity='.35'/>
+      <circle cx='30' cy='30' r='4' fill='${color}'/>
+    </g>
+  </svg>`;
+}
+
+// ═══════════════════ BOARD BUILDER ═══════════════════════════
+const ARMY_COLORS = ['#c0392b','#1a5fa0','#1a7038','#a06800'];
+
+function makeBoard(containerId, wrapId, cols, rows, sqPx, style) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  el.style.cssText = `
+    display:grid;
+    grid-template-columns:repeat(${cols},${sqPx}px);
+    grid-template-rows:repeat(${rows},${sqPx}px);
+    position:relative;
+    border:${style.framePx||5}px solid ${style.frameColor};
+    box-shadow:0 0 0 ${style.frameInset||2}px ${style.frameDark},
+               0 0 0 ${(style.frameInset||2)+(style.framePx||5)+2}px ${style.frameColor},
+               0 12px 40px rgba(0,0,0,.6), 0 4px 12px rgba(0,0,0,.4);
+  `;
+
+  const lightUri = enc(style.lightMark(style.lightStroke, style.markOp||0.16));
+  const darkUri  = enc(style.darkMark(style.darkStroke,  style.markOp||0.16));
+
+  for (let r=0; r<rows; r++) {
+    for (let c=0; c<cols; c++) {
+      const isLight = (r+c)%2===0;
+      const cell = document.createElement('div');
+
+      // Determine if this cell is in an army corner zone
+      let armyTint='';
+      const armyOpacity=0.12;
+      if      (r<2 && c<cols/2) armyTint=`inset 0 0 0 100px rgba(26,95,160,${armyOpacity})`;
+      else if (r<2 && c>=cols/2) armyTint=`inset 0 0 0 100px rgba(160,104,0,${armyOpacity})`;
+      else if (r>=rows-2 && c<cols/2) armyTint=`inset 0 0 0 100px rgba(192,57,43,${armyOpacity})`;
+      else if (r>=rows-2 && c>=cols/2) armyTint=`inset 0 0 0 100px rgba(26,112,56,${armyOpacity})`;
+
+      cell.style.cssText = `
+        width:${sqPx}px;height:${sqPx}px;
+        background-color:${isLight ? style.light : style.dark};
+        background-image:url("${isLight ? lightUri : darkUri}");
+        background-size:62% 62%;
+        background-repeat:no-repeat;
+        background-position:center;
+        position:relative;
+        ${armyTint ? `box-shadow:${armyTint};` : ''}
+        ${style.cellBorder||''}
+      `;
+      cell.dataset.row=r; cell.dataset.col=c;
+      el.appendChild(cell);
+    }
+  }
+
+  // Add corner ornaments
+  if (wrapId) {
+    const wrap = document.getElementById(wrapId);
+    if (wrap) {
+      wrap.style.position='relative';
+      wrap.style.display='inline-block';
+      ['c-tl','c-tr','c-bl','c-br'].forEach(cls=>{
+        const orn = document.createElement('div');
+        orn.className=`corner-orn ${cls}`;
+        orn.innerHTML=cornSVG(style.frameColor);
+        wrap.appendChild(orn);
+      });
+    }
+  }
+}
+
+// ═══════════════════ BOARD STYLE DEFINITIONS ════════════════
+
+const B1 = {
+  name:'Kurukshetra',
+  light:'#b87828', dark:'#3e0c0c',
+  frameColor:'#c9a84c', frameDark:'#6a4800', framePx:5, frameInset:2,
+  lightMark:mkLotus,    lightStroke:'#7a4a00',
+  darkMark:mkChakra,    darkStroke:'#8a3030',
+  markOp:.18,
+  cellBorder:'border:1px solid rgba(0,0,0,0.22);',
+};
+const B2 = {
+  name:'Pushkar Mandala',
+  light:'#d4960e', dark:'#14124a',
+  frameColor:'#e8c96a', frameDark:'#080620', framePx:6, frameInset:2,
+  lightMark:mkTrishul,  lightStroke:'#7a5200',
+  darkMark:mkSun,       darkStroke:'#5060b0',
+  markOp:.2,
+  cellBorder:'border:1px solid rgba(0,0,0,0.18);',
+};
+const B3 = {
+  name:'Mauryan Rajya',
+  light:'#c09058', dark:'#22303e',
+  frameColor:'#a07838', frameDark:'#121e28', framePx:5, frameInset:2,
+  lightMark:mkElephant, lightStroke:'#604800',
+  darkMark:mkChakra,    darkStroke:'#4070a0',
+  markOp:.16,
+  cellBorder:'border:1px solid rgba(0,0,0,0.2);',
+};
+const B4 = {
+  name:'Vana Samragya',
+  light:'#78a844', dark:'#122010',
+  frameColor:'#5a7a28', frameDark:'#081408', framePx:5, frameInset:2,
+  lightMark:mkPeacock,  lightStroke:'#2a5010',
+  darkMark:mkLotusBud,  darkStroke:'#4a8040',
+  markOp:.18,
+  cellBorder:'border:1px solid rgba(0,0,0,0.25);',
+};
+
+// Extended boards use Kurukshetra palette, lighter marks
+const BX = (s) => ({...B1, markOp:.14, light:'#b87828', dark:'#3e0c0c',
+  cellBorder:`border:${s>50?'':'0px solid '}rgba(0,0,0,0.18);`});
+
+// ═══════════════════ INITIALIZE ALL BOARDS ═══════════════════
+makeBoard('b8-1','b8-wrap-1',  8,  8, 70, B1);
+makeBoard('b8-2','b8-wrap-2',  8,  8, 70, B2);
+makeBoard('b8-3','b8-wrap-3',  8,  8, 70, B3);
+makeBoard('b8-4','b8-wrap-4',  8,  8, 70, B4);
+
+makeBoard('b10', null, 10, 10, 56, BX(56));
+makeBoard('b12', null, 12, 12, 47, BX(47));
+makeBoard('b14', null, 14, 14, 40, BX(40));
+makeBoard('b16', null, 16, 16, 36, BX(36));
+makeBoard('b18', null, 18, 18, 32, BX(32));
+</script>
+</body>
+</html>

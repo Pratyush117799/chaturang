@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gaja Prototypes — Chaturanga</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--page:#0c0804;--gold:#c9a84c;--gold2:#e8c96a;--text:#f0e4c8;--muted:#8a7050;--border:rgba(201,168,76,.18)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--page);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh}
+.pg{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+.hdr{text-align:center;padding:50px 0 40px;border-bottom:1px solid var(--border);margin-bottom:48px}
+.hdr-title{font-family:'Cinzel',serif;font-size:2.6rem;color:var(--gold2);letter-spacing:.06em;margin-bottom:7px}
+.hdr-sub2{font-size:.95rem;color:var(--muted);letter-spacing:.1em;margin-bottom:14px}
+.hdr-p{font-size:.85rem;color:var(--muted);line-height:1.8;max-width:610px;margin:0 auto}
+.sec{background:#17110a;border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:36px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:7px}
+.badge{font-size:.65rem;font-family:'Cinzel',serif;letter-spacing:.14em;text-transform:uppercase;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.16);border-radius:3px;padding:2px 10px;color:var(--muted)}
+.sec-title{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold2)}
+.sec-sub{font-size:.75rem;color:var(--muted);letter-spacing:.04em;margin-bottom:9px}
+.sec-p{font-size:.8rem;color:var(--muted);line-height:1.65;margin-bottom:28px;max-width:700px}
+.piece-row{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end}
+.piece-col{display:flex;flex-direction:column;align-items:center;gap:9px}
+.lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.div{height:1px;background:var(--border);margin:26px 0}
+.bd-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:24px;margin-bottom:9px}
+.board-row{display:flex;border:2px solid rgba(201,168,76,.22);border-radius:4px;overflow:hidden;width:fit-content}
+.sq-l{background:#e8d5b0;display:flex;align-items:center;justify-content:center}
+.sq-d{background:#a07848;display:flex;align-items:center;justify-content:center}
+.guide{background:rgba(201,168,76,.04);border:1px solid var(--border);border-radius:8px;padding:18px 22px;margin-top:26px;font-size:.78rem;color:var(--muted);line-height:1.85}
+code{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.15);border-radius:3px;padding:1px 6px;font-family:monospace;font-size:.71rem;color:var(--gold2)}
+strong{color:var(--gold)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute;overflow:hidden">
+  <defs>
+    <radialGradient id="inner-glow" cx="40%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#fff8ec" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#fff8ec" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div class="pg">
+<div class="hdr">
+  <div class="hdr-title">Gaja — गज</div>
+  <div class="hdr-sub2">हाथी &nbsp;·&nbsp; War Elephant &nbsp;·&nbsp; Chaturanga</div>
+  <div class="hdr-p">Three SVG prototypes for the Gaja piece — each on a light ivory inner disc with army-coloured fills and dark ink outlines on every element. The trunk is the unmistakable identifier at any size. Elephant body, ear, tusks, caparison barding, howdah seat, mahout and riders all carry separate dark borders so every layer reads distinctly.</div>
+</div>
+
+<!-- ═══ P1 — DHANURDHARI GAJA ════════════════════════════════ -->
+<div class="sec">
+  <div class="sec-head"><span class="badge">Prototype 1</span><span class="sec-title">Dhanurdhari Gaja — धनुर्धारी गज</span></div>
+  <div class="sec-sub">Archer War Elephant &nbsp;·&nbsp; 16-block meander ring &nbsp;·&nbsp; Trunk RAISED in battle cry</div>
+  <div class="sec-p">The trunk raised upward is the battle-cry pose — the most dramatic and iconic posture in Indian war elephant imagery. An armoured caparison covers the elephant's body with decorative panel detailing. A turbaned mahout sits on the neck with an ankush (goad). An archer stands in the howdah, bow fully drawn with arrow nocked, string pulled to cheek. At 32 px the raised trunk arc + howdah box are immediately readable.</div>
+  <div class="lbl" style="margin-bottom:13px">All four armies</div>
+  <div class="piece-row" id="r1a"></div>
+  <div class="div"></div>
+  <div class="lbl" style="margin-bottom:13px">Sizes — Red army</div>
+  <div class="piece-row" id="r1s"></div>
+  <div class="bd-lbl">Board preview — 54 px squares, all four armies</div>
+  <div class="board-row" id="b1"></div>
+  <div class="guide"><strong>Integration</strong><br><br>Drop-in for <code>renderBoardGrid()</code>. Same <code>viewBox="0 0 80 80"</code> across the entire set. The ivory inner disc (<code>#f2e8d0</code>) is baked in; every fill and stroke colour is driven by <code>playerColours[owner]</code>. Dark ink (<code>#1a0d04</code>) on every path as <code>stroke</code>. At 32 px: raised trunk curves left = unmistakable elephant. Render at <code>width="50" height="50"</code> in a 54 px square.</div>
+</div>
+
+<!-- ═══ P2 — CHATRI GAJA ══════════════════════════════════════ -->
+<div class="sec">
+  <div class="sec-head"><span class="badge">Prototype 2</span><span class="sec-title">Chatri Gaja — छत्री गज</span></div>
+  <div class="sec-sub">Royal Canopy Elephant &nbsp;·&nbsp; 8-petal royal lotus ring &nbsp;·&nbsp; Trunk DOWN, ornate howdah + chatri dome</div>
+  <div class="sec-p">The royal ceremonial war elephant, directly referencing the carved ivory chess pieces in the reference images. Trunk gently curled downward (dignity rather than aggression). A full ornate howdah seat with two riders visible behind its carved rail. A chatri parasol dome rises above the howdah on a pole — the most architecturally complex silhouette of the three. Elaborate multi-tier caparison with chain fringe along the bottom edge.</div>
+  <div class="lbl" style="margin-bottom:13px">All four armies</div>
+  <div class="piece-row" id="r2a"></div>
+  <div class="div"></div>
+  <div class="lbl" style="margin-bottom:13px">Sizes — Red army</div>
+  <div class="piece-row" id="r2s"></div>
+  <div class="bd-lbl">Board preview — 54 px squares, all four armies</div>
+  <div class="board-row" id="b2"></div>
+  <div class="guide"><strong>Integration</strong><br><br>The chatri dome tip and parasol disc extend above the inner disc rim — creating a distinctive vertical silhouette taller than any Nara or Raja piece, unique in the set. The trunk-down curve points left-downward; at 32 px this reads as the elephant's forward-hanging trunk. The 8-petal lotus border provides visual weight matching the royal Raja piece. Same <code>width="50" height="50"</code> rendering on 54 px squares.</div>
+</div>
+
+<!-- ═══ P3 — VEERA GAJA ═══════════════════════════════════════ -->
+<div class="sec">
+  <div class="sec-head"><span class="badge">Prototype 3</span><span class="sec-title">Veera Gaja — वीर गज</span></div>
+  <div class="sec-sub">Battle Elephant &nbsp;·&nbsp; 24-spoke Ashoka ring &nbsp;·&nbsp; Trunk FORWARD, forehead armour, war flag</div>
+  <div class="sec-p">The most aggressive posture — trunk thrust forward as a weapon, the elephant's own body becoming the battering ram. A forehead armour plate (gaja kavach) is bolted to the elephant's crown. A single warrior mahout on the neck holds a spear. A compact battle howdah has a dhvaja war flag flying from its post. This is the most martial silhouette: elephant body + forward trunk + raised flag = war machine. The 24-spoke Ashoka ring is the sovereign battle emblem.</div>
+  <div class="lbl" style="margin-bottom:13px">All four armies</div>
+  <div class="piece-row" id="r3a"></div>
+  <div class="div"></div>
+  <div class="lbl" style="margin-bottom:13px">Sizes — Red army</div>
+  <div class="piece-row" id="r3s"></div>
+  <div class="bd-lbl">Board preview — 54 px squares, all four armies</div>
+  <div class="board-row" id="b3"></div>
+  <div class="guide"><strong>Integration</strong><br><br>Forward trunk + head armour creates a unique "nose-forward" silhouette that reads differently from P1 and P2 at all sizes. The forehead armour plate is a hard geometric shape unlike any organic elephant feature, providing an extra visual cue that this is a battle unit. At 32 px the armour plate + forward trunk + flag post form three vertical beats across the disc. Same <code>viewBox</code> and <code>width="50" height="50"</code> rendering convention.</div>
+</div>
+
+</div>
+
+<script>
+const A = [
+  {n:'Red',   c:'#c0392b', bg:'#1a0c06'},
+  {n:'Blue',  c:'#1a5fa0', bg:'#060e1a'},
+  {n:'Green', c:'#1a7038', bg:'#050f08'},
+  {n:'Gold',  c:'#a06800', bg:'#0d0a00'},
+];
+const INK   = '#1a0d04';
+const IVORY = '#f2e8d0';
+
+// ── Borders ───────────────────────────────────────────────────
+
+// P1: 16-block meander — warrior/military
+const meander16 = c =>
+  `<g transform="translate(40,40)">${Array.from({length:20},(_,i)=>`
+    <g transform="rotate(${i*18})">
+      <rect x="-2.4" y="-36.5" width="4.8" height="6.8" rx=".5" fill="${c}" stroke="${c}" stroke-width=".3"/>
+      <rect x="-1.1" y="-35.3" width="2.2" height="4" rx=".3" fill="none" stroke="#fff" stroke-width=".55" opacity=".28"/>
+    </g>`).join('')}</g>`;
+
+// P2: 8-petal royal lotus — regal/ceremonial
+const lotus8 = c =>
+  Array.from({length:8},(_,i)=>
+    `<ellipse cx="40" cy="5" rx="5.5" ry="8.5" transform="rotate(${i*45} 40 40)" fill="${c}" stroke="${INK}" stroke-width=".5" opacity=".85"/>`
+  ).join('');
+
+// P3: 24-spoke Ashoka ring — sovereign/battle
+const ashokaRing = c => {
+  const spokes = Array.from({length:24},(_,i)=>{
+    const a=(i*15-90)*Math.PI/180;
+    const x1=(40+30.8*Math.cos(a)).toFixed(1), y1=(40+30.8*Math.sin(a)).toFixed(1);
+    const x2=(40+35.5*Math.cos(a)).toFixed(1), y2=(40+35.5*Math.sin(a)).toFixed(1);
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="2.1" stroke-linecap="round"/>`;
+  }).join('');
+  return spokes
+    +`<circle cx="40" cy="40" r="30.8" fill="none" stroke="${c}" stroke-width=".9" opacity=".42"/>`
+    +`<circle cx="40" cy="40" r="35.5" fill="none" stroke="${c}" stroke-width=".8" opacity=".32"/>`;
+};
+
+// ── Shared: caparison (decorative elephant barding cloth) ─────
+function caparison(c, style=1) {
+  if (style===1) return `
+    <!-- CAPARISON — armour cloth over body -->
+    <path d="M30,47 Q44,43 59,46 Q62,52 60,59 Q55,63 33,63 Q26,60 27,54 Q26,49 30,47Z"
+      fill="${c}" stroke="${INK}" stroke-width="1.1" opacity=".52"/>
+    <!-- caparison top border band -->
+    <path d="M30,47 Q44,43 59,46" fill="none" stroke="${INK}" stroke-width="1" opacity=".55"/>
+    <path d="M31,49 Q44,45 58,48" fill="none" stroke="${INK}" stroke-width=".7" opacity=".38"/>
+    <!-- diamond pattern on caparison -->
+    <path d="M40,46 L43.5,49.5 L40,53 L36.5,49.5Z" fill="none" stroke="${INK}" stroke-width=".8" opacity=".45"/>
+    <path d="M50,46 L53.5,49.5 L50,53 L46.5,49.5Z" fill="none" stroke="${INK}" stroke-width=".8" opacity=".45"/>`;
+  if (style===2) return `
+    <!-- CAPARISON — ornate royal cloth -->
+    <path d="M29,47 Q43,43 60,46 Q64,52 61,60 Q55,64 32,64 Q25,61 25,54 Q25,48 29,47Z"
+      fill="${c}" stroke="${INK}" stroke-width="1.2" opacity=".55"/>
+    <!-- multi-tier border bands -->
+    <path d="M29,47 Q43,43 60,46" fill="none" stroke="${INK}" stroke-width="1.1" opacity=".6"/>
+    <path d="M29.5,49.5 Q43,45.5 59,48.5" fill="none" stroke="${INK}" stroke-width=".75" opacity=".42"/>
+    <path d="M30,52 Q43,48.5 58,51.5" fill="none" stroke="${INK}" stroke-width=".6" opacity=".3"/>
+    <!-- caparison bottom chain/fringe -->
+    <path d="M27,62 Q30,64.5 33,62 Q36,64.5 39,62 Q42,64.5 45,62 Q48,64.5 51,62 Q54,64.5 57,62 Q59,64.5 61,62"
+      fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M27,62 Q30,64.5 33,62 Q36,64.5 39,62 Q42,64.5 45,62 Q48,64.5 51,62 Q54,64.5 57,62 Q59,64.5 61,62"
+      fill="none" stroke="${INK}" stroke-width=".5"/>
+    <!-- central medallion on caparison -->
+    <circle cx="44" cy="53" r="5" fill="none" stroke="${INK}" stroke-width=".9" opacity=".45"/>
+    <circle cx="44" cy="53" r="2.5" fill="none" stroke="${INK}" stroke-width=".7" opacity=".35"/>
+    <!-- crossed lines inside medallion -->
+    <line x1="44" y1="48" x2="44" y2="58" stroke="${INK}" stroke-width=".6" opacity=".35"/>
+    <line x1="39" y1="53" x2="49" y2="53" stroke="${INK}" stroke-width=".6" opacity=".35"/>`;
+  // style 3 — battle armour
+  return `
+    <!-- CAPARISON — battle plate armour -->
+    <path d="M30,46 Q43,42 59,45 Q62,51 60,58 Q55,62 32,62 Q26,59 26,53 Q25,48 30,46Z"
+      fill="${c}" stroke="${INK}" stroke-width="1.2" opacity=".5"/>
+    <!-- horizontal armour plate bands -->
+    <path d="M30,46 Q43,42 59,45" fill="none" stroke="${INK}" stroke-width="1" opacity=".55"/>
+    <path d="M29,49 Q43,45 58,48" fill="none" stroke="${INK}" stroke-width=".9" opacity=".45"/>
+    <path d="M28.5,52 Q43,48 57.5,51" fill="none" stroke="${INK}" stroke-width=".8" opacity=".38"/>
+    <path d="M28.5,55.5 Q43,51.5 57,54.5" fill="none" stroke="${INK}" stroke-width=".7" opacity=".32"/>
+    <!-- armour rivet dots -->
+    <circle cx="35" cy="47.5" r="1" fill="${INK}" opacity=".4"/>
+    <circle cx="44" cy="46.5" r="1" fill="${INK}" opacity=".4"/>
+    <circle cx="53" cy="47.5" r="1" fill="${INK}" opacity=".4"/>
+    <circle cx="35" cy="53" r="1" fill="${INK}" opacity=".4"/>
+    <circle cx="44" cy="52" r="1" fill="${INK}" opacity=".4"/>
+    <circle cx="53" cy="53" r="1" fill="${INK}" opacity=".4"/>`;
+}
+
+// ── Shared: howdah seat ───────────────────────────────────────
+function howdah(x, y, w, h, c) {
+  return `
+    <!-- HOWDAH (elephant seat with carved rail) -->
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${c}" stroke="${INK}" stroke-width="1.4"/>
+    <!-- inner panel lighter area -->
+    <rect x="${x+1}" y="${y+1}" width="${w-2}" height="${h-2}" rx="1.5" fill="${IVORY}" stroke="${INK}" stroke-width=".7" opacity=".38"/>
+    <!-- top carved rail -->
+    <rect x="${x-1}" y="${y-2.5}" width="${w+2}" height="3.5" rx="1.5" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+    <!-- front decorative post -->
+    <rect x="${x-1}" y="${y-3}" width="4" height="${h+5}" rx="1.5" fill="${c}" stroke="${INK}" stroke-width="1"/>
+    <!-- rear post -->
+    <rect x="${x+w-3}" y="${y-3}" width="4" height="${h+5}" rx="1.5" fill="${c}" stroke="${INK}" stroke-width="1"/>
+    <!-- decorative carved panel -->
+    <path d="M${x+4},${y+h*0.4} L${x+w*0.5},${y+h*0.85} L${x+w-4},${y+h*0.4}" fill="none" stroke="${INK}" stroke-width=".7" opacity=".35"/>`;
+}
+
+// ── Shared: base elephant body (facing LEFT) ──────────────────
+function elephantBase(c) {
+  return `
+    <!-- ══ EAR — drawn first, behind everything ══ -->
+    <!-- Outer ear — large floppy Indian elephant ear -->
+    <path d="M21,37 Q15,26 10,29 Q7,37 8,47 Q9,53 15,53 Q19,52 21,46 Q22,41 21,37Z"
+      fill="${c}" stroke="${INK}" stroke-width="1.3" stroke-linejoin="round"/>
+    <!-- Ear inner area — lighter to show ear depth -->
+    <path d="M19,39 Q14,29 11,31 Q9,37 10,45 Q11,51 15,51 Q18,50 19,45 Q20,41 19,39Z"
+      fill="${c}" stroke="${INK}" stroke-width=".7" opacity=".38"/>
+
+    <!-- ══ NECK-SHOULDER BRIDGE connecting head ellipse to body ellipse ══ -->
+    <path d="M26,44 Q30,37 36,37 Q41,44 41,53 Q34,55 26,53Z"
+      fill="${c}" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/>
+
+    <!-- ══ BODY — large rounded mass ══ -->
+    <ellipse cx="44" cy="55" rx="21" ry="11.5" fill="${c}" stroke="${INK}" stroke-width="1.6"/>
+
+    <!-- ══ HEAD — forward of body ══ -->
+    <ellipse cx="19" cy="44" rx="10" ry="11.5" fill="${c}" stroke="${INK}" stroke-width="1.6"/>
+
+    <!-- ══ FOREHEAD RIDGE / bump ══ -->
+    <path d="M14,37 Q17,34 20,37" fill="none" stroke="${INK}" stroke-width=".9" opacity=".42"/>
+
+    <!-- ══ EYE ══ -->
+    <circle cx="13.5" cy="42" r="1.3" fill="${INK}" stroke="none"/>
+    <!-- eyelid line -->
+    <path d="M11.5,41 Q13.5,39.5 15.5,41" fill="none" stroke="${INK}" stroke-width=".7" opacity=".4"/>
+
+    <!-- ══ TAIL ══ -->
+    <path d="M64,51 Q69,55 68,61" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M64,51 Q69,55 68,61" fill="none" stroke="${INK}" stroke-width=".8" stroke-linecap="round"/>
+
+    <!-- ══ LEGS — thick, columnar elephant legs ══ -->
+    <!-- front-left -->
+    <line x1="26" y1="65.5" x2="24.5" y2="70" stroke="${c}" stroke-width="7" stroke-linecap="round"/>
+    <line x1="26" y1="65.5" x2="24.5" y2="70" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- front-right -->
+    <line x1="34.5" y1="65.5" x2="34" y2="70" stroke="${c}" stroke-width="7" stroke-linecap="round"/>
+    <line x1="34.5" y1="65.5" x2="34" y2="70" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- back-left -->
+    <line x1="51" y1="65.5" x2="50" y2="70" stroke="${c}" stroke-width="7" stroke-linecap="round"/>
+    <line x1="51" y1="65.5" x2="50" y2="70" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- back-right -->
+    <line x1="60" y1="64.5" x2="60.5" y2="70" stroke="${c}" stroke-width="7" stroke-linecap="round"/>
+    <line x1="60" y1="64.5" x2="60.5" y2="70" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- foot pads -->
+    <ellipse cx="24.5" cy="70.5" rx="4.5" ry="1.8" fill="${c}" stroke="${INK}" stroke-width="1"/>
+    <ellipse cx="34" cy="70.5" rx="4.5" ry="1.8" fill="${c}" stroke="${INK}" stroke-width="1"/>
+    <ellipse cx="50" cy="70.5" rx="4.5" ry="1.8" fill="${c}" stroke="${INK}" stroke-width="1"/>
+    <ellipse cx="60.5" cy="70.5" rx="4.5" ry="1.8" fill="${c}" stroke="${INK}" stroke-width="1"/>
+
+    <!-- ══ TUSK ══ -->
+    <path d="M12,51 Q8,55 7,60" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M12,51 Q8,55 7,60" fill="none" stroke="${INK}" stroke-width=".9" stroke-linecap="round"/>`;
+}
+
+// ── Figure 1: Dhanurdhari Gaja — trunk RAISED, archer in howdah ─
+function dhanurGaja(c) { return `<g>
+
+  ${elephantBase(c)}
+
+  <!-- ══ TRUNK RAISED — battle cry pose ══ -->
+  <!-- thick trunk shape going UP from face -->
+  <path d="M12,52 Q8,46 8,39 Q8,30 11,25 Q14,21 17,24 Q18,27 15,31"
+    fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>
+  <path d="M12,52 Q8,46 8,39 Q8,30 11,25 Q14,21 17,24 Q18,27 15,31"
+    fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- trunk tip flare -->
+  <ellipse cx="15.5" cy="30.5" rx="2.8" ry="2.2" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+
+  ${caparison(c, 1)}
+  ${howdah(33, 36, 24, 11, c)}
+
+  <!-- ══ MAHOUT (driver) on neck ══ -->
+  <circle cx="26" cy="29" r="3.8" fill="${c}" stroke="${INK}" stroke-width="1.3"/>
+  <!-- turban -->
+  <path d="M22.5,28 Q26,23 29.5,28 Q28,26 26,26 Q24,26 22.5,28Z"
+    fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <!-- turban knot -->
+  <path d="M28.5,26.5 Q31.5,25 33,27.5 Q32,30 29,29Z" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+  <!-- body -->
+  <path d="M23,32.5 Q26,30 29,32.5 L29,38 L23,38Z" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <!-- ANKUSH goad — held up-right -->
+  <line x1="28" y1="29.5" x2="34" y2="23" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="28" y1="29.5" x2="34" y2="23" stroke="${INK}" stroke-width=".7" stroke-linecap="round"/>
+  <!-- ankush hook tip -->
+  <path d="M34,23 Q36.5,21 35.5,25Z" fill="${c}" stroke="${INK}" stroke-width=".8"/>
+
+  <!-- ══ ARCHER in howdah ══ -->
+  <circle cx="44" cy="27.5" r="3.8" fill="${c}" stroke="${INK}" stroke-width="1.3"/>
+  <!-- turban -->
+  <path d="M40.5,26.5 Q44,21.5 47.5,26.5 Q46,25 44,25 Q42,25 40.5,26.5Z"
+    fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <!-- crest plume -->
+  <path d="M44,21.5 Q46,18 48,21.5 Q46,19.5 44,21.5Z" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+  <!-- torso -->
+  <path d="M41,31.5 Q44,29 47,31.5 L47,38 L41,38Z" fill="${c}" stroke="${INK}" stroke-width="1.2"/>
+  <!-- belt -->
+  <rect x="41" y="35.5" width="6" height="1.8" rx=".9" fill="${c}" stroke="${INK}" stroke-width=".8"/>
+  <!-- left arm reaching to bow -->
+  <path d="M41.5,33.5 Q37,33 33,31.5" fill="none" stroke="${c}" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M41.5,33.5 Q37,33 33,31.5" fill="none" stroke="${INK}" stroke-width=".8" stroke-linecap="round"/>
+  <!-- BOW ARC — thick, sweeping left -->
+  <path d="M33,25.5 Q24,31 33,37" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M33,25.5 Q24,31 33,37" fill="none" stroke="${INK}" stroke-width="1" stroke-linecap="round"/>
+  <!-- bow tip nubs -->
+  <ellipse cx="33" cy="25.5" rx="2.2" ry="2" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+  <ellipse cx="33" cy="37" rx="2.2" ry="2" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+  <!-- BOWSTRING -->
+  <line x1="33" y1="25.5" x2="52.5" y2="30.5" stroke="${INK}" stroke-width="1"/>
+  <line x1="33" y1="37" x2="52.5" y2="33" stroke="${INK}" stroke-width="1"/>
+  <!-- ARROW -->
+  <line x1="33" y1="31.5" x2="52.5" y2="31.5" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="33" y1="31.5" x2="52.5" y2="31.5" stroke="${INK}" stroke-width=".55" stroke-linecap="round"/>
+  <!-- arrowhead -->
+  <polygon points="33,31.5 36.5,29 36.5,34" fill="${c}" stroke="${INK}" stroke-width=".9" stroke-linejoin="round"/>
+  <!-- fletching -->
+  <path d="M50.5,31.5 Q53,29 54.5,31 Q53,33.5 50.5,32Z" fill="${c}" stroke="${INK}" stroke-width=".8"/>
+  <!-- right arm drawing string -->
+  <path d="M46.5,33 Q49.5,31.5 52.5,30.5" fill="none" stroke="${c}" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M46.5,33 Q49.5,31.5 52.5,30.5" fill="none" stroke="${INK}" stroke-width=".8" stroke-linecap="round"/>
+
+</g>`; }
+
+// ── Figure 2: Chatri Gaja — trunk DOWN curled, chatri parasol ──
+function chatriGaja(c) { return `<g>
+
+  ${elephantBase(c)}
+
+  <!-- ══ TRUNK DOWN — curled at tip (dignified/royal pose) ══ -->
+  <path d="M12,52 Q8,58 9,64 Q10,68 14,67 Q17,65 15,60 Q13,57 12,52"
+    fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>
+  <path d="M12,52 Q8,58 9,64 Q10,68 14,67 Q17,65 15,60 Q13,57 12,52"
+    fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- trunk tip curl -->
+  <path d="M15,60 Q18,62 17,58" fill="none" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M15,60 Q18,62 17,58" fill="none" stroke="${INK}" stroke-width="1.3" stroke-linecap="round"/>
+
+  ${caparison(c, 2)}
+  ${howdah(32, 36, 26, 11, c)}
+
+  <!-- ══ MAHOUT on neck ══ -->
+  <circle cx="25" cy="28.5" r="3.8" fill="${c}" stroke="${INK}" stroke-width="1.3"/>
+  <path d="M21.5,27.5 Q25,22.5 28.5,27.5 Q27,26 25,26 Q23,26 21.5,27.5Z"
+    fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <path d="M22,31.5 Q25,29.5 28,31.5 L28,37 L22,37Z" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+
+  <!-- ══ RIDER 1 in howdah (left) ══ -->
+  <circle cx="38.5" cy="27" r="3.5" fill="${c}" stroke="${INK}" stroke-width="1.2"/>
+  <path d="M35.5,26 Q38.5,21.5 41.5,26 Q40,24.5 38.5,24.5 Q37,24.5 35.5,26Z"
+    fill="${c}" stroke="${INK}" stroke-width="1"/>
+  <path d="M36,30 Q38.5,28 41,30 L41,36 L36,36Z" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+
+  <!-- ══ RIDER 2 in howdah (right) ══ -->
+  <circle cx="50" cy="27" r="3.5" fill="${c}" stroke="${INK}" stroke-width="1.2"/>
+  <path d="M47,26 Q50,21.5 53,26 Q51.5,24.5 50,24.5 Q48.5,24.5 47,26Z"
+    fill="${c}" stroke="${INK}" stroke-width="1"/>
+  <path d="M47.5,30 Q50,28 52.5,30 L52.5,36 L47.5,36Z" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+
+  <!-- ══ CHATRI PARASOL above howdah ══ -->
+  <!-- Pole from centre of howdah rail up -->
+  <line x1="45" y1="14" x2="45" y2="34.5" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="45" y1="14" x2="45" y2="34.5" stroke="${INK}" stroke-width=".7" stroke-linecap="round"/>
+  <!-- Parasol ribs (flat disc shape) -->
+  <ellipse cx="45" cy="14" rx="12.5" ry="3.5" fill="${c}" stroke="${INK}" stroke-width="1.3"/>
+  <!-- Parasol rim ring -->
+  <ellipse cx="45" cy="14" rx="12.5" ry="3.5" fill="none" stroke="${INK}" stroke-width="1.3"/>
+  <!-- Parasol top dome cap -->
+  <path d="M37,14 Q40,9.5 45,8.5 Q50,9.5 53,14" fill="${c}" stroke="${INK}" stroke-width="1.2"/>
+  <!-- Parasol inner rib lines -->
+  <line x1="45" y1="8.5" x2="45" y2="17.5" stroke="${INK}" stroke-width=".8" opacity=".45"/>
+  <line x1="37.5" y1="11.5" x2="52.5" y2="11.5" stroke="${INK}" stroke-width=".6" opacity=".35"/>
+  <!-- Parasol fringe/hanging scallops -->
+  <path d="M32.5,16.5 Q33.5,19 34.5,16.5 Q35.5,19 36.5,16.5 Q37.5,19 38.5,16.5 Q39.5,19 40.5,16.5 Q41.5,19 42.5,16.5 Q43.5,19 44.5,16.5 Q45.5,19 46.5,16.5 Q47.5,19 48.5,16.5 Q49.5,19 50.5,16.5 Q51.5,19 52.5,16.5 Q53.5,19 55,16.5 Q56,19 57.5,16.5"
+    fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M32.5,16.5 Q33.5,19 34.5,16.5 Q35.5,19 36.5,16.5 Q37.5,19 38.5,16.5 Q39.5,19 40.5,16.5 Q41.5,19 42.5,16.5 Q43.5,19 44.5,16.5 Q45.5,19 46.5,16.5 Q47.5,19 48.5,16.5 Q49.5,19 50.5,16.5 Q51.5,19 52.5,16.5 Q53.5,19 55,16.5 Q56,19 57.5,16.5"
+    fill="none" stroke="${INK}" stroke-width=".5"/>
+  <!-- Pole finial tip -->
+  <circle cx="45" cy="8.5" r="2.5" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <path d="M45,6 Q47,7.2 45,8.5 Q43,7.2 45,6Z" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+
+</g>`; }
+
+// ── Figure 3: Veera Gaja — trunk FORWARD, head armour, flag ───
+function veeraGaja(c) { return `<g>
+
+  ${elephantBase(c)}
+
+  <!-- ══ TRUNK FORWARD — aggressive charging pose ══ -->
+  <path d="M12,51 Q7,53 5.5,56 Q5,60 7.5,63 Q11,64 13,59 Q12,55 12,51"
+    fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round"/>
+  <path d="M12,51 Q7,53 5.5,56 Q5,60 7.5,63 Q11,64 13,59 Q12,55 12,51"
+    fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- trunk tip open -->
+  <ellipse cx="10" cy="63.5" rx="3" ry="2.2" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+
+  <!-- ══ GAJA KAVACH — forehead armour plate ══ -->
+  <path d="M14,33 Q17,28 22,28 Q25,28 26,32 Q25,36 22,37 Q17,37.5 14,33Z"
+    fill="${c}" stroke="${INK}" stroke-width="1.4"/>
+  <!-- armour rivets -->
+  <circle cx="17" cy="32" r="1.1" fill="${INK}" opacity=".55" stroke="none"/>
+  <circle cx="22" cy="31" r="1.1" fill="${INK}" opacity=".55" stroke="none"/>
+  <circle cx="21" cy="35.5" r="1.1" fill="${INK}" opacity=".55" stroke="none"/>
+  <!-- forehead boss / central plate ornament -->
+  <circle cx="19" cy="33" r="2.5" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+  <circle cx="19" cy="33" r="1.2" fill="${c}" stroke="${INK}" stroke-width=".7" opacity=".5"/>
+
+  ${caparison(c, 3)}
+  ${howdah(35, 38, 20, 9, c)}
+
+  <!-- ══ WARRIOR MAHOUT (combat rider on neck) ══ -->
+  <circle cx="26" cy="28.5" r="4" fill="${c}" stroke="${INK}" stroke-width="1.3"/>
+  <!-- crested battle helmet -->
+  <path d="M22.5,27 Q26,20.5 29.5,27 Q28,25 26,25 Q24,25 22.5,27Z"
+    fill="${c}" stroke="${INK}" stroke-width="1.2"/>
+  <!-- helmet crest plume -->
+  <path d="M25,21 Q26.5,17 28,21 Q26.5,18.5 25,21Z" fill="${c}" stroke="${INK}" stroke-width="1"/>
+  <!-- nasal guard -->
+  <rect x="25" y="25" width="2" height="5" rx=".8" fill="${c}" stroke="${INK}" stroke-width=".8" opacity=".5"/>
+  <!-- body / armour torso -->
+  <path d="M22.5,32 Q26,29 29.5,32 L30,37.5 L22,37.5Z" fill="${c}" stroke="${INK}" stroke-width="1.2"/>
+  <!-- SPEAR held up-right -->
+  <line x1="29" y1="29" x2="36" y2="20" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="29" y1="29" x2="36" y2="20" stroke="${INK}" stroke-width=".8" stroke-linecap="round"/>
+  <!-- spear tip (leaf blade) -->
+  <path d="M36,20 L34.5,21 L36,25 L37.5,21Z" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+
+  <!-- ══ WAR FLAG / DHVAJA from howdah ══ -->
+  <!-- pole -->
+  <line x1="54.5" y1="13" x2="54.5" y2="37" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="54.5" y1="13" x2="54.5" y2="37" stroke="${INK}" stroke-width=".7" stroke-linecap="round"/>
+  <!-- finial -->
+  <circle cx="54.5" cy="13" r="2.4" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <path d="M54.5,10.5 Q57,11.8 54.5,13 Q52,11.8 54.5,10.5Z" fill="${c}" stroke="${INK}" stroke-width=".9"/>
+  <!-- flag cloth — triangular, pointing right -->
+  <path d="M54.5,15.5 L64.5,19.5 L54.5,25.5Z" fill="${c}" stroke="${INK}" stroke-width="1.1"/>
+  <line x1="54.5" y1="20.5" x2="63" y2="22" stroke="${INK}" stroke-width=".7" opacity=".5"/>
+
+</g>`; }
+
+// ── Disc compositor — ivory inner field ───────────────────────
+function disc(borderFn, figFn, c, bg, sz, forBoard=false) {
+  const shadow = forBoard ? 'rgba(0,0,0,.13)' : 'rgba(0,0,0,.32)';
+  return `<svg viewBox="0 0 80 80" width="${sz}" height="${sz}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="41" r="36" fill="${shadow}"/>
+    <circle cx="40" cy="40" r="36" fill="${bg}"/>
+    ${borderFn(c)}
+    <circle cx="40" cy="40" r="29" fill="${IVORY}"/>
+    <circle cx="40" cy="40" r="29" fill="url(#inner-glow)"/>
+    <circle cx="40" cy="40" r="29" fill="none" stroke="${c}" stroke-width="1.5" opacity=".65"/>
+    ${figFn(c)}
+  </svg>`;
+}
+
+// ── Render ─────────────────────────────────────────────────────
+const SIZES=[{l:'90px',s:90},{l:'64px',s:64},{l:'54px',s:54},{l:'40px',s:40},{l:'32px',s:32}];
+function renderSection(raId, rsId, bId, bFn, fFn) {
+  const ra = document.getElementById(raId);
+  A.forEach(a=>{const d=document.createElement('div');d.className='piece-col';d.innerHTML=`<div class="lbl">${a.n}</div>${disc(bFn,fFn,a.c,a.bg,90)}`;ra.appendChild(d);});
+  const rs = document.getElementById(rsId);
+  SIZES.forEach(({l,s})=>{const d=document.createElement('div');d.className='piece-col';d.innerHTML=`<div class="lbl">${l}</div>${disc(bFn,fFn,A[0].c,A[0].bg,s)}`;rs.appendChild(d);});
+  const board = document.getElementById(bId);
+  A.forEach((a,i)=>{const d=document.createElement('div');d.className=i%2?'sq-d':'sq-l';d.style.cssText='width:54px;height:54px';d.innerHTML=disc(bFn,fFn,a.c,a.bg,50,true);board.appendChild(d);});
+}
+renderSection('r1a','r1s','b1', meander16, dhanurGaja);
+renderSection('r2a','r2s','b2', lotus8,    chatriGaja);
+renderSection('r3a','r3s','b3', ashokaRing, veeraGaja);
+</script>
+</body>
+</html>

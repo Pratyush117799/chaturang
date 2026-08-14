@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Chaturanga — Piece Forge · Indian Style Pieces</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink:   #c9a84c;
+  --ink2:  #e8c96a;
+  --ink3:  #f5e4a0;
+  --vel:   #0c0804;
+  --vel2:  #130d05;
+  --vel3:  #1c1508;
+  --vel4:  #241c0c;
+  --muted: #8a7050;
+  --border:rgba(201,168,76,.18);
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--vel);
+  color: var(--ink3);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  opacity:.7;
+}
+
+.page { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 24px 80px; }
+
+/* ── HEADER ─────────────────────────────────────── */
+.forge-header {
+  text-align:center;
+  padding:52px 0 40px;
+}
+.forge-ornament {
+  font-size:1.6rem; color:rgba(201,168,76,.2);
+  letter-spacing:.5em; display:block; margin-bottom:14px;
+}
+.forge-eyebrow {
+  font-size:.6rem; letter-spacing:.28em; text-transform:uppercase;
+  color:rgba(201,168,76,.4); margin-bottom:10px;
+}
+.forge-title {
+  font-family:'Cinzel',serif; font-size:2.8rem; font-weight:700;
+  color:var(--ink2); line-height:1.1; margin-bottom:6px;
+}
+.forge-subtitle {
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  font-size:1.1rem; color:rgba(201,168,76,.5); margin-bottom:18px;
+}
+.forge-desc {
+  font-size:.82rem; color:var(--muted); line-height:1.8;
+  max-width:540px; margin:0 auto;
+}
+
+/* ── DIVIDER ──────────────────────────────────── */
+.divider {
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);
+  margin:32px 0;
+}
+
+/* ── PIECES GRID ───────────────────────────────── */
+.pieces-showcase {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:16px;
+  margin-bottom:56px;
+}
+@media(max-width:800px){ .pieces-showcase { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:500px){ .pieces-showcase { grid-template-columns:repeat(2,1fr); } }
+
+.piece-card {
+  background:linear-gradient(160deg, var(--vel3), var(--vel2));
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 12px 16px;
+  display:flex; flex-direction:column; align-items:center;
+  position:relative; overflow:hidden;
+  cursor:pointer;
+  transition:transform .25s, border-color .25s, box-shadow .25s;
+  animation:cardIn .5s ease both;
+}
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.piece-card:nth-child(1){ animation-delay:.05s }
+.piece-card:nth-child(2){ animation-delay:.1s }
+.piece-card:nth-child(3){ animation-delay:.15s }
+.piece-card:nth-child(4){ animation-delay:.2s }
+.piece-card:nth-child(5){ animation-delay:.25s }
+
+.piece-card:hover {
+  transform:translateY(-4px);
+  border-color:rgba(201,168,76,.4);
+  box-shadow:0 12px 40px rgba(201,168,76,.08);
+}
+
+/* Corner ornaments */
+.piece-card::before,.piece-card::after {
+  content:''; position:absolute;
+  width:16px; height:16px;
+  border-color:rgba(201,168,76,.3); border-style:solid; pointer-events:none;
+}
+.piece-card::before { top:8px; left:8px; border-width:1px 0 0 1px; }
+.piece-card::after  { top:8px; right:8px; border-width:1px 1px 0 0; }
+
+/* ── PIECE SVG CONTAINER ────────────────────────── */
+.piece-display {
+  width:120px; height:180px;
+  display:flex; align-items:flex-end; justify-content:center;
+  margin-bottom:16px;
+  filter:drop-shadow(0 4px 16px rgba(201,168,76,.25));
+  transition:filter .25s;
+}
+.piece-card:hover .piece-display {
+  filter:drop-shadow(0 6px 24px rgba(201,168,76,.4));
+}
+
+/* All piece SVGs use CSS variable for color */
+.piece-display svg {
+  --pc:   #c9a84c;   /* main piece gold */
+  --pc2:  #f5e4a0;   /* highlight */
+  --pc3:  #3a2c10;   /* deep shadow detail */
+  --pcs:  rgba(201,168,76,.6); /* stroke */
+  overflow:visible;
+}
+
+/* Name section */
+.piece-sanskrit {
+  font-family:'Cinzel',serif; font-size:.88rem; color:var(--ink2);
+  font-weight:600; text-align:center; margin-bottom:3px;
+}
+.piece-devanagari {
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  font-size:.8rem; color:rgba(201,168,76,.5); margin-bottom:3px; text-align:center;
+}
+.piece-english {
+  font-size:.62rem; color:var(--muted); text-transform:uppercase;
+  letter-spacing:.1em; text-align:center;
+}
+
+/* ── GAME SIZE PREVIEW ──────────────────────────── */
+.game-size-section {
+  text-align:center;
+  margin-bottom:48px;
+}
+.gs-title {
+  font-family:'Cinzel',serif; font-size:.72rem; color:rgba(201,168,76,.45);
+  letter-spacing:.15em; text-transform:uppercase; margin-bottom:20px;
+}
+.gs-row {
+  display:flex; gap:20px; justify-content:center; align-items:flex-end;
+  padding:24px; background:var(--vel3); border:1px solid var(--border);
+  border-radius:12px; flex-wrap:wrap;
+}
+.gs-item { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.gs-item svg {
+  --pc: #c9a84c; --pc2:#f5e4a0; --pc3:#3a2c10; --pcs:rgba(201,168,76,.6);
+  filter:drop-shadow(0 2px 8px rgba(201,168,76,.3));
+}
+.gs-label {
+  font-size:.58rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+}
+
+/* Also show 4-player colors */
+.gs-row.player-colors {
+  gap:12px;
+}
+.player-group { display:flex; gap:8px; align-items:flex-end; padding:0 12px; }
+.player-group:not(:last-child) { border-right:1px solid rgba(201,168,76,.1); }
+
+/* Player color SVGs */
+.player-group svg { --pc2:#fff; --pc3:rgba(0,0,0,0.4); --pcs:rgba(0,0,0,0.2); }
+.player-group.red    svg { --pc:#e04030; }
+.player-group.blue   svg { --pc:#3070d0; }
+.player-group.green  svg { --pc:#30a050; }
+.player-group.yellow svg { --pc:#d0a020; }
+
+/* ── SECTION LABEL ──────────────────────────────── */
+.section-label {
+  font-family:'Cinzel',serif; font-size:.7rem; color:rgba(201,168,76,.4);
+  letter-spacing:.18em; text-transform:uppercase;
+  display:flex; align-items:center; gap:12px; margin-bottom:24px;
+}
+.section-label::before,.section-label::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.25));
+}
+.section-label::after {
+  background:linear-gradient(90deg,rgba(201,168,76,.25),transparent);
+}
+
+/* ── INTEGRATION GUIDE ──────────────────────────── */
+.guide-box {
+  background:var(--vel3); border:1px solid var(--border);
+  border-radius:10px; padding:20px 22px;
+  font-size:.78rem; color:var(--muted); line-height:1.8;
+}
+.guide-box code {
+  font-family:monospace; color:var(--ink); background:rgba(201,168,76,.07);
+  padding:1px 5px; border-radius:3px; font-size:.75rem;
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── HEADER ─────────────────────────────────────── -->
+<div class="forge-header">
+  <span class="forge-ornament">❧ ✦ ❧</span>
+  <div class="forge-eyebrow">Chaturanga v1.0.5.2 · Design System</div>
+  <div class="forge-title">The Piece Forge</div>
+  <div class="forge-subtitle">मूर्ति शाला · Mūrti Shālā</div>
+  <div class="forge-desc">
+    Five pieces. Five centuries of Indian martial art carved into gold.
+    Temple-sculpture silhouettes with Mughal decorative detail —
+    each recognisable at 48 pixels, beautiful at any size.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── LARGE SHOWCASE ────────────────────────────── -->
+<div class="pieces-showcase">
+
+  <!-- ══════════════════ RAJA ══════════════════ -->
+  <div class="piece-card">
+    <div class="piece-display">
+      <svg viewBox="0 0 60 90" width="110" height="165" xmlns="http://www.w3.org/2000/svg">
+        <!-- ── BASE PEDESTAL (shared) ── -->
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M21,78 Q21,74 30,73 Q39,74 39,78Z" fill="var(--pc)"/>
+        <!-- Shadow line on base -->
+        <path d="M13,84 Q30,86 47,84" fill="none" stroke="var(--pc3)" stroke-width="1.2"/>
+
+        <!-- ── ROYAL ROBE BODY ── -->
+        <!-- Wide flowing robe, tapers at waist, expands to hem -->
+        <path d="
+          M21,73
+          Q18,68 15,62
+          Q12,55 14,50
+          Q15,46 18,45
+          L22,44
+          L38,44
+          L42,45
+          Q45,46 46,50
+          Q48,55 45,62
+          Q42,68 39,73
+          Z
+        " fill="var(--pc)"/>
+
+        <!-- Robe hem decorative band -->
+        <path d="M16,66 Q30,69 44,66" fill="none" stroke="var(--pc3)" stroke-width="1.5"/>
+
+        <!-- Belt / patka -->
+        <rect x="21" y="57" width="18" height="3.5" rx="1.5" fill="var(--pc3)"/>
+
+        <!-- ── CHEST JEWELRY (haar / necklace) ── -->
+        <!-- Main chain -->
+        <path d="M22,47 Q30,54 38,47" fill="none" stroke="var(--pc2)" stroke-width="1.8"/>
+        <!-- Pendant drops -->
+        <circle cx="27" cy="50" r="1.8" fill="var(--pc2)"/>
+        <circle cx="30" cy="51.5" r="2.2" fill="var(--pc2)"/>
+        <circle cx="33" cy="50" r="1.8" fill="var(--pc2)"/>
+        <!-- Small gems on chain -->
+        <circle cx="23.5" cy="48" r="1" fill="var(--pc2)"/>
+        <circle cx="36.5" cy="48" r="1" fill="var(--pc2)"/>
+
+        <!-- Arms / sleeves visible at sides -->
+        <path d="M15,52 Q11,57 13,63 Q15,65 17,63 Q15,58 17,53Z" fill="var(--pc)"/>
+        <path d="M45,52 Q49,57 47,63 Q45,65 43,63 Q45,58 43,53Z" fill="var(--pc)"/>
+        <!-- Bangles at wrists -->
+        <path d="M13,62 Q15,65 17,62" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <path d="M47,62 Q45,65 43,62" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+
+        <!-- ── NECK ── -->
+        <rect x="26" y="38" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <!-- Neck ornament line -->
+        <path d="M26,41 Q30,43 34,41" fill="none" stroke="var(--pc3)" stroke-width="1"/>
+
+        <!-- ── HEAD ── -->
+        <circle cx="30" cy="30" r="10.5" fill="var(--pc)"/>
+        <!-- Face shadow -->
+        <ellipse cx="30" cy="33" rx="7" ry="5" fill="var(--pc3)" opacity=".25"/>
+
+        <!-- Chandratilaka (forehead mark) -->
+        <path d="M28.5,21.5 Q30,18.5 31.5,21.5 Q30,23 28.5,21.5Z" fill="var(--pc2)"/>
+
+        <!-- Eyes — almond-shaped, Indian style -->
+        <path d="M23,29 Q25.5,26.5 28,29 Q25.5,31.5 23,29Z" fill="var(--pc3)"/>
+        <path d="M32,29 Q34.5,26.5 37,29 Q34.5,31.5 32,29Z" fill="var(--pc3)"/>
+        <!-- Eye glint -->
+        <circle cx="25" cy="28.5" r="0.8" fill="var(--pc2)"/>
+        <circle cx="34" cy="28.5" r="0.8" fill="var(--pc2)"/>
+
+        <!-- Royal moustache -->
+        <path d="M23.5,34 Q27,36.5 30,35.5 Q33,36.5 36.5,34" fill="none" stroke="var(--pc3)" stroke-width="1.8" stroke-linecap="round"/>
+
+        <!-- Ear ornaments (kundal) — chandelier earrings -->
+        <circle cx="19.5" cy="31" r="2" fill="var(--pc)" stroke="var(--pc2)" stroke-width="1.2"/>
+        <path d="M18.5,33 L17,37 L19.5,38.5 L22,37 L20.5,33Z" fill="var(--pc2)" opacity=".8"/>
+        <circle cx="40.5" cy="31" r="2" fill="var(--pc)" stroke="var(--pc2)" stroke-width="1.2"/>
+        <path d="M39.5,33 L38,37 L40.5,38.5 L43,37 L41.5,33Z" fill="var(--pc2)" opacity=".8"/>
+
+        <!-- ── CROWN — PANCH SHIKHA MUKUT ── -->
+        <!-- Crown base band — wide jewelled band -->
+        <rect x="17.5" y="19" width="25" height="5.5" rx="2.5" fill="var(--pc)"/>
+        <!-- Band highlight -->
+        <rect x="18.5" y="19.5" width="23" height="2" rx="1" fill="var(--pc2)" opacity=".4"/>
+
+        <!-- PEAK 1 — far left (smallest) -->
+        <path d="M18,19 Q19,13.5 21,19Z" fill="var(--pc)"/>
+        <!-- PEAK 2 — inner left (medium) -->
+        <path d="M21,19 Q23.5,10 26.5,19Z" fill="var(--pc)"/>
+        <!-- PEAK 3 — CENTER PINNACLE (tallest, the crown jewel) -->
+        <path d="M25.5,19 Q27,8 30,4 Q33,8 34.5,19Z" fill="var(--pc)"/>
+        <!-- Center peak highlight -->
+        <path d="M29,8 Q30,5 31,8 L30,10Z" fill="var(--pc2)" opacity=".5"/>
+        <!-- PEAK 4 — inner right (medium) -->
+        <path d="M33.5,19 Q36.5,10 39,19Z" fill="var(--pc)"/>
+        <!-- PEAK 5 — far right (smallest) -->
+        <path d="M39,19 Q41,13.5 42,19Z" fill="var(--pc)"/>
+
+        <!-- Crown jewels -->
+        <circle cx="30" cy="5" r="2.5" fill="var(--pc2)"/>
+        <circle cx="30" cy="5" r="1.2" fill="var(--pc3)"/>
+        <circle cx="24" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="36" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="20" cy="16.5" r="1.2" fill="var(--pc2)"/>
+        <circle cx="40" cy="16.5" r="1.2" fill="var(--pc2)"/>
+
+        <!-- Crown band gems -->
+        <circle cx="22.5" cy="21.5" r="1.5" fill="var(--pc2)"/>
+        <circle cx="30" cy="21.5" r="2" fill="var(--pc2)"/>
+        <circle cx="37.5" cy="21.5" r="1.5" fill="var(--pc2)"/>
+        <!-- Red center gem dot -->
+        <circle cx="30" cy="21.5" r="1" fill="var(--pc3)"/>
+      </svg>
+    </div>
+    <div class="piece-sanskrit">Raja</div>
+    <div class="piece-devanagari">राजा</div>
+    <div class="piece-english">King</div>
+  </div>
+
+  <!-- ══════════════════ RATHA ══════════════════ -->
+  <div class="piece-card">
+    <div class="piece-display">
+      <svg viewBox="0 0 60 90" width="110" height="165" xmlns="http://www.w3.org/2000/svg">
+        <!-- ── BASE / GROUND ── -->
+        <ellipse cx="30" cy="87" rx="22" ry="4" fill="var(--pc)"/>
+        <rect x="9" y="83" width="42" height="5" rx="2" fill="var(--pc)"/>
+        <!-- Ground shadow -->
+        <path d="M11,86 Q30,88 49,86" fill="none" stroke="var(--pc3)" stroke-width="1"/>
+
+        <!-- ══ DHARMACHAKRA WHEEL — The defining element ══ -->
+        <!-- Rim (outer ring) -->
+        <circle cx="30" cy="62" r="20" fill="none" stroke="var(--pc)" stroke-width="3"/>
+        <!-- Outer wheel fill (so it looks solid from front) -->
+        <circle cx="30" cy="62" r="20" fill="var(--pc)" opacity=".08"/>
+        <!-- Rim inner edge -->
+        <circle cx="30" cy="62" r="17.5" fill="none" stroke="var(--pc)" stroke-width="1"/>
+
+        <!-- Felloe (rim decoration — traditional chariot wheel pattern) -->
+        <circle cx="30" cy="62" r="19" fill="none" stroke="var(--pc2)" stroke-width=".6" stroke-dasharray="4,3"/>
+
+        <!-- 8 SPOKES — Ashoka Chakra style -->
+        <!-- Each spoke: from hub-edge to near-rim. Hub r=4.5, rim r=17. Spoke length≈12.5 -->
+        <!-- Hub center (30,62) -->
+        <!-- 0° East -->
+        <line x1="34.5" y1="62" x2="47" y2="62" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 45° SE -->
+        <line x1="33.2" y1="65.2" x2="42" y2="74" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 90° South -->
+        <line x1="30" y1="66.5" x2="30" y2="79" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 135° SW -->
+        <line x1="26.8" y1="65.2" x2="18" y2="74" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 180° West -->
+        <line x1="25.5" y1="62" x2="13" y2="62" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 225° NW -->
+        <line x1="26.8" y1="58.8" x2="18" y2="50" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 270° North -->
+        <line x1="30" y1="57.5" x2="30" y2="45" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- 315° NE -->
+        <line x1="33.2" y1="58.8" x2="42" y2="50" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+
+        <!-- Hub (center circle) -->
+        <circle cx="30" cy="62" r="4.5" fill="var(--pc)"/>
+        <circle cx="30" cy="62" r="2.5" fill="var(--pc3)"/>
+        <circle cx="30" cy="62" r="1.2" fill="var(--pc2)"/>
+
+        <!-- ── CHARIOT CAB (sits behind/above wheel) ── -->
+        <!-- The cab body — decorated rectangular panel -->
+        <path d="
+          M16,42
+          Q16,36 22,35
+          L38,35
+          Q44,36 44,42
+          L44,58
+          Q44,62 40,63
+          L20,63
+          Q16,62 16,58
+          Z
+        " fill="var(--pc)"/>
+
+        <!-- Cab front arch (decorative Mughal arch / mehrab) -->
+        <path d="M19,42 Q19,37 30,36 Q41,37 41,42 L41,58 Q41,61 30,62 Q19,61 19,58Z" fill="var(--pc3)" opacity=".35"/>
+        <!-- Arch border line -->
+        <path d="M20,42 Q20,38.5 30,37.5 Q40,38.5 40,42" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+
+        <!-- Cab decorative band at top -->
+        <rect x="16" y="34.5" width="28" height="3.5" rx="1.5" fill="var(--pc)"/>
+        <!-- Top band gems -->
+        <circle cx="22" cy="36.2" r="1.2" fill="var(--pc2)"/>
+        <circle cx="30" cy="36.2" r="1.5" fill="var(--pc2)"/>
+        <circle cx="38" cy="36.2" r="1.2" fill="var(--pc2)"/>
+
+        <!-- Cab decorative band at bottom -->
+        <rect x="16" y="58" width="28" height="3" rx="1" fill="var(--pc)"/>
+
+        <!-- Cab interior detail — warrior silhouette (simplified) -->
+        <!-- Warrior holding bow inside cab -->
+        <circle cx="34" cy="46" r="3.5" fill="var(--pc)" opacity=".7"/>
+        <path d="M31,49 Q29,44 30,40 Q32,38 34,40 L35,50Z" fill="var(--pc)" opacity=".6"/>
+        <!-- Bow drawn back -->
+        <path d="M23,43 Q24,46 23,49" fill="none" stroke="var(--pc)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="23" y1="43" x2="23" y2="49" stroke="var(--pc)" stroke-width=".8" stroke-dasharray="2,2"/>
+        <!-- Arrow -->
+        <line x1="26" y1="46" x2="34" y2="46" stroke="var(--pc2)" stroke-width="1.2"/>
+        <path d="M26,44.5 L24,46 L26,47.5Z" fill="var(--pc2)"/>
+
+        <!-- ── FLAG POLE + BANNER ── -->
+        <line x1="21" y1="8" x2="21" y2="35" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Flag pole ball finial -->
+        <circle cx="21" cy="8" r="2.5" fill="var(--pc2)"/>
+        <!-- Triangular pennant flag -->
+        <path d="M21,10 L40,15.5 L21,22 Z" fill="var(--pc)"/>
+        <!-- Flag detail: small gem/chakra in center -->
+        <circle cx="28" cy="16" r="2" fill="var(--pc2)" opacity=".7"/>
+        <!-- Flag ripple line -->
+        <path d="M21,14 Q30,15 38,16" fill="none" stroke="var(--pc3)" stroke-width=".8"/>
+
+      </svg>
+    </div>
+    <div class="piece-sanskrit">Ratha</div>
+    <div class="piece-devanagari">रथ</div>
+    <div class="piece-english">Chariot</div>
+  </div>
+
+  <!-- ══════════════════ ASHWA ══════════════════ -->
+  <div class="piece-card">
+    <div class="piece-display">
+      <svg viewBox="0 0 60 90" width="110" height="165" xmlns="http://www.w3.org/2000/svg">
+        <!-- ── BASE PEDESTAL ── -->
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M20,78 Q20,74 30,73 Q40,74 40,78Z" fill="var(--pc)"/>
+        <!-- Base shadow -->
+        <path d="M13,84 Q30,86 47,84" fill="none" stroke="var(--pc3)" stroke-width="1.2"/>
+
+        <!-- ── HORSE CHEST / BODY BASE ── -->
+        <!-- Connects to pedestal and rises into the neck -->
+        <path d="
+          M20,73
+          Q15,68 14,60
+          Q13,52 18,48
+          Q22,44 28,44
+          L32,44
+          Q38,44 42,48
+          Q47,52 46,60
+          Q45,68 40,73
+          Z
+        " fill="var(--pc)"/>
+
+        <!-- Decorative JHOOL (embroidered neck cloth of Rajasthani horse) -->
+        <!-- This cloth drapes over the chest -->
+        <path d="M18,52 Q17,58 19,63 Q22,67 30,67 Q38,67 41,63 Q43,58 42,52 Q38,56 30,57 Q22,56 18,52Z" fill="var(--pc3)" opacity=".4"/>
+        <!-- Jhool border -->
+        <path d="M18,52 Q22,56 30,57 Q38,56 42,52" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+        <!-- Jhool tassel edge -->
+        <path d="M19,63 Q30,66 41,63" fill="none" stroke="var(--pc2)" stroke-width=".8" stroke-dasharray="3,2"/>
+        <!-- Jhool gems -->
+        <circle cx="24" cy="56" r="1.2" fill="var(--pc2)"/>
+        <circle cx="30" cy="57" r="1.5" fill="var(--pc2)"/>
+        <circle cx="36" cy="56" r="1.2" fill="var(--pc2)"/>
+        <!-- Bell clusters at bottom of jhool -->
+        <path d="M22,63 L20,66 Q22,68 24,66 L22,63Z" fill="var(--pc2)" opacity=".7"/>
+        <path d="M30,64 L28,67 Q30,69 32,67 L30,64Z" fill="var(--pc2)" opacity=".7"/>
+        <path d="M38,63 L36,66 Q38,68 40,66 L38,63Z" fill="var(--pc2)" opacity=".7"/>
+
+        <!-- ── HORSE NECK ── -->
+        <!-- Arched, powerful neck sweeping up and slightly left (like chess knight) -->
+        <path d="
+          M20,48
+          Q16,42 16,34
+          Q16,26 20,22
+          Q24,18 30,18
+          Z
+        " fill="var(--pc)"/>
+        <path d="
+          M40,48
+          Q44,42 44,34
+          Q44,26 40,22
+          Q36,18 30,18
+          Z
+        " fill="var(--pc)"/>
+        <!-- Neck front fill -->
+        <path d="M20,48 Q20,38 30,36 Q40,38 40,48 Q36,52 30,52 Q24,52 20,48Z" fill="var(--pc)"/>
+
+        <!-- ── MANE (flowing from poll down the neck) ── -->
+        <!-- Mane is on the LEFT side (facing left convention) -->
+        <!-- Main mane bulk -->
+        <path d="
+          M30,18
+          Q26,20 22,24
+          Q18,28 16,34
+          Q16,40 18,44
+          Q20,40 20,36
+          Q20,30 23,26
+          Q26,22 30,20
+          Z
+        " fill="var(--pc3)" opacity=".5"/>
+        <!-- Mane flow lines -->
+        <path d="M28,20 Q24,24 22,30 Q20,36 20,42" fill="none" stroke="var(--pc2)" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+        <path d="M26,20 Q22,25 20,32 Q18,38 19,44" fill="none" stroke="var(--pc2)" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+
+        <!-- ── HORSE HEAD ── -->
+        <!-- The head faces slightly left (3/4 view) -->
+        <!-- Head silhouette: forehead, face, muzzle, jaw -->
+        <path d="
+          M20,22
+          Q18,20 16,18
+          Q14,16 14,20
+          Q14,26 16,30
+          Q16,34 14,38
+          Q14,44 18,46
+          Q22,48 26,46
+          Q30,44 30,40
+          Q32,36 30,30
+          Q30,24 28,22
+          Q24,20 20,22
+          Z
+        " fill="var(--pc)"/>
+
+        <!-- Nose/muzzle highlight -->
+        <path d="M14,38 Q16,44 20,46 Q24,48 26,46 Q22,44 18,44 Q16,42 14,38Z" fill="var(--pc3)" opacity=".3"/>
+
+        <!-- EYE — large, beautiful, characteristic of Indian horse art -->
+        <ellipse cx="21" cy="28" rx="3.5" ry="2.8" fill="var(--pc3)"/>
+        <ellipse cx="21" cy="28" rx="2.5" ry="2" fill="var(--pc3)"/>
+        <!-- Eye highlight / glint -->
+        <circle cx="20" cy="27" r="1" fill="var(--pc2)"/>
+        <!-- Kohl/kajal eye liner effect -->
+        <path d="M17.5,28 Q18,25.5 21,25.5 Q24,25.5 24.5,28" fill="none" stroke="var(--pc3)" stroke-width=".8"/>
+
+        <!-- NOSTRIL (flared, like a racing horse) -->
+        <ellipse cx="14.5" cy="41" rx="2" ry="1.3" fill="var(--pc3)" opacity=".6"/>
+
+        <!-- LIPS / MUZZLE LINE -->
+        <path d="M14,44 Q16,46 20,46" fill="none" stroke="var(--pc3)" stroke-width="1" stroke-linecap="round"/>
+
+        <!-- EAR 1 (front, inner) — pointed, pricked forward -->
+        <path d="M22,22 Q24,16 26,18 Q25,20 23,22Z" fill="var(--pc)"/>
+        <!-- EAR 1 inner -->
+        <path d="M22.5,22 Q24,17.5 25.5,19 Q24.5,20.5 23,22Z" fill="var(--pc3)" opacity=".5"/>
+        <!-- EAR 2 (back ear visible) -->
+        <path d="M26,20 Q28,14 30,16 Q29.5,18 28,20Z" fill="var(--pc)"/>
+
+        <!-- FOREHEAD ORNAMENT — Maang-tikka / Chamang -->
+        <!-- Crescent moon motif on forehead -->
+        <path d="M20,24 Q22,20 24,24 Q22,26 20,24Z" fill="var(--pc2)" opacity=".8"/>
+        <!-- Tikka drop pendant -->
+        <path d="M22,25 L21.5,29" stroke="var(--pc2)" stroke-width="1"/>
+        <circle cx="21.5" cy="30" r="1.5" fill="var(--pc2)"/>
+        <!-- Small jewels flanking -->
+        <circle cx="19" cy="25" r="1" fill="var(--pc2)" opacity=".6"/>
+        <circle cx="25" cy="24" r="1" fill="var(--pc2)" opacity=".6"/>
+
+        <!-- NATHUNI (nose ring - typical of decorated Indian horses) -->
+        <path d="M13,40 Q12,43 14,44" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+
+      </svg>
+    </div>
+    <div class="piece-sanskrit">Ashwa</div>
+    <div class="piece-devanagari">अश्व</div>
+    <div class="piece-english">Horse</div>
+  </div>
+
+  <!-- ══════════════════ DANTI ══════════════════ -->
+  <div class="piece-card">
+    <div class="piece-display">
+      <svg viewBox="0 0 60 90" width="110" height="165" xmlns="http://www.w3.org/2000/svg">
+        <!-- ── BASE PEDESTAL ── -->
+        <ellipse cx="30" cy="87" rx="22" ry="4" fill="var(--pc)"/>
+        <path d="M10,87 Q10,81 16,78 L44,78 Q50,81 50,87Z" fill="var(--pc)"/>
+        <!-- Base shadow -->
+        <path d="M12,84 Q30,86 48,84" fill="none" stroke="var(--pc3)" stroke-width="1.2"/>
+
+        <!-- ── LEGS (stub legs below body) ── -->
+        <rect x="16" y="68" width="9" height="12" rx="4" fill="var(--pc)"/>
+        <rect x="35" y="68" width="9" height="12" rx="4" fill="var(--pc)"/>
+        <!-- Ankle decorations (payals / anklets) -->
+        <path d="M16,75 Q20.5,77 25,75" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <path d="M35,75 Q39.5,77 44,75" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+
+        <!-- ── BODY ── -->
+        <path d="M14,78 Q12,70 13,62 Q14,54 18,50 L42,50 Q46,54 47,62 Q48,70 46,78Z" fill="var(--pc)"/>
+        <!-- Body cloth decoration (embroidered blanket) -->
+        <path d="M16,70 Q30,73 44,70 L44,56 Q30,59 16,56 Z" fill="var(--pc3)" opacity=".35"/>
+        <!-- Blanket border top -->
+        <path d="M16,56 Q23,58 30,58 Q37,58 44,56" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+        <!-- Blanket gems -->
+        <circle cx="22" cy="60" r="1.4" fill="var(--pc2)"/>
+        <circle cx="30" cy="62" r="1.8" fill="var(--pc2)"/>
+        <circle cx="38" cy="60" r="1.4" fill="var(--pc2)"/>
+        <!-- Small diamond pattern on blanket -->
+        <path d="M26,64 L30,60 L34,64 L30,68Z" fill="none" stroke="var(--pc2)" stroke-width=".8" opacity=".6"/>
+
+        <!-- ── EARS (large fan ears — most distinctive elephant feature) ── -->
+        <!-- LEFT EAR — large, veined, shaped like a fan/lotus petal -->
+        <path d="
+          M18,52
+          Q10,48 7,40
+          Q6,34 10,30
+          Q14,26 20,28
+          Q24,30 24,36
+          Q26,42 24,48
+          Q22,52 20,54
+          Z
+        " fill="var(--pc)"/>
+        <!-- Left ear vein lines (like real elephant ears) -->
+        <path d="M18,44 Q14,38 12,32 Q11,36 14,42 Q16,46 18,50" fill="none" stroke="var(--pc3)" stroke-width="1" opacity=".4"/>
+        <path d="M21,46 Q18,40 17,34 Q15,38 16,44" fill="none" stroke="var(--pc3)" stroke-width=".8" opacity=".3"/>
+        <!-- Left ear rim line -->
+        <path d="M18,52 Q10,46 7,40 Q6,34 10,30 Q14,26 20,28" fill="none" stroke="var(--pc2)" stroke-width="1" opacity=".5"/>
+
+        <!-- RIGHT EAR (mirror) -->
+        <path d="
+          M42,52
+          Q50,48 53,40
+          Q54,34 50,30
+          Q46,26 40,28
+          Q36,30 36,36
+          Q34,42 36,48
+          Q38,52 40,54
+          Z
+        " fill="var(--pc)"/>
+        <!-- Right ear vein lines -->
+        <path d="M42,44 Q46,38 48,32 Q49,36 46,42 Q44,46 42,50" fill="none" stroke="var(--pc3)" stroke-width="1" opacity=".4"/>
+        <!-- Right ear rim -->
+        <path d="M42,52 Q50,46 53,40 Q54,34 50,30 Q46,26 40,28" fill="none" stroke="var(--pc2)" stroke-width="1" opacity=".5"/>
+
+        <!-- ── HEAD (large dome — characteristic elephant dome forehead) ── -->
+        <ellipse cx="30" cy="46" rx="14" ry="16" fill="var(--pc)"/>
+        <!-- Head dome highlight -->
+        <ellipse cx="28" cy="38" rx="6" ry="5" fill="var(--pc2)" opacity=".12"/>
+
+        <!-- EYES — small, wise, kind -->
+        <ellipse cx="22" cy="48" rx="2.8" ry="2.2" fill="var(--pc3)"/>
+        <ellipse cx="38" cy="48" rx="2.8" ry="2.2" fill="var(--pc3)"/>
+        <circle cx="21.5" cy="47.5" r="0.9" fill="var(--pc2)"/>
+        <circle cx="37.5" cy="47.5" r="0.9" fill="var(--pc2)"/>
+
+        <!-- FOREHEAD DECORATION (Indian festival elephant tilaka painting) -->
+        <!-- Central leaf/bindi motif -->
+        <path d="M27,36 Q30,30 33,36 Q30,40 27,36Z" fill="var(--pc2)" opacity=".7"/>
+        <!-- Side flower patterns (bindis) -->
+        <circle cx="22" cy="38" r="2.5" fill="none" stroke="var(--pc2)" stroke-width="1"/>
+        <circle cx="22" cy="38" r="1.2" fill="var(--pc2)" opacity=".6"/>
+        <circle cx="38" cy="38" r="2.5" fill="none" stroke="var(--pc2)" stroke-width="1"/>
+        <circle cx="38" cy="38" r="1.2" fill="var(--pc2)" opacity=".6"/>
+        <!-- Decorative dots in a triangle -->
+        <circle cx="27" cy="42" r="1" fill="var(--pc2)" opacity=".5"/>
+        <circle cx="30" cy="44" r="1" fill="var(--pc2)" opacity=".5"/>
+        <circle cx="33" cy="42" r="1" fill="var(--pc2)" opacity=".5"/>
+
+        <!-- ── TRUNK (the most elephant-defining feature) ── -->
+        <path d="
+          M23,58
+          Q20,64 21,70
+          Q22,76 25,78
+          Q27,80 27,76
+          Q27,72 25,70
+          Q23,66 24,60
+          Z
+        " fill="var(--pc)"/>
+        <!-- Trunk rings (annular creases) -->
+        <path d="M22,63 Q24,64 25,63" fill="none" stroke="var(--pc3)" stroke-width="1" opacity=".5"/>
+        <path d="M21,67 Q24,68 25,67" fill="none" stroke="var(--pc3)" stroke-width="1" opacity=".5"/>
+        <path d="M21,71 Q24,72 25,71" fill="none" stroke="var(--pc3)" stroke-width="1" opacity=".5"/>
+        <!-- Trunk tip curl -->
+        <path d="M25,78 Q28,82 25,84 Q22,82 23,78" fill="none" stroke="var(--pc)" stroke-width="2.5" stroke-linecap="round"/>
+
+        <!-- ── TUSKS ── -->
+        <!-- Left tusk — curves outward and forward -->
+        <path d="M22,60 Q16,66 12,72 Q10,76 14,77 Q18,77 20,73 Q22,68 24,62" fill="none" stroke="var(--pc2)" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+        <!-- Right tusk -->
+        <path d="M38,60 Q44,66 48,72 Q50,76 46,77 Q42,77 40,73 Q38,68 36,62" fill="none" stroke="var(--pc2)" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+
+        <!-- ── HOWDAH (seat platform on top) ── -->
+        <!-- Howdah base/platform -->
+        <path d="M20,32 Q20,28 30,27 Q40,28 40,32 L40,36 Q40,38 30,39 Q20,38 20,36 Z" fill="var(--pc)"/>
+        <!-- Howdah decorative top edge -->
+        <path d="M20,32 Q30,29 40,32" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+        <!-- Howdah canopy poles -->
+        <line x1="21" y1="32" x2="21" y2="24" stroke="var(--pc)" stroke-width="1.5"/>
+        <line x1="39" y1="32" x2="39" y2="24" stroke="var(--pc)" stroke-width="1.5"/>
+        <!-- Canopy top -->
+        <path d="M18,24 Q30,19 42,24 L40,27 Q30,22 20,27 Z" fill="var(--pc)"/>
+        <!-- Canopy fringe -->
+        <path d="M18,24 Q24,26 30,25 Q36,26 42,24" fill="none" stroke="var(--pc2)" stroke-width=".8" stroke-dasharray="2.5,2"/>
+        <!-- Howdah jewels -->
+        <circle cx="25" cy="34" r="1.2" fill="var(--pc2)"/>
+        <circle cx="30" cy="35" r="1.5" fill="var(--pc2)"/>
+        <circle cx="35" cy="34" r="1.2" fill="var(--pc2)"/>
+        <!-- Small flag on howdah -->
+        <line x1="30" y1="19" x2="30" y2="10" stroke="var(--pc)" stroke-width="1.5"/>
+        <path d="M30,10 L38,13 L30,16Z" fill="var(--pc2)" opacity=".7"/>
+
+      </svg>
+    </div>
+    <div class="piece-sanskrit">Danti</div>
+    <div class="piece-devanagari">दन्ती</div>
+    <div class="piece-english">Elephant</div>
+  </div>
+
+  <!-- ══════════════════ NARA ══════════════════ -->
+  <div class="piece-card">
+    <div class="piece-display">
+      <svg viewBox="0 0 60 90" width="110" height="165" xmlns="http://www.w3.org/2000/svg">
+        <!-- ── BASE PEDESTAL ── -->
+        <ellipse cx="30" cy="87" rx="18" ry="3.5" fill="var(--pc)"/>
+        <path d="M14,87 Q14,82 19,79 L41,79 Q46,82 46,87Z" fill="var(--pc)"/>
+        <path d="M22,79 Q22,75 30,74 Q38,75 38,79Z" fill="var(--pc)"/>
+        <!-- Base shadow -->
+        <path d="M16,84 Q30,86 44,84" fill="none" stroke="var(--pc3)" stroke-width="1"/>
+
+        <!-- ── FEET / SANDALS ── -->
+        <path d="M20,79 Q18,75 20,72 Q22,70 24,72 L24,79Z" fill="var(--pc)"/>
+        <path d="M36,79 Q34,75 36,72 Q38,70 40,72 L40,79Z" fill="var(--pc)"/>
+        <!-- Sandal strap lines -->
+        <path d="M20,76 Q22,77 24,76" fill="none" stroke="var(--pc2)" stroke-width="1"/>
+        <path d="M36,76 Q38,77 40,76" fill="none" stroke="var(--pc2)" stroke-width="1"/>
+
+        <!-- ── DHOTI / LOWER GARMENT ── -->
+        <!-- Wide dhoti from waist to knees -->
+        <path d="M19,72 Q17,66 18,60 L20,58 L40,58 L42,60 Q43,66 41,72Z" fill="var(--pc)"/>
+        <!-- Dhoti fold lines -->
+        <path d="M20,65 Q30,67 40,65" fill="none" stroke="var(--pc3)" stroke-width="1" opacity=".5"/>
+        <path d="M21,69 Q30,71 39,69" fill="none" stroke="var(--pc3)" stroke-width=".8" opacity=".4"/>
+
+        <!-- BELT / KATIBAND -->
+        <rect x="19" y="56" width="22" height="3.5" rx="1.5" fill="var(--pc3)" opacity=".7"/>
+        <circle cx="30" cy="57.8" r="2" fill="var(--pc2)" opacity=".8"/> <!-- belt buckle -->
+
+        <!-- ── BODY / KURTA (upper torso) ── -->
+        <path d="M19,58 Q16,52 18,46 Q20,42 24,41 L36,41 Q40,42 42,46 Q44,52 41,58Z" fill="var(--pc)"/>
+        <!-- Kurta decorative border -->
+        <path d="M19,58 Q30,60 41,58" fill="none" stroke="var(--pc2)" stroke-width=".8"/>
+        <!-- Chest line (kurta opening, V-neck) -->
+        <path d="M26,42 Q30,46 34,42" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+        <!-- Small pendant at chest -->
+        <circle cx="30" cy="47" r="1.8" fill="var(--pc2)" opacity=".7"/>
+
+        <!-- ── LEFT ARM holding DHAL (shield) ── -->
+        <path d="M19,48 Q14,47 12,50 L12,54" stroke="var(--pc)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <!-- DHAL (round shield) — Indian circular war shield -->
+        <!-- Main shield disk -->
+        <circle cx="10" cy="57" r="9" fill="var(--pc)"/>
+        <!-- Shield rim (raised edge) -->
+        <circle cx="10" cy="57" r="9" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <!-- Shield boss (umbo) at center -->
+        <circle cx="10" cy="57" r="3.5" fill="var(--pc2)" opacity=".7"/>
+        <circle cx="10" cy="57" r="2" fill="var(--pc3)"/>
+        <!-- Shield decorative rings -->
+        <circle cx="10" cy="57" r="6.5" fill="none" stroke="var(--pc2)" stroke-width=".8" opacity=".5"/>
+        <!-- Shield decorative pattern (4 petals) -->
+        <circle cx="10" cy="50.5" r="1.2" fill="var(--pc2)" opacity=".5"/>
+        <circle cx="10" cy="63.5" r="1.2" fill="var(--pc2)" opacity=".5"/>
+        <circle cx="3.5" cy="57" r="1.2" fill="var(--pc2)" opacity=".5"/>
+        <circle cx="16.5" cy="57" r="1.2" fill="var(--pc2)" opacity=".5"/>
+
+        <!-- ── RIGHT ARM holding VEL (spear) ── -->
+        <path d="M41,48 Q44,47 46,49 L46,52" stroke="var(--pc)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+        <!-- ── SPEAR SHAFT (vel) — extends tall above figure ── -->
+        <line x1="47" y1="8" x2="47" y2="54" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Spear grip wrap (leather binding) -->
+        <path d="M46,48 L48,48" stroke="var(--pc2)" stroke-width="1" opacity=".7"/>
+        <path d="M46,45 L48,45" stroke="var(--pc2)" stroke-width="1" opacity=".7"/>
+        <path d="M46,42 L48,42" stroke="var(--pc2)" stroke-width="1" opacity=".7"/>
+
+        <!-- ── SPEAR TIP — TRISHULA-INSPIRED ── -->
+        <!-- Central blade -->
+        <path d="M44,8 L47,3 L50,8 L48,12 L47,10 L46,12 Z" fill="var(--pc2)"/>
+        <!-- Wing blades (small trishula cross blades) -->
+        <path d="M44,10 L41,8 L43,11Z" fill="var(--pc2)" opacity=".7"/>
+        <path d="M50,10 L53,8 L51,11Z" fill="var(--pc2)" opacity=".7"/>
+
+        <!-- ── NECK ── -->
+        <rect x="26" y="35" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <!-- Neck ornament (kantha) -->
+        <path d="M26,38 Q30,40 34,38" fill="none" stroke="var(--pc2)" stroke-width="1"/>
+
+        <!-- ── HEAD ── -->
+        <circle cx="30" cy="27" r="9.5" fill="var(--pc)"/>
+        <!-- Face shadow -->
+        <ellipse cx="30" cy="30" rx="6" ry="4.5" fill="var(--pc3)" opacity=".2"/>
+
+        <!-- TILAKA (forehead mark — a soldier's warrior mark) -->
+        <path d="M28.5,19.5 Q30,17 31.5,19.5 Q30,21 28.5,19.5Z" fill="var(--pc2)"/>
+
+        <!-- Eyes -->
+        <path d="M23.5,26 Q25.5,23.5 27.5,26 Q25.5,28.5 23.5,26Z" fill="var(--pc3)"/>
+        <path d="M32.5,26 Q34.5,23.5 36.5,26 Q34.5,28.5 32.5,26Z" fill="var(--pc3)"/>
+        <circle cx="25.5" cy="25.5" r=".8" fill="var(--pc2)"/>
+        <circle cx="34.5" cy="25.5" r=".8" fill="var(--pc2)"/>
+
+        <!-- Moustache (young soldier) -->
+        <path d="M25,30 Q30,32 35,30" fill="none" stroke="var(--pc3)" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- ── PAGDI / TURBAN ── -->
+        <!-- Turban base band (petha — forehead band) -->
+        <rect x="21" y="20" width="18" height="4" rx="1" fill="var(--pc)"/>
+        <!-- Turban dome (multiple wrapped layers) -->
+        <path d="M20,21 Q21,10 30,8 Q39,10 40,21Z" fill="var(--pc)"/>
+        <!-- Turban folds (the wrapped layers create horizontal ridges) -->
+        <path d="M20.5,21 Q30,17 39.5,21" fill="none" stroke="var(--pc3)" stroke-width=".8" opacity=".5"/>
+        <path d="M21,18 Q30,14 39,18" fill="none" stroke="var(--pc3)" stroke-width=".8" opacity=".4"/>
+        <path d="M22,15 Q30,12 38,15" fill="none" stroke="var(--pc3)" stroke-width=".7" opacity=".3"/>
+        <!-- Turban highlight (top dome) -->
+        <ellipse cx="30" cy="11" rx="6" ry="4" fill="var(--pc2)" opacity=".15"/>
+        <!-- SARPECH (turban jewel — the soldier wears a simple one) -->
+        <!-- Small feather/pankhi ornament -->
+        <path d="M28,10 Q30,6 32,10 Q31,13 30,14 Q29,13 28,10Z" fill="var(--pc2)" opacity=".75"/>
+        <circle cx="30" cy="9" r="1.5" fill="var(--pc2)"/>
+        <!-- Turban back knot / pheta fold -->
+        <path d="M39,16 Q42,18 40,21" fill="var(--pc)" stroke="var(--pc3)" stroke-width=".5"/>
+      </svg>
+    </div>
+    <div class="piece-sanskrit">Nara</div>
+    <div class="piece-devanagari">नर</div>
+    <div class="piece-english">Foot Soldier</div>
+  </div>
+
+</div><!-- end pieces-showcase -->
+
+<div class="divider"></div>
+
+<!-- ── IN-GAME SIZE PREVIEW ─────────────────────── -->
+<div class="game-size-section">
+  <div class="section-label">In-Game Size Preview · 48px</div>
+  <div class="gs-row">
+
+    <div class="gs-item">
+      <!-- RAJA 48px -->
+      <svg viewBox="0 0 60 90" width="40" height="60">
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M21,78 Q21,74 30,73 Q39,74 39,78Z" fill="var(--pc)"/>
+        <path d="M21,73 Q18,68 15,62 Q12,55 14,50 Q15,46 18,45 L22,44 L38,44 L42,45 Q45,46 46,50 Q48,55 45,62 Q42,68 39,73Z" fill="var(--pc)"/>
+        <path d="M22,47 Q30,54 38,47" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <circle cx="30" cy="51.5" r="2" fill="var(--pc2)"/>
+        <rect x="26" y="38" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <circle cx="30" cy="30" r="10.5" fill="var(--pc)"/>
+        <path d="M23,29 Q25.5,26.5 28,29 Q25.5,31.5 23,29Z" fill="var(--pc3)"/>
+        <path d="M32,29 Q34.5,26.5 37,29 Q34.5,31.5 32,29Z" fill="var(--pc3)"/>
+        <path d="M23.5,34 Q27,36.5 30,35.5 Q33,36.5 36.5,34" fill="none" stroke="var(--pc3)" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="17.5" y="19" width="25" height="5.5" rx="2.5" fill="var(--pc)"/>
+        <path d="M18,19 Q19,13.5 21,19Z" fill="var(--pc)"/>
+        <path d="M21,19 Q23.5,10 26.5,19Z" fill="var(--pc)"/>
+        <path d="M25.5,19 Q27,8 30,4 Q33,8 34.5,19Z" fill="var(--pc)"/>
+        <path d="M33.5,19 Q36.5,10 39,19Z" fill="var(--pc)"/>
+        <path d="M39,19 Q41,13.5 42,19Z" fill="var(--pc)"/>
+        <circle cx="30" cy="5" r="2.5" fill="var(--pc2)"/>
+        <circle cx="24" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="36" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="30" cy="21.5" r="2" fill="var(--pc2)"/>
+      </svg>
+      <div class="gs-label">Raja</div>
+    </div>
+
+    <div class="gs-item">
+      <!-- RATHA 48px (simplified) -->
+      <svg viewBox="0 0 60 90" width="40" height="60">
+        <ellipse cx="30" cy="87" rx="22" ry="4" fill="var(--pc)"/>
+        <rect x="9" y="83" width="42" height="5" rx="2" fill="var(--pc)"/>
+        <circle cx="30" cy="62" r="20" fill="none" stroke="var(--pc)" stroke-width="3"/>
+        <line x1="34.5" y1="62" x2="47" y2="62" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="33.2" y1="65.2" x2="42" y2="74" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="30" y1="66.5" x2="30" y2="79" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="26.8" y1="65.2" x2="18" y2="74" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="25.5" y1="62" x2="13" y2="62" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="26.8" y1="58.8" x2="18" y2="50" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="30" y1="57.5" x2="30" y2="45" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="33.2" y1="58.8" x2="42" y2="50" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="30" cy="62" r="4.5" fill="var(--pc)"/>
+        <circle cx="30" cy="62" r="2" fill="var(--pc3)"/>
+        <rect x="16" y="34.5" width="28" height="24" rx="2" fill="var(--pc)"/>
+        <path d="M20,42 Q20,38.5 30,37.5 Q40,38.5 40,42" fill="none" stroke="var(--pc2)" stroke-width="1.2"/>
+        <line x1="21" y1="8" x2="21" y2="35" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="21" cy="8" r="2.5" fill="var(--pc2)"/>
+        <path d="M21,10 L40,15.5 L21,22 Z" fill="var(--pc)"/>
+      </svg>
+      <div class="gs-label">Ratha</div>
+    </div>
+
+    <div class="gs-item">
+      <!-- ASHWA 48px -->
+      <svg viewBox="0 0 60 90" width="40" height="60">
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M20,73 Q15,68 14,60 Q13,52 18,48 Q22,44 28,44 L32,44 Q38,44 42,48 Q47,52 46,60 Q45,68 40,73Z" fill="var(--pc)"/>
+        <path d="M20,48 Q16,42 16,34 Q16,26 20,22 Q24,18 30,18Z" fill="var(--pc)"/>
+        <path d="M40,48 Q44,42 44,34 Q44,26 40,22 Q36,18 30,18Z" fill="var(--pc)"/>
+        <path d="M20,48 Q20,38 30,36 Q40,38 40,48 Q36,52 30,52 Q24,52 20,48Z" fill="var(--pc)"/>
+        <path d="M20,22 Q18,20 16,18 Q14,16 14,20 Q14,26 16,30 Q16,34 14,38 Q14,44 18,46 Q22,48 26,46 Q30,44 30,40 Q32,36 30,30 Q30,24 28,22 Q24,20 20,22Z" fill="var(--pc)"/>
+        <ellipse cx="21" cy="28" rx="3.5" ry="2.8" fill="var(--pc3)"/>
+        <circle cx="20" cy="27" r="1" fill="var(--pc2)"/>
+        <path d="M22,22 Q24,16 26,18 Q25,20 23,22Z" fill="var(--pc)"/>
+        <path d="M20,24 Q22,20 24,24 Q22,26 20,24Z" fill="var(--pc2)" opacity=".8"/>
+        <circle cx="21.5" cy="30" r="1.5" fill="var(--pc2)"/>
+        <path d="M28,20 Q24,24 22,30 Q20,36 20,42" fill="none" stroke="var(--pc2)" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+      </svg>
+      <div class="gs-label">Ashwa</div>
+    </div>
+
+    <div class="gs-item">
+      <!-- DANTI 48px -->
+      <svg viewBox="0 0 60 90" width="40" height="60">
+        <ellipse cx="30" cy="87" rx="22" ry="4" fill="var(--pc)"/>
+        <path d="M10,87 Q10,81 16,78 L44,78 Q50,81 50,87Z" fill="var(--pc)"/>
+        <rect x="16" y="68" width="9" height="12" rx="4" fill="var(--pc)"/>
+        <rect x="35" y="68" width="9" height="12" rx="4" fill="var(--pc)"/>
+        <path d="M14,78 Q12,70 13,62 Q14,54 18,50 L42,50 Q46,54 47,62 Q48,70 46,78Z" fill="var(--pc)"/>
+        <path d="M18,52 Q10,48 7,40 Q6,34 10,30 Q14,26 20,28 Q24,30 24,36 Q26,42 24,48 Q22,52 20,54Z" fill="var(--pc)"/>
+        <path d="M42,52 Q50,48 53,40 Q54,34 50,30 Q46,26 40,28 Q36,30 36,36 Q34,42 36,48 Q38,52 40,54Z" fill="var(--pc)"/>
+        <ellipse cx="30" cy="46" rx="14" ry="16" fill="var(--pc)"/>
+        <ellipse cx="22" cy="48" rx="2.8" ry="2.2" fill="var(--pc3)"/>
+        <ellipse cx="38" cy="48" rx="2.8" ry="2.2" fill="var(--pc3)"/>
+        <path d="M27,36 Q30,30 33,36 Q30,40 27,36Z" fill="var(--pc2)" opacity=".7"/>
+        <path d="M23,58 Q20,64 21,70 Q22,76 25,78 Q27,80 27,76 Q27,72 25,70 Q23,66 24,60Z" fill="var(--pc)"/>
+        <path d="M22,60 Q16,66 12,72 Q10,76 14,77 Q18,77 20,73 Q22,68 24,62" fill="none" stroke="var(--pc2)" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+        <path d="M38,60 Q44,66 48,72 Q50,76 46,77 Q42,77 40,73 Q38,68 36,62" fill="none" stroke="var(--pc2)" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+        <path d="M20,32 Q20,28 30,27 Q40,28 40,32 L40,36 Q40,38 30,39 Q20,38 20,36Z" fill="var(--pc)"/>
+      </svg>
+      <div class="gs-label">Danti</div>
+    </div>
+
+    <div class="gs-item">
+      <!-- NARA 48px -->
+      <svg viewBox="0 0 60 90" width="40" height="60">
+        <ellipse cx="30" cy="87" rx="18" ry="3.5" fill="var(--pc)"/>
+        <path d="M14,87 Q14,82 19,79 L41,79 Q46,82 46,87Z" fill="var(--pc)"/>
+        <path d="M20,79 Q18,75 20,72 Q22,70 24,72 L24,79Z" fill="var(--pc)"/>
+        <path d="M36,79 Q34,75 36,72 Q38,70 40,72 L40,79Z" fill="var(--pc)"/>
+        <path d="M19,72 Q17,66 18,60 L20,58 L40,58 L42,60 Q43,66 41,72Z" fill="var(--pc)"/>
+        <path d="M19,58 Q16,52 18,46 Q20,42 24,41 L36,41 Q40,42 42,46 Q44,52 41,58Z" fill="var(--pc)"/>
+        <path d="M19,48 Q14,47 12,50 L12,54" stroke="var(--pc)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <circle cx="10" cy="57" r="9" fill="var(--pc)"/>
+        <circle cx="10" cy="57" r="9" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <circle cx="10" cy="57" r="3.5" fill="var(--pc2)" opacity=".7"/>
+        <circle cx="10" cy="57" r="2" fill="var(--pc3)"/>
+        <line x1="47" y1="8" x2="47" y2="54" stroke="var(--pc)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M44,8 L47,3 L50,8 L48,12 L47,10 L46,12Z" fill="var(--pc2)"/>
+        <rect x="26" y="35" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <circle cx="30" cy="27" r="9.5" fill="var(--pc)"/>
+        <path d="M23.5,26 Q25.5,23.5 27.5,26 Q25.5,28.5 23.5,26Z" fill="var(--pc3)"/>
+        <path d="M32.5,26 Q34.5,23.5 36.5,26 Q34.5,28.5 32.5,26Z" fill="var(--pc3)"/>
+        <rect x="21" y="20" width="18" height="4" rx="1" fill="var(--pc)"/>
+        <path d="M20,21 Q21,10 30,8 Q39,10 40,21Z" fill="var(--pc)"/>
+        <path d="M28,10 Q30,6 32,10 Q31,13 30,14 Q29,13 28,10Z" fill="var(--pc2)" opacity=".75"/>
+        <circle cx="30" cy="9" r="1.5" fill="var(--pc2)"/>
+      </svg>
+      <div class="gs-label">Nara</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── 4-PLAYER COLOUR PREVIEW ─────────────────── -->
+<div class="section-label">4-Player Colour Preview · Raja</div>
+<div class="gs-row player-colors" style="margin-bottom:40px">
+
+  <!-- Just the Raja piece in all 4 colors -->
+  <div class="player-group red">
+    <div class="gs-item">
+      <svg viewBox="0 0 60 90" width="48" height="72">
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M21,78 Q21,74 30,73 Q39,74 39,78Z" fill="var(--pc)"/>
+        <path d="M21,73 Q18,68 15,62 Q12,55 14,50 Q15,46 18,45 L22,44 L38,44 L42,45 Q45,46 46,50 Q48,55 45,62 Q42,68 39,73Z" fill="var(--pc)"/>
+        <path d="M22,47 Q30,54 38,47" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <circle cx="30" cy="51.5" r="2" fill="var(--pc2)"/>
+        <rect x="26" y="38" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <circle cx="30" cy="30" r="10.5" fill="var(--pc)"/>
+        <path d="M23,29 Q25.5,26.5 28,29 Q25.5,31.5 23,29Z" fill="var(--pc3)"/>
+        <path d="M32,29 Q34.5,26.5 37,29 Q34.5,31.5 32,29Z" fill="var(--pc3)"/>
+        <path d="M23.5,34 Q27,36.5 30,35.5 Q33,36.5 36.5,34" fill="none" stroke="var(--pc3)" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="17.5" y="19" width="25" height="5.5" rx="2.5" fill="var(--pc)"/>
+        <path d="M18,19 Q19,13.5 21,19Z" fill="var(--pc)"/>
+        <path d="M21,19 Q23.5,10 26.5,19Z" fill="var(--pc)"/>
+        <path d="M25.5,19 Q27,8 30,4 Q33,8 34.5,19Z" fill="var(--pc)"/>
+        <path d="M33.5,19 Q36.5,10 39,19Z" fill="var(--pc)"/>
+        <path d="M39,19 Q41,13.5 42,19Z" fill="var(--pc)"/>
+        <circle cx="30" cy="5" r="2.5" fill="var(--pc2)"/>
+        <circle cx="24" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="36" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="30" cy="21.5" r="2" fill="var(--pc2)"/>
+      </svg>
+      <div class="gs-label" style="color:var(--pc)">Red</div>
+    </div>
+  </div>
+
+  <div class="player-group blue">
+    <div class="gs-item">
+      <svg viewBox="0 0 60 90" width="48" height="72">
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M21,78 Q21,74 30,73 Q39,74 39,78Z" fill="var(--pc)"/>
+        <path d="M21,73 Q18,68 15,62 Q12,55 14,50 Q15,46 18,45 L22,44 L38,44 L42,45 Q45,46 46,50 Q48,55 45,62 Q42,68 39,73Z" fill="var(--pc)"/>
+        <path d="M22,47 Q30,54 38,47" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <circle cx="30" cy="51.5" r="2" fill="var(--pc2)"/>
+        <rect x="26" y="38" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <circle cx="30" cy="30" r="10.5" fill="var(--pc)"/>
+        <path d="M23,29 Q25.5,26.5 28,29 Q25.5,31.5 23,29Z" fill="var(--pc3)"/>
+        <path d="M32,29 Q34.5,26.5 37,29 Q34.5,31.5 32,29Z" fill="var(--pc3)"/>
+        <path d="M23.5,34 Q27,36.5 30,35.5 Q33,36.5 36.5,34" fill="none" stroke="var(--pc3)" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="17.5" y="19" width="25" height="5.5" rx="2.5" fill="var(--pc)"/>
+        <path d="M18,19 Q19,13.5 21,19Z" fill="var(--pc)"/>
+        <path d="M21,19 Q23.5,10 26.5,19Z" fill="var(--pc)"/>
+        <path d="M25.5,19 Q27,8 30,4 Q33,8 34.5,19Z" fill="var(--pc)"/>
+        <path d="M33.5,19 Q36.5,10 39,19Z" fill="var(--pc)"/>
+        <path d="M39,19 Q41,13.5 42,19Z" fill="var(--pc)"/>
+        <circle cx="30" cy="5" r="2.5" fill="var(--pc2)"/>
+        <circle cx="24" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="36" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="30" cy="21.5" r="2" fill="var(--pc2)"/>
+      </svg>
+      <div class="gs-label" style="color:var(--pc)">Blue</div>
+    </div>
+  </div>
+
+  <div class="player-group green">
+    <div class="gs-item">
+      <svg viewBox="0 0 60 90" width="48" height="72">
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M21,78 Q21,74 30,73 Q39,74 39,78Z" fill="var(--pc)"/>
+        <path d="M21,73 Q18,68 15,62 Q12,55 14,50 Q15,46 18,45 L22,44 L38,44 L42,45 Q45,46 46,50 Q48,55 45,62 Q42,68 39,73Z" fill="var(--pc)"/>
+        <path d="M22,47 Q30,54 38,47" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <circle cx="30" cy="51.5" r="2" fill="var(--pc2)"/>
+        <rect x="26" y="38" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <circle cx="30" cy="30" r="10.5" fill="var(--pc)"/>
+        <path d="M23,29 Q25.5,26.5 28,29 Q25.5,31.5 23,29Z" fill="var(--pc3)"/>
+        <path d="M32,29 Q34.5,26.5 37,29 Q34.5,31.5 32,29Z" fill="var(--pc3)"/>
+        <path d="M23.5,34 Q27,36.5 30,35.5 Q33,36.5 36.5,34" fill="none" stroke="var(--pc3)" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="17.5" y="19" width="25" height="5.5" rx="2.5" fill="var(--pc)"/>
+        <path d="M18,19 Q19,13.5 21,19Z" fill="var(--pc)"/>
+        <path d="M21,19 Q23.5,10 26.5,19Z" fill="var(--pc)"/>
+        <path d="M25.5,19 Q27,8 30,4 Q33,8 34.5,19Z" fill="var(--pc)"/>
+        <path d="M33.5,19 Q36.5,10 39,19Z" fill="var(--pc)"/>
+        <path d="M39,19 Q41,13.5 42,19Z" fill="var(--pc)"/>
+        <circle cx="30" cy="5" r="2.5" fill="var(--pc2)"/>
+        <circle cx="24" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="36" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="30" cy="21.5" r="2" fill="var(--pc2)"/>
+      </svg>
+      <div class="gs-label" style="color:var(--pc)">Green</div>
+    </div>
+  </div>
+
+  <div class="player-group yellow">
+    <div class="gs-item">
+      <svg viewBox="0 0 60 90" width="48" height="72">
+        <ellipse cx="30" cy="87" rx="21" ry="4" fill="var(--pc)"/>
+        <path d="M11,87 Q11,81 17,78 L43,78 Q49,81 49,87Z" fill="var(--pc)"/>
+        <path d="M21,78 Q21,74 30,73 Q39,74 39,78Z" fill="var(--pc)"/>
+        <path d="M21,73 Q18,68 15,62 Q12,55 14,50 Q15,46 18,45 L22,44 L38,44 L42,45 Q45,46 46,50 Q48,55 45,62 Q42,68 39,73Z" fill="var(--pc)"/>
+        <path d="M22,47 Q30,54 38,47" fill="none" stroke="var(--pc2)" stroke-width="1.5"/>
+        <circle cx="30" cy="51.5" r="2" fill="var(--pc2)"/>
+        <rect x="26" y="38" width="8" height="7" rx="3" fill="var(--pc)"/>
+        <circle cx="30" cy="30" r="10.5" fill="var(--pc)"/>
+        <path d="M23,29 Q25.5,26.5 28,29 Q25.5,31.5 23,29Z" fill="var(--pc3)"/>
+        <path d="M32,29 Q34.5,26.5 37,29 Q34.5,31.5 32,29Z" fill="var(--pc3)"/>
+        <path d="M23.5,34 Q27,36.5 30,35.5 Q33,36.5 36.5,34" fill="none" stroke="var(--pc3)" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="17.5" y="19" width="25" height="5.5" rx="2.5" fill="var(--pc)"/>
+        <path d="M18,19 Q19,13.5 21,19Z" fill="var(--pc)"/>
+        <path d="M21,19 Q23.5,10 26.5,19Z" fill="var(--pc)"/>
+        <path d="M25.5,19 Q27,8 30,4 Q33,8 34.5,19Z" fill="var(--pc)"/>
+        <path d="M33.5,19 Q36.5,10 39,19Z" fill="var(--pc)"/>
+        <path d="M39,19 Q41,13.5 42,19Z" fill="var(--pc)"/>
+        <circle cx="30" cy="5" r="2.5" fill="var(--pc2)"/>
+        <circle cx="24" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="36" cy="12.5" r="1.8" fill="var(--pc2)"/>
+        <circle cx="30" cy="21.5" r="2" fill="var(--pc2)"/>
+      </svg>
+      <div class="gs-label" style="color:var(--pc)">Yellow</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ── INTEGRATION GUIDE ──────────────────────── -->
+<div class="section-label">Integration Guide</div>
+<div class="guide-box">
+  <strong style="color:var(--ink2)">How to use these pieces in game.html / board renderer:</strong><br><br>
+
+  Each piece SVG uses two CSS variables for colorisation:<br>
+  &nbsp; <code>--pc</code> : main piece fill colour (set per player)<br>
+  &nbsp; <code>--pc2</code> : highlight / jewel colour (lighter tone of --pc)<br>
+  &nbsp; <code>--pc3</code> : shadow / engraving detail (darker tone)<br><br>
+
+  In your board square renderer, wrap the piece SVG:<br>
+  <code>&lt;div class="piece piece-red"&gt; ... SVG ... &lt;/div&gt;</code><br><br>
+
+  CSS player theming:<br>
+  <code>.piece-red    { --pc:#e04030; --pc2:#f8a090; --pc3:rgba(0,0,0,0.45); }</code><br>
+  <code>.piece-blue   { --pc:#3070d0; --pc2:#90b8f8; --pc3:rgba(0,0,0,0.45); }</code><br>
+  <code>.piece-green  { --pc:#30a050; --pc2:#90d8a0; --pc3:rgba(0,0,0,0.45); }</code><br>
+  <code>.piece-yellow { --pc:#c8a010; --pc2:#f8d870; --pc3:rgba(0,0,0,0.45); }</code><br><br>
+
+  All pieces use <code>viewBox="0 0 60 90"</code> — render at any size with<br>
+  <code>width="48" height="72"</code> for a standard 64px square board cell.
+</div>
+
+</div><!-- end .page -->
+</body>
+</html>
