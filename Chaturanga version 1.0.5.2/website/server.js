@@ -14,14 +14,110 @@ const mimeTypes = {
     '.jpeg': 'image/jpeg',
     '.svg': 'image/svg+xml',
     '.txt': 'text/plain',
-    '.pdf': 'application/pdf'
+    '.pdf': 'application/pdf',
+    '.xml': 'application/xml',
+    '.webp': 'image/webp',
+    '.ico': 'image/x-icon'
 };
 
+// ─── Clean URL → File mappings ────────────────────────────────────────────────
+const pageRoutes = {
+    '/':                              '/website/index.html',
+    '/about':                         '/website/pages/about.html',
+    '/faq':                           '/website/pages/faq.html',
+    '/privacy-policy':                '/website/pages/privacy-policy.html',
+    '/terms':                         '/website/pages/terms.html',
+    '/contact':                       '/website/pages/contact.html',
+    '/what-is-chaturanga':            '/website/pages/what-is-chaturanga.html',
+    '/chaturanga-vs-chess-vs-xiangqi':'/website/pages/chaturanga-vs-chess-vs-xiangqi.html',
+    '/how-to-play':                   '/website/howtoplay.html',
+    '/howtoplay':                     '/website/howtoplay.html',
+};
+
+// ─── Helper: serve custom error page with correct HTTP status ────────────────
+function serveErrorPage(res, statusCode) {
+    const pageFile = path.join(__dirname, 'pages', `${statusCode}.html`);
+    try {
+        const data = fs.readFileSync(pageFile);
+        res.writeHead(statusCode, { 'Content-Type': 'text/html' });
+        res.end(data);
+    } catch {
+        // Fallback plain text if custom page itself is missing
+        res.writeHead(statusCode, { 'Content-Type': 'text/plain' });
+        res.end(`${statusCode} Error`);
+    }
+}
+
+// ─── Rate limiter for contact form (simple in-memory) ────────────────────────
+const contactRateMap = new Map();
+const CONTACT_RATE_LIMIT_MS = 60_000; // 1 submission per minute per IP
+const CONTACT_RATE_MAX = 3;           // max 3 per minute
+
 const server = http.createServer((req, res) => {
+    // ── HTTPS Redirect (Behind reverse proxy like ALB/Heroku/Cloudflare) ────
+    if (req.headers['x-forwarded-proto'] === 'http') {
+        res.writeHead(301, { 'Location': 'https://' + req.headers.host + req.url });
+        res.end();
+        return;
+    }
+
     let urlPath = req.url.split('?')[0];
-    if (urlPath === '/') urlPath = '/website/index.html';
-    
-    // Handle API endpoints
+
+    // ── Serve robots.txt, sitemap.xml, ads.txt from website root ─────────────
+    if (urlPath === '/robots.txt' || urlPath === '/sitemap.xml' || urlPath === '/ads.txt') {
+        const seoFile = path.join(__dirname, urlPath.slice(1));
+        try {
+            const data = fs.readFileSync(seoFile);
+            const ct = urlPath === '/sitemap.xml' ? 'application/xml' : 'text/plain';
+            res.writeHead(200, { 'Content-Type': ct });
+            res.end(data);
+        } catch { serveErrorPage(res, 404); }
+        return;
+    }
+
+    // ── Contact form POST endpoint ────────────────────────────────────────────
+    if (req.method === 'POST' && urlPath === '/api/contact') {
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+        const now = Date.now();
+        const bucket = contactRateMap.get(ip) || [];
+        const recent = bucket.filter(t => now - t < CONTACT_RATE_LIMIT_MS);
+        if (recent.length >= CONTACT_RATE_MAX) {
+            res.writeHead(429, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, error: 'Too many requests. Please wait a moment.' }));
+            return;
+        }
+        recent.push(now);
+        contactRateMap.set(ip, recent);
+
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString().slice(0, 4096); });
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                // Honeypot check
+                if (data.website) { res.writeHead(200); res.end(JSON.stringify({ success: true })); return; }
+                const name = String(data.name || '').trim();
+                const email = String(data.email || '').trim();
+                const message = String(data.message || '').trim();
+                if (!name || !email || message.length < 20 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, error: 'Invalid form data.' }));
+                    return;
+                }
+                // Log to console (wire up email delivery here when ready)
+                console.log(`[CONTACT] ${new Date().toISOString()} | ${name} <${email}> | ${data.subject || 'general'} | ${message.slice(0, 100)}`);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+                console.error('[CONTACT] Parse error:', err);
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, error: 'Bad request.' }));
+            }
+        });
+        return;
+    }
+
+    // ── Puzzle admin API endpoint ─────────────────────────────────────────────
     if (req.method === 'POST' && urlPath === '/api/admin/puzzle') {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
@@ -29,12 +125,7 @@ const server = http.createServer((req, res) => {
             try {
                 const puzzleData = JSON.parse(body);
                 const puzzlesFilePath = path.join(root, 'Chaturanga version 1.0.5.2', 'puzzles', 'puzzle-data.js');
-                
-                // Read current puzzle file
                 let content = fs.readFileSync(puzzlesFilePath, 'utf8');
-                
-                // Inject the new puzzle into the global array
-                // Matches: window.ChaturangaPuzzleData = [ ... ];
                 const regex = /(window\.ChaturangaPuzzleData\s*=\s*\[)([\s\S]*?)(\];)/;
                 if (regex.test(content)) {
                     const newContent = content.replace(regex, (match, p1, p2, p3) => {
@@ -50,22 +141,36 @@ const server = http.createServer((req, res) => {
             } catch (err) {
                 console.error('API Error:', err);
                 res.writeHead(500);
-                res.end(JSON.stringify({ success: false, error: err.message }));
+                res.end(JSON.stringify({ success: false, error: 'Internal server error.' }));
             }
         });
         return;
     }
 
-    const fp = path.join(root, urlPath);
-    const ext = path.extname(fp);
+    // ── Clean URL routing → page files ───────────────────────────────────────
     try {
-        if (!fs.existsSync(fp)) throw new Error('Not found');
-        const data = fs.readFileSync(fp);
+        const cleanPath = urlPath.endsWith('/') && urlPath !== '/' ? urlPath.slice(0, -1) : urlPath;
+        let filePath;
+
+        if (pageRoutes[cleanPath]) {
+            // Matched a clean URL route
+            filePath = path.join(root, pageRoutes[cleanPath]);
+        } else {
+            // Fall through to direct file serving (CSS, JS, images, etc.)
+            filePath = path.join(root, urlPath);
+        }
+
+        if (!fs.existsSync(filePath)) {
+            serveErrorPage(res, 404);
+            return;
+        }
+        const ext = path.extname(filePath);
+        const data = fs.readFileSync(filePath);
         res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
         res.end(data);
-    } catch (e) {
-        res.writeHead(404);
-        res.end('Not found: ' + fp);
+    } catch (err) {
+        console.error('[SERVER ERROR]', err);
+        serveErrorPage(res, 500);
     }
 });
 

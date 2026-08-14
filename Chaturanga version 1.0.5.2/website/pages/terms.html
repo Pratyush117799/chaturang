@@ -3,140 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Terms &amp; Conditions | Chaturanga</title>
+  <title>Terms & Conditions | Chaturanga</title>
   <meta name="description" content="Read the Chaturanga Terms and Conditions. By using our site you agree to these terms covering accounts, intellectual property, acceptable use, and disclaimers." />
+  <meta name="robots" content="noindex" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Yatra+One&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --maroon: #3d0b0b; --maroon-mid: #5c1a1a; --crimson: #8b1a1a;
-      --gold: #c9a84c; --gold-light: #e8cc80; --gold-dim: #8a6e2f;
-      --sandstone: #e8d5a3; --parchment: #f4ead0; --midnight: #120400;
-      --dark-bg: #1a0600; --text: #f4ead0; --text-muted: #c9b890; --text-dark: #2a0e0e;
-      --border-gold: 1px solid rgba(201,168,76,0.3);
-      --radius: 12px; --radius-lg: 20px;
-      --shadow-gold: 0 0 30px rgba(201,168,76,0.15);
-      --shadow-deep: 0 8px 40px rgba(0,0,0,0.5);
-      --font-display: 'Cinzel', serif; --font-deva: 'Noto Sans Devanagari', sans-serif;
-      --font-body: 'Raleway', sans-serif; --font-yatra: 'Yatra One', cursive;
-      --transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: var(--font-body); background: var(--dark-bg); color: var(--text); overflow-x: hidden; line-height: 1.7; }
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: var(--midnight); }
-    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-
-    /* NAVBAR */
-    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 24px; height: 72px; display: flex; align-items: center; background: rgba(18,4,0,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,168,76,0.2); box-shadow: 0 4px 30px rgba(0,0,0,0.4); }
-    .nav-container { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 32px; }
-    .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
-    .logo-devanagari { font-family: var(--font-yatra); font-size: 1.4rem; color: var(--gold); letter-spacing: 1px; }
-    .logo-divider { color: var(--gold-dim); font-size: 1.1rem; }
-    .logo-latin { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--sandstone); letter-spacing: 2px; }
-    .nav-links { display: flex; list-style: none; gap: 4px; margin-left: auto; }
-    .nav-link { font-family: var(--font-display); font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); text-decoration: none; padding: 8px 14px; border-radius: 6px; transition: var(--transition); }
-    .nav-link:hover { color: var(--gold); background: rgba(201,168,76,0.08); }
-    .nav-cta { font-family: var(--font-display); font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--midnight); background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; text-decoration: none; transition: var(--transition); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
-    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(201,168,76,0.4); }
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
-    .hamburger span { display: block; width: 22px; height: 2px; background: var(--gold); border-radius: 2px; transition: var(--transition); }
-
-    /* PAGE HERO */
-    .page-hero { padding: 140px 0 60px; text-align: center; position: relative; background: linear-gradient(180deg, rgba(61,11,11,0.6) 0%, transparent 100%); border-bottom: var(--border-gold); }
-    .page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(201,168,76,0.07) 0%, transparent 70%); }
-    .page-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); border-radius: 999px; padding: 6px 16px; font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
-    .page-hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: var(--sandstone); margin-bottom: 16px; line-height: 1.2; }
-    .page-hero h1 span { color: var(--gold); }
-    .page-hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
-    .last-updated { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 1.5px; color: var(--gold-dim); text-transform: uppercase; }
-
-    /* CONTENT */
-    .content-section { padding: 80px 0; }
-    .terms-layout { display: grid; grid-template-columns: 240px 1fr; gap: 48px; align-items: start; }
-    .terms-toc { position: sticky; top: 96px; background: rgba(61,11,11,0.35); border: var(--border-gold); border-radius: var(--radius-lg); padding: 24px; }
-    .terms-toc h4 { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 10px; border-bottom: var(--border-gold); }
-    .toc-list { list-style: none; }
-    .toc-list li { margin-bottom: 6px; }
-    .toc-list a { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.5px; color: var(--text-muted); text-decoration: none; transition: var(--transition); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
-    .toc-list a:hover { color: var(--gold); }
-    .toc-list .toc-num { color: var(--gold-dim); flex-shrink: 0; font-size: 0.68rem; margin-top: 2px; }
-
-    .terms-block { margin-bottom: 52px; }
-    .section-num { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 6px; }
-    .section-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
-    .gold-divider { width: 48px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin: 12px 0 20px; border-radius: 2px; }
-    .prose { color: var(--text-muted); line-height: 1.9; font-size: 0.97rem; }
-    .prose p { margin-bottom: 14px; }
-    .prose strong { color: var(--sandstone); }
-    .prose a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
-    .prose ol { list-style: none; counter-reset: terms-counter; margin: 0 0 14px 0; padding: 0; }
-    .prose ol li { counter-increment: terms-counter; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.75; }
-    .prose ol li::before { content: counter(terms-counter); flex-shrink: 0; width: 26px; height: 26px; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.25); border-radius: 50%; font-family: var(--font-display); font-size: 0.68rem; font-weight: 700; color: var(--gold); display: flex; align-items: center; justify-content: center; margin-top: 2px; }
-    .prose ul { list-style: none; margin: 0 0 14px 0; padding: 0; }
-    .prose ul li { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.75; }
-    .prose ul li::before { content: '\25C6'; color: var(--gold-dim); font-size: 0.5rem; flex-shrink: 0; margin-top: 7px; }
-
-    /* HIGHLIGHT BOX */
-    .highlight-box { background: rgba(61,11,11,0.5); border: var(--border-gold); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: 18px 22px; margin: 18px 0; }
-    .highlight-box p { color: var(--text-muted); font-size: 0.93rem; margin: 0; line-height: 1.8; }
-    .highlight-box strong { color: var(--sandstone); }
-
-    /* WARNING BOX */
-    .warning-box { background: rgba(139,26,26,0.2); border: 1px solid rgba(139,26,26,0.4); border-left: 3px solid var(--crimson); border-radius: var(--radius); padding: 18px 22px; margin: 18px 0; display: flex; gap: 14px; align-items: flex-start; }
-    .warning-box i { color: var(--crimson); font-size: 1rem; flex-shrink: 0; margin-top: 3px; }
-    .warning-box p { color: var(--text-muted); font-size: 0.93rem; margin: 0; line-height: 1.8; }
-
-    /* CONTACT CARD */
-    .contact-card { background: rgba(61,11,11,0.4); border: var(--border-gold); border-radius: var(--radius-lg); padding: 28px 32px; display: flex; align-items: center; gap: 20px; margin-top: 20px; }
-    .contact-card-icon { width: 52px; height: 52px; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--gold); flex-shrink: 0; }
-    .contact-card-body h4 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--sandstone); margin-bottom: 4px; }
-    .contact-card-body p { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
-    .contact-card-body a { color: var(--gold); text-decoration: none; font-weight: 600; transition: var(--transition); }
-    .contact-card-body a:hover { color: var(--gold-light); }
-
-    /* FOOTER */
-    .footer { background: rgba(18,4,0,0.98); border-top: var(--border-gold); padding: 60px 0 30px; margin-top: 80px; }
-    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
-    .footer-brand p { color: var(--text-muted); font-size: 0.9rem; margin: 12px 0 20px; line-height: 1.6; }
-    .footer-version { display: flex; align-items: center; gap: 12px; }
-    .version-pill { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); border-radius: 999px; padding: 4px 12px; font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 1px; color: var(--gold); }
-    .version-link { color: var(--gold); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
-    .version-link:hover { color: var(--gold-light); }
-    .footer-links h5 { font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
-    .footer-links ul { list-style: none; }
-    .footer-links ul li { margin-bottom: 8px; }
-    .footer-links ul li a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; transition: var(--transition); }
-    .footer-links ul li a:hover { color: var(--gold); }
-    .footer-bottom { border-top: var(--border-gold); padding-top: 24px; text-align: center; }
-    .footer-credits { color: var(--text-muted); font-size: 0.82rem; }
-
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      .terms-layout { grid-template-columns: 1fr; }
-      .terms-toc { position: static; display: none; }
-    }
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 72px; left: 0; right: 0; background: rgba(18,4,0,0.98); padding: 16px 24px; border-bottom: var(--border-gold); gap: 4px; }
-      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-      .contact-card { flex-direction: column; }
-    }
-
-    /* SCROLL ANIMATION */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .last-updated { display:inline-flex; align-items:center; gap:8px; background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.2); border-radius:8px; padding:8px 16px; font-size:0.82rem; color:var(--gold); font-family:var(--font-display); letter-spacing:1px; margin-bottom:28px; }
+    .terms-section { margin-bottom:50px; scroll-margin-top:90px; }
+    .terms-section h2 { font-family:var(--font-display); font-size:1.25rem; font-weight:700; color:var(--sandstone); margin-bottom:12px; display:flex; align-items:center; gap:12px; padding-bottom:12px; border-bottom:1px solid rgba(201,168,76,0.15); }
+    .terms-section h2 .num { font-size:0.9rem; background:rgba(201,168,76,0.15); border-radius:6px; padding:4px 10px; color:var(--gold); font-weight:900; flex-shrink:0; }
+    .terms-section h3 { font-family:var(--font-display); font-size:0.95rem; font-weight:600; color:var(--gold); margin:20px 0 8px; }
+    .terms-section p { color:var(--text-muted); line-height:1.9; margin-bottom:14px; font-size:0.97rem; }
+    .terms-section ul, .terms-section ol { color:var(--text-muted); padding-left:22px; margin-bottom:14px; }
+    .terms-section li { margin-bottom:7px; line-height:1.8; font-size:0.96rem; }
+    .terms-section strong { color:var(--sandstone); }
+    .terms-section a { color:var(--gold); }
+    .notice-box { background:rgba(201,168,76,0.08); border-left:3px solid var(--gold); border-radius:0 var(--radius) var(--radius) 0; padding:16px 20px; margin-bottom:28px; color:var(--text-muted); font-size:0.94rem; line-height:1.8; }
+    .notice-box strong { color:var(--gold); }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
   <nav id="navbar" class="navbar">
     <div class="nav-container">
       <a href="../index.html" class="nav-logo">
@@ -145,305 +36,166 @@
         <span class="logo-latin">Chaturanga</span>
       </a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="../pages/about.html" class="nav-link">About</a></li>
-        <li><a href="../pages/faq.html" class="nav-link">FAQ</a></li>
-        <li><a href="../pages/what-is-chaturanga.html" class="nav-link">History</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+        <li><a href="privacy-policy.html" class="nav-link">Privacy</a></li>
       </ul>
       <a href="../../game/game.html" class="nav-cta"><i class="fa-solid fa-chess-king"></i> Play Now</a>
       <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
 
-  <!-- HERO -->
   <section class="page-hero">
     <div class="container">
-      <div class="page-badge"><i class="fa-solid fa-scale-balanced"></i> Legal</div>
-      <h1>Terms &amp; <span>Conditions</span></h1>
-      <p>Please read these terms carefully before using the Chaturanga platform. Your continued use of the service constitutes your acceptance of these terms.</p>
-      <div class="last-updated"><i class="fa-regular fa-calendar"></i> Last Updated: August 14, 2026</div>
+      <div class="page-badge"><i class="fa-solid fa-file-contract"></i> Legal</div>
+      <h1>Terms &amp; <span class="gold">Conditions</span></h1>
+      <p>Please read these terms carefully before using the Chaturanga website and game services.</p>
     </div>
   </section>
 
-  <!-- MAIN CONTENT -->
   <section class="content-section">
-    <div class="container">
-      <div class="terms-layout">
+    <div class="container" style="max-width:860px;">
 
-        <!-- TABLE OF CONTENTS -->
-        <aside class="terms-toc reveal">
-          <h4><i class="fa-solid fa-list"></i> &nbsp;Contents</h4>
-          <ol class="toc-list">
-            <li><a href="#acceptance"><span class="toc-num">01</span> Acceptance of Terms</a></li>
-            <li><a href="#service"><span class="toc-num">02</span> Description of Service</a></li>
-            <li><a href="#accounts"><span class="toc-num">03</span> Account Rules</a></li>
-            <li><a href="#acceptable-use"><span class="toc-num">04</span> Acceptable Use</a></li>
-            <li><a href="#ip"><span class="toc-num">05</span> Intellectual Property</a></li>
-            <li><a href="#disclaimer"><span class="toc-num">06</span> Disclaimer of Warranties</a></li>
-            <li><a href="#liability"><span class="toc-num">07</span> Limitation of Liability</a></li>
-            <li><a href="#termination"><span class="toc-num">08</span> Termination</a></li>
-            <li><a href="#governing-law"><span class="toc-num">09</span> Governing Law</a></li>
-            <li><a href="#changes"><span class="toc-num">10</span> Changes to Terms</a></li>
-            <li><a href="#contact"><span class="toc-num">11</span> Contact</a></li>
-          </ol>
-        </aside>
+      <div class="last-updated reveal">
+        <i class="fa-regular fa-calendar"></i> Last Updated: August 14, 2026
+      </div>
 
-        <!-- TERMS BODY -->
-        <div class="terms-content">
+      <div class="notice-box reveal">
+        <strong>Important:</strong> By accessing or using the Chaturanga website, game, or any related services, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use our services.
+      </div>
 
-          <!-- 1. Acceptance -->
-          <div class="terms-block reveal" id="acceptance">
-            <div class="section-num">Section 01</div>
-            <h2 class="section-title">Acceptance of Terms</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>By accessing, browsing, or using the Chaturanga website and platform (collectively, the <strong>"Service"</strong>), you acknowledge that you have read, understood, and agree to be bound by these Terms &amp; Conditions (the <strong>"Terms"</strong>), including any additional guidelines, policies, or rules that may be posted on the Service.</p>
-              <p>These Terms constitute a legally binding agreement between you (<strong>"User"</strong> or <strong>"you"</strong>) and the Chaturanga team (<strong>"we"</strong>, <strong>"us"</strong>, or <strong>"our"</strong>). They apply to all visitors, registered users, and any others who access or use the Service in any way.</p>
-              <div class="warning-box">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <p><strong>If you do not agree to these Terms in their entirety, you must immediately stop using the Service.</strong> Your continued use of any part of the platform after any modification to these Terms constitutes your binding acceptance of those changes.</p>
-              </div>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">1</span> Acceptance of Terms</h2>
+        <p>These Terms and Conditions ("Terms") constitute a legally binding agreement between you and the Chaturanga team ("we," "us," or "our") governing your access to and use of the Chaturanga website, online game, lessons, multiplayer features, and all related content and services (collectively, the "Service").</p>
+        <p>By accessing or using the Service, you confirm that you have read, understood, and agree to be bound by these Terms and our <a href="privacy-policy.html">Privacy Policy</a>, which is incorporated herein by reference. If you are using the Service on behalf of an organization, you represent that you have the authority to bind that organization to these Terms.</p>
+      </div>
 
-          <!-- 2. Description of Service -->
-          <div class="terms-block reveal" id="service">
-            <div class="section-num">Section 02</div>
-            <h2 class="section-title">Description of Service</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>Chaturanga is a <strong>free online game platform</strong> dedicated to the ancient Indian board game of Chaturanga — the earliest known ancestor of modern chess, originating on the Indian subcontinent around the 6th century CE. The Service currently includes, but is not limited to:</p>
-              <ul>
-                <li>A fully playable, browser-based digital implementation of the four-player Chaturanga board game</li>
-                <li>Multiplayer game modes enabling real-time play with other users around the world</li>
-                <li>AI-powered opponents for solo practice and skill development</li>
-                <li>Educational content, lessons, and historical context about Chaturanga and its cultural significance</li>
-                <li>Informational pages covering the history, rules, and evolution of the game</li>
-              </ul>
-              <p>The Service is provided free of charge. We reserve the right to introduce optional premium features in the future, with clear notice to users. We may also modify, suspend, or discontinue any aspect of the Service at any time without prior notice.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">2</span> Description of Service</h2>
+        <p>Chaturanga is a free online gaming platform that offers a digital implementation of Chaturanga, the ancient Indian board game widely recognized as the ancestor of modern chess. The Service includes:</p>
+        <ul>
+          <li>A playable implementation of Chaturanga with authentic dice-based (Pasha) rules</li>
+          <li>Single-player and online multiplayer game modes</li>
+          <li>Interactive lessons, puzzles, and training features (Acharya, Akhara, etc.)</li>
+          <li>An AI analysis engine (Seer) and ELO rating system</li>
+          <li>Historical and cultural content about Chaturanga and related board games</li>
+        </ul>
+        <p>We reserve the right to modify, suspend, or discontinue any part of the Service at any time, with or without notice.</p>
+      </div>
 
-          <!-- 3. Account Rules -->
-          <div class="terms-block reveal" id="accounts">
-            <div class="section-num">Section 03</div>
-            <h2 class="section-title">Account Rules</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>To access certain features of the Service, you may be required to create an account. By creating an account, you agree to the following rules:</p>
-              <ol>
-                <li>You must be at least <strong>13 years of age</strong> to register an account. Users under 18 should ensure they have their parent or legal guardian's consent before using the Service.</li>
-                <li>You may maintain only <strong>one personal account</strong>. Creating multiple accounts to gain an unfair advantage, circumvent suspensions, or for any other deceptive purpose is strictly prohibited.</li>
-                <li>You agree to provide <strong>accurate, current, and complete</strong> information during registration and to keep your account information up to date at all times.</li>
-                <li>You are solely responsible for <strong>maintaining the confidentiality</strong> of your account credentials (username and password). You must not share your account access with any other person.</li>
-                <li>You are fully responsible for <strong>all activity that occurs under your account</strong>, whether or not you authorised it. Notify us immediately at <a href="mailto:chaturangagame@gmail.com">chaturangagame@gmail.com</a> if you suspect any unauthorised use of your account.</li>
-                <li>Usernames must not impersonate other individuals, organisations, or brands, and must not contain offensive, hateful, or inappropriate language.</li>
-              </ol>
-              <div class="highlight-box">
-                <p><strong>Parental Notice:</strong> We are committed to protecting the privacy of younger users. If you believe a child under 13 has created an account without consent, please contact us and we will promptly investigate and remove the account.</p>
-              </div>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">3</span> Account Rules</h2>
+        <h3>Eligibility</h3>
+        <p>You must be at least <strong>13 years of age</strong> to create an account or use the Service. By creating an account, you represent that you meet this age requirement. If you are between 13 and 17, you represent that you have parental or guardian consent to use the Service.</p>
+        <h3>Account Responsibilities</h3>
+        <ul>
+          <li>You may create only <strong>one account per person</strong>. Creating multiple accounts to gain unfair advantages is prohibited.</li>
+          <li>You must provide accurate, current, and complete information when creating an account.</li>
+          <li>You are responsible for maintaining the confidentiality of your account credentials. Do not share your password with others.</li>
+          <li>You are responsible for all activity that occurs under your account.</li>
+          <li>Notify us immediately at <a href="mailto:chaturangagame@gmail.com">chaturangagame@gmail.com</a> if you suspect unauthorized access to your account.</li>
+        </ul>
+      </div>
 
-          <!-- 4. Acceptable Use -->
-          <div class="terms-block reveal" id="acceptable-use">
-            <div class="section-num">Section 04</div>
-            <h2 class="section-title">Acceptable Use</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>The Chaturanga platform is built on a foundation of fair play, respect, and community. You agree to use the Service only for lawful, ethical purposes and in a manner that does not infringe upon the rights of others. The following conduct is strictly prohibited:</p>
-              <ol>
-                <li><strong>Cheating &amp; Exploitation:</strong> Using bots, automation tools, third-party software, or any other method to gain an unfair advantage in gameplay. Deliberately exploiting bugs, glitches, or unintended game mechanics is also prohibited.</li>
-                <li><strong>Harassment &amp; Abuse:</strong> Engaging in abusive, threatening, hateful, discriminatory, or harassing behaviour toward other users in the multiplayer chat or any other communication feature of the platform.</li>
-                <li><strong>Impersonation:</strong> Pretending to be another user, a member of the Chaturanga team, or any real-world person or entity in a misleading or deceptive manner.</li>
-                <li><strong>Reverse Engineering:</strong> Attempting to decompile, disassemble, reverse-engineer, or otherwise derive the source code of the server, game engine, or any proprietary component of the Service.</li>
-                <li><strong>Spamming:</strong> Sending unsolicited or repetitive messages in chat, deliberately disrupting game lobbies, or flooding the platform with any form of unwanted content.</li>
-                <li><strong>Unauthorised Access:</strong> Attempting to access accounts, systems, or data that you are not authorised to access, including penetration testing or vulnerability scanning without explicit written permission from the Chaturanga team.</li>
-                <li><strong>Illegal Activity:</strong> Using the Service for any purpose that violates applicable laws or regulations, or to facilitate illegal activity of any kind.</li>
-              </ol>
-              <p>We reserve the right to investigate any suspected violations of these rules and take appropriate action, including account suspension or termination, without prior notice.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">4</span> Acceptable Use</h2>
+        <p>You agree to use the Service only for lawful purposes and in accordance with these Terms. You agree <strong>not</strong> to:</p>
+        <ul>
+          <li>Cheat, exploit bugs, or use automated tools, bots, or scripts to manipulate gameplay or gain an unfair competitive advantage.</li>
+          <li>Harass, threaten, abuse, or demean other users in multiplayer chat or any other part of the Service.</li>
+          <li>Impersonate other users, team members, or any other person or entity.</li>
+          <li>Attempt to reverse-engineer, decompile, disassemble, or otherwise access the source code of our server software in an unauthorized manner.</li>
+          <li>Attempt to gain unauthorized access to our servers, databases, or other systems.</li>
+          <li>Transmit spam, malware, or any other harmful content.</li>
+          <li>Use the Service in any way that violates applicable local, national, or international laws or regulations.</li>
+        </ul>
+      </div>
 
-          <!-- 5. Intellectual Property -->
-          <div class="terms-block reveal" id="ip">
-            <div class="section-num">Section 05</div>
-            <h2 class="section-title">Intellectual Property</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>The Chaturanga platform contains creative and technical works that are owned by or licensed to the Chaturanga team. It is important to understand how intellectual property applies to both our platform and the historical game itself:</p>
-              <ol>
-                <li>The <strong>game code, software, artwork, user interface design, graphic assets, lesson content, written materials, and overall site design</strong> are the exclusive intellectual property of the Chaturanga team and are protected by applicable copyright, trademark, and other intellectual property laws.</li>
-                <li>The <strong>game of Chaturanga itself</strong> — its rules, history, and traditions — is a traditional and historical game that belongs to the global cultural heritage of humanity. It resides firmly in the <strong>public domain</strong>, and we make no claim of ownership over the ancient game or its rules.</li>
-                <li>Our <strong>specific digital implementation</strong> of Chaturanga — including but not limited to the code base, visual design, AI systems, lesson structure, and unique gameplay features — is original work protected by copyright. You may not copy, reproduce, distribute, publish, or create derivative works based on our specific implementation without prior written permission from the Chaturanga team.</li>
-                <li>Any <strong>user-generated content</strong> (such as chat messages or game replays) submitted through the Service may be used by us for service improvement, moderation, and platform development, subject to our <a href="./privacy-policy.html">Privacy Policy</a>.</li>
-              </ol>
-              <div class="highlight-box">
-                <p>In short: <strong>the ancient game is yours to play and explore freely</strong> — it belongs to all of humanity. However, <strong>our specific code, design, and content belong to us</strong>, and we ask that you respect that.</p>
-              </div>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">5</span> Intellectual Property</h2>
+        <h3>Our Content</h3>
+        <p>The Chaturanga website, game engine, source code, lesson content, artwork, piece designs, UI elements, and all other original content created by the Chaturanga team are owned by us and are protected by applicable copyright, trademark, and other intellectual property laws.</p>
+        <h3>Traditional Game</h3>
+        <p>The game of Chaturanga itself is a traditional historical game and is in the public domain. However, <strong>our specific implementation</strong> — including the code, artwork, lesson content, and design — is our original work and may not be copied, reproduced, or redistributed without our explicit written permission.</p>
+        <h3>Open Source</h3>
+        <p>The Chaturanga project's source code is available on <a href="https://github.com/Pratyush117799/chaturang" target="_blank" rel="noopener">GitHub</a>. Use of the code is subject to the license terms specified in the repository. If no explicit license is specified, all rights are reserved.</p>
+        <h3>User Content</h3>
+        <p>Any content you submit (e.g., chat messages) grants us a non-exclusive license to use, display, and moderate that content in connection with the Service.</p>
+      </div>
 
-          <!-- 6. Disclaimer -->
-          <div class="terms-block reveal" id="disclaimer">
-            <div class="section-num">Section 06</div>
-            <h2 class="section-title">Disclaimer of Warranties</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>The Service is provided on an <strong>"as is"</strong> and <strong>"as available"</strong> basis, without any warranties of any kind, either express or implied. To the fullest extent permitted by applicable law, the Chaturanga team expressly disclaims all warranties, including but not limited to:</p>
-              <ul>
-                <li>Implied warranties of <strong>merchantability</strong>, fitness for a particular purpose, and non-infringement</li>
-                <li>Any guarantee of <strong>continuous, uninterrupted, or error-free uptime</strong> — the Service may be temporarily unavailable due to maintenance, technical issues, or factors beyond our control</li>
-                <li>Any warranty that the Service will be <strong>free of bugs, viruses, or other harmful components</strong></li>
-                <li>Any warranty regarding the <strong>accuracy, completeness, or reliability</strong> of any content available on the Service</li>
-              </ul>
-              <p>We are a small, passionate team working hard to deliver the best possible experience. While we strive for quality, we cannot guarantee perfection. We appreciate your patience and encourage you to report any issues you encounter.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">6</span> Disclaimer of Warranties</h2>
+        <p>The Service is provided <strong>"as is"</strong> and <strong>"as available"</strong> without any warranties of any kind, whether express or implied. We do not warrant that:</p>
+        <ul>
+          <li>The Service will be uninterrupted, error-free, or secure.</li>
+          <li>Any errors or defects will be corrected.</li>
+          <li>The Service or the server that makes it available is free of viruses or other harmful components.</li>
+        </ul>
+        <p>To the fullest extent permitted by law, we expressly disclaim all warranties, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+      </div>
 
-          <!-- 7. Limitation of Liability -->
-          <div class="terms-block reveal" id="liability">
-            <div class="section-num">Section 07</div>
-            <h2 class="section-title">Limitation of Liability</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>To the maximum extent permitted by applicable law, the Chaturanga team, its members, contributors, and affiliates shall not be liable for any:</p>
-              <ul>
-                <li><strong>Indirect, incidental, special, consequential, or punitive damages</strong> arising out of or related to your use of or inability to use the Service</li>
-                <li>Loss of data, loss of profits, or loss of goodwill, even if we have been advised of the possibility of such damages</li>
-                <li>Damages resulting from <strong>unauthorised access to or alteration of your transmissions or data</strong></li>
-                <li>Conduct or content of any <strong>third party</strong> on the Service</li>
-                <li>Any temporary or permanent <strong>interruption or discontinuation</strong> of the Service</li>
-              </ul>
-              <p>In no event shall our total liability to you for all damages, losses, and causes of action exceed the amount you have paid to us in the twelve (12) months preceding the event giving rise to such liability (or, if you have not paid us anything, one hundred Indian Rupees — &#8377;100).</p>
-              <p>Some jurisdictions do not allow the exclusion or limitation of certain damages, so some of the above limitations may not apply to you.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">7</span> Limitation of Liability</h2>
+        <p>To the fullest extent permitted by applicable law, the Chaturanga team and its contributors shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, goodwill, or other intangible losses, resulting from:</p>
+        <ul>
+          <li>Your access to or use of (or inability to access or use) the Service.</li>
+          <li>Any conduct or content of any third party on the Service.</li>
+          <li>Unauthorized access, use, or alteration of your transmissions or content.</li>
+        </ul>
+        <p>In no event shall our total liability to you exceed the amount you have paid us (if any) in the six months preceding the claim.</p>
+      </div>
 
-          <!-- 8. Termination -->
-          <div class="terms-block reveal" id="termination">
-            <div class="section-num">Section 08</div>
-            <h2 class="section-title">Termination</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>We reserve the right to <strong>suspend, restrict, or permanently terminate</strong> your access to the Service, with or without notice, at our sole discretion, for any of the following reasons:</p>
-              <ul>
-                <li>Violation of any provision of these Terms &amp; Conditions</li>
-                <li>Conduct that is harmful, fraudulent, abusive, or disruptive to other users or the platform</li>
-                <li>Actions that could expose the Chaturanga team to legal liability</li>
-                <li>Requests by law enforcement or government authorities</li>
-                <li>Extended periods of inactivity, at our discretion</li>
-              </ul>
-              <p>Upon termination, your right to use the Service ceases immediately. Provisions of these Terms that by their nature should survive termination — including Intellectual Property, Disclaimer of Warranties, Limitation of Liability, and Governing Law — shall survive and remain in full force.</p>
-              <p>You may also terminate your account at any time by contacting us at <a href="mailto:chaturangagame@gmail.com">chaturangagame@gmail.com</a> with a deletion request.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">8</span> Termination</h2>
+        <p>We reserve the right to suspend or terminate your access to the Service, with or without notice, for any violation of these Terms, including but not limited to cheating, harassment, or abusive behavior. Upon termination, your right to use the Service ceases immediately.</p>
+        <p>We may also terminate or suspend access at our discretion for inactivity or technical reasons. We are not liable to you or any third party for termination of your access.</p>
+      </div>
 
-          <!-- 9. Governing Law -->
-          <div class="terms-block reveal" id="governing-law">
-            <div class="section-num">Section 09</div>
-            <h2 class="section-title">Governing Law</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>These Terms &amp; Conditions and any disputes arising out of or related to them or to the Service shall be governed by and construed in accordance with the <strong>laws of India</strong>, without regard to its conflict of law principles.</p>
-              <p>You agree that any legal action or proceeding arising under these Terms shall be brought exclusively in the competent courts of India, and you hereby irrevocably consent to the personal jurisdiction and venue of such courts.</p>
-              <p>If any provision of these Terms is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, the remaining provisions shall continue in full force and effect.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">9</span> Governing Law</h2>
+        <p>These Terms shall be governed by and construed in accordance with the laws of <strong>India</strong>, without regard to its conflict-of-law provisions. Any disputes arising from these Terms or the Service shall be subject to the exclusive jurisdiction of the courts located in India.</p>
+      </div>
 
-          <!-- 10. Changes -->
-          <div class="terms-block reveal" id="changes">
-            <div class="section-num">Section 10</div>
-            <h2 class="section-title">Changes to These Terms</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>We may revise and update these Terms &amp; Conditions from time to time at our sole discretion. All changes are effective immediately when we post them and apply to all access to and use of the Service thereafter.</p>
-              <p>When we make material changes to these Terms, we will make reasonable efforts to notify you — for example, by updating the <strong>"Last Updated"</strong> date at the top of this page, posting a notice on the platform, or sending an email to registered users where appropriate.</p>
-              <div class="highlight-box">
-                <p><strong>Your continued use of the Service after the posting of revised Terms constitutes your acceptance of the changes.</strong> We encourage you to review this page periodically so that you are aware of the current Terms that apply to your use of the Service.</p>
-              </div>
-              <p>If you do not agree to any revised Terms, you must stop using the Service immediately.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">10</span> Changes to These Terms</h2>
+        <p>We may update these Terms from time to time. When we do, we will revise the "Last Updated" date at the top of this page. We encourage you to review these Terms periodically. Your continued use of the Service after changes are posted constitutes your acceptance of the revised Terms.</p>
+      </div>
 
-          <!-- 11. Contact -->
-          <div class="terms-block reveal" id="contact">
-            <div class="section-num">Section 11</div>
-            <h2 class="section-title">Contact Us</h2>
-            <div class="gold-divider"></div>
-            <div class="prose">
-              <p>If you have any questions, concerns, or comments about these Terms &amp; Conditions, or if you need to report a violation or request account deletion, please reach out to us. We are a small, dedicated team and will do our best to respond in a timely manner.</p>
-            </div>
-            <div class="contact-card reveal">
-              <div class="contact-card-icon"><i class="fa-solid fa-envelope"></i></div>
-              <div class="contact-card-body">
-                <h4>Get in Touch</h4>
-                <p>For legal enquiries, Terms-related questions, or account support:<br />
-                  <a href="mailto:chaturangagame@gmail.com">chaturangagame@gmail.com</a>
-                </p>
-              </div>
-            </div>
-            <div class="prose" style="margin-top: 20px;">
-              <p>You can also visit our dedicated <a href="./contact.html">Contact page</a> for additional ways to reach us, or review our <a href="./privacy-policy.html">Privacy Policy</a> to understand how we handle your data.</p>
-            </div>
-          </div>
+      <div class="terms-section reveal">
+        <h2><span class="num">11</span> Contact</h2>
+        <p>If you have any questions about these Terms and Conditions, please contact us:</p>
+        <p><strong>Email:</strong> <a href="mailto:chaturangagame@gmail.com">chaturangagame@gmail.com</a></p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/Pratyush117799/chaturang" target="_blank" rel="noopener">github.com/Pratyush117799/chaturang</a></p>
+      </div>
 
-        </div><!-- /terms-content -->
-      </div><!-- /terms-layout -->
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="nav-logo">
+          <a href="../index.html" class="nav-logo" style="display:inline-flex;margin-bottom:12px;">
             <span class="logo-devanagari">चतुरंग</span>
             <span class="logo-divider">·</span>
             <span class="logo-latin">Chaturanga</span>
-          </div>
+          </a>
           <p>The ancient Indian 4-player war game &amp; ancestor of Chess. Revived for the digital age.</p>
-          <div class="footer-version">
-            <span class="version-pill">v1.0.5.2</span>
-            <a href="../../game/game.html" class="version-link">Play now →</a>
-          </div>
+          <div class="footer-version"><span class="version-pill">v1.0.5.2</span><a href="../../game/game.html" class="version-link">Play now →</a></div>
         </div>
-        <div class="footer-links">
-          <h5>Navigate</h5>
-          <ul>
-            <li><a href="../index.html">Home</a></li>
-            <li><a href="../pages/about.html">About</a></li>
-            <li><a href="../pages/faq.html">FAQ</a></li>
-            <li><a href="../pages/what-is-chaturanga.html">History</a></li>
-            <li><a href="../pages/chaturanga-vs-chess-vs-xiangqi.html">Comparison</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h5>Legal</h5>
-          <ul>
-            <li><a href="../pages/privacy-policy.html">Privacy Policy</a></li>
-            <li><a href="../pages/terms.html">Terms &amp; Conditions</a></li>
-            <li><a href="../pages/contact.html">Contact Us</a></li>
-          </ul>
-        </div>
+        <div class="footer-links"><h5>Navigate</h5><ul><li><a href="../index.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Home</a></li><li><a href="about.html"><i class="fa-solid fa-chevron-right fa-xs"></i> About</a></li><li><a href="faq.html"><i class="fa-solid fa-chevron-right fa-xs"></i> FAQ</a></li></ul></div>
+        <div class="footer-links"><h5>Play</h5><ul><li><a href="../../game/game.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Play Game</a></li><li><a href="../howtoplay.html"><i class="fa-solid fa-chevron-right fa-xs"></i> How to Play</a></li></ul></div>
+        <div class="footer-links"><h5>Legal</h5><ul><li><a href="privacy-policy.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Privacy Policy</a></li><li><a href="terms.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Terms &amp; Conditions</a></li><li><a href="contact.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Contact Us</a></li></ul></div>
       </div>
-      <div class="footer-bottom">
-        <p class="footer-credits">Chaturanga Project · Ancient Indian Game Revival · Built with &#9823; by the Chaturanga team</p>
-      </div>
+      <div class="footer-bottom"><p class="footer-credits">Chaturanga Project · Ancient Indian Game Revival · Built with ♟ by the Chaturanga team</p></div>
     </div>
   </footer>
 
   <script>
-    // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-    }, { threshold: 0.1 });
+    const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.05 });
     reveals.forEach(r => obs.observe(r));
-
-    // Hamburger
-    const ham = document.getElementById('hamburger');
-    const nav = document.getElementById('navLinks');
+    const ham = document.getElementById('hamburger'); const nav = document.getElementById('navLinks');
     if (ham && nav) ham.addEventListener('click', () => nav.classList.toggle('open'));
   </script>
 </body>

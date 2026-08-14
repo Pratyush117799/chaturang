@@ -1,0 +1,11 @@
+# ads.txt — Authorized Digital Sellers
+# https://support.google.com/adsense/answer/7532444
+#
+# IMPORTANT: Replace YOUR_PUBLISHER_ID with your actual Google AdSense
+# publisher ID (format: pub-XXXXXXXXXXXXXXXX) once your AdSense account
+# is approved. Until then, leave this file as-is.
+#
+# Example line (uncomment and replace when ready):
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+
+# Placeholder — add your publisher ID after AdSense approval
