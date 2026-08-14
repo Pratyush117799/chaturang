@@ -68,7 +68,7 @@
     .ls-sq.highlight{outline:3px solid var(--gold,#c9a84c);outline-offset:-3px;box-shadow:inset 0 0 10px rgba(201,168,76,.3)}
     .ls-sq.selected{background:rgba(201,168,76,.5) !important}
     .ls-sq.legal-move::after{content:'';width:30%;height:30%;background:rgba(0,0,0,.3);border-radius:50%;display:block}
-    .ls-piece{width:80%;height:80%;object-fit:contain;pointer-events:none}
+    .ls-piece{width:82%;height:82%;object-fit:cover;clip-path:circle(44% at center);position:absolute;top:9%;left:9%;z-index:2;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.7));transition:transform .12s ease,filter .12s ease;transform:translateZ(0);will-change:transform}
 
     .badge-pill{display:inline-block;background:linear-gradient(135deg,#c9a84c,#f0cc7a);color:#1a1306;border-radius:12px;padding:3px 12px;font-size:.72rem;font-weight:700;margin-top:6px}
 
@@ -268,7 +268,7 @@ function renderLsBoard(l, step, container){
         const img=document.createElement('img');
         img.className='ls-piece';
         const typeStr=(PIECE_NAMES[piece.type]||piece.type).toLowerCase();
-        img.src=`images/pieces/${PLAYER_COLORS[piece.owner]}_${typeStr}.webp`;
+        img.src=`../../images/pieces/${PLAYER_COLORS[piece.owner]}_${typeStr}.webp`;
         img.onerror=()=>{
           img.style.display='none';
           const span=document.createElement('span');

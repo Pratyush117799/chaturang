@@ -61,6 +61,37 @@ function sendMail(toEmail, subject, name, bodyHtml) {
     .catch((err) => console.error(`Failed to send email to ${toEmail}:`, err.message));
 }
 
+
+// ---------------------------------------------------------
+// Pending registration schema (holds name/email/OTP until
+// the email is verified and a password is set)
+// ---------------------------------------------------------
+const pendingRegistrationSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+  otp: { type: String, required: true },
+  otpExpires: { type: Date, required: true },
+  verified: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now, expires: 3600 } // auto-cleanup after 1hr
+});
+
+const PendingRegistration = mongoose.model('PendingRegistration', pendingRegistrationSchema);
+
+function signupOtpHtml(name, otp) {
+  return `
+    <div style="font-family:sans-serif; color:#2a0e0e; padding:20px; background:#faf8f5; border:1px solid #c8960c; border-radius:8px;">
+      <h2 style="color:#8a6e2f; margin-top:0;">चतुरंग · Chaturanga</h2>
+      <p>Hi <strong>${name}</strong>,</p>
+      <p>Use this code to verify your email and finish creating your account.</p>
+      <div style="background:#110e05; color:#c8960c; font-size:2rem; font-weight:700; letter-spacing:6px; padding:12px 24px; text-align:center; border-radius:6px; margin:16px 0;">
+        ${otp}
+      </div>
+      <p style="font-size:0.85rem; color:#666;">This code is valid for <strong>10 minutes</strong>. If you didn't request this, you can ignore it.</p>
+    </div>`;
+}
+
+
+
 function loginEmailHtml(name) {
   return `
     <div style="font-family:sans-serif; color:#2a0e0e; padding:16px;">
@@ -185,23 +216,93 @@ app.post('/api/puzzles/progress/:userId/solve', async (req, res) => {
 });
 
 
-app.post('/api/auth/register', async (req, res) => {
+// STEP 1 — send OTP to verify the email before any account exists
+app.post('/api/auth/register/send-otp', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ success: false, message: 'All fields are required' });
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ success: false, message: 'Name and email are required' });
     }
-    if (password.length < 8) {
-      return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
-    }
+    const cleanEmail = email.toLowerCase().trim();
 
-    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+    const existingUser = await User.findOne({ email: cleanEmail });
     if (existingUser) {
       return res.status(409).json({ success: false, message: 'Email already registered' });
     }
 
-    // No explicit elo here — the schema default (1200) applies.
-    const user = await User.create({ name, email, password });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Upsert so re-requesting a code just refreshes it
+    await PendingRegistration.findOneAndUpdate(
+      { email: cleanEmail },
+      { name: name.trim(), email: cleanEmail, otp, otpExpires, verified: false, createdAt: new Date() },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    sendMail(cleanEmail, 'Verify your Chaturanga email', name, signupOtpHtml(name, otp));
+    res.status(200).json({ success: true, message: `OTP sent to ${cleanEmail}. Please check your inbox!` });
+  } catch (err) {
+    console.error('Send signup OTP error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// STEP 2 — verify the OTP (email is confirmed, but no account yet)
+app.post('/api/auth/register/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: 'Email and OTP are required' });
+    }
+    const cleanEmail = email.toLowerCase().trim();
+
+    const pending = await PendingRegistration.findOne({ email: cleanEmail });
+    if (!pending) {
+      return res.status(404).json({ success: false, message: 'No pending registration found for this email. Please request a new OTP.' });
+    }
+    if (pending.otp !== String(otp).trim()) {
+      return res.status(400).json({ success: false, message: 'Invalid OTP code. Please check and try again.' });
+    }
+    if (Date.now() > new Date(pending.otpExpires).getTime()) {
+      return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
+    }
+
+    pending.verified = true;
+    await pending.save();
+
+    res.status(200).json({ success: true, message: 'Email verified! Now set your password.' });
+  } catch (err) {
+    console.error('Verify signup OTP error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// STEP 3 — set password and actually create the account
+app.post('/api/auth/register/set-password', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+    }
+    const cleanEmail = email.toLowerCase().trim();
+
+    const pending = await PendingRegistration.findOne({ email: cleanEmail });
+    if (!pending || !pending.verified) {
+      return res.status(400).json({ success: false, message: 'Email not verified. Please verify your email with an OTP first.' });
+    }
+
+    const existingUser = await User.findOne({ email: cleanEmail });
+    if (existingUser) {
+      await PendingRegistration.deleteOne({ email: cleanEmail });
+      return res.status(409).json({ success: false, message: 'Email already registered' });
+    }
+
+    const user = await User.create({ name: pending.name, email: cleanEmail, password });
+    await PendingRegistration.deleteOne({ email: cleanEmail });
 
     res.status(201).json({ success: true, message: 'Registered successfully', user });
     sendMail(user.email, 'Welcome to Chaturanga', user.name, registerEmailHtml(user.name));
@@ -209,7 +310,7 @@ app.post('/api/auth/register', async (req, res) => {
     if (err.code === 11000) {
       return res.status(409).json({ success: false, message: 'Email already registered' });
     }
-    console.error('Register error:', err);
+    console.error('Set-password error:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

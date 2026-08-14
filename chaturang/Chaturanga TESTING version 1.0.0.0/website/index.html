@@ -52,6 +52,14 @@
       transform:translateY(-2px);
       box-shadow:0 8px 20px rgba(200,150,12,0.28);
     }
+
+    .nav-signin {
+      background:rgba(200,150,12,0.18);
+      border-color:#eab308;
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(200,150,12,0.28);
+      color:#eab308
+    }
     .howto-nav-link i{
       animation:howtoIconTilt 2.6s ease-in-out infinite;
     }
@@ -983,7 +991,7 @@ function renderNavUser() {
     if (!user) {
       const link = document.createElement('a');
       link.href = 'loginpage.html';
-      link.className = 'nav-signin-link';
+      link.className = 'nav-signin';
       link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
       navUser.appendChild(link);
       return;
