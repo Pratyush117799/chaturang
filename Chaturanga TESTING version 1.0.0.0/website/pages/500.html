@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Error (500) | Chaturanga</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Yatra+One&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <style>
+    .error-icon-500 { font-size:4.5rem; color:var(--gold-dim); display:block; margin-bottom:20px; animation:pulse500 3s ease-in-out infinite; }
+    @keyframes pulse500 { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+    .error-deva { font-family:var(--font-deva); color:var(--gold-dim); font-size:1.05rem; display:block; margin-bottom:12px; }
+    .report-box { margin-top:36px; background:rgba(61,11,11,0.35); border:var(--border-gold); border-radius:var(--radius-lg); padding:24px 28px; max-width:460px; margin-left:auto; margin-right:auto; }
+    .report-box p { color:var(--text-muted); font-size:0.9rem; line-height:1.7; margin-bottom:14px; }
+    .report-box a { display:inline-flex; align-items:center; gap:8px; color:var(--gold); text-decoration:none; font-family:var(--font-display); font-size:0.8rem; letter-spacing:1.5px; text-transform:uppercase; border:1px solid rgba(201,168,76,0.4); border-radius:8px; padding:10px 18px; transition:var(--transition); }
+    .report-box a:hover { background:rgba(201,168,76,0.1); border-color:var(--gold); }
+    .bg-glow { position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(139,26,26,0.15) 0%, transparent 70%); pointer-events:none; z-index:0; animation:glowPulse 5s ease-in-out infinite; }
+    @keyframes glowPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <nav id="navbar" class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-devanagari">चतुरंग</span>
+        <span class="logo-divider">·</span>
+        <span class="logo-latin">Chaturanga</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+      </ul>
+      <a href="../../game/game.html" class="nav-cta"><i class="fa-solid fa-chess-king"></i> Play Now</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <main class="error-section" style="position:relative;z-index:1;">
+    <div class="container" style="text-align:center;max-width:600px;margin:0 auto;">
+      <i class="fa-solid fa-triangle-exclamation error-icon-500"></i>
+      <div class="error-code">500</div>
+      <span class="error-deva">कुछ गलत हुआ</span>
+      <h1 class="error-title">Something Went Wrong on Our End</h1>
+      <p class="error-msg">The server encountered an unexpected error. This is our fault, not yours — please try again in a moment. If the problem persists, please let us know.</p>
+      <div class="error-links">
+        <a href="../index.html" class="btn-gold" style="width:auto;">
+          <i class="fa-solid fa-rotate-left"></i> Try Again
+        </a>
+        <a href="../index.html" class="btn-outline">
+          <i class="fa-solid fa-house"></i> Go Home
+        </a>
+      </div>
+      <div class="report-box">
+        <p><i class="fa-solid fa-flag" style="color:var(--gold);margin-right:6px;"></i> <strong style="color:var(--sandstone);">Seen this repeatedly?</strong> Please report it — your description helps us fix it faster.</p>
+        <a href="contact.html?subject=bug">
+          <i class="fa-solid fa-bug"></i> Report This Issue
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const ham = document.getElementById('hamburger'); const nav = document.getElementById('navLinks');
+    if (ham && nav) ham.addEventListener('click', () => nav.classList.toggle('open'));
+  </script>
+</body>
+</html>

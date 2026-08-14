@@ -1,0 +1,307 @@
+CHATURANGA v1.0.5.2 — REMAINING FEATURES BUILD LIST
+For Claude AI. Vanilla JS/HTML. No frameworks. Match existing dark gold aesthetic.
+Existing globals: ChaturangaELO, ChaturangaClock, game (Game instance), ui.js functions.
+localStorage prefix: chaturanga_*
+
+═══════════════════════════════════════════════════════
+1. ADAPTIVE BOT — js/adaptive-bot.js (~20 lines)
+═══════════════════════════════════════════════════════
+- Read last 10 bot games from chaturanga_elo_v2 history
+- Win rate >70% → next bot ELO += 100. Win rate <30% → next bot ELO -= 100
+- Clamp result to 100–1000
+- Store adjusted ELO in localStorage key: chaturanga_adaptive_elo
+- On game start, if adaptive mode enabled, call setBotConfig(adaptiveELO) before board init
+- Show small toast: "Difficulty adjusted ↑" or "↓" using existing ui toast pattern
+- Expose: AdaptiveBot.getNextELO(), AdaptiveBot.setEnabled(bool)
+
+═══════════════════════════════════════════════════════
+2. CRITICAL MOMENT DETECTION — seer additions
+═══════════════════════════════════════════════════════
+Files: new js/analysis-worker.js + additions to seer.html/seer.js
+
+analysis-worker.js (Web Worker):
+- Receives: { positions: [{fen-like state, moveHistory, playerIndex}], botELO: 400 }
+- For each position, runs ChaturangaTieredBot.getMove(game, 400)
+- Compares material delta of bot's suggested move vs actual move made
+- If delta difference >= 3 points (Ashwa=3, Ratha=5, Danti=3, Raja=∞), flag as missed win
+- Returns array of { moveIndex, actualMove, betterMove, deltaGap, pieceType }
+
+seer.js additions:
+- After game loads in Seer, spawn analysis-worker with blunder positions
+- In move log, add gold lightning ⚡ icon next to blunder moves
+- On click: expand panel showing "Bot found [piece] to [square] — would have won [X] material"
+- Draw gold arrow on board at the missed move square
+- Section heading: "Turning Points" above the move log
+
+═══════════════════════════════════════════════════════
+3. ITIHASA — itihasa.html (replay theater)
+═══════════════════════════════════════════════════════
+Standalone page. Reads Granth vault from localStorage (chaturanga_granth_vault).
+
+Layout (dark parchment, Cinzel headings matching elo-profile.html style):
+- Left panel: vault list — game date, opponent, result, inscription count
+- Right panel: replay board + scrubber timeline at bottom
+- Board: read-only 8x8 render (copy board CSS from game.html, strip interactivity)
+
+Replay engine:
+- Parse moveHistory array from saved game object
+- Scrubber: range input 0–moveHistory.length, prev/next buttons, auto-play toggle (1 move/sec)
+- On scrub to move N: rebuild board state by replaying moves 0..N from starting position
+- When scrubber passes a move that earned a Granth inscription: fire inscription card overlay (reuse Granth SVG card renderer, call ChaturangaGranth.renderFromGame partial)
+- Show move notation in sidebar as scrubber advances
+
+Nav link: add "Itihasa" to game.html nav and granth.html nav.
+
+═══════════════════════════════════════════════════════
+4. MOVE NOTATION + SHARE URL — js/cn-encoder.js + additions
+═══════════════════════════════════════════════════════
+cn-encoder.js:
+- Define Chaturanga Notation (CN) format: R:e1-e5 B:e8-e5x A:d4-f5 Y:pass
+  Player initials R/B/G/Y, from-to, x=capture, p=promotion, f=forfeit
+- encodeCN(moveHistory) → compact string
+- decodeCN(string) → moveHistory array
+- toShareURL(moveHistory) → base64 encode CN, append as ?game=BASE64 to current URL
+- fromShareURL() → check window.location.search for ?game=, decode if present
+
+Seer integration:
+- Add "Share game" button in game-over overlay (copy existing button style)
+- On click: call toShareURL, copy to clipboard, show "Link copied" toast
+- On seer.html load: call fromShareURL(), if found auto-load the game into replay
+
+═══════════════════════════════════════════════════════
+5. DICE PROBABILITY HEATMAP — seer.html addition
+═══════════════════════════════════════════════════════
+New section in Seer post-game panel: "Pāśaka Chronicle"
+
+- Count face frequency (1–6) per player from moveHistory dice rolls
+- Expected: each face = totalRolls/6 (16.7%)
+- Render SVG bar chart: grouped bars per face value, 4 player colours
+- Overlay expected distribution as a thin gold horizontal line per bar group
+- If any player's distribution is >2 standard deviations from expected: show annotation "Auspicious Misfortune — [Player] rolled [face] [N] times, expected [X]"
+- All SVG, no external chart libs
+
+═══════════════════════════════════════════════════════
+6. OPENING LIBRARY — js/openings-data.js + ui additions
+═══════════════════════════════════════════════════════
+openings-data.js:
+- Object mapping first-4-halfmove sequences to opening names + descriptions
+- ~20 openings. Examples:
+  Bhishma's Wall: Rathas advance to d1,e1 files in moves 1-2
+  Arjuna's Surge: Both Ashwas advance on moves 1-2
+  Karna's Gambit: Nara sacrificed on move 1 to open file
+  Drona's Formation: Danti to centre diagonal move 1
+  (build out 16 more in same pattern)
+- Each entry: { id, name, description, moves: ['R:a1-a4','B:...'], granth_achievement_id }
+
+ui.js addition:
+- After move 4, check moveHistory[0..3] against openings-data patterns
+- If match: flash small banner top-center of board: "[Opening Name]" (2s, then fade)
+- Store matched opening in current game state
+- Pass to Granth renderer so it appears in post-game manuscript
+- Add 20 opening entries to chatbot-data.js (Acharya can explain each)
+
+═══════════════════════════════════════════════════════
+7. BOARD THEMES AS ACHIEVEMENTS — additions to game.html + granth.html
+═══════════════════════════════════════════════════════
+No new files needed. Extend existing board-theme selector.
+
+5 locked themes + their unlock conditions:
+- Kurukshetra at Sunset: complete Campaign Day 13 (check kurukshetra progress in localStorage)
+- Indraprastha Marble: reach Arjuna rank in Akhara (check akhara_rank localStorage key)
+- Ashoka's Pillar: 30-day Shubh streak (check shubh_streak key)
+- Shakuni's Court: use Pāśa mechanic in 10 games (check pasha_count key)
+- Midnight Ashtāpada: play 5 games between 23:00–03:00 IST (check timestamps in elo history)
+
+In game.html board-theme selector:
+- Locked themes show padlock icon + one-line unlock hint
+- On Granth achievement grant: call unlockBoardTheme(themeId) which sets chaturanga_unlocked_themes in localStorage
+- On unlock: brief celebration animation (gold shimmer over board for 1.5s using CSS keyframe)
+- Theme CSS: add 5 new :root overrides in themes.css with --board-light, --board-dark, --board-border variables
+
+═══════════════════════════════════════════════════════
+8. LIVE SPECTATOR MODE — server-ws.js + lobby.html + game.html
+═══════════════════════════════════════════════════════
+server-ws.js:
+- Add spectators: Set to each room object (alongside players: Map)
+- New WS message type: join-spectate { roomId }
+- Server adds socket to spectators set, sends current game-state snapshot
+- All game-state broadcasts go to players AND spectators
+- Server never forwards move/roll messages from spectator sockets (guard by checking spectators set)
+- Broadcast spectator-count { count } to all in room when spectators set changes
+
+lobby.html:
+- Add "Watch" button on each room card alongside "Join"
+- Show spectator count badge on room card if count > 0
+- Watch button sends join-spectate message
+
+game.html / ws-client.js:
+- If connected as spectator: disable Roll button, disable board click/drag
+- Show "Watching" banner in place of player controls
+- Spectator chat sidebar: simple textarea + send, WS message type spectator-chat
+
+═══════════════════════════════════════════════════════
+9. REMATCH + REVENGE — server-ws.js + ui.js
+═══════════════════════════════════════════════════════
+Already: rematch-vote WS message type exists in ws-client.js. Just needs wiring.
+
+server-ws.js handler for rematch-vote:
+- Track votes per room in rematch_votes Map
+- When all players vote: broadcast rematch-start { sideSwap: true }
+- Side swap: rotate player colour assignments by 1 position
+- Reset board, clear old game state, start fresh
+
+ui.js game-over overlay additions:
+- "Rematch" button → sends rematch-vote { type: 'rematch' }
+- "Revenge" button → sends rematch-vote { type: 'revenge', preferredColor: currentColor }
+- Show head-to-head record: read localStorage key chaturanga_h2h_{opponentId}
+  Format: "You: 3 wins · Opponent: 5 wins"
+- Update h2h record on game-over: ChaturangaH2H.record(opponentId, won)
+- Waiting state: "Waiting for opponent..." spinner after voting
+
+═══════════════════════════════════════════════════════
+10. SAMARA SHASTRA — samara.html (pre-battle briefing)
+═══════════════════════════════════════════════════════
+Standalone overlay page OR modal that fires before any game loads.
+
+Reads three data sources:
+  A) Panchanga: import today's tithi/nakshatra/vara/yoga from panchanga.html logic
+     (copy getPanchangaToday() function, it already exists in panchanga.html)
+  B) Granth vault: last 3 inscriptions earned (tactical pattern player uses most)
+  C) Vyuha selection: player's chosen formation from current game setup
+
+Generates briefing text by template:
+  "Today is [vara] under [nakshatra] — [yoga adjective].
+   Your Granth records [N] [top inscription name] inscriptions.
+   The [formation name] opens your [formation strength].
+   [Tactical advice combining all three]."
+
+Mapping table needed (hardcode in samara.html):
+  nakshatra → tactical advice string (27 entries)
+  vara → piece modifier hint (7 entries)  
+  inscription → tactical pattern name (10 entries, from granth.html)
+  formation → strength description (6 entries, from vyuha-data.js)
+
+Display:
+  Full-screen dark overlay, Cinzel font, gold text
+  Drona avatar (SVG, simple silhouette — reuse existing if present)
+  Briefing text types in character by character (typewriter effect, 40ms/char)
+  "Enter battle" button dismisses and loads game
+  Skip link bottom-right for repeat players
+
+Trigger: add "Seek counsel" button to game setup screen in game.html
+         OR auto-show on first game of the day (check localStorage date key)
+
+═══════════════════════════════════════════════════════
+11. SANGRAM LIVE DHARMA BAR — additions to game.html + dharma-engine.js
+═══════════════════════════════════════════════════════
+Currently: dharma computed only post-game in dharma-engine.js.
+Goal: live animated bar updating after every move.
+
+dharma-engine.js additions:
+- Export getDharmaSnapshot(moveHistory) → { scores: [R,B,G,Y], events: lastEvent }
+- Compute incrementally: on each move append to running dharma state
+- Events that change dharma (already defined in engine, just expose live):
+  sacrifice (+), forfeit (-), consecutive captures (+), raja capture (climax)
+
+game.html additions:
+- Add dharma bar element below/beside the existing score/material bar
+- 4 coloured segments (R/B/G/Y) proportional to dharma scores, animated width transition 0.4s
+- After each move: call getDharmaSnapshot, update bar widths
+- On significant dharma event (delta > 15): flash brief annotation above bar
+  e.g. "Ratha sacrificed — Dharma rises"
+- On Raja capture: full-width gold pulse animation on the bar (CSS keyframe 1s)
+
+Visual spec:
+  Bar height: 6px, same width as board
+  Segment colours match player colours (red/blue/green/yellow at 0.7 opacity)
+  Background: rgba(255,255,255,0.04)
+  Annotation: small italic text, 1.5s then fade, positioned above bar centre
+
+═══════════════════════════════════════════════════════
+12. WEEKLY YUDDHA LEADERBOARD — server.js + lobby.html
+═══════════════════════════════════════════════════════
+server.js additions:
+- Separate in-memory ledger: weeklyELO Map { playerId → deltaELO this week }
+- On ranked game-over: POST /api/weekly-yuddha { playerId, delta }
+  Server adds delta to weekly ledger
+- GET /api/weekly-yuddha returns top 10 { playerId, name, weeklyDelta, rank }
+- Scheduled reset: check every hour if Sunday midnight IST has passed
+  On reset: grant Granth achievements to top 3, clear weekly ledger
+  Achievements: Saptaha Vijeta (1st), Agrani (2nd), Yoddha Shrestha (3rd)
+- Persist weekly ledger to weekly-yuddha.json (same pattern as leaderboard.json)
+
+lobby.html additions:
+- Leaderboard panel in lobby sidebar
+- Fetch /api/weekly-yuddha on load, render top 10 rows
+- Show countdown to next Sunday reset (compute from current IST time)
+- Top 3 rows get gold/silver/bronze left-border accent
+
+═══════════════════════════════════════════════════════
+13. OFFLINE PWA IMPROVEMENTS — sw.js + nav additions
+═══════════════════════════════════════════════════════
+sw.js:
+- Add offline.html to cache on install
+- Add Background Sync registration for Shubh solve events
+  Queue: shubh-sync-queue in IndexedDB, retry on reconnect
+- Fetch handler: on network fail, return offline.html for navigation requests
+
+offline.html (new file):
+- Simple dark page matching game aesthetic
+- Message: "You are offline — AI practice and daily puzzles are still available"
+- Two buttons: "Play vs AI" (links to game.html) and "Daily Shubh" (links to shubh.html)
+- No external font requests (use system serif fallback)
+
+Nav connectivity dot (add to all pages' nav bar):
+- Small circle element id="connectivity-dot" in top nav
+- green = online, amber = reconnecting (show on WS disconnect), grey = offline
+- JS: window addEventListener online/offline + WS onclose/onopen events
+- CSS: 8px circle, position absolute top-right of nav, transition color 0.3s
+
+═══════════════════════════════════════════════════════
+14. CLAN SYSTEM (SENA) — sena.html + lobby.html + server.js
+═══════════════════════════════════════════════════════
+sena.html (new page):
+- Create Sena: name input + choose Vyuha emblem (6 Vyuha icons from vyuha-data.js)
+- Generate 6-char invite code (random, stored as clan ID)
+- Join Sena: enter invite code
+- Sena panel: list of members with their ELO and recent Granth inscriptions
+- Leave / Disband buttons
+
+localStorage (clan data, no server needed for MVP):
+- chaturanga_sena: { id, name, vyuha, members: [{id, name, elo}], inviteCode }
+- Member ELO pulled from their local chaturanga_elo_v2 (shared via invite flow)
+
+lobby.html:
+- Show Sena badge next to player name if in a clan
+- Sena leaderboard tab: weekly wins aggregated across members
+
+server.js (optional server-side for shared clans):
+- POST /api/sena/create, /api/sena/join, GET /api/sena/:id
+- If server unavailable: graceful localStorage-only fallback
+
+═══════════════════════════════════════════════════════
+BUILD ORDER RECOMMENDATION
+═══════════════════════════════════════════════════════
+Session 1 (single-player depth, already started):
+  → 1. Adaptive Bot        (20 lines, immediate)
+  → 2. Critical Moments    (closes play-to-learn loop)
+  → 3. Itihasa             (replay theater, uses existing Granth data)
+
+Session 2 (distribution + discovery):
+  → 4. Share URL / CN      (viral)
+  → 6. Opening Library     (vocabulary layer)
+  → 5. Dice Heatmap        (validates frustration, quick SVG build)
+
+Session 3 (visual rewards + feel):
+  → 7. Board Themes        (zero new infra, immediate delight)
+  → 11. Sangram Dharma Bar (live emotional register, small addition)
+  → 10. Samara Shastra     (biggest atmosphere payoff)
+
+Session 4 (multiplayer layer):
+  → 8. Spectator Mode      (social proof)
+  → 9. Rematch + Revenge   (strongest post-loss retention)
+  → 12. Weekly Yuddha      (week-long tension)
+
+Session 5 (platform completion):
+  → 13. Offline PWA        (India market)
+  → 14. Clan System        (largest effort, highest long-term stickiness)

@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaturanga · Raja — The King Piece</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #0A0600;
+  --gold:   #C9922A;
+  --gold2:  #F0C050;
+  --gold3:  #FFDF80;
+  --muted:  #7A6030;
+  --text:   #E8D090;
+  --dim:    rgba(201,146,42,0.18);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: #080400;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Noise + vignette layer */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 70% at 50% 40%, rgba(40,20,0,0) 40%, rgba(0,0,0,0.75) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Thin horizontal rule texture */
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent 2px,
+    rgba(201,146,42,0.012) 2px,
+    rgba(201,146,42,0.012) 3px
+  );
+}
+
+.page {
+  position:relative; z-index:1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px 120px;
+}
+
+/* ── HEADER ───────────────────────────────────── */
+.header {
+  text-align: center;
+  padding: 72px 0 56px;
+  animation: fadeDown 0.9s cubic-bezier(.22,.9,.36,1) both;
+}
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.header-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(201,146,42,0.38);
+  margin-bottom: 20px;
+}
+
+.header-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 900;
+  color: var(--gold2);
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 0 120px rgba(240,192,80,0.18),
+    0 2px 0 rgba(0,0,0,0.9);
+}
+
+.header-deva {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: rgba(201,146,42,0.35);
+  margin-top: 10px;
+  letter-spacing: 0.08em;
+}
+
+.header-rule {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(180deg, transparent, rgba(201,146,42,0.4), transparent);
+  margin: 22px auto 0;
+}
+
+/* ── DIVIDER ──────────────────────────────────── */
+.hr {
+  display:flex; align-items:center; gap:16px;
+  margin: 54px 0;
+}
+.hr::before,.hr::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,146,42,0.28));
+}
+.hr::after { background:linear-gradient(270deg,transparent,rgba(201,146,42,0.28)); }
+.hr-node {
+  width:7px; height:7px;
+  background:var(--gold);
+  transform:rotate(45deg);
+  box-shadow:0 0 12px rgba(201,146,42,0.5);
+  flex-shrink:0;
+}
+
+/* ── HERO STAGE ───────────────────────────────── */
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+  margin-bottom: 80px;
+  animation: riseIn 1s cubic-bezier(.22,.9,.36,1) 0.15s both;
+}
+@keyframes riseIn {
+  from { opacity:0; transform:translateY(32px) scale(0.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.piece-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.piece-glow {
+  position:absolute;
+  width:340px; height:340px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(180,100,0,0.22) 0%, transparent 70%);
+  animation: pulse 3.5s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes pulse {
+  0%,100% { transform:scale(1); opacity:0.8; }
+  50%      { transform:scale(1.1); opacity:1; }
+}
+
+.piece-svg {
+  width: 300px;
+  height: 300px;
+  cursor: pointer;
+  filter: drop-shadow(0 16px 60px rgba(0,0,0,0.85)) drop-shadow(0 0 40px rgba(160,80,0,0.18));
+  transition: transform 0.5s cubic-bezier(.22,.9,.36,1), filter 0.5s;
+  display: block;
+}
+
+.piece-svg:hover {
+  transform: translateY(-14px) scale(1.04) rotate(-0.5deg);
+  filter: drop-shadow(0 30px 80px rgba(0,0,0,0.8)) drop-shadow(0 0 60px rgba(200,130,0,0.25));
+}
+
+.piece-caption {
+  text-align: center;
+}
+
+.piece-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold2);
+  letter-spacing: 0.16em;
+  margin-bottom: 5px;
+}
+.piece-subtitle {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+.piece-tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 18px;
+  border: 1px solid rgba(201,146,42,0.22);
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(201,146,42,0.4);
+}
+
+/* ── FOUR-PLAYER SECTION ──────────────────────── */
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gold2);
+  letter-spacing: 0.14em;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.section-note {
+  text-align:center;
+  font-style:italic;
+  font-size:0.92rem;
+  color:var(--muted);
+  margin-bottom:32px;
+}
+
+.color-row {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 80px;
+}
+
+.color-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: riseIn 0.8s cubic-bezier(.22,.9,.36,1) both;
+}
+.color-cell:nth-child(1) { animation-delay:0.1s; }
+.color-cell:nth-child(2) { animation-delay:0.2s; }
+.color-cell:nth-child(3) { animation-delay:0.3s; }
+.color-cell:nth-child(4) { animation-delay:0.4s; }
+
+.color-cell svg {
+  width:130px; height:130px;
+  display:block;
+  filter: drop-shadow(0 4px 18px rgba(0,0,0,0.7));
+  transition: transform 0.35s cubic-bezier(.22,.9,.36,1), filter 0.35s;
+  cursor:pointer;
+}
+.color-cell svg:hover {
+  transform:translateY(-7px) scale(1.07);
+  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.7)) drop-shadow(0 0 20px var(--c-glow, rgba(200,130,0,0.3)));
+}
+.color-label {
+  font-family:'Cinzel',serif;
+  font-size:0.55rem;
+  letter-spacing:0.28em;
+  text-transform:uppercase;
+  color:rgba(201,146,42,0.35);
+}
+
+/* ── SIZE PREVIEW ─────────────────────────────── */
+.size-band {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 36px;
+  flex-wrap: wrap;
+  padding: 36px;
+  background: rgba(201,146,42,0.025);
+  border: 1px solid rgba(201,146,42,0.12);
+  margin-bottom: 80px;
+}
+.size-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+.size-item svg {
+  display:block;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.65));
+}
+.size-label {
+  font-size:0.58rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:rgba(201,146,42,0.3);
+}
+
+/* ── INTEGRATION CARD ─────────────────────────── */
+.int-card {
+  border: 1px solid rgba(201,146,42,0.15);
+  background: rgba(201,146,42,0.025);
+  padding: 44px 48px;
+  margin-bottom: 80px;
+}
+@media(max-width:640px){ .int-card { padding:28px 22px; } }
+
+.int-heading {
+  font-family:'Cinzel',serif;
+  font-size:0.95rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  color:var(--gold);
+  border-bottom:1px solid rgba(201,146,42,0.14);
+  padding-bottom:16px;
+  margin-bottom:28px;
+}
+
+.int-body {
+  font-size:0.96rem;
+  line-height:2;
+  color:var(--muted);
+}
+.int-body strong {
+  color:var(--text);
+  font-weight:500;
+}
+.int-body p { margin-bottom:16px; }
+.int-body p:last-child { margin-bottom:0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══ HEADER ═══════════════════════════════════════════ -->
+<header class="header">
+  <p class="header-eyebrow">Chaturanga · Piece Design System · v1.0</p>
+  <h1 class="header-title">RAJA</h1>
+  <p class="header-deva">राजा · The King</p>
+  <div class="header-rule"></div>
+</header>
+
+<!-- ═══ HERO PIECE ════════════════════════════════════════ -->
+<div class="stage">
+  <div class="piece-container">
+    <div class="piece-glow"></div>
+
+    <!--
+    ═══════════════════════════════════════════════════════
+      THE RAJA — Front-facing Maratha-Mughal Emperor
+      viewBox: 0 0 240 240  |  designed at 300×300 px
+    ═══════════════════════════════════════════════════════
+    -->
+    <svg class="piece-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"
+         role="img" aria-label="Raja — The King piece for Chaturanga">
+      <defs>
+
+        <!-- ── COIN BORDER ── -->
+        <clipPath id="coin"><circle cx="120" cy="120" r="112"/></clipPath>
+
+        <!-- ── BACKGROUNDS ── -->
+        <radialGradient id="bgMain" cx="50%" cy="38%" r="62%">
+          <stop offset="0%"   stop-color="#2E1400"/>
+          <stop offset="60%"  stop-color="#160900"/>
+          <stop offset="100%" stop-color="#080300"/>
+        </radialGradient>
+
+        <!-- ── GOLD GRADIENTS ── -->
+        <linearGradient id="goldV" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#FFEEA0"/>
+          <stop offset="35%"  stop-color="#E0A820"/>
+          <stop offset="70%"  stop-color="#C98A10"/>
+          <stop offset="100%" stop-color="#7A5200"/>
+        </linearGradient>
+        <linearGradient id="goldH" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#FFEEA0"/>
+          <stop offset="50%"  stop-color="#E0A820"/>
+          <stop offset="100%" stop-color="#7A5200"/>
+        </linearGradient>
+        <radialGradient id="goldShine" cx="35%" cy="30%" r="60%">
+          <stop offset="0%"   stop-color="#FFF0B0"/>
+          <stop offset="40%"  stop-color="#E0A820"/>
+          <stop offset="100%" stop-color="#7A5200"/>
+        </radialGradient>
+
+        <!-- ── TURBAN ── -->
+        <linearGradient id="turbBase" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#CF4420"/>
+          <stop offset="45%"  stop-color="#9E2A08"/>
+          <stop offset="100%" stop-color="#5A1204"/>
+        </linearGradient>
+        <linearGradient id="turbLight" x1="0%" y1="0%" x2="100%" y2="80%">
+          <stop offset="0%"   stop-color="#E85A28"/>
+          <stop offset="100%" stop-color="#8E2008"/>
+        </linearGradient>
+        <linearGradient id="turbShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#B83A14"/>
+          <stop offset="100%" stop-color="#4A0E04"/>
+        </linearGradient>
+
+        <!-- ── SKIN ── -->
+        <radialGradient id="skinFace" cx="50%" cy="42%" r="55%">
+          <stop offset="0%"   stop-color="#C87A38"/>
+          <stop offset="65%"  stop-color="#B06828"/>
+          <stop offset="100%" stop-color="#8A4818"/>
+        </radialGradient>
+        <radialGradient id="skinShadow" cx="50%" cy="30%" r="55%">
+          <stop offset="0%"   stop-color="#A05A20"/>
+          <stop offset="100%" stop-color="#6A3A10"/>
+        </radialGradient>
+
+        <!-- ── GARMENT ── -->
+        <linearGradient id="garmGrad" x1="10%" y1="0%" x2="90%" y2="100%">
+          <stop offset="0%"   stop-color="#8E2A08"/>
+          <stop offset="50%"  stop-color="#6A1C06"/>
+          <stop offset="100%" stop-color="#3C0C02"/>
+        </linearGradient>
+
+        <!-- ── GEMS ── -->
+        <radialGradient id="rubyR" cx="35%" cy="30%" r="58%">
+          <stop offset="0%"   stop-color="#FF8868"/>
+          <stop offset="50%"  stop-color="#D02020"/>
+          <stop offset="100%" stop-color="#7A0808"/>
+        </radialGradient>
+        <radialGradient id="emeraldR" cx="35%" cy="30%" r="58%">
+          <stop offset="0%"   stop-color="#80FFB0"/>
+          <stop offset="50%"  stop-color="#18A040"/>
+          <stop offset="100%" stop-color="#085020"/>
+        </radialGradient>
+        <radialGradient id="pearlR" cx="35%" cy="30%" r="58%">
+          <stop offset="0%"   stop-color="#FFFFFF"/>
+          <stop offset="60%"  stop-color="#E8E0D0"/>
+          <stop offset="100%" stop-color="#A89880"/>
+        </radialGradient>
+
+        <!-- ── FILTERS ── -->
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+
+      </defs>
+
+      <!-- ════════════ COIN MEDALLION BORDER ════════════ -->
+      <!-- Outer rim dark -->
+      <circle cx="120" cy="120" r="119" fill="#050200"/>
+      <!-- Gold outer ring -->
+      <circle cx="120" cy="120" r="118" fill="none" stroke="url(#goldV)" stroke-width="3"/>
+      <!-- Decorative dot ring (32 dots) -->
+      <g fill="url(#goldShine)">
+        <circle cx="120" cy="4"   r="2.2"/> <circle cx="143" cy="6"   r="2.2"/>
+        <circle cx="165" cy="13"  r="2.2"/> <circle cx="184" cy="24"  r="2.2"/>
+        <circle cx="200" cy="39"  r="2.2"/> <circle cx="212" cy="57"  r="2.2"/>
+        <circle cx="219" cy="77"  r="2.2"/> <circle cx="222" cy="98"  r="2.2"/>
+        <circle cx="220" cy="119" r="2.2"/> <circle cx="214" cy="140" r="2.2"/>
+        <circle cx="204" cy="159" r="2.2"/> <circle cx="191" cy="176" r="2.2"/>
+        <circle cx="175" cy="190" r="2.2"/> <circle cx="156" cy="201" r="2.2"/>
+        <circle cx="136" cy="208" r="2.2"/> <circle cx="115" cy="211" r="2.2"/>
+        <circle cx="94"  cy="208" r="2.2"/> <circle cx="74"  cy="201" r="2.2"/>
+        <circle cx="55"  cy="190" r="2.2"/> <circle cx="39"  cy="176" r="2.2"/>
+        <circle cx="26"  cy="159" r="2.2"/> <circle cx="16"  cy="140" r="2.2"/>
+        <circle cx="10"  cy="119" r="2.2"/> <circle cx="8"   cy="98"  r="2.2"/>
+        <circle cx="11"  cy="77"  r="2.2"/> <circle cx="18"  cy="57"  r="2.2"/>
+        <circle cx="30"  cy="39"  r="2.2"/> <circle cx="46"  cy="24"  r="2.2"/>
+        <circle cx="65"  cy="13"  r="2.2"/> <circle cx="87"  cy="6"   r="2.2"/>
+        <circle cx="109" cy="3"   r="2.2"/> <circle cx="131" cy="3"   r="2.2"/>
+      </g>
+      <!-- Inner border ring -->
+      <circle cx="120" cy="120" r="113" fill="none" stroke="url(#goldV)" stroke-width="0.8" opacity="0.5"/>
+      <!-- Second thin ring -->
+      <circle cx="120" cy="120" r="110" fill="none" stroke="url(#goldV)" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.35"/>
+
+      <!-- ════════════ BACKGROUND FILL ════════════ -->
+      <circle cx="120" cy="120" r="112" fill="url(#bgMain)"/>
+
+      <!-- ════════════ BACKGROUND MANDALA ════════════ -->
+      <!-- Sun-wheel spokes (12) — very subtle -->
+      <g clip-path="url(#coin)" opacity="0.28" stroke="#C98A10" fill="none">
+        <line x1="120" y1="120" x2="120" y2="10"   stroke-width="1"/>
+        <line x1="120" y1="120" x2="178" y2="26"   stroke-width="1"/>
+        <line x1="120" y1="120" x2="218" y2="72"   stroke-width="1"/>
+        <line x1="120" y1="120" x2="228" y2="130"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="210" y2="183"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="170" y2="218"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="112" y2="228"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="56"  y2="210"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="20"  y2="172"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="12"  y2="118"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="34"  y2="62"   stroke-width="1"/>
+        <line x1="120" y1="120" x2="74"  y2="22"   stroke-width="1"/>
+      </g>
+      <!-- Concentric faint rings -->
+      <circle cx="120" cy="120" r="80" fill="none" stroke="#C98A10" stroke-width="0.5" opacity="0.12"/>
+      <circle cx="120" cy="120" r="55" fill="none" stroke="#C98A10" stroke-width="0.4" opacity="0.10"/>
+
+      <!-- Lotus petals in background (8 petals, very faint) -->
+      <g clip-path="url(#coin)" opacity="0.18" fill="#C98A10">
+        <ellipse cx="120" cy="52" rx="8" ry="16"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(45,120,120)"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(90,120,120)"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(135,120,120)"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(180,120,120)"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(225,120,120)"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(270,120,120)"/>
+        <ellipse cx="120" cy="52" rx="8" ry="16" transform="rotate(315,120,120)"/>
+      </g>
+
+      <!-- ════════════ FIGURE (all clipped) ════════════ -->
+      <g clip-path="url(#coin)">
+
+        <!-- ═══ GARMENT / BODY ═══ -->
+        <!-- Wide angarkha shoulders -->
+        <path d="M -10,240
+                 C 10,200 30,178 58,166
+                 L 80,158 C 90,162 102,165 120,165
+                 C 138,165 150,162 160,158
+                 L 182,166
+                 C 210,178 230,200 250,240 Z"
+              fill="url(#garmGrad)" stroke="#300800" stroke-width="1.2"/>
+
+        <!-- Gold border on shoulder collar -->
+        <path d="M 58,166 C 75,160 96,157 120,157 C 144,157 165,160 182,166"
+              fill="none" stroke="url(#goldH)" stroke-width="2.8" stroke-linecap="round"/>
+
+        <!-- Embroidery chevrons on garment -->
+        <g opacity="0.38" stroke="url(#goldH)" fill="none" stroke-width="0.9">
+          <path d="M 36,210 C 50,193 66,182 85,174"/>
+          <path d="M 42,225 C 58,207 74,196 92,188"/>
+          <path d="M 204,210 C 190,193 174,182 155,174"/>
+          <path d="M 198,225 C 182,207 166,196 148,188"/>
+          <!-- Small paisley shapes on chest area -->
+          <path d="M 105,175 C 108,168 116,166 120,167 C 124,166 132,168 135,175 C 132,181 124,183 120,182 C 116,183 108,181 105,175 Z"/>
+        </g>
+        <!-- Central chest gem -->
+        <circle cx="120" cy="175" r="4" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.8"/>
+        <circle cx="120" cy="175" r="2.2" fill="url(#rubyR)"/>
+        <circle cx="119.2" cy="174.2" r="0.7" fill="white" opacity="0.7"/>
+
+        <!-- ═══ NECK ═══ -->
+        <path d="M 107,158 L 107,166 C 107,170 113,172 120,172
+                 C 127,172 133,170 133,166 L 133,158 Z"
+              fill="url(#skinFace)" stroke="#7A4018" stroke-width="0.8"/>
+
+        <!-- ═══ PEARL + RUBY HAAR (necklace) ═══ -->
+        <!-- String -->
+        <path d="M 96,163 C 104,157 112,154 120,154 C 128,154 136,157 144,163"
+              fill="none" stroke="#C98A10" stroke-width="0.6" opacity="0.5"/>
+        <!-- Pearls alternating with rubies -->
+        <circle cx="97"  cy="163" r="2.8" fill="url(#pearlR)" stroke="#C0A060" stroke-width="0.6"/>
+        <circle cx="103" cy="159" r="2.8" fill="url(#rubyR)"  stroke="#8A2020" stroke-width="0.6"/>
+        <circle cx="110" cy="156" r="2.8" fill="url(#pearlR)" stroke="#C0A060" stroke-width="0.6"/>
+        <circle cx="120" cy="154" r="4.0" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="120" cy="154" r="2.2" fill="url(#rubyR)"/>
+        <circle cx="119.2" cy="153.2" r="0.7" fill="white" opacity="0.75"/>
+        <circle cx="130" cy="156" r="2.8" fill="url(#pearlR)" stroke="#C0A060" stroke-width="0.6"/>
+        <circle cx="137" cy="159" r="2.8" fill="url(#rubyR)"  stroke="#8A2020" stroke-width="0.6"/>
+        <circle cx="143" cy="163" r="2.8" fill="url(#pearlR)" stroke="#C0A060" stroke-width="0.6"/>
+        <!-- Pendant drop from central gem -->
+        <line x1="120" y1="158" x2="120" y2="163" stroke="#C98A10" stroke-width="1"/>
+        <circle cx="120" cy="165" r="2.5" fill="url(#emeraldR)" stroke="#C98A10" stroke-width="0.7"/>
+        <circle cx="119.4" cy="164.4" r="0.6" fill="white" opacity="0.6"/>
+
+        <!-- ═══ FACE ═══ -->
+        <!-- Head / face shape — slightly oval, Indian proportions -->
+        <path d="M 84,115
+                 C 82,96 86,78 96,67
+                 C 104,58 120,54 120,54
+                 C 120,54 136,58 144,67
+                 C 154,78 158,96 156,115
+                 C 158,134 153,148 142,155
+                 C 135,160 120,162 120,162
+                 C 120,162 105,160 98,155
+                 C 87,148 82,134 84,115 Z"
+              fill="url(#skinFace)" stroke="#7A4018" stroke-width="1.2"/>
+
+        <!-- Subtle face shadow / depth on sides -->
+        <path d="M 84,115 C 82,96 86,78 96,67 C 100,63 105,60 110,58"
+              fill="none" stroke="rgba(80,30,0,0.18)" stroke-width="6" stroke-linecap="round"/>
+        <path d="M 156,115 C 158,96 154,78 144,67 C 140,63 135,60 130,58"
+              fill="none" stroke="rgba(80,30,0,0.18)" stroke-width="6" stroke-linecap="round"/>
+
+        <!-- ═══ LEFT EAR + JHUMKA ═══ -->
+        <path d="M 84,112 C 77,115 73,122 73,130 C 73,138 77,143 84,142"
+              fill="url(#skinFace)" stroke="#7A4018" stroke-width="1"/>
+        <!-- Jhumka (bell earring) -->
+        <circle cx="72" cy="127" r="4.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="72" cy="127" r="2.5" fill="url(#rubyR)"/>
+        <circle cx="71" cy="126" r="0.9" fill="white" opacity="0.7"/>
+        <!-- Bell body below -->
+        <path d="M 67.5,131 C 67.5,137 72,142 72,142 C 72,142 76.5,137 76.5,131 Z"
+              fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <!-- Bell fringe dots -->
+        <circle cx="69" cy="141" r="1.2" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.4"/>
+        <circle cx="72" cy="143" r="1.2" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.4"/>
+        <circle cx="75" cy="141" r="1.2" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.4"/>
+
+        <!-- ═══ RIGHT EAR + JHUMKA ═══ -->
+        <path d="M 156,112 C 163,115 167,122 167,130 C 167,138 163,143 156,142"
+              fill="url(#skinFace)" stroke="#7A4018" stroke-width="1"/>
+        <circle cx="168" cy="127" r="4.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="168" cy="127" r="2.5" fill="url(#rubyR)"/>
+        <circle cx="167" cy="126" r="0.9" fill="white" opacity="0.7"/>
+        <path d="M 163.5,131 C 163.5,137 168,142 168,142 C 168,142 172.5,137 172.5,131 Z"
+              fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="165" cy="141" r="1.2" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.4"/>
+        <circle cx="168" cy="143" r="1.2" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.4"/>
+        <circle cx="171" cy="141" r="1.2" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.4"/>
+
+        <!-- ═══ EYEBROWS — strong, arched ═══ -->
+        <path d="M 90,100 C 95,93 104,91 114,93"
+              stroke="#1A0800" stroke-width="5" fill="none"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M 126,93 C 136,91 145,93 150,100"
+              stroke="#1A0800" stroke-width="5" fill="none"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Eyebrow highlight -->
+        <path d="M 91,99 C 96,93 104,91.5 113,93.5"
+              stroke="#3A1200" stroke-width="1.5" fill="none" opacity="0.5"
+              stroke-linecap="round"/>
+        <path d="M 127,93.5 C 136,91.5 144,93 149,99"
+              stroke="#3A1200" stroke-width="1.5" fill="none" opacity="0.5"
+              stroke-linecap="round"/>
+
+        <!-- ═══ EYES ═══ -->
+        <!-- Left eye white -->
+        <path d="M 90,110 C 95,102 106,101 112,108 C 106,115 95,115 90,110 Z"
+              fill="#F8EED8"/>
+        <!-- Right eye white -->
+        <path d="M 128,108 C 134,101 145,102 150,110 C 145,115 134,115 128,108 Z"
+              fill="#F8EED8"/>
+        <!-- Left iris -->
+        <circle cx="101" cy="108" r="6" fill="#1E0C04"/>
+        <circle cx="101" cy="108" r="3.5" fill="#080200"/>
+        <!-- Right iris -->
+        <circle cx="139" cy="108" r="6" fill="#1E0C04"/>
+        <circle cx="139" cy="108" r="3.5" fill="#080200"/>
+        <!-- Eye highlights -->
+        <circle cx="103" cy="106" r="1.8" fill="white" opacity="0.8"/>
+        <circle cx="141" cy="106" r="1.8" fill="white" opacity="0.8"/>
+        <circle cx="100" cy="109.5" r="0.8" fill="white" opacity="0.3"/>
+        <circle cx="138" cy="109.5" r="0.8" fill="white" opacity="0.3"/>
+        <!-- Upper eyelid line -->
+        <path d="M 90,110 C 95,102 106,101 112,108"
+              stroke="#1A0800" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 128,108 C 134,101 145,102 150,110"
+              stroke="#1A0800" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Lower eyelid (thinner) -->
+        <path d="M 90,110 C 95,116 106,116 112,110"
+              stroke="#3A1C08" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <path d="M 128,110 C 134,116 145,116 150,110"
+              stroke="#3A1C08" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <!-- Kohl — tiny lash lines -->
+        <path d="M 88,110 L 86,109" stroke="#1A0800" stroke-width="1" opacity="0.7"/>
+        <path d="M 148,110 L 152,109" stroke="#1A0800" stroke-width="1" opacity="0.7"/>
+
+        <!-- ═══ NOSE ═══ -->
+        <!-- Bridge -->
+        <path d="M 120,108 C 120,115 119,120 117,124"
+              stroke="#7A4018" stroke-width="1" fill="none" opacity="0.3"/>
+        <!-- Nostrils -->
+        <path d="M 111,127 C 114,132 126,132 129,127
+                 C 126,124 114,124 111,127 Z"
+              fill="url(#skinShadow)" opacity="0.7" stroke="none"/>
+        <!-- Nostril definition -->
+        <path d="M 113,127 C 115,130 120,131 120,131" fill="none" stroke="#7A4018" stroke-width="0.9" opacity="0.5"/>
+        <path d="M 127,127 C 125,130 120,131 120,131" fill="none" stroke="#7A4018" stroke-width="0.9" opacity="0.5"/>
+
+        <!-- ═══ MOUSTACHE ═══ (thick, full Rajput warrior moustache) -->
+        <path d="M 100,134
+                 C 104,127 110,124 120,125
+                 C 130,124 136,127 140,134
+                 C 136,136 129,137 120,136
+                 C 111,137 104,136 100,134 Z"
+              fill="#1A0A04" stroke="#0A0402" stroke-width="0.5"/>
+        <!-- Moustache wax ends curling up -->
+        <path d="M 100,134 C 97,131 96,127 98,124"
+              fill="none" stroke="#1A0A04" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M 140,134 C 143,131 144,127 142,124"
+              fill="none" stroke="#1A0A04" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Philtrum line -->
+        <path d="M 116,133 C 118,130 122,130 124,133"
+              fill="none" stroke="rgba(80,30,0,0.2)" stroke-width="1.2"/>
+
+        <!-- ═══ LIPS ═══ -->
+        <path d="M 104,136 C 108,131 114,129 120,130 C 126,129 132,131 136,136"
+              fill="none" stroke="#7A3010" stroke-width="1.8"/>
+        <path d="M 104,136 C 108,143 132,143 136,136
+                 C 132,140 126,142 120,141
+                 C 114,142 108,140 104,136 Z"
+              fill="#8A2810" stroke="#6A1808" stroke-width="0.8"/>
+        <!-- Lip highlight -->
+        <path d="M 111,141 C 115,144 125,144 129,141"
+              fill="none" stroke="#A04020" stroke-width="0.7" opacity="0.4"/>
+
+        <!-- ═══ BEARD ═══ (full, structured warrior beard) -->
+        <path d="M 84,140
+                 C 82,150 80,162 82,170
+                 C 88,178 102,183 120,184
+                 C 138,183 152,178 158,170
+                 C 160,162 158,150 156,140
+                 C 146,147 134,151 120,151
+                 C 106,151 94,147 84,140 Z"
+              fill="#1A0A04" stroke="#0A0402" stroke-width="0.8"/>
+        <!-- Beard texture lines -->
+        <path d="M 90,150 C 100,155 110,157 120,158" fill="none" stroke="#2A1408" stroke-width="1.2" opacity="0.65"/>
+        <path d="M 150,150 C 140,155 130,157 120,158" fill="none" stroke="#2A1408" stroke-width="1.2" opacity="0.65"/>
+        <path d="M 87,162 C 98,168 109,170 120,171"  fill="none" stroke="#200E04" stroke-width="1"   opacity="0.5"/>
+        <path d="M 153,162 C 142,168 131,170 120,171" fill="none" stroke="#200E04" stroke-width="1"   opacity="0.5"/>
+
+        <!-- ══════════════════════════════════════════
+             TURBAN — MARATHA SHAHI PAGDI
+             Tall front fold, dramatic fan-top, rich sarpech
+        ══════════════════════════════════════════════ -->
+
+        <!-- Back volume (darkest layer) -->
+        <path d="M 76,88
+                 C 74,66 80,44 93,30
+                 C 103,18 120,12 120,12
+                 C 120,12 137,18 147,30
+                 C 160,44 166,66 164,88
+                 C 154,83 140,80 120,78
+                 C 100,80 86,83 76,88 Z"
+              fill="#4A0E04" stroke="#280604" stroke-width="1.2"/>
+
+        <!-- Mid layer (main body, lighter) -->
+        <path d="M 79,86
+                 C 77,64 83,43 95,30
+                 C 104,20 120,15 120,15
+                 C 120,15 136,20 145,30
+                 C 157,43 163,64 161,86
+                 C 151,81 138,78 120,77
+                 C 102,78 89,81 79,86 Z"
+              fill="url(#turbBase)" stroke="#7E2408" stroke-width="0.7"/>
+
+        <!-- ── Wrap fold lines (diagonal — Maratha style) ── -->
+        <g fill="none" stroke="#E8561C" stroke-linecap="round" opacity="0.35">
+          <path d="M 83,82 C 88,64 96,48 108,36" stroke-width="1.4"/>
+          <path d="M 87,83 C 92,66 100,51 111,39" stroke-width="1.1"/>
+          <path d="M 91,84 C 96,68 103,54 113,43" stroke-width="0.9"/>
+          <path d="M 157,82 C 152,64 144,48 132,36" stroke-width="1.4"/>
+          <path d="M 153,83 C 148,66 140,51 129,39" stroke-width="1.1"/>
+          <path d="M 149,84 C 144,68 137,54 127,43" stroke-width="0.9"/>
+        </g>
+        <!-- Horizontal wrap band line near forehead -->
+        <path d="M 79,86 C 94,83 107,81 120,81 C 133,81 146,83 161,86"
+              fill="none" stroke="#CF4420" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 80,86 C 95,84 108,82 120,82 C 132,82 145,84 160,86"
+              fill="none" stroke="#E8661A" stroke-width="1" opacity="0.4" stroke-linecap="round"/>
+
+        <!-- ── RAISED FRONT FOLD (tall conical front piece of Maratha pagdi) ── -->
+        <path d="M 102,34
+                 C 102,24 108,16 120,13
+                 C 132,16 138,24 138,34
+                 C 134,30 128,27 120,26
+                 C 112,27 106,30 102,34 Z"
+              fill="url(#turbLight)" stroke="#CF4420" stroke-width="1"/>
+        <!-- Fold crease lines on front piece -->
+        <path d="M 105,32 C 108,22 114,16 120,14" fill="none" stroke="#E8661A" stroke-width="0.8" opacity="0.4"/>
+        <path d="M 135,32 C 132,22 126,16 120,14" fill="none" stroke="#E8661A" stroke-width="0.8" opacity="0.4"/>
+
+        <!-- ── MARATHA FAN (PANKHA) ── -->
+        <!-- Fan base knot -->
+        <ellipse cx="120" cy="19" rx="7" ry="6"
+                 fill="url(#turbShadow)" stroke="#CF4420" stroke-width="1.2"/>
+        <!-- Fan blades (9 blades) — wider, more dramatic -->
+        <g fill="url(#turbBase)" stroke="#9E2A08" stroke-width="0.7">
+          <path d="M 116,17 C 110,10 105,5 100,2 C 103,6 106,10 110,15 Z"/>
+          <path d="M 118,16 C 113,8  109,3  106,0 C 109,4  112,9  115,14 Z"/>
+          <path d="M 119,15 C 116,7  114,2  112,0 C 115,4  117,8  118,13 Z"/>
+          <path d="M 120,15 C 120,7  120,2  120,0 C 120,4  120,8  120,13 Z"/>
+          <path d="M 121,15 C 124,7  126,2  128,0 C 125,4  123,8  122,13 Z"/>
+          <path d="M 122,16 C 127,8  131,3  134,0 C 131,4  128,9  125,14 Z"/>
+          <path d="M 124,17 C 130,10 135,5  140,2 C 137,6  134,10 130,15 Z"/>
+        </g>
+        <!-- Fan color accent on center blade (brightest) -->
+        <path d="M 120,15 C 120,7 120,2 120,0 C 120,4 120,8 120,13 Z"
+              fill="#E8661A" opacity="0.6"/>
+        <!-- Gold fan-tip ornament -->
+        <circle cx="120" cy="5" r="4.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="1" filter="url(#glow)"/>
+        <circle cx="120" cy="5" r="2.5" fill="url(#rubyR)"/>
+        <circle cx="119" cy="4" r="0.9" fill="white" opacity="0.8"/>
+        <!-- Four tiny gems radiating from fan tip -->
+        <circle cx="120" cy="0" r="1.5" fill="url(#goldShine)" opacity="0.7"/>
+        <circle cx="114" cy="2" r="1.2" fill="url(#goldShine)" opacity="0.5"/>
+        <circle cx="126" cy="2" r="1.2" fill="url(#goldShine)" opacity="0.5"/>
+
+        <!-- ── SARPECH (central turban jewel — most elaborate) ── -->
+        <!-- Thin gold chain arcing from fan base -->
+        <path d="M 115,22 C 114,34 112,44 110,52"
+              fill="none" stroke="#C98A10" stroke-width="1.2"/>
+        <path d="M 125,22 C 126,34 128,44 130,52"
+              fill="none" stroke="#C98A10" stroke-width="1.2"/>
+        <!-- Chain bead dots -->
+        <circle cx="113" cy="30" r="1.6" fill="url(#goldShine)"/>
+        <circle cx="111" cy="40" r="1.6" fill="url(#goldShine)"/>
+        <circle cx="127" cy="30" r="1.6" fill="url(#goldShine)"/>
+        <circle cx="129" cy="40" r="1.6" fill="url(#goldShine)"/>
+
+        <!-- Sarpech mounting (gold filigree base) -->
+        <path d="M 107,58
+                 C 107,46 113,40 120,38
+                 C 127,40 133,46 133,58
+                 C 133,67 127,71 120,71
+                 C 113,71 107,67 107,58 Z"
+              fill="url(#goldShine)" stroke="#C98A10" stroke-width="1.2"/>
+        <!-- Filigree side wings -->
+        <path d="M 107,55 C 103,52 99,52 98,56 C 99,60 103,60 107,58"
+              fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <path d="M 133,55 C 137,52 141,52 142,56 C 141,60 137,60 133,58"
+              fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <!-- Filigree dots on wings -->
+        <circle cx="101" cy="56" r="1.5" fill="url(#rubyR)" stroke="#C98A10" stroke-width="0.5"/>
+        <circle cx="139" cy="56" r="1.5" fill="url(#rubyR)" stroke="#C98A10" stroke-width="0.5"/>
+        <!-- Outer gem ring on sarpech -->
+        <circle cx="111" cy="52" r="2.5" fill="url(#emeraldR)" stroke="#C98A10" stroke-width="0.7"/>
+        <circle cx="120" cy="42" r="2.5" fill="url(#emeraldR)" stroke="#C98A10" stroke-width="0.7"/>
+        <circle cx="129" cy="52" r="2.5" fill="url(#emeraldR)" stroke="#C98A10" stroke-width="0.7"/>
+        <!-- Central large ruby (main gem) -->
+        <ellipse cx="120" cy="60" rx="7" ry="8"
+                 fill="url(#rubyR)" stroke="url(#goldH)" stroke-width="1.2" filter="url(#softGlow)"/>
+        <ellipse cx="120" cy="60" rx="4" ry="4.5" fill="#FF8060" opacity="0.6"/>
+        <circle  cx="118" cy="57" r="2" fill="white" opacity="0.55"/>
+        <!-- Pendant drops below sarpech (3 gold chains) -->
+        <line x1="114" y1="71" x2="112" y2="79" stroke="#C98A10" stroke-width="1"/>
+        <circle cx="112" cy="82" r="2.8" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.7"/>
+        <line x1="120" y1="71" x2="120" y2="81" stroke="#C98A10" stroke-width="1.2"/>
+        <circle cx="120" cy="84" r="3.2" fill="url(#rubyR)" stroke="url(#goldShine)" stroke-width="0.9"/>
+        <circle cx="119.2" cy="83.2" r="0.9" fill="white" opacity="0.6"/>
+        <line x1="126" y1="71" x2="128" y2="79" stroke="#C98A10" stroke-width="1"/>
+        <circle cx="128" cy="82" r="2.8" fill="url(#pearlR)" stroke="#C98A10" stroke-width="0.7"/>
+
+        <!-- ── SIDE TURBAN PINS (smaller gems flanking sarpech) ── -->
+        <circle cx="92"  cy="66" r="3.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="92"  cy="66" r="2"   fill="url(#emeraldR)"/>
+        <circle cx="91.3" cy="65.3" r="0.7" fill="white" opacity="0.6"/>
+        <circle cx="148" cy="66" r="3.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="148" cy="66" r="2"   fill="url(#emeraldR)"/>
+        <circle cx="147.3" cy="65.3" r="0.7" fill="white" opacity="0.6"/>
+        <!-- Smaller side pins -->
+        <circle cx="84"  cy="78" r="2.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.7"/>
+        <circle cx="84"  cy="78" r="1.4" fill="url(#rubyR)"/>
+        <circle cx="156" cy="78" r="2.5" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.7"/>
+        <circle cx="156" cy="78" r="1.4" fill="url(#rubyR)"/>
+
+        <!-- ── FOREHEAD TILAK (Vaishnava — vertical U mark) ── -->
+        <path d="M 117,90 C 117,84 120,81 120,81 C 120,81 123,84 123,90 C 123,93 122,95 120,95 C 118,95 117,93 117,90 Z"
+              fill="#FF7700" opacity="0.9"/>
+        <line x1="120" y1="81" x2="120" y2="95" stroke="#CC4400" stroke-width="0.6" opacity="0.5"/>
+        <!-- Second line of tilak -->
+        <path d="M 113,90 C 113,86 115,83 115,83 L 115,92 C 115,93 114,94 113,93 Z"
+              fill="#FF7700" opacity="0.7"/>
+        <path d="M 127,90 C 127,86 125,83 125,83 L 125,92 C 125,93 126,94 127,93 Z"
+              fill="#FF7700" opacity="0.7"/>
+        <!-- Chandratilak gem (bindi) -->
+        <circle cx="120" cy="97" r="2.8" fill="url(#goldShine)" stroke="#C98A10" stroke-width="0.7" filter="url(#glow)"/>
+        <circle cx="120" cy="97" r="1.5" fill="url(#rubyR)"/>
+        <circle cx="119.3" cy="96.3" r="0.5" fill="white" opacity="0.7"/>
+
+      </g><!-- end clip -->
+
+      <!-- ════════════ FINAL COIN RING ════════════ -->
+      <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(201,146,42,0.14)" stroke-width="2"/>
+
+    </svg>
+    <!-- end .piece-svg -->
+  </div>
+
+  <div class="piece-caption">
+    <p class="piece-name">CHAKRAVARTIN RAJA</p>
+    <p class="piece-subtitle">Maratha Sun Emperor · The King</p>
+    <span class="piece-tag">Prototype 1 · Front-Facing Coin Medal</span>
+  </div>
+</div>
+
+<div class="hr"><span class="hr-node"></span></div>
+
+<!-- ═══ FOUR-PLAYER COLORS ════════════════════════════════ -->
+<h2 class="section-title">Four-Player Army Colors</h2>
+<p class="section-note">One SVG — four armies. The entire palette shifts via two CSS variable swaps.</p>
+
+<div class="color-row">
+
+  <!-- SAFFRON (default) -->
+  <div class="color-cell" style="--c-glow: rgba(200,100,0,0.35);">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="cp_o"><circle cx="120" cy="120" r="112"/></clipPath>
+        <radialGradient id="bg_o" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#2E1400"/><stop offset="100%" stop-color="#080300"/></radialGradient>
+        <linearGradient id="t_o"  x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#CF4420"/><stop offset="100%" stop-color="#5A1204"/></linearGradient>
+        <linearGradient id="g_o"  x1="0%" y1="0%" x2="80%"  y2="100%"><stop offset="0%" stop-color="#8E2A08"/><stop offset="100%" stop-color="#3C0C02"/></linearGradient>
+        <radialGradient id="gl_o" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFEEA0"/><stop offset="50%" stop-color="#E0A820"/><stop offset="100%" stop-color="#7A5200"/></radialGradient>
+        <radialGradient id="sk_o" cx="50%" cy="42%" r="55%"><stop offset="0%" stop-color="#C87A38"/><stop offset="100%" stop-color="#8A4818"/></radialGradient>
+      </defs>
+      <circle cx="120" cy="120" r="119" fill="#050200"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="url(#gl_o)" stroke-width="2.5"/>
+      <circle cx="120" cy="120" r="112" fill="url(#bg_o)"/>
+      <g clip-path="url(#cp_o)" opacity="0.3" stroke="#C98A10" fill="none">
+        <line x1="120" y1="120" x2="120" y2="10"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="200" y2="60"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="220" y2="150" stroke-width="1"/>
+        <line x1="120" y1="120" x2="150" y2="220" stroke-width="1"/>
+        <line x1="120" y1="120" x2="60"  y2="210" stroke-width="1"/>
+        <line x1="120" y1="120" x2="20"  y2="140" stroke-width="1"/>
+        <line x1="120" y1="120" x2="40"  y2="50"  stroke-width="1"/>
+      </g>
+      <g clip-path="url(#cp_o)">
+        <path d="M-10,240 C20,195 50,175 80,164 L100,157 C108,161 113,163 120,163 C127,163 132,161 140,157 L160,164 C190,175 220,195 250,240Z" fill="url(#g_o)"/>
+        <path d="M107,156 L107,164 C107,168 113,170 120,170 C127,170 133,168 133,164 L133,156Z" fill="url(#sk_o)"/>
+        <path d="M84,113 C82,94 87,76 97,65 C105,57 120,53 120,53 C120,53 135,57 143,65 C153,76 158,94 156,113 C158,132 152,146 141,153 C134,158 120,160 120,160 C120,160 106,158 99,153 C88,146 82,132 84,113Z" fill="url(#sk_o)" stroke="#7A4018" stroke-width="1"/>
+        <path d="M90,98 C95,91 104,89 114,91" stroke="#1A0800" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M126,91 C136,89 145,91 150,98" stroke="#1A0800" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M90,108 C95,100 106,100 112,107 C106,114 95,114 90,108Z" fill="#F8EED8"/>
+        <path d="M128,107 C134,100 145,100 150,108 C145,114 134,114 128,107Z" fill="#F8EED8"/>
+        <circle cx="101" cy="107" r="5.5" fill="#1E0C04"/><circle cx="101" cy="107" r="3" fill="#060100"/>
+        <circle cx="139" cy="107" r="5.5" fill="#1E0C04"/><circle cx="139" cy="107" r="3" fill="#060100"/>
+        <circle cx="103" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <circle cx="141" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <path d="M90,108 C95,100 106,100 112,107" stroke="#1A0800" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M128,107 C134,100 145,100 150,108" stroke="#1A0800" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M111,127 C114,132 126,132 129,127 C126,124 114,124 111,127Z" fill="#8A4818" opacity="0.6"/>
+        <path d="M100,132 C104,125 110,122 120,123 C130,122 136,125 140,132 C136,134 129,135 120,134 C111,135 104,134 100,132Z" fill="#1A0A04"/>
+        <path d="M100,132 C104,141 120,139 140,132 C136,137 126,140 120,139 C114,140 104,137 100,132Z" fill="#8A2810"/>
+        <path d="M84,140 C81,153 81,164 84,171 C90,178 103,182 120,183 C137,182 150,178 156,171 C159,164 159,153 156,140 C146,147 134,150 120,151 C106,150 94,147 84,140Z" fill="#1A0A04"/>
+        <!-- Turban -->
+        <path d="M79,84 C77,62 83,42 95,28 C104,19 120,14 120,14 C120,14 136,19 145,28 C157,42 163,62 161,84 C151,79 138,76 120,75 C102,76 89,79 79,84Z" fill="#4A0E04"/>
+        <path d="M82,82 C80,61 86,41 97,28 C105,20 120,16 120,16 C120,16 135,20 143,28 C154,41 160,61 158,82 C148,77 136,74 120,73 C104,74 92,77 82,82Z" fill="url(#t_o)"/>
+        <path d="M82,82 C96,79 107,77 120,77 C133,77 144,79 158,82" fill="none" stroke="#CF4420" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M104,32 C104,22 110,15 120,13 C130,15 136,22 136,32 C132,29 127,27 120,26 C113,27 108,29 104,32Z" fill="url(#t_o)"/>
+        <ellipse cx="120" cy="18" rx="7" ry="6" fill="#6A1808"/>
+        <path d="M116,16 C110,9 105,4 100,1 C103,5 106,9 110,14Z" fill="url(#t_o)"/>
+        <path d="M118,15 C114,7 111,2 108,0 C111,4 113,9 115,13Z" fill="url(#t_o)"/>
+        <path d="M120,14 C120,6 120,1 120,0 C120,4 120,8 120,12Z" fill="#CF4420"/>
+        <path d="M122,15 C126,7 129,2 132,0 C129,4 127,9 125,13Z" fill="url(#t_o)"/>
+        <path d="M124,16 C130,9 135,4 140,1 C137,5 134,9 130,14Z" fill="url(#t_o)"/>
+        <circle cx="120" cy="4" r="4" fill="url(#gl_o)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="120" cy="4" r="2.2" fill="#FF4040"/>
+        <!-- Sarpech -->
+        <path d="M108,56 C108,44 113,38 120,36 C127,38 132,44 132,56 C132,65 127,69 120,69 C113,69 108,65 108,56Z" fill="url(#gl_o)" stroke="#C98A10" stroke-width="1.1"/>
+        <ellipse cx="120" cy="58" rx="6.5" ry="7.5" fill="#D02020" stroke="url(#gl_o)" stroke-width="1.1"/>
+        <circle cx="118" cy="55" r="2" fill="white" opacity="0.55"/>
+        <line x1="120" y1="69" x2="120" y2="79" stroke="#C98A10" stroke-width="1.1"/>
+        <circle cx="120" cy="82" r="3" fill="#D02020" stroke="url(#gl_o)" stroke-width="0.8"/>
+        <!-- Tilak -->
+        <path d="M117,88 C117,83 120,80 120,80 C120,80 123,83 123,88 C123,92 121,94 120,94 C119,94 117,92 117,88Z" fill="#FF7700" opacity="0.9"/>
+        <circle cx="120" cy="96" r="2.5" fill="url(#gl_o)"/>
+        <circle cx="120" cy="96" r="1.3" fill="#D02020"/>
+      </g>
+      <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(201,146,42,0.1)" stroke-width="1.5"/>
+    </svg>
+    <p class="color-label">Saffron Army</p>
+  </div>
+
+  <!-- CRIMSON ARMY -->
+  <div class="color-cell" style="--c-glow: rgba(200,0,0,0.35);">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="cp_r"><circle cx="120" cy="120" r="112"/></clipPath>
+        <radialGradient id="bg_r2" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#280A0A"/><stop offset="100%" stop-color="#060101"/></radialGradient>
+        <linearGradient id="t_r2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D83838"/><stop offset="100%" stop-color="#5A0A0A"/></linearGradient>
+        <linearGradient id="g_r2" x1="0%" y1="0%" x2="80%"  y2="100%"><stop offset="0%" stop-color="#A01818"/><stop offset="100%" stop-color="#380404"/></linearGradient>
+        <radialGradient id="gl_r" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFEEA0"/><stop offset="50%" stop-color="#E0A820"/><stop offset="100%" stop-color="#7A5200"/></radialGradient>
+        <radialGradient id="sk_r" cx="50%" cy="42%" r="55%"><stop offset="0%" stop-color="#C87A38"/><stop offset="100%" stop-color="#8A4818"/></radialGradient>
+      </defs>
+      <circle cx="120" cy="120" r="119" fill="#040000"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="url(#gl_r)" stroke-width="2.5"/>
+      <circle cx="120" cy="120" r="112" fill="url(#bg_r2)"/>
+      <g clip-path="url(#cp_r)" opacity="0.28" stroke="#C98A10" fill="none">
+        <line x1="120" y1="120" x2="120" y2="10"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="200" y2="60"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="220" y2="150" stroke-width="1"/>
+        <line x1="120" y1="120" x2="150" y2="220" stroke-width="1"/>
+        <line x1="120" y1="120" x2="60"  y2="210" stroke-width="1"/>
+        <line x1="120" y1="120" x2="20"  y2="140" stroke-width="1"/>
+        <line x1="120" y1="120" x2="40"  y2="50"  stroke-width="1"/>
+      </g>
+      <g clip-path="url(#cp_r)">
+        <path d="M-10,240 C20,195 50,175 80,164 L100,157 C108,161 113,163 120,163 C127,163 132,161 140,157 L160,164 C190,175 220,195 250,240Z" fill="url(#g_r2)"/>
+        <path d="M107,156 L107,164 C107,168 113,170 120,170 C127,170 133,168 133,164 L133,156Z" fill="url(#sk_r)"/>
+        <path d="M84,113 C82,94 87,76 97,65 C105,57 120,53 120,53 C120,53 135,57 143,65 C153,76 158,94 156,113 C158,132 152,146 141,153 C134,158 120,160 120,160 C120,160 106,158 99,153 C88,146 82,132 84,113Z" fill="url(#sk_r)" stroke="#7A4018" stroke-width="1"/>
+        <path d="M90,98 C95,91 104,89 114,91" stroke="#1A0800" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M126,91 C136,89 145,91 150,98" stroke="#1A0800" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M90,108 C95,100 106,100 112,107 C106,114 95,114 90,108Z" fill="#F8EED8"/>
+        <path d="M128,107 C134,100 145,100 150,108 C145,114 134,114 128,107Z" fill="#F8EED8"/>
+        <circle cx="101" cy="107" r="5.5" fill="#1A0808"/><circle cx="101" cy="107" r="3" fill="#060000"/>
+        <circle cx="139" cy="107" r="5.5" fill="#1A0808"/><circle cx="139" cy="107" r="3" fill="#060000"/>
+        <circle cx="103" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <circle cx="141" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <path d="M90,108 C95,100 106,100 112,107" stroke="#1A0800" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M128,107 C134,100 145,100 150,108" stroke="#1A0800" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M111,127 C114,132 126,132 129,127 C126,124 114,124 111,127Z" fill="#8A4818" opacity="0.6"/>
+        <path d="M100,132 C104,125 110,122 120,123 C130,122 136,125 140,132 C136,134 129,135 120,134 C111,135 104,134 100,132Z" fill="#1A0808"/>
+        <path d="M100,132 C104,141 120,139 140,132 C136,137 126,140 120,139 C114,140 104,137 100,132Z" fill="#8A1010"/>
+        <path d="M84,140 C81,153 81,164 84,171 C90,178 103,182 120,183 C137,182 150,178 156,171 C159,164 159,153 156,140 C146,147 134,150 120,151 C106,150 94,147 84,140Z" fill="#1A0808"/>
+        <!-- Turban RED -->
+        <path d="M79,84 C77,62 83,42 95,28 C104,19 120,14 120,14 C120,14 136,19 145,28 C157,42 163,62 161,84 C151,79 138,76 120,75 C102,76 89,79 79,84Z" fill="#3C0808"/>
+        <path d="M82,82 C80,61 86,41 97,28 C105,20 120,16 120,16 C120,16 135,20 143,28 C154,41 160,61 158,82 C148,77 136,74 120,73 C104,74 92,77 82,82Z" fill="url(#t_r2)"/>
+        <path d="M82,82 C96,79 107,77 120,77 C133,77 144,79 158,82" fill="none" stroke="#D83838" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M104,32 C104,22 110,15 120,13 C130,15 136,22 136,32 C132,29 127,27 120,26 C113,27 108,29 104,32Z" fill="url(#t_r2)"/>
+        <ellipse cx="120" cy="18" rx="7" ry="6" fill="#5A0A0A"/>
+        <path d="M116,16 C110,9 105,4 100,1 C103,5 106,9 110,14Z" fill="url(#t_r2)"/>
+        <path d="M120,14 C120,6 120,1 120,0 C120,4 120,8 120,12Z" fill="#D83838"/>
+        <path d="M124,16 C130,9 135,4 140,1 C137,5 134,9 130,14Z" fill="url(#t_r2)"/>
+        <circle cx="120" cy="4" r="4" fill="url(#gl_r)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="120" cy="4" r="2.2" fill="#FF6060"/>
+        <path d="M108,56 C108,44 113,38 120,36 C127,38 132,44 132,56 C132,65 127,69 120,69 C113,69 108,65 108,56Z" fill="url(#gl_r)" stroke="#C98A10" stroke-width="1.1"/>
+        <ellipse cx="120" cy="58" rx="6.5" ry="7.5" fill="#CC2020" stroke="url(#gl_r)" stroke-width="1.1"/>
+        <circle cx="118" cy="55" r="2" fill="white" opacity="0.55"/>
+        <line x1="120" y1="69" x2="120" y2="79" stroke="#C98A10" stroke-width="1.1"/>
+        <circle cx="120" cy="82" r="3" fill="#CC2020" stroke="url(#gl_r)" stroke-width="0.8"/>
+        <path d="M117,88 C117,83 120,80 120,80 C120,80 123,83 123,88 C123,92 121,94 120,94 C119,94 117,92 117,88Z" fill="#FFAA00" opacity="0.9"/>
+        <circle cx="120" cy="96" r="2.5" fill="url(#gl_r)"/>
+        <circle cx="120" cy="96" r="1.3" fill="#CC2020"/>
+      </g>
+      <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(201,146,42,0.1)" stroke-width="1.5"/>
+    </svg>
+    <p class="color-label">Crimson Army</p>
+  </div>
+
+  <!-- JADE ARMY -->
+  <div class="color-cell" style="--c-glow: rgba(0,160,60,0.35);">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="cp_g2"><circle cx="120" cy="120" r="112"/></clipPath>
+        <radialGradient id="bg_g2" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#0A2010"/><stop offset="100%" stop-color="#010602"/></radialGradient>
+        <linearGradient id="t_g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#30B040"/><stop offset="100%" stop-color="#084818"/></linearGradient>
+        <linearGradient id="g_g2" x1="0%" y1="0%" x2="80%"  y2="100%"><stop offset="0%" stop-color="#187828"/><stop offset="100%" stop-color="#042808"/></linearGradient>
+        <radialGradient id="gl_g" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFEEA0"/><stop offset="50%" stop-color="#E0A820"/><stop offset="100%" stop-color="#7A5200"/></radialGradient>
+        <radialGradient id="sk_g" cx="50%" cy="42%" r="55%"><stop offset="0%" stop-color="#C87A38"/><stop offset="100%" stop-color="#8A4818"/></radialGradient>
+      </defs>
+      <circle cx="120" cy="120" r="119" fill="#010400"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="url(#gl_g)" stroke-width="2.5"/>
+      <circle cx="120" cy="120" r="112" fill="url(#bg_g2)"/>
+      <g clip-path="url(#cp_g2)" opacity="0.28" stroke="#C98A10" fill="none">
+        <line x1="120" y1="120" x2="120" y2="10"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="200" y2="60"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="220" y2="150" stroke-width="1"/>
+        <line x1="120" y1="120" x2="150" y2="220" stroke-width="1"/>
+        <line x1="120" y1="120" x2="60"  y2="210" stroke-width="1"/>
+        <line x1="120" y1="120" x2="20"  y2="140" stroke-width="1"/>
+        <line x1="120" y1="120" x2="40"  y2="50"  stroke-width="1"/>
+      </g>
+      <g clip-path="url(#cp_g2)">
+        <path d="M-10,240 C20,195 50,175 80,164 L100,157 C108,161 113,163 120,163 C127,163 132,161 140,157 L160,164 C190,175 220,195 250,240Z" fill="url(#g_g2)"/>
+        <path d="M107,156 L107,164 C107,168 113,170 120,170 C127,170 133,168 133,164 L133,156Z" fill="url(#sk_g)"/>
+        <path d="M84,113 C82,94 87,76 97,65 C105,57 120,53 120,53 C120,53 135,57 143,65 C153,76 158,94 156,113 C158,132 152,146 141,153 C134,158 120,160 120,160 C120,160 106,158 99,153 C88,146 82,132 84,113Z" fill="url(#sk_g)" stroke="#7A4018" stroke-width="1"/>
+        <path d="M90,98 C95,91 104,89 114,91" stroke="#1A1A08" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M126,91 C136,89 145,91 150,98" stroke="#1A1A08" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M90,108 C95,100 106,100 112,107 C106,114 95,114 90,108Z" fill="#F8EED8"/>
+        <path d="M128,107 C134,100 145,100 150,108 C145,114 134,114 128,107Z" fill="#F8EED8"/>
+        <circle cx="101" cy="107" r="5.5" fill="#0A1808"/><circle cx="101" cy="107" r="3" fill="#020600"/>
+        <circle cx="139" cy="107" r="5.5" fill="#0A1808"/><circle cx="139" cy="107" r="3" fill="#020600"/>
+        <circle cx="103" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <circle cx="141" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <path d="M90,108 C95,100 106,100 112,107" stroke="#1A1A08" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M128,107 C134,100 145,100 150,108" stroke="#1A1A08" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M111,127 C114,132 126,132 129,127 C126,124 114,124 111,127Z" fill="#8A4818" opacity="0.6"/>
+        <path d="M100,132 C104,125 110,122 120,123 C130,122 136,125 140,132 C136,134 129,135 120,134 C111,135 104,134 100,132Z" fill="#1A1808"/>
+        <path d="M100,132 C104,141 120,139 140,132 C136,137 126,140 120,139 C114,140 104,137 100,132Z" fill="#104010"/>
+        <path d="M84,140 C81,153 81,164 84,171 C90,178 103,182 120,183 C137,182 150,178 156,171 C159,164 159,153 156,140 C146,147 134,150 120,151 C106,150 94,147 84,140Z" fill="#1A1808"/>
+        <!-- Turban GREEN -->
+        <path d="M79,84 C77,62 83,42 95,28 C104,19 120,14 120,14 C120,14 136,19 145,28 C157,42 163,62 161,84 C151,79 138,76 120,75 C102,76 89,79 79,84Z" fill="#042808"/>
+        <path d="M82,82 C80,61 86,41 97,28 C105,20 120,16 120,16 C120,16 135,20 143,28 C154,41 160,61 158,82 C148,77 136,74 120,73 C104,74 92,77 82,82Z" fill="url(#t_g2)"/>
+        <path d="M82,82 C96,79 107,77 120,77 C133,77 144,79 158,82" fill="none" stroke="#30B040" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M104,32 C104,22 110,15 120,13 C130,15 136,22 136,32 C132,29 127,27 120,26 C113,27 108,29 104,32Z" fill="url(#t_g2)"/>
+        <ellipse cx="120" cy="18" rx="7" ry="6" fill="#084818"/>
+        <path d="M116,16 C110,9 105,4 100,1 C103,5 106,9 110,14Z" fill="url(#t_g2)"/>
+        <path d="M120,14 C120,6 120,1 120,0 C120,4 120,8 120,12Z" fill="#30B040"/>
+        <path d="M124,16 C130,9 135,4 140,1 C137,5 134,9 130,14Z" fill="url(#t_g2)"/>
+        <circle cx="120" cy="4" r="4" fill="url(#gl_g)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="120" cy="4" r="2.2" fill="#20D040"/>
+        <path d="M108,56 C108,44 113,38 120,36 C127,38 132,44 132,56 C132,65 127,69 120,69 C113,69 108,65 108,56Z" fill="url(#gl_g)" stroke="#C98A10" stroke-width="1.1"/>
+        <ellipse cx="120" cy="58" rx="6.5" ry="7.5" fill="#20A030" stroke="url(#gl_g)" stroke-width="1.1"/>
+        <circle cx="118" cy="55" r="2" fill="white" opacity="0.55"/>
+        <line x1="120" y1="69" x2="120" y2="79" stroke="#C98A10" stroke-width="1.1"/>
+        <circle cx="120" cy="82" r="3" fill="#20A030" stroke="url(#gl_g)" stroke-width="0.8"/>
+        <path d="M117,88 C117,83 120,80 120,80 C120,80 123,83 123,88 C123,92 121,94 120,94 C119,94 117,92 117,88Z" fill="#FFAA00" opacity="0.9"/>
+        <circle cx="120" cy="96" r="2.5" fill="url(#gl_g)"/>
+        <circle cx="120" cy="96" r="1.3" fill="#20A030"/>
+      </g>
+      <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(201,146,42,0.1)" stroke-width="1.5"/>
+    </svg>
+    <p class="color-label">Jade Army</p>
+  </div>
+
+  <!-- INDIGO ARMY -->
+  <div class="color-cell" style="--c-glow: rgba(60,80,220,0.35);">
+    <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="cp_b2"><circle cx="120" cy="120" r="112"/></clipPath>
+        <radialGradient id="bg_b2" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#0C1030"/><stop offset="100%" stop-color="#020308"/></radialGradient>
+        <linearGradient id="t_b2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4060D8"/><stop offset="100%" stop-color="#0C1868"/></linearGradient>
+        <linearGradient id="g_b2" x1="0%" y1="0%" x2="80%"  y2="100%"><stop offset="0%" stop-color="#2038A0"/><stop offset="100%" stop-color="#060C40"/></linearGradient>
+        <radialGradient id="gl_b" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFEEA0"/><stop offset="50%" stop-color="#E0A820"/><stop offset="100%" stop-color="#7A5200"/></radialGradient>
+        <radialGradient id="sk_b" cx="50%" cy="42%" r="55%"><stop offset="0%" stop-color="#C87A38"/><stop offset="100%" stop-color="#8A4818"/></radialGradient>
+      </defs>
+      <circle cx="120" cy="120" r="119" fill="#010108"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="url(#gl_b)" stroke-width="2.5"/>
+      <circle cx="120" cy="120" r="112" fill="url(#bg_b2)"/>
+      <g clip-path="url(#cp_b2)" opacity="0.28" stroke="#C98A10" fill="none">
+        <line x1="120" y1="120" x2="120" y2="10"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="200" y2="60"  stroke-width="1"/>
+        <line x1="120" y1="120" x2="220" y2="150" stroke-width="1"/>
+        <line x1="120" y1="120" x2="150" y2="220" stroke-width="1"/>
+        <line x1="120" y1="120" x2="60"  y2="210" stroke-width="1"/>
+        <line x1="120" y1="120" x2="20"  y2="140" stroke-width="1"/>
+        <line x1="120" y1="120" x2="40"  y2="50"  stroke-width="1"/>
+      </g>
+      <g clip-path="url(#cp_b2)">
+        <path d="M-10,240 C20,195 50,175 80,164 L100,157 C108,161 113,163 120,163 C127,163 132,161 140,157 L160,164 C190,175 220,195 250,240Z" fill="url(#g_b2)"/>
+        <path d="M107,156 L107,164 C107,168 113,170 120,170 C127,170 133,168 133,164 L133,156Z" fill="url(#sk_b)"/>
+        <path d="M84,113 C82,94 87,76 97,65 C105,57 120,53 120,53 C120,53 135,57 143,65 C153,76 158,94 156,113 C158,132 152,146 141,153 C134,158 120,160 120,160 C120,160 106,158 99,153 C88,146 82,132 84,113Z" fill="url(#sk_b)" stroke="#7A4018" stroke-width="1"/>
+        <path d="M90,98 C95,91 104,89 114,91" stroke="#080818" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M126,91 C136,89 145,91 150,98" stroke="#080818" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M90,108 C95,100 106,100 112,107 C106,114 95,114 90,108Z" fill="#F8EED8"/>
+        <path d="M128,107 C134,100 145,100 150,108 C145,114 134,114 128,107Z" fill="#F8EED8"/>
+        <circle cx="101" cy="107" r="5.5" fill="#080820"/><circle cx="101" cy="107" r="3" fill="#020208"/>
+        <circle cx="139" cy="107" r="5.5" fill="#080820"/><circle cx="139" cy="107" r="3" fill="#020208"/>
+        <circle cx="103" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <circle cx="141" cy="105" r="1.6" fill="white" opacity="0.8"/>
+        <path d="M90,108 C95,100 106,100 112,107" stroke="#080818" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M128,107 C134,100 145,100 150,108" stroke="#080818" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M111,127 C114,132 126,132 129,127 C126,124 114,124 111,127Z" fill="#8A4818" opacity="0.6"/>
+        <path d="M100,132 C104,125 110,122 120,123 C130,122 136,125 140,132 C136,134 129,135 120,134 C111,135 104,134 100,132Z" fill="#080818"/>
+        <path d="M100,132 C104,141 120,139 140,132 C136,137 126,140 120,139 C114,140 104,137 100,132Z" fill="#1030A0"/>
+        <path d="M84,140 C81,153 81,164 84,171 C90,178 103,182 120,183 C137,182 150,178 156,171 C159,164 159,153 156,140 C146,147 134,150 120,151 C106,150 94,147 84,140Z" fill="#080818"/>
+        <!-- Turban INDIGO -->
+        <path d="M79,84 C77,62 83,42 95,28 C104,19 120,14 120,14 C120,14 136,19 145,28 C157,42 163,62 161,84 C151,79 138,76 120,75 C102,76 89,79 79,84Z" fill="#060C40"/>
+        <path d="M82,82 C80,61 86,41 97,28 C105,20 120,16 120,16 C120,16 135,20 143,28 C154,41 160,61 158,82 C148,77 136,74 120,73 C104,74 92,77 82,82Z" fill="url(#t_b2)"/>
+        <path d="M82,82 C96,79 107,77 120,77 C133,77 144,79 158,82" fill="none" stroke="#4060D8" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M104,32 C104,22 110,15 120,13 C130,15 136,22 136,32 C132,29 127,27 120,26 C113,27 108,29 104,32Z" fill="url(#t_b2)"/>
+        <ellipse cx="120" cy="18" rx="7" ry="6" fill="#0C1868"/>
+        <path d="M116,16 C110,9 105,4 100,1 C103,5 106,9 110,14Z" fill="url(#t_b2)"/>
+        <path d="M120,14 C120,6 120,1 120,0 C120,4 120,8 120,12Z" fill="#4060D8"/>
+        <path d="M124,16 C130,9 135,4 140,1 C137,5 134,9 130,14Z" fill="url(#t_b2)"/>
+        <circle cx="120" cy="4" r="4" fill="url(#gl_b)" stroke="#C98A10" stroke-width="0.9"/>
+        <circle cx="120" cy="4" r="2.2" fill="#6080FF"/>
+        <path d="M108,56 C108,44 113,38 120,36 C127,38 132,44 132,56 C132,65 127,69 120,69 C113,69 108,65 108,56Z" fill="url(#gl_b)" stroke="#C98A10" stroke-width="1.1"/>
+        <ellipse cx="120" cy="58" rx="6.5" ry="7.5" fill="#2048C0" stroke="url(#gl_b)" stroke-width="1.1"/>
+        <circle cx="118" cy="55" r="2" fill="white" opacity="0.55"/>
+        <line x1="120" y1="69" x2="120" y2="79" stroke="#C98A10" stroke-width="1.1"/>
+        <circle cx="120" cy="82" r="3" fill="#2048C0" stroke="url(#gl_b)" stroke-width="0.8"/>
+        <path d="M117,88 C117,83 120,80 120,80 C120,80 123,83 123,88 C123,92 121,94 120,94 C119,94 117,92 117,88Z" fill="#FFAA00" opacity="0.9"/>
+        <circle cx="120" cy="96" r="2.5" fill="url(#gl_b)"/>
+        <circle cx="120" cy="96" r="1.3" fill="#2048C0"/>
+      </g>
+      <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(201,146,42,0.1)" stroke-width="1.5"/>
+    </svg>
+    <p class="color-label">Indigo Army</p>
+  </div>
+
+</div><!-- .color-row -->
+
+<div class="hr"><span class="hr-node"></span></div>
+
+<!-- ═══ SIZE PREVIEW ════════════════════════════════════ -->
+<h2 class="section-title">Board Scale Reference</h2>
+<p class="section-note">How the piece reads at each rendered size on a Chaturanga board</p>
+
+<div class="size-band">
+  <div class="size-item">
+    <svg width="160" height="160" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="120" cy="120" r="119" fill="#060300"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="#C98A10" stroke-width="2"/>
+      <circle cx="120" cy="120" r="112" fill="#1E0C04"/>
+      <defs><clipPath id="sz1"><circle cx="120" cy="120" r="112"/></clipPath></defs>
+      <g clip-path="url(#sz1)" opacity="0.4" stroke="#C98A10" fill="none">
+        <line x1="120" y1="120" x2="120" y2="10" stroke-width="1.2"/>
+        <line x1="120" y1="120" x2="210" y2="55" stroke-width="1.2"/>
+        <line x1="120" y1="120" x2="225" y2="155" stroke-width="1.2"/>
+        <line x1="120" y1="120" x2="155" y2="225" stroke-width="1.2"/>
+        <line x1="120" y1="120" x2="55" y2="215" stroke-width="1.2"/>
+        <line x1="120" y1="120" x2="15" y2="148" stroke-width="1.2"/>
+        <line x1="120" y1="120" x2="35" y2="52" stroke-width="1.2"/>
+      </g>
+      <g clip-path="url(#sz1)">
+        <path d="M0,240 C20,195 55,175 90,163 L120,160 L150,163 C185,175 220,195 240,240Z" fill="#5A1204"/>
+        <path d="M107,156 L107,164 C107,168 113,170 120,170 C127,170 133,168 133,164 L133,156Z" fill="#C07030"/>
+        <path d="M84,113 C82,94 87,76 97,65 C105,57 120,53 120,53 C120,53 135,57 143,65 C153,76 158,94 156,113 C158,132 152,146 141,153 C134,158 120,160 120,160 C120,160 106,158 99,153 C88,146 82,132 84,113Z" fill="#C07030" stroke="#7A4018" stroke-width="1.2"/>
+        <path d="M90,98 C95,91 105,89 114,91" stroke="#1A0800" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M126,91 C136,89 145,91 150,98" stroke="#1A0800" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M90,108 C95,100 106,100 112,107 C106,114 95,114 90,108Z" fill="#F8EED8"/>
+        <path d="M128,107 C134,100 145,100 150,108 C145,114 134,114 128,107Z" fill="#F8EED8"/>
+        <circle cx="101" cy="107" r="6" fill="#1E0C04"/><circle cx="101" cy="107" r="3.2" fill="#060100"/>
+        <circle cx="139" cy="107" r="6" fill="#1E0C04"/><circle cx="139" cy="107" r="3.2" fill="#060100"/>
+        <circle cx="103" cy="105" r="2" fill="white" opacity="0.8"/>
+        <circle cx="141" cy="105" r="2" fill="white" opacity="0.8"/>
+        <path d="M90,108 C95,100 106,100 112,107" stroke="#1A0800" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M128,107 C134,100 145,100 150,108" stroke="#1A0800" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M100,132 C104,125 110,122 120,123 C130,122 136,125 140,132 C136,135 129,136 120,135 C111,136 104,135 100,132Z" fill="#1A0A04"/>
+        <path d="M100,132 C104,142 120,140 140,132 C136,137 126,140 120,140 C114,140 104,137 100,132Z" fill="#8A2810"/>
+        <path d="M84,140 C81,153 81,164 84,171 C90,179 103,182 120,183 C137,182 150,179 156,171 C159,164 159,153 156,140 C145,148 132,151 120,151 C108,151 95,148 84,140Z" fill="#1A0A04"/>
+        <path d="M79,84 C77,62 83,42 95,28 C104,19 120,14 120,14 C120,14 136,19 145,28 C157,42 163,62 161,84 C151,79 138,76 120,75 C102,76 89,79 79,84Z" fill="#4A0E04"/>
+        <path d="M82,82 C80,61 86,41 97,28 C105,20 120,16 120,16 C120,16 135,20 143,28 C154,41 160,61 158,82 C148,77 136,74 120,73 C104,74 92,77 82,82Z" fill="#CF4420"/>
+        <path d="M82,82 C96,79 108,77 120,77 C132,77 144,79 158,82" fill="none" stroke="#E85A28" stroke-width="2.5" stroke-linecap="round"/>
+        <ellipse cx="120" cy="18" rx="7" ry="6" fill="#6A1808"/>
+        <path d="M116,16 C110,9 105,4 100,1 C103,5 107,9 110,14Z" fill="#CF4420"/>
+        <path d="M120,14 C120,6 120,1 120,0 C120,4 120,8 120,12Z" fill="#E85A28"/>
+        <path d="M124,16 C130,9 135,4 140,1 C137,5 133,9 130,14Z" fill="#CF4420"/>
+        <circle cx="120" cy="4" r="4.5" fill="#E0A820" stroke="#C98A10" stroke-width="1"/>
+        <circle cx="120" cy="4" r="2.5" fill="#D02020"/>
+        <path d="M108,56 C108,44 113,38 120,36 C127,38 132,44 132,56 C132,65 127,69 120,69 C113,69 108,65 108,56Z" fill="#E0A820" stroke="#C98A10" stroke-width="1.2"/>
+        <ellipse cx="120" cy="58" rx="7" ry="8" fill="#D02020"/>
+        <circle cx="118" cy="55" r="2.2" fill="white" opacity="0.55"/>
+        <line x1="120" y1="69" x2="120" y2="80" stroke="#C98A10" stroke-width="1.2"/>
+        <circle cx="120" cy="83" r="3.2" fill="#D02020" stroke="#E0A820" stroke-width="0.9"/>
+        <path d="M117,88 C117,83 120,80 120,80 C120,80 123,83 123,88 C123,92 121,94 120,94 C119,94 117,92 117,88Z" fill="#FF7700" opacity="0.9"/>
+        <circle cx="120" cy="97" r="3" fill="#E0A820"/>
+        <circle cx="120" cy="97" r="1.6" fill="#D02020"/>
+      </g>
+    </svg>
+    <p class="size-label">160 px · Hero</p>
+  </div>
+
+  <div class="size-item">
+    <svg width="90" height="90" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="120" cy="120" r="119" fill="#060300"/>
+      <circle cx="120" cy="120" r="112" fill="#1E0C04"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="#C98A10" stroke-width="3"/>
+      <defs><clipPath id="sz2"><circle cx="120" cy="120" r="112"/></clipPath></defs>
+      <g clip-path="url(#sz2)">
+        <path d="M0,240 C25,195 60,175 95,163 L120,160 L145,163 C180,175 215,195 240,240Z" fill="#5A1204"/>
+        <path d="M107,156 L107,165 L133,165 L133,156Z" fill="#C07030"/>
+        <path d="M82,112 C80,90 86,70 98,60 C106,53 120,49 120,49 C120,49 134,53 142,60 C154,70 160,90 158,112 C160,133 153,149 141,157 C133,161 120,163 120,163 C120,163 107,161 99,157 C87,149 80,133 82,112Z" fill="#C07030" stroke="#7A4018" stroke-width="1.5"/>
+        <path d="M88,96 C94,88 104,86 116,88" stroke="#1A0800" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M124,88 C136,86 146,88 152,96" stroke="#1A0800" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M88,106 C94,97 107,97 114,105 C107,113 94,113 88,106Z" fill="#F8EED8"/>
+        <path d="M126,105 C133,97 146,97 152,106 C146,113 133,113 126,105Z" fill="#F8EED8"/>
+        <circle cx="101" cy="105" r="7" fill="#1E0C04"/><circle cx="101" cy="105" r="4" fill="#060100"/>
+        <circle cx="139" cy="105" r="7" fill="#1E0C04"/><circle cx="139" cy="105" r="4" fill="#060100"/>
+        <circle cx="104" cy="102" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="142" cy="102" r="2.5" fill="white" opacity="0.8"/>
+        <path d="M88,106 C94,97 107,97 114,105" stroke="#1A0800" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M126,105 C133,97 146,97 152,106" stroke="#1A0800" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M98,130 C103,122 110,119 120,120 C130,119 137,122 142,130 C137,133 128,135 120,134 C112,135 103,133 98,130Z" fill="#1A0A04"/>
+        <path d="M98,130 C103,142 120,140 142,130 C137,137 126,141 120,140 C114,141 103,137 98,130Z" fill="#8A2810"/>
+        <path d="M82,140 C79,155 80,167 84,174 C90,181 103,185 120,185 C137,185 150,181 156,174 C160,167 161,155 158,140 C146,149 132,153 120,153 C108,153 94,149 82,140Z" fill="#1A0A04"/>
+        <path d="M77,82 C75,58 82,37 95,24 C104,14 120,10 120,10 C120,10 136,14 145,24 C158,37 165,58 163,82 C151,77 138,74 120,73 C102,74 89,77 77,82Z" fill="#4A0E04"/>
+        <path d="M80,80 C78,57 85,37 97,24 C105,16 120,12 120,12 C120,12 135,16 143,24 C155,37 162,57 160,80 C148,75 136,72 120,71 C104,72 92,75 80,80Z" fill="#CF4420"/>
+        <path d="M80,80 C96,77 108,75 120,75 C132,75 144,77 160,80" fill="none" stroke="#E85A28" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="120" cy="16" rx="8" ry="7" fill="#6A1808"/>
+        <path d="M120,12 C120,4 120,0 120,0 C120,3 120,8 120,11Z" fill="#E85A28"/>
+        <path d="M116,13 C110,6 106,2 102,0 C105,4 108,8 112,13Z" fill="#CF4420"/>
+        <path d="M124,13 C130,6 134,2 138,0 C135,4 132,8 128,13Z" fill="#CF4420"/>
+        <circle cx="120" cy="3" r="5" fill="#E0A820" stroke="#C98A10" stroke-width="1.2"/>
+        <circle cx="120" cy="3" r="2.8" fill="#D02020"/>
+        <path d="M106,55 C106,42 112,36 120,34 C128,36 134,42 134,55 C134,65 128,70 120,70 C112,70 106,65 106,55Z" fill="#E0A820" stroke="#C98A10" stroke-width="1.5"/>
+        <ellipse cx="120" cy="57" rx="8" ry="9" fill="#D02020"/>
+        <circle cx="117" cy="53" r="2.8" fill="white" opacity="0.55"/>
+        <line x1="120" y1="70" x2="120" y2="82" stroke="#C98A10" stroke-width="1.5"/>
+        <circle cx="120" cy="85" r="4" fill="#D02020" stroke="#E0A820" stroke-width="1.2"/>
+        <path d="M116,90 C116,84 120,81 120,81 C120,81 124,84 124,90 C124,94 122,97 120,97 C118,97 116,94 116,90Z" fill="#FF7700" opacity="0.9"/>
+        <circle cx="120" cy="100" r="3.5" fill="#E0A820"/>
+        <circle cx="120" cy="100" r="2" fill="#D02020"/>
+      </g>
+    </svg>
+    <p class="size-label">90 px · Board Cell</p>
+  </div>
+
+  <div class="size-item">
+    <svg width="56" height="56" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="120" cy="120" r="119" fill="#060300"/>
+      <circle cx="120" cy="120" r="112" fill="#200E05"/>
+      <circle cx="120" cy="120" r="118" fill="none" stroke="#C98A10" stroke-width="4"/>
+      <defs><clipPath id="sz3"><circle cx="120" cy="120" r="112"/></clipPath></defs>
+      <g clip-path="url(#sz3)">
+        <path d="M0,240 C30,195 70,175 100,163 L120,160 L140,163 C170,175 210,195 240,240Z" fill="#6A1804"/>
+        <path d="M107,155 L107,168 L133,168 L133,155Z" fill="#C07030"/>
+        <path d="M80,112 C77,86 85,64 100,55 C108,50 120,47 120,47 C120,47 132,50 140,55 C155,64 163,86 160,112 C162,136 154,154 141,161 C132,165 120,167 120,167 C120,167 108,165 99,161 C86,154 78,136 80,112Z" fill="#C07030" stroke="#7A4018" stroke-width="2"/>
+        <path d="M86,96 C94,86 108,84 118,87" stroke="#150600" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M122,87 C132,84 146,86 154,96" stroke="#150600" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M86,107 C93,96 110,96 116,106 C110,116 93,116 86,107Z" fill="#F8EED8"/>
+        <path d="M124,106 C130,96 147,96 154,107 C147,116 130,116 124,106Z" fill="#F8EED8"/>
+        <circle cx="101" cy="105" r="8.5" fill="#150600"/>
+        <circle cx="139" cy="105" r="8.5" fill="#150600"/>
+        <circle cx="105" cy="101" r="3" fill="white" opacity="0.8"/>
+        <circle cx="143" cy="101" r="3" fill="white" opacity="0.8"/>
+        <path d="M96,130 C103,120 110,116 120,118 C130,116 137,120 144,130 C138,134 128,137 120,136 C112,137 102,134 96,130Z" fill="#160800"/>
+        <path d="M96,130 C102,145 120,143 144,130 C138,140 126,144 120,143 C114,144 102,140 96,130Z" fill="#8A2010"/>
+        <path d="M80,142 C76,158 77,172 82,180 C90,188 104,192 120,192 C136,192 150,188 158,180 C163,172 164,158 160,142 C147,153 132,157 120,157 C108,157 93,153 80,142Z" fill="#160800"/>
+        <path d="M75,82 C73,55 81,32 96,18 C106,8 120,4 120,4 C120,4 134,8 144,18 C159,32 167,55 165,82 C151,76 138,73 120,72 C102,73 89,76 75,82Z" fill="#3C0A02"/>
+        <path d="M79,80 C77,54 84,32 98,19 C107,10 120,6 120,6 C120,6 133,10 142,19 C156,32 163,54 161,80 C147,75 135,72 120,71 C105,72 93,75 79,80Z" fill="#D44820"/>
+        <path d="M79,80 C96,77 108,75 120,75 C132,75 144,77 161,80" fill="none" stroke="#F06030" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="120" cy="13" rx="9" ry="8" fill="#6A1808"/>
+        <path d="M120,10 C120,1 120,0 120,0 C120,3 120,6 120,9Z" fill="#F06030" stroke-width="1"/>
+        <path d="M115,11 C108,4 104,1 100,0 C103,4 107,8 112,12Z" fill="#D44820"/>
+        <path d="M125,11 C132,4 136,1 140,0 C137,4 133,8 128,12Z" fill="#D44820"/>
+        <circle cx="120" cy="2" r="6" fill="#D4A020" stroke="#C98A10" stroke-width="1.5"/>
+        <circle cx="120" cy="2" r="3.5" fill="#CC1010"/>
+        <path d="M104,54 C104,38 112,31 120,29 C128,31 136,38 136,54 C136,66 128,72 120,72 C112,72 104,66 104,54Z" fill="#D4A020" stroke="#C98A10" stroke-width="2"/>
+        <ellipse cx="120" cy="56" rx="10" ry="11" fill="#CC1010"/>
+        <circle cx="116" cy="51" r="3.5" fill="white" opacity="0.55"/>
+        <line x1="120" y1="72" x2="120" y2="86" stroke="#C98A10" stroke-width="2"/>
+        <circle cx="120" cy="90" r="5" fill="#CC1010" stroke="#D4A020" stroke-width="1.5"/>
+        <path d="M115,97 C115,89 120,85 120,85 C120,85 125,89 125,97 C125,103 122,106 120,106 C118,106 115,103 115,97Z" fill="#FF7700"/>
+        <circle cx="120" cy="109" r="4.5" fill="#D4A020"/>
+        <circle cx="120" cy="109" r="2.5" fill="#CC1010"/>
+      </g>
+    </svg>
+    <p class="size-label">56 px · Mini</p>
+  </div>
+
+  <div class="size-item">
+    <svg width="34" height="34" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="120" cy="120" r="112" fill="#220E04"/>
+      <circle cx="120" cy="120" r="119" fill="none" stroke="#C98A10" stroke-width="6"/>
+      <defs><clipPath id="sz4"><circle cx="120" cy="120" r="112"/></clipPath></defs>
+      <g clip-path="url(#sz4)">
+        <path d="M0,240 C40,195 80,175 110,163 L120,160 L130,163 C160,175 200,195 240,240Z" fill="#6A1804"/>
+        <path d="M80,110 C77,82 87,57 104,46 C110,42 120,40 120,40 C120,40 130,42 136,46 C153,57 163,82 160,110 C162,138 153,158 138,165 C130,169 120,171 120,171 C120,171 110,169 102,165 C87,158 78,138 80,110Z" fill="#C07030"/>
+        <path d="M84,94 C95,80 110,78 118,81" stroke="#100400" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M122,81 C130,78 145,80 156,94" stroke="#100400" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M84,104 C93,90 112,90 118,103 C112,117 93,117 84,104Z" fill="#F8EED8"/>
+        <path d="M122,103 C128,90 147,90 156,104 C147,117 128,117 122,103Z" fill="#F8EED8"/>
+        <circle cx="101" cy="102" r="10" fill="#100400"/>
+        <circle cx="139" cy="102" r="10" fill="#100400"/>
+        <circle cx="105" cy="98" r="3.5" fill="white" opacity="0.8"/>
+        <circle cx="143" cy="98" r="3.5" fill="white" opacity="0.8"/>
+        <path d="M80,145 C76,165 78,180 85,189 C93,198 106,202 120,202 C134,202 147,198 155,189 C162,180 164,165 160,145 C145,156 133,160 120,160 C107,160 95,156 80,145Z" fill="#100800"/>
+        <path d="M74,80 C72,50 82,24 100,10 C108,3 120,0 120,0 C120,0 132,3 140,10 C158,24 168,50 166,80 C150,74 136,71 120,70 C104,71 90,74 74,80Z" fill="#D44820"/>
+        <path d="M74,80 C96,77 108,75 120,75 C132,75 144,77 166,80" fill="none" stroke="#F06030" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="120" cy="4" r="8" fill="#D4A020" stroke="#C98A10" stroke-width="2"/>
+        <circle cx="120" cy="4" r="4.5" fill="#CC2020"/>
+        <path d="M104,52 C104,34 113,27 120,25 C127,27 136,34 136,52 C136,67 127,73 120,73 C113,73 104,67 104,52Z" fill="#D4A020" stroke="#C98A10" stroke-width="2.5"/>
+        <ellipse cx="120" cy="54" rx="11" ry="13" fill="#CC2020"/>
+        <circle cx="115" cy="49" r="4" fill="white" opacity="0.55"/>
+        <line x1="120" y1="73" x2="120" y2="90" stroke="#C98A10" stroke-width="3"/>
+        <circle cx="120" cy="94" r="6.5" fill="#CC2020" stroke="#D4A020" stroke-width="2"/>
+        <path d="M114,102 C114,92 120,87 120,87 C120,87 126,92 126,102 C126,110 123,114 120,114 C117,114 114,110 114,102Z" fill="#FF8800"/>
+        <circle cx="120" cy="118" r="5.5" fill="#D4A020"/>
+        <circle cx="120" cy="118" r="3" fill="#CC2020"/>
+      </g>
+    </svg>
+    <p class="size-label">34 px · Thumb</p>
+  </div>
+</div>
+
+<div class="hr"><span class="hr-node"></span></div>
+
+<!-- ═══ INTEGRATION NOTE ════════════════════════════════ -->
+<div class="int-card">
+  <h3 class="int-heading">⬡ Integration as a Game Piece</h3>
+  <div class="int-body">
+    <p>
+      The Raja is delivered as a <strong>self-contained SVG circle (viewBox 0 0 240 240)</strong> — a coin-medal with the character painted inside. Drop it as an <code>&lt;img&gt;</code>, inline <code>&lt;svg&gt;</code>, or CSS <code>background-image</code>. On the board, the container cell simply wraps it in a fixed square div and the SVG fills it automatically via <code>width:100%; height:100%</code>.
+    </p>
+    <p>
+      <strong>Resizing:</strong> Because the piece uses a vector viewBox (no pixel dimensions baked in), it renders crisply at any size — from a 34 px thumbnail in a move log to a 300 px hero card on a piece selection screen. For a standard 8×8 Chaturanga board with 80 px cells, render at <strong>72 px</strong> (90% of cell width) with a 4 px gap for breathing room. The circular shape naturally prevents visual overlap with adjacent cells.
+    </p>
+    <p>
+      <strong>Color theming:</strong> Swap the army color by changing two CSS variables on the wrapping element — <code>--turb-start</code> and <code>--turb-end</code> — and every gradient inside that references them shifts instantly. No JS needed. The gold rings, skin tones, gems, and beard stay constant across all four armies; only the turban and garment shift to the army hue.
+    </p>
+    <p>
+      <strong>Hover &amp; selection states:</strong> Add <code>filter: drop-shadow(0 0 12px var(--army-glow))</code> on <code>:hover</code> and a <code>scale(1.08)</code> transform for a satisfying pick-up feel. For a selected/active piece, apply a pulsing <code>@keyframes</code> glow on the outer gold ring stroke to communicate the piece is in play.
+    </p>
+  </div>
+</div>
+
+</div><!-- .page -->
+</body>
+</html>

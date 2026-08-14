@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Disallow server internals
+Disallow: /node_modules/
+Disallow: /raw_archive/
+
+Sitemap: https://chaturangagame.com/sitemap.xml

@@ -1,0 +1,38 @@
+Analysis of the 5 uploaded files
+All five files are complete and match what was built in the previous session. Line counts are identical to the project versions (oracle: 1297, pasha: 1205, granth: 1144, vyuha-clash: 782, sankat: 1078). Every feature described in the session report is present and verified.
+One structural issue still visible in sankat.html: dismissSankat and onSquareClick are each defined twice — once as the original function and once as a patched override using const _origDismiss = dismissSankat. This works at runtime (the second definition wins in JS) but it is messy. If someone ever calls _origDismiss thinking it's the active function, the sacrifice flow will break. The right fix is to merge the two definitions into one clean function rather than patching over the first. Not urgent if it works, but worth noting.
+Oracle's wasThreatened flag is still hardcoded to false. The engineered detection for Ratha Sacrifice therefore never fires — Natural fulfilment works, Legendary tier for that specific prophecy never triggers. Everything else in Oracle works correctly.
+Everything else across the five files is solid.
+
+What the full project actually contains (from the analysis report)
+This is a significantly larger codebase than just the six things we built. The full v1.0.5 already has: 4-player game engine with 10 ELO bot tiers, 4-format tournament system, 17 campaign scenarios, puzzle system, daily Shubh challenge, Akhara training arena, structured lessons hub, Vyuha builder, Army builder, Granth encyclopedia, Acharya AI chatbot, Rashtra Map, Panchanga (Hindu astronomical calendar), Board Forge editor, Benchmark, Admin panel, WebSocket multiplayer lobby, PWA service worker. That is ~25 distinct systems.
+The Panchanga is particularly relevant for what we should build next. It already computes — live, every day — tithi (lunar day), nakshatra (star house), vara (day of week with planetary deity), yoga (auspicious/inauspicious quality), ritu (season), Vikram Samvat date, and festival overrides. It maps all of this to specific Chaturanga game advice. It even has a Drona daily message. But it currently sits as a standalone page with zero connection to the actual game. That is the biggest untapped bridge in the entire codebase.
+
+Creative proposals for v1.0.5.2
+Here are five ideas, ranging from immediately buildable to ambitious:
+
+1. Navagraha Engine — the astronomical modifier system
+Panchanga already computes everything. A small navagraha-engine.js reads today's Panchanga state and applies subtle game modifiers that change every single day. Mangalvara (Mars's day) → a Ratha gets one extra square of range once per game. Purnima (full moon) → combination captures award double dharma. Ekadashi → same as Shubh already does — no hints, hardest positions. Vishakha nakshatra (the fork star) → horse fork combinations score a bonus inscription. Shukla yoga (auspicious) → pawn promotion creates two pawns instead of one.
+The game would literally be a different game every day based on the astronomical calendar. No other strategy game on earth does this. The engine is small — ~200 lines connecting Panchanga data to the dharma engine and game modifiers.
+
+2. Itihasa — The Replay Theater
+The Granth vault already saves complete moveHistory for every game to localStorage. A replay viewer reads from that vault and renders the board position at each move with a scrubber timeline at the bottom. As playback reaches a move that earned an inscription, the inscription card fires with its SVG art and Sanskrit name. The result is a "battle film" — you can watch any saved game like a documentary with the tactical highlights annotated automatically.
+This is self-contained, builds entirely on infrastructure that exists, and creates strong retention. Players replay their own games to study. It is Chaturanga's game review feature, but dressed as a personal chronicle.
+
+3. Dwandwa — The Personal Duel
+A pure 2-player mode against Drona directly — not in the 4-player board context but as a real 1v1 with personality. The key differentiator: Drona reads your Granth vault. If your last three games earned Ashwa Mudra (horse fork inscriptions), Drona specifically deploys knight-blocking formations and denies your horses open squares. If you have Nara Uttarayan (pawn promotions), he hunts your pawns. He adapts to your recorded tendencies. He taunts you in his voice when he successfully blocks your pattern. He compliments you when you earn an inscription he didn't expect.
+This turns the Granth from a passive record into an active opponent model. Your history becomes the AI's playbook against you.
+
+4. Samara Shastra — The Pre-Battle Briefing
+Before any game loads — campaign, Vyuha Clash, Dwandwa — a Drona-voiced screen delivers a personalised strategic briefing combining three live data streams: today's Panchanga advice, your recent Granth inscriptions (tactical patterns you've been earning), and your chosen formation. Output in Drona's voice: "Today is Mangalvara under Vishakha — the fork nakshatra. Your Granth records three Ashwa Mudra inscriptions. The Garuda formation opens your cavalry wings. Today, play the fork early and protect nothing."
+Every player, every day, gets a briefing that is unique to them and to that exact astronomical moment. No other game on earth can generate that sentence.
+
+5. Sangram — The Live Dharma Board
+Currently dharma is only computed post-game. What if it was live during the game, visible to all players as an animated bar that updates after every move? Sacrifice a piece deliberately → dharma spikes. Forfeit a turn → dharma drains. Three consecutive captures → dharma surges. Capture a Raja → immediate climax animation. The bar sits beside the board like a second score — not material advantage, but the moral character of how the game is being played.
+This changes how players think mid-game. They start making moves partly for the dharma reading. A player who is losing on material but winning on dharma feels something different. That is a genuinely new emotional register for a strategy game.
+
+My recommendation for what to build first
+Itihasa is the fastest to build and has the highest immediate value — it uses data that's already being saved and turns it into something players will actually open. One session.
+Navagraha Engine is the most exclusive feature in the list — the game changing daily based on live astronomical data is something that cannot exist in any other game. Medium effort, maximum originality.
+Dwandwa is the most emotionally compelling for retention — an opponent who has studied you.
+Which of these do you want to build, or is there a direction from your own thinking you want to push first?

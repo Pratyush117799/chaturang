@@ -1,0 +1,115 @@
+Architected three distinct Ashwa prototypes blending Indian aesthetics with chess functionality
+Architected three distinct Ashwa prototypes blending Indian aesthetics with chess functionality
+The user wants me to build 2-3 best prototype SVG designs for the Ashwa (horse) piece in Chaturanga. They want:
+
+Indian art style - temple sculpture meets Mughal miniature aesthetic
+Appealing like the 4 images shown (rearing horse in medallion/circle format, colorful, with Indian decorative elements)
+Like chess.com pieces but Indian themed
+SVG based, colorable with CSS variables for the 4-player color system
+Include integration notes about sizing
+Let me look at the chaturanga-pieces.html file first to understand what already exists.
+
+The 4 images show:
+
+Red ashwa: rearing horse in red mandala medallion with Indian patterns, red saddle cloth with sun motif
+Green ashwa: rearing horse in green botanical mandala, green saddle with peacock motif, brown horse
+Yellow ashwa: white/grey horse in orange geometric medallion border, golden saddle with ornate embroidery
+Blue ashwa: white horse in geometric meander border medallion, blue saddle cloth with wave motif
+Key visual elements across all:
+
+Circular medallion/disc format with decorative border
+Rearing horse (front legs up) in 3/4 profile
+Decorative saddle cloth (jhool) with cultural motif
+Color-coded by player (red, green, yellow, blue)
+Clean bold lines suitable for small display
+The horse body is often cream/white/neutral, with color coming from the decorative elements
+For chess.com style:
+
+Clean silhouette readable at small sizes
+High contrast
+3D-ish shading but stylized
+Distinctive profile
+Let me think about what makes these GREAT SVG pieces:
+
+Prototype 1: "Rajput Medallion" - Circular coin-format, rearing horse in full profile with detailed Indian ornamental border. The horse is a silhouette with inner detail lines. Color comes from the medallion border and saddle cloth. Think of it like an ancient Indian coin but with the chess.com level of detail.
+
+Now I have a clear picture of what exists. The current Ashwa piece is a front-facing horse head on a chess piece pedestal (like a traditional chess piece). The user wants pieces that look like the 4 uploaded images - rearing horse in a medallion format, very Indian, very colorful, like what's on chess.com but Indian themed.
+Let me build 3 distinct prototypes:
+Prototype 1: "Yuddha Ashva" — The War Medallion
+
+Circular medallion format with decorative border (like the uploaded images)
+Rearing horse in full body profile inside the disc
+Detailed saddle cloth with Indian motifs
+Reads at 48px+ on board
+Most like the uploaded reference images
+
+Prototype 2: "Ashvini" — The Chess.com Silhouette
+
+Standard chess piece proportions (tall, narrow)
+Bold rearing horse silhouette
+Indian ornamental details carved INTO the silhouette
+Reads well at 30px-70px
+Most "game-ready" of the three
+
+Prototype 3: "Stambha Ashva" — The Pillar Horse
+
+Horse head 3/4 profile on top of a decorated Ashoka-pillar style column
+The most clearly chess-piece shaped
+Horse face has all the detail: maang-tikka, kohl eye, pricked ears
+Reads at any size
+
+I'll build an HTML showcase page with all three, shown at multiple sizes, with all 4 player colors, plus integration notes.
+Let me think carefully about what makes great SVG chess pieces:
+
+Strong silhouette - the piece must be recognizable as a HORSE even at 24px. The rearing pose achieves this.
+Directionality - it should face one direction clearly (convention: left or right)
+Sufficient contrast - details need to work against both light and dark squares
+CSS variable theming - single --pc variable controls all color
+
+For the rearing horse silhouette, the key contours are:
+
+Head raised and turned slightly
+Front legs raised and bent
+Body at an angle
+Rear legs grounded
+
+Let me think about each prototype more concretely:
+Prototype 1: "Yuddha Ashva" (War Horse Medallion)
+
+Now I have the full picture of the existing piece design system. I can see that:
+
+The SVG pieces use --pc, --pc2, --pc3, --pcs CSS variables
+The game size preview shows pieces at different pixel sizes
+The design system uses warm dark gold tones
+
+Now let me write the three Ashwa prototypes in a single HTML file. I'll build each as a proper SVG with Indian design elements.
+Key design decisions:
+
+Prototype A: "Yuddha Ashva" - Circular medallion (100x100 viewBox), like the reference images. Full rearing horse inside a decorative Indian border.
+Prototype B: "Kshatriya" - Chess.com style (45x45 viewBox), rearing horse silhouette, player color throughout with cream highlights. Most functional for gameplay.
+Prototype C: "Chakravarti" - Tall pillar format (55x85 viewBox), horse head on decorated column base. Traditional chess piece proportions but Indian aesthetic.
+
+For the horse body, I'll use the cream-body-with-player-color-decoration approach that matches the reference images.
+Let me now write the complete HTML. I'll build each SVG carefully.
+For Prototype A (Medallion, 100x100):
+
+Inner circle background
+8-petal lotus border pattern in player color
+Full rearing horse body (cream) inside
+Player color: mane, jhool (saddle cloth), bells, maang-tikka, medallion border
+
+For Prototype B (Chess silhouette, 45x45):
+
+Traditional chess piece base (tapered pedestal)
+Rearing horse profile in player color (the WHOLE piece is player color)
+White/cream highlights for face detail, mane highlight, tikka
+Visible even at 30px
+
+For Prototype C (Pillar piece, 55x85):
+
+Decorated column base (Mughal arched pedestal)
+Horse head and neck in 3/4 view on top
+Player color throughout
+Most detail in the face: tikka, kohl eye, pricked ears, nathuni
+
+Let me write all three now. I'll focus on making the SVG paths anatomically reasonable. For the rearing horse in Prototype A, I'll use the layered ellipses approach.

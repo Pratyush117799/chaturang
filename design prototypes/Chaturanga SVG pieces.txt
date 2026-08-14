@@ -1,0 +1,15 @@
+This is the most important visual design challenge in the whole project. Temple-sculpture meets Mughal miniature — carved gold silhouettes, not clip art. Let me design each piece as a proper SVG monument. Starting with all 5 — carefully, one at a time.All 5 pieces delivered. Here's what was designed for each and why:
+
+---
+
+**Raja (King)** — The most elaborate piece. The crown is a **Panch-Shikha Mukut** (5-peaked crown) — the traditional Indian royal crown with a tall central spire reaching the highest point. The face has a **chandratilaka** (crescent forehead mark), almond-shaped eyes in Indian painting style, a royal moustache, and **kundal** chandelier earrings. The robe is wide and bell-shaped like Mughal miniature painting kings. The **haar** necklace with 3 pendant drops runs across the chest.
+
+**Ratha (Chariot)** — The wheel is a proper **Dharmachakra / Ashoka Chakra** with 8 spokes — not a generic wheel. This makes it culturally meaningful, not just visually. A Mughal arch frames the chariot cab interior where an archer is drawn at bow. A triangular pennant flag with pole finial sits at top-left. This is recognizable from 10 feet away purely by the wheel silhouette.
+
+**Ashwa (Horse)** — Horse head in 3/4 profile with a large expressive eye, pricked ears, and a flared nostril. The **maang-tikka** forehead ornament (crescent with pendant drop) sits between the eyes. The **jhool** (embroidered ceremonial cloth) drapes the chest with three bells hanging at the hem — exactly how Rajasthani horses look in processions. The mane flows in two distinct layers.
+
+**Danti (Elephant)** — The wide fan ears dominate the silhouette (unlike the horse, this piece is immediately readable by the ears alone even at 20px). The forehead has a **tilaka** leaf pattern flanked by bindis — exactly how festival elephants in Kerala/Mysore are painted. Curved tusks sweep outward. A **howdah** with canopy and curtain poles sits on top with a small flag.
+
+**Nara (Foot Soldier)** — The spear tip is a **trishula-inspired** three-point blade, not a boring triangle. The **pagdi** (turban) has visible wrap lines and a **sarpech** (turban jewel with small feather). The shield is an Indian **dhal** (round war shield) with a central boss, concentric rings, and 4 directional studs. The belt has a central buckle gem.
+
+**Integration:** each piece uses `--pc`, `--pc2`, `--pc3` CSS variables. Drop `class="piece-red"` on the wrapper div and all colours change instantly for your 4-player theme system.

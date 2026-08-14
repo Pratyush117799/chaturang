@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | Chaturanga</title>
+  <meta name="description" content="Get in touch with the Chaturanga team. Report bugs, ask questions, share feedback, or send collaboration requests." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Yatra+One&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <style>
+    .contact-layout { display:grid; grid-template-columns:3fr 2fr; gap:40px; align-items:start; }
+    @media(max-width:860px){ .contact-layout{ grid-template-columns:1fr; } }
+    .privacy-note { background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.2); border-radius:var(--radius); padding:14px 18px; color:var(--text-muted); font-size:0.86rem; margin-top:16px; display:flex; gap:10px; align-items:flex-start; }
+    .privacy-note i { color:var(--gold); flex-shrink:0; margin-top:2px; }
+    .privacy-note a { color:var(--gold); }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar" class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-devanagari">चतुरंग</span>
+        <span class="logo-divider">·</span>
+        <span class="logo-latin">Chaturanga</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="faq.html" class="nav-link">FAQ</a></li>
+        <li><a href="what-is-chaturanga.html" class="nav-link">History</a></li>
+      </ul>
+      <a href="../../game/game.html" class="nav-cta"><i class="fa-solid fa-chess-king"></i> Play Now</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-badge"><i class="fa-solid fa-paper-plane"></i> Reach Out</div>
+      <span class="deva-sub">संपर्क करें</span>
+      <h1><span class="gold">Contact</span> Us</h1>
+      <p>Whether it's a bug report, a question about Chaturanga history, or a collaboration idea — we'd love to hear from you.</p>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="container">
+      <div class="contact-layout">
+
+        <!-- FORM -->
+        <div class="reveal">
+          <div class="section-label">Send a Message</div>
+          <h2 class="section-title">Write to <span class="gold">Us</span></h2>
+          <div class="gold-divider"></div>
+          <div class="form-wrap">
+            <form id="contactForm" novalidate>
+              <!-- Honeypot -->
+              <div class="honeypot"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-name">Your Name *</label>
+                <input class="form-input" type="text" id="contact-name" name="name" placeholder="e.g. Arjuna" autocomplete="name" required />
+                <span class="form-error" id="err-name">Please enter your name.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-email">Email Address *</label>
+                <input class="form-input" type="email" id="contact-email" name="email" placeholder="you@example.com" autocomplete="email" required />
+                <span class="form-error" id="err-email">Please enter a valid email address.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-subject">Subject *</label>
+                <select class="form-select" id="contact-subject" name="subject" required>
+                  <option value="" disabled selected>Select a topic…</option>
+                  <option value="general">General Question</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="business">Business / Collaboration</option>
+                  <option value="privacy">Privacy Request</option>
+                  <option value="other">Other</option>
+                </select>
+                <span class="form-error" id="err-subject">Please select a subject.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contact-message">Message * <span style="font-family:var(--font-body);text-transform:none;letter-spacing:0;font-size:0.75rem;color:var(--text-muted);">(min. 20 characters)</span></label>
+                <textarea class="form-textarea" id="contact-message" name="message" placeholder="Tell us what's on your mind…" required></textarea>
+                <span class="form-error" id="err-message">Please write a message of at least 20 characters.</span>
+              </div>
+
+              <button class="btn-gold" type="submit" id="contact-submit">
+                <i class="fa-solid fa-paper-plane"></i> Send Message
+              </button>
+
+              <div class="form-success" id="form-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <strong>Message sent!</strong> Thank you for reaching out. We'll get back to you within 24–48 hours.
+              </div>
+            </form>
+
+            <div class="privacy-note">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Your message is private and will only be seen by the Chaturanga team. For privacy-related requests, please read our <a href="privacy-policy.html">Privacy Policy</a> first.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- INFO SIDEBAR -->
+        <div>
+          <div class="section-label reveal">Get in Touch</div>
+          <h2 class="section-title reveal">Other <span class="gold">Ways</span></h2>
+          <div class="gold-divider reveal"></div>
+
+          <div class="contact-info-card reveal">
+            <div class="contact-info-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div>
+              <h4>Email Us</h4>
+              <a href="mailto:chaturangagame@gmail.com">chaturangagame@gmail.com</a>
+              <p style="margin-top:6px;font-size:0.83rem;">We respond within 24–48 hours.</p>
+            </div>
+          </div>
+
+          <div class="contact-info-card reveal">
+            <div class="contact-info-icon"><i class="fa-brands fa-github"></i></div>
+            <div>
+              <h4>GitHub</h4>
+              <a href="https://github.com/Pratyush117799/chaturang" target="_blank" rel="noopener">github.com/Pratyush117799/chaturang</a>
+              <p style="margin-top:6px;font-size:0.83rem;">Open an issue for bugs or feature requests — this is the fastest path for technical topics.</p>
+            </div>
+          </div>
+
+          <div class="contact-info-card reveal">
+            <div class="contact-info-icon"><i class="fa-solid fa-clock"></i></div>
+            <div>
+              <h4>Response Time</h4>
+              <p>We are a small indie team. We read every message and genuinely appreciate your patience and support.</p>
+            </div>
+          </div>
+
+          <div class="contact-info-card reveal">
+            <div class="contact-info-icon"><i class="fa-solid fa-bug"></i></div>
+            <div>
+              <h4>Reporting Bugs</h4>
+              <p>Please include the browser/device you're using, what you expected to happen, and what actually happened. Screenshots help!</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="nav-logo" style="display:inline-flex;margin-bottom:12px;">
+            <span class="logo-devanagari">चतुरंग</span><span class="logo-divider">·</span><span class="logo-latin">Chaturanga</span>
+          </a>
+          <p>The ancient Indian 4-player war game &amp; ancestor of Chess. Revived for the digital age.</p>
+          <div class="footer-version"><span class="version-pill">v1.0.5.2</span><a href="../../game/game.html" class="version-link">Play now →</a></div>
+        </div>
+        <div class="footer-links"><h5>Navigate</h5><ul><li><a href="../index.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Home</a></li><li><a href="about.html"><i class="fa-solid fa-chevron-right fa-xs"></i> About</a></li><li><a href="faq.html"><i class="fa-solid fa-chevron-right fa-xs"></i> FAQ</a></li></ul></div>
+        <div class="footer-links"><h5>Play</h5><ul><li><a href="../../game/game.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Play Game</a></li><li><a href="../howtoplay.html"><i class="fa-solid fa-chevron-right fa-xs"></i> How to Play</a></li></ul></div>
+        <div class="footer-links"><h5>Legal</h5><ul><li><a href="privacy-policy.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Privacy Policy</a></li><li><a href="terms.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Terms &amp; Conditions</a></li><li><a href="contact.html"><i class="fa-solid fa-chevron-right fa-xs"></i> Contact Us</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><p class="footer-credits">Chaturanga Project · Ancient Indian Game Revival · Built with ♟ by the Chaturanga team</p></div>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal animation
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.05 });
+    reveals.forEach(r => obs.observe(r));
+    // Hamburger
+    const ham = document.getElementById('hamburger'); const nav = document.getElementById('navLinks');
+    if (ham && nav) ham.addEventListener('click', () => nav.classList.toggle('open'));
+
+    // Form handling
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('contact-submit');
+    const successBox = document.getElementById('form-success');
+
+    function showErr(id, show) {
+      document.getElementById(id).classList.toggle('show', show);
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Honeypot check
+      if (form.querySelector('[name="website"]').value) return;
+
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const subject = document.getElementById('contact-subject').value;
+      const message = document.getElementById('contact-message').value.trim();
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      let valid = true;
+      showErr('err-name', !name); if (!name) valid = false;
+      showErr('err-email', !emailRe.test(email)); if (!emailRe.test(email)) valid = false;
+      showErr('err-subject', !subject); if (!subject) valid = false;
+      showErr('err-message', message.length < 20); if (message.length < 20) valid = false;
+
+      if (!valid) return;
+
+      // Simulate submission
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+      setTimeout(() => {
+        submitBtn.style.display = 'none';
+        successBox.style.display = 'block';
+        form.reset();
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
