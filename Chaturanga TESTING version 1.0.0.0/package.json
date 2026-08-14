@@ -4,7 +4,8 @@
   "description": "Chaturanga server setup",
   "main": "game/server.js",
   "scripts": {
-    "start": "node game/server.js"
+    "start": "node game/server.js",
+    "dev": "nodemon --ignore 'data/' --ignore 'game/data/' --ignore '*.tmp-*' --ignore '**/*.tmp-*' game/server.js"
   },
   "dependencies": {
     "cors": "^2.8.6",

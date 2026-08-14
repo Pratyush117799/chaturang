@@ -2,6 +2,8 @@
  * Chaturanga v1.0.5 — Serializable game state for bot/replay
  * Minimal: expose a snapshot that bot can use without holding game reference.
  */
+
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
