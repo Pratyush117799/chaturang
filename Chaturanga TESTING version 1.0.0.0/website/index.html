@@ -921,10 +921,19 @@ const weights = {
         <div class="footer-links">
           <h5>Resources</h5>
           <ul>
-            <li><a href="../Chaturanga-version-1.0.3.2/planning/RULES_AND_MATRIX.md" target="_blank">Rules Matrix</a>
-            </li>
+            <li><a href="../Chaturanga-version-1.0.3.2/planning/RULES_AND_MATRIX.md" target="_blank">Rules Matrix</a></li>
             <li><a href="../Chaturanga-version-1.0.3.2/planning/BOT_ENGINE.md" target="_blank">Bot Engine Spec</a></li>
             <li><a href="../rules.txt" target="_blank">Original Rules</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Legal &amp; Info</h5>
+          <ul>
+            <li><a href="pages/about.html">About Us</a></li>
+            <li><a href="pages/faq.html">FAQ</a></li>
+            <li><a href="pages/privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="pages/terms.html">Terms &amp; Conditions</a></li>
+            <li><a href="pages/contact.html">Contact Us</a></li>
           </ul>
         </div>
       </div>
@@ -1141,6 +1150,167 @@ function renderNavUser() {
   Session.onChange(renderNavUser);
 
  </script>
-</body>
 
+  <!-- Cookie Consent Banner -->
+  <div class="cookie-banner" id="cookieBanner">
+    <div class="cookie-content">
+      <i class="fa-solid fa-cookie-bite cookie-banner-icon"></i>
+      <p>
+        We use cookies to analyze site traffic, remember your preferences, and serve personalized ads. 
+        By clicking <strong>"Accept All"</strong>, you consent to our use of cookies in accordance with our 
+        <a href="pages/privacy-policy.html" target="_blank">Privacy Policy</a>.
+      </p>
+    </div>
+    <div class="cookie-actions">
+      <button class="cookie-btn cookie-btn-reject" id="cookieReject">Reject Non-Essential</button>
+      <button class="cookie-btn cookie-btn-accept" id="cookieAccept">Accept All</button>
+    </div>
+  </div>
+
+  <style>
+    .cookie-banner {
+      position: fixed;
+      bottom: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 850px;
+      background: rgba(26, 6, 0, 0.98);
+      border: 1px solid rgba(201, 168, 76, 0.35);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.65), 0 0 30px rgba(201, 168, 76, 0.1);
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      z-index: 9999;
+      transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+      backdrop-filter: blur(12px);
+    }
+    .cookie-banner.show {
+      bottom: 24px;
+    }
+    .cookie-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+    }
+    .cookie-banner-icon {
+      font-size: 2rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      animation: cookieWiggle 5s ease-in-out infinite;
+    }
+    @keyframes cookieWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      10% { transform: rotate(-8deg); }
+      20% { transform: rotate(8deg); }
+      30% { transform: rotate(-5deg); }
+      40% { transform: rotate(5deg); }
+      50% { transform: rotate(0deg); }
+    }
+    .cookie-content p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .cookie-content strong {
+      color: var(--sandstone);
+    }
+    .cookie-content a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: var(--transition);
+    }
+    .cookie-content a:hover {
+      color: var(--gold-light);
+    }
+    .cookie-actions {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .cookie-btn {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cookie-btn-accept {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--midnight);
+      border: none;
+    }
+    .cookie-btn-accept:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
+    }
+    .cookie-btn-reject {
+      background: rgba(201, 168, 76, 0.05);
+      color: var(--gold);
+      border: 1px solid rgba(201, 168, 76, 0.35);
+    }
+    .cookie-btn-reject:hover {
+      background: rgba(201, 168, 76, 0.15);
+      border-color: var(--gold);
+    }
+    @media (max-width: 768px) {
+      .cookie-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 18px;
+        text-align: center;
+      }
+      .cookie-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .cookie-actions {
+        justify-content: center;
+        width: 100%;
+      }
+      .cookie-btn {
+        flex: 1;
+      }
+    }
+  </style>
+
+  <script>
+    // Cookie Consent Banner Script
+    document.addEventListener("DOMContentLoaded", function() {
+      const banner = document.getElementById("cookieBanner");
+      const acceptBtn = document.getElementById("cookieAccept");
+      const rejectBtn = document.getElementById("cookieReject");
+      
+      const consent = localStorage.getItem("chaturanga_cookie_consent");
+      
+      if (!consent) {
+        setTimeout(() => {
+          banner.classList.add("show");
+        }, 1500);
+      }
+      
+      function setConsent(value) {
+        localStorage.setItem("chaturanga_cookie_consent", value);
+        banner.classList.remove("show");
+        
+        // Dispatch custom event for analytical tools/AdSense scripts to listen to
+        window.dispatchEvent(new CustomEvent("cookieConsentChanged", { detail: { consent: value } }));
+      }
+      
+      acceptBtn.addEventListener("click", () => setConsent("accepted"));
+      rejectBtn.addEventListener("click", () => setConsent("rejected"));
+    });
+  </script>
+</body>
 </html>
