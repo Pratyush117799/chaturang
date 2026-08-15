@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chaturanga Chronicle — From Indus Valley Tokens to Modern Chess</title>
+<meta name="description" content="An honestly-sourced, interactive lineage of chess: from Indus Valley race games through Gupta-era Chaturanga, Shatranj, Chaturaji, the East Asian variants, to modern chess — with disputed claims clearly flagged.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="devanagari-hero">चतुरंग की गाथा</span>
+        <h1>Four thousand years of one idea: a board, an army, a king worth capturing.</h1>
+        <p class="lede">A research-grade, interactively navigable lineage connecting Indus Valley dice games to
+          modern chess — through Gupta-era Chaturanga, Persian Chatrang, Islamic Shatranj, the four-player
+          Chaturaji splinter, and the East Asian variants. Every claim is labelled by how well it's actually
+          sourced.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#lineage">Follow the Lineage ↓</a>
+          <a class="btn btn-ghost" href="didactics.html">Why It Matters Today</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="num">8</span><span class="lbl">Documented eras</span></div>
+          <div class="hero-stat"><span class="num">~4,500</span><span class="lbl">Years spanned</span></div>
+          <div class="hero-stat"><span class="num">3</span><span class="lbl">Continents</span></div>
+          <div class="hero-stat"><span class="num">1</span><span class="lbl">Piece lineage traced throughout</span></div>
+        </div>
+      </div>
+      <div class="hero-seal-cluster" aria-hidden="true">
+        <!-- populated by JS with all eight era seals once data.js loads -->
+      </div>
+    </div>
+  </section>
+
+  <!-- METHOD STRIP -->
+  <section class="wrap" id="method" style="padding-top:40px;">
+    <div class="method-strip reveal">
+      <span class="msg">How to read this site</span>
+      <span class="confidence-flag confidence-established">Established</span> broad scholarly consensus
+      &nbsp;·&nbsp;
+      <span class="confidence-flag confidence-reconstructed">Reconstructed</span> pieced together from fragments
+      &nbsp;·&nbsp;
+      <span class="confidence-flag confidence-theorized">Theorized</span> a popular but debated narrative
+      &nbsp;·&nbsp;
+      <span class="confidence-flag confidence-unverified">Unverified</span> could not be traced to a primary source
+    </div>
+  </section>
+
+  <!-- LINEAGE / RIVER TIMELINE -->
+  <section class="section" id="lineage">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">The Main Line</span>
+        <h2>Eight eras, one board</h2>
+        <p>Scroll through the chronological spine of the story. Each waypoint links to a full deep-dive: the
+          army roster, the rules, the historical context, and — importantly — what's actually disputed about it.</p>
+      </div>
+      <div class="river" id="river"></div>
+    </div>
+  </section>
+
+  <!-- BRANCHES -->
+  <section class="section section-alt" id="branches">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">After Shatranj</span>
+        <h2>The tree forks three ways</h2>
+        <p>By the time Shatranj was mature, chess wasn't one lineage anymore. India kept mutating its own game
+          in parallel; separate variants were taking shape in East and Southeast Asia; and Europe was about to
+          rewrite the rulebook entirely. This chronicle treats all three as real, distinct branches — not one
+          tidy inevitable line.</p>
+      </div>
+      <p class="branch-fork-line reveal">— shared root: Ashtapada / early Chaturanga —</p>
+      <div class="branches">
+        <article class="branch-card reveal">
+          <span class="eyebrow">Stayed in India</span>
+          <h3>Chaturaji — the four-player splinter</h3>
+          <p>Dice come back, four kings take the corners, and gambling culture returns to the board. A real,
+            attested regional mutation that never fed back into the main line.</p>
+          <a class="btn btn-ghost" href="pages/era.html?slug=chaturaji">Read the era →</a>
+        </article>
+        <article class="branch-card reveal">
+          <span class="eyebrow">Went east</span>
+          <h3>Xiangqi, Shogi, Makruk</h3>
+          <p>Related in spirit, radically different in rule — a river-divided board, a "palace," and Shogi's
+            unique drop rule. Historians disagree on how directly these connect back to India at all.</p>
+          <a class="btn btn-ghost" href="pages/era.html?slug=east-asian">Read the era →</a>
+        </article>
+        <article class="branch-card reveal">
+          <span class="eyebrow">Went west</span>
+          <h3>Modern chess</h3>
+          <p>Shatranj enters Europe, sits for centuries, then gets rewritten in a documented 1475 burst: the
+            Queen, the Bishop, and castling as we know them today.</p>
+          <a class="btn btn-ghost" href="pages/era.html?slug=modern-chess">Read the era →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGACY TEASER -->
+  <section class="section">
+    <div class="wrap">
+      <div class="legacy-teaser reveal">
+        <div>
+          <span class="eyebrow" style="color:#a9c9c0;">Beyond the timeline</span>
+          <h2>Why a 1,500-year-old war simulation still teaches something today</h2>
+          <p>Chaturanga's real legacy isn't just genealogical. It's a design lesson in abstraction, and — as our
+            own Chaturanga project argues — a genuinely useful didactic tool for strategic thinking. See how we
+            connect the history to the present.</p>
+        </div>
+        <div>
+          <a class="btn btn-primary" href="didactics.html">Explore the Didactic Case →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Populate the hero seal cluster with all eight era seals once data.js has loaded.
+  document.addEventListener("DOMContentLoaded", () => {
+    const cluster = document.querySelector(".hero-seal-cluster");
+    if (cluster && typeof ERAS !== "undefined") {
+      cluster.innerHTML = ERAS.slice().sort((a,b)=>a.order-b.order).map(era => {
+        const key = era.slug.replace(/-/g, "");
+        return `<svg class="seal-badge" viewBox="0 0 48 48" role="img" aria-label="${era.title} emblem">${SEALS[key] || ""}</svg>`;
+      }).join("");
+    }
+  });
+</script>
+</body>
+</html>
