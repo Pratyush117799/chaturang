@@ -7,14 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
-.sq .piece-img {
-  width: 80%;
-  height: 80%;
-  object-fit: contain;
-  pointer-events: none; /* Prevents image dragging interfereing with cell clicks */
-  user-select: none;
-}
-  .qa-quickmatch{
+
+.qa-quickmatch{
   background:linear-gradient(135deg,#c9a84c,#e0c470);
   color:#1a1a1a;font-weight:700;width:100%;
   border:none;border-radius:8px;padding:10px 16px;
@@ -74,14 +68,14 @@
   padding:10px;margin-bottom:16px;
 }
 
-
 :root {
   --gold:#c9a84c;--gold2:#e8c96a;--gold3:#f5e4a0;
   --dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;--dark4:#241c0c;
   --border:rgba(201,168,76,.18);--border2:rgba(201,168,76,.32);
   --text:#f0e4c8;--muted:#8a7050;--muted2:#5a4830;
   --red:#e74c3c;--blue:#60a5fa;--green:#4ade80;--yellow:#fbbf24;
-  --sq:52px;
+  --board-w: 47vw;
+  --sq: clamp(30px, calc(var(--board-w) / 8), 76px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
@@ -189,10 +183,44 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .pr-conn{font-size:.6rem;color:var(--muted2)}
 .pr-conn.online{color:var(--green)}
 
-.dice-card{background:rgba(201,168,76,.06);border:1px solid var(--border);
-  border-radius:9px;padding:12px;text-align:center}
-.dc-face{font-size:2rem;margin-bottom:4px}
-.dc-name{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold)}
+/* ── INVITE BUTTON + MODAL ───────────────────────────────────── */
+.invite-btn{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(201,168,76,.08);color:var(--gold);font-family:'Outfit',sans-serif;
+  font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:8px;transition:all .2s}
+.invite-btn:hover{background:rgba(201,168,76,.15);border-color:var(--gold)}
+
+/* ── VERTICAL GAME CONTROLS (right of board) ─────────────────── */
+.board-row{display:flex;gap:16px;align-items:flex-start}
+.game-controls-vertical{display:flex;flex-direction:column;align-items:center;gap:14px;
+  flex-shrink:0;padding-top:2px}
+
+.dice-control{width:96px;padding:14px 8px;border-radius:12px;background:rgba(201,168,76,.06);
+  border:1px solid var(--border);text-align:center;cursor:pointer;user-select:none;
+  transition:all .2s}
+.dice-control:hover:not(.is-disabled){border-color:var(--gold);background:rgba(201,168,76,.13);
+  transform:translateY(-2px)}
+.dice-control.is-disabled{opacity:.45;cursor:default;transform:none}
+.dice-control .dc-face{font-size:1.9rem;margin-bottom:4px}
+.dice-control .dc-name{font-family:'Cinzel',serif;font-size:.68rem;color:var(--gold);line-height:1.3}
+
+.control-icon-btn{position:relative;width:52px;height:52px;border-radius:10px;
+  border:1px solid var(--border);background:var(--dark2);color:var(--muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.control-icon-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);background:var(--dark3)}
+.control-icon-btn:disabled{opacity:.35;cursor:default}
+.resign-icon-btn{color:var(--red);border-color:rgba(231,76,60,.3)}
+.resign-icon-btn:hover{background:rgba(231,76,60,.1);border-color:var(--red);color:var(--red)}
+
+.control-tooltip{position:absolute;right:calc(100% + 10px);top:50%;
+  transform:translateY(-50%) translateX(6px);background:var(--dark4);color:var(--gold2);
+  font-size:.7rem;padding:6px 10px;border-radius:6px;white-space:nowrap;
+  border:1px solid var(--border2);opacity:0;pointer-events:none;transition:all .18s}
+.control-icon-btn:hover .control-tooltip{opacity:1;transform:translateY(-50%) translateX(0)}
+@media(max-width:680px){
+  .control-tooltip{right:auto;left:50%;top:calc(100% + 8px);transform:translateX(-50%) translateY(-4px)}
+  .control-icon-btn:hover .control-tooltip{transform:translateX(-50%) translateY(0)}
+}
 
 /* BOARD */
 .board-labels-top{display:flex;width:calc(var(--sq)*8);margin-left:18px}
@@ -200,12 +228,20 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .board-row-w{display:flex;align-items:center}
 .board-ranks{display:flex;flex-direction:column;width:18px}
 .rank-lbl{height:var(--sq);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--muted)}
-.board{display:grid;grid-template-columns:repeat(8,var(--sq));border:2px solid rgba(201,168,76,.3);border-radius:2px}
+.board{display:grid;grid-template-columns:repeat(8,var(--sq));grid-template-rows:repeat(8,var(--sq));width:calc(var(--sq)*8);aspect-ratio:1;overflow:hidden;border:1px solid var(--border-strong, rgba(201,168,76,.3));box-shadow:0 8px 32px rgba(0,0,0,0.5);background-image:url('images/board.png');background-size:127.68% 127.68%;background-position:49.55% 49.55%;user-select:none;-webkit-user-select:none;touch-action:none;contain:layout style paint}
 .sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;position:relative;transition:background .08s ease;contain:layout style paint;transform:translateZ(0)}
-.sq.light{background:#f0d9b5}.sq.dark{background:#b58863}
+  cursor:pointer;position:relative;background:transparent;transition:background .08s ease;contain:layout style paint;transform:translateZ(0);-webkit-tap-highlight-color:transparent}
+.sq.light{background:transparent}.sq.dark{background:transparent}
 .sq.sel{background:rgba(201,168,76,.55)!important;outline:2px solid var(--gold);outline-offset:-2px}
-.sq.legal::after{content:'';width:26%;height:26%;background:rgba(0,0,0,.2);border-radius:50%;display:block;pointer-events:none}
+.sq.legal::after{
+  content:'';
+  width:26%;
+  height:26%;
+  background:rgba(74,222,128,.65);   /* was rgba(0,0,0,.2) */
+  border-radius:50%;
+  display:block;
+  pointer-events:none
+}
 .sq.legal-cap{outline:2px solid var(--red);outline-offset:-2px}
 .sq.lf{background:rgba(201,168,76,.28)!important}
 .sq.lt{background:rgba(201,168,76,.42)!important}
@@ -213,23 +249,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 @keyframes kp{0%,100%{background:rgba(248,113,113,.3)!important}50%{background:rgba(248,113,113,.6)!important}}
 .piece{font-size:calc(var(--sq)*.58);line-height:1;user-select:none;pointer-events:none;
   text-shadow:0 1px 3px rgba(0,0,0,.55);transition:transform .12s ease}
-.piece-img{width:86%;height:86%;object-fit:contain;border-radius:50%;padding:4px;
-  background:rgba(0,0,0,0.22);box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.15);
-  pointer-events:none;user-select:none;-webkit-user-drag:none;
-  transition:transform .12s ease,filter .12s ease;transform:translateZ(0);will-change:transform}
+.sq img.piece-img, .piece-img{width:82%;height:82%;object-fit:cover;clip-path:circle(44% at center);position:absolute;top:9%;left:9%;z-index:2;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.7));transition:transform .12s ease,filter .12s ease;transform:translateZ(0);will-change:transform}
 .sq:hover .piece-img,.sq:hover .piece{transform:scale(1.08) translateZ(0);filter:brightness(1.15)}
 
-.action-row{display:flex;gap:7px;width:calc(var(--sq)*8)}
-.act-btn{flex:1;padding:8px 10px;border-radius:6px;border:none;font-family:'Outfit',sans-serif;
-  font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;gap:5px}
-.roll-btn{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00}
-.roll-btn:hover:not(:disabled){background:linear-gradient(135deg,#e8b52a,#c8960c)}
-.roll-btn:disabled,.forfeit-btn:disabled,.resign-btn:disabled{opacity:.35;cursor:default}
-.forfeit-btn{background:transparent;color:var(--muted);border:1px solid var(--border)}
-.forfeit-btn:hover:not(:disabled){border-color:var(--red);color:var(--red)}
-.resign-btn{background:transparent;color:var(--muted);border:1px solid var(--border)}
-.resign-btn:hover:not(:disabled){border-color:var(--red);color:var(--red)}
 .status-bar{font-size:.8rem;color:var(--gold);padding:6px 10px;
   background:rgba(201,168,76,.07);border-radius:6px;border:1px solid var(--border);
   width:calc(var(--sq)*8);text-align:center;min-height:32px;margin-top:7px}
@@ -327,11 +349,13 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 /* RESPONSIVE */
 @media(max-width:680px){
-  :root{--sq:40px}
   .game-layout{flex-direction:column}
   .game-left,.game-right{width:100%}
   .chat-panel{height:220px}
+  .board-row{flex-direction:column;align-items:center}
+  .game-controls-vertical{flex-direction:row;padding-top:10px}
 }
+
 /* ── ELO RANK SYSTEM ──────────────────────────────────────────── */
 .rank-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
   border-radius:12px;font-size:.65rem;font-weight:600;margin-top:5px;letter-spacing:.04em}
@@ -421,7 +445,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   </a>
   <span class="nav-badge">Multiplayer</span>
   <div class="nav-links">
-    <butopebton type="button" class="nav-link" id="friendsNavBtn" onclick="openFriendsModal()" style="position:relative;background:none;border:none;cursor:pointer;color:var(--text);font-family:inherit;font-size:inherit;">
+    <button type="button" class="nav-link" id="friendsNavBtn" onclick="openFriendsModal()" style="position:relative;background:none;border:none;cursor:pointer;color:var(--text);font-family:inherit;font-size:inherit;">
       <i class="fa-solid fa-user-group fa-xs"></i> Friends
       <span class="friends-badge" id="friendsBadge" style="display:none;position:absolute;top:-4px;right:-8px;background:var(--red);color:#fff;font-size:0.6rem;font-weight:700;border-radius:10px;padding:2px 6px;">0</span>
     </button>
@@ -448,7 +472,6 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <div class="pc-label">Your Identity</div>
       <div class="pc-name-row">
         <input class="pc-name-input" id="playerNameInput" placeholder="Enter your name…" maxlength="20"/>
-        
       </div>
       <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
         <div class="pc-elo" id="playerEloDisplay">1200</div>
@@ -478,10 +501,10 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       </div>
 
       <div class="qa-row">
-    <button class="qa-btn qa-quickmatch" onclick="startQuickMatch()">
-      <i class="fa-solid fa-bolt fa-xs"></i> Quick Match
-    </button>
-  </div>
+        <button class="qa-btn qa-quickmatch" onclick="startQuickMatch()">
+          <i class="fa-solid fa-bolt fa-xs"></i> Quick Match
+        </button>
+      </div>
 
       <div class="qa-row">
         <button class="qa-btn qa-primary" onclick="createRoom()">
@@ -562,20 +585,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
   <!-- Left panel -->
   <div class="game-left">
-    <div class="room-code-display">
-      <div class="rcd-label">Room</div>
-      <div class="rcd-code" id="gameRoomCode">——</div>
-      <div class="rcd-copy" onclick="copyRoomLink()"><i class="fa-solid fa-copy fa-xs"></i> Copy link</div>
-    </div>
+    <button class="invite-btn" onclick="openInviteModal()">
+      <i class="fa-solid fa-user-plus fa-xs"></i> Invite Player
+    </button>
 
     <div class="players-list" id="playersListEl">
       <!-- rendered dynamically -->
-    </div>
-
-    <!-- QR Code below players list -->
-    <div class="qr-box-game" style="margin:8px 0;text-align:center;background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:8px;padding:8px">
-      <div style="font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Scan to Join / Share</div>
-      <canvas id="gameQrCanvas" style="width:105px;height:105px;border-radius:6px;background:#fff;padding:4px;display:inline-block"></canvas>
     </div>
 
     <div class="info-card">
@@ -583,51 +598,62 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <div class="ic-val" id="turnDisplay">—</div>
     </div>
 
-    <div class="dice-card">
-      <div class="dc-face" id="gameDiceFace">—</div>
-      <div class="dc-name" id="gameDiceName">Roll to begin</div>
-    </div>
-
     <div class="info-card">
       <div class="ic-label">You are</div>
       <div class="ic-val" id="yourSeatDisplay">—</div>
     </div>
-
-    <div class="action-row">
-      <button class="act-btn roll-btn"    id="rollBtn"    onclick="rollDice()">
-        <i class="fa-solid fa-dice-d6 fa-xs"></i> Roll
-      </button>
-      <button class="act-btn forfeit-btn" id="forfeitBtn" onclick="forfeitTurn()" disabled>
-        <i class="fa-solid fa-flag fa-xs"></i> Forfeit
-      </button>
-    </div>
-    <div class="action-row" style="margin-top:7px">
-      <button class="act-btn resign-btn" id="resignBtn" onclick="resignGame()">
-        <i class="fa-solid fa-flag-checkered fa-xs"></i> Resign &amp; Leave
-      </button>
-    </div>
   </div>
 
-  <!-- Center: board -->
+  <!-- Center: board + vertical controls -->
   <div class="game-center">
-    <div id="gameBoardWrap"></div>
+    <div class="board-row">
+      <div id="gameBoardWrap"></div>
+
+      <div class="game-controls-vertical">
+        <!-- Dice box doubles as the roll button -->
+        <div class="dice-control" id="rollBtn" onclick="rollDice()">
+          <div class="dc-face" id="gameDiceFace">—</div>
+          <div class="dc-name" id="gameDiceName">Roll to begin</div>
+        </div>
+
+        <button class="control-icon-btn" id="forfeitBtn" onclick="forfeitTurn()" disabled>
+          <i class="fa-solid fa-flag fa-lg"></i>
+          <span class="control-tooltip">Forfeit turn</span>
+        </button>
+
+        <button class="control-icon-btn resign-icon-btn" id="resignBtn" onclick="resignGame()">
+          <i class="fa-solid fa-flag fa-lg"></i>
+          <span class="control-tooltip">Resign and leave</span>
+        </button>
+      </div>
+    </div>
+
     <div class="status-bar" id="statusBar">Waiting for the game to start…</div>
   </div>
 
-  <!-- Right panel: chat -->
-  <div class="game-right">
-    <div class="chat-panel">
-      <div class="chat-header"><i class="fa-solid fa-comments fa-xs"></i> &nbsp;Battle Chat</div>
-      <div class="chat-messages" id="chatMessages"></div>
-      <div class="chat-input-row">
-        <input class="chat-input" id="chatInput" placeholder="Type a message…" maxlength="200"
-          onkeydown="if(event.key==='Enter')sendChat()"/>
-        <button class="chat-send" onclick="sendChat()"><i class="fa-solid fa-paper-plane fa-xs"></i></button>
-      </div>
+</div>
+</div>
+
+<!-- ════════════ INVITE MODAL ════════════ -->
+<div id="inviteModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.88);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border);border-radius:14px;max-width:360px;width:100%;padding:24px;text-align:center;box-shadow:0 0 50px rgba(201,168,76,.15);position:relative;">
+    <button type="button" onclick="closeInviteModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
+
+    <div style="font-family:'Cinzel',serif;font-size:1.15rem;color:var(--gold);margin-bottom:16px;">
+      <i class="fa-solid fa-user-plus"></i> Invite a Player
+    </div>
+
+    <div class="room-code-display">
+      <div class="rcd-label">Room</div>
+      <div class="rcd-code" id="gameRoomCode">——</div>
+      <div class="rcd-copy" onclick="copyRoomLink()"><i class="fa-solid fa-copy fa-xs"></i> Copy invite link</div>
+    </div>
+
+    <div style="margin:16px auto 0;text-align:center">
+      <div style="font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Or scan to join</div>
+      <canvas id="gameQrCanvas" style="width:150px;height:150px;border-radius:8px;background:#fff;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,0.5)"></canvas>
     </div>
   </div>
-
-</div>
 </div>
 
 <!-- ════════════ RESIGN CONFIRMATION DIALOGUE ════════════ -->
@@ -687,14 +713,6 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <div class="mm-radar-ring mm-ring1"></div>
       <div class="mm-radar-ring mm-ring2"></div>
       <div class="mm-radar-core"><i class="fa-solid fa-magnifying-glass"></i></div>
-    </div>
-
-    <div class="mm-timer-wrap">
-      <svg class="mm-timer-svg" viewBox="0 0 60 60">
-        <circle class="mm-timer-bg" cx="30" cy="30" r="26"></circle>
-        <circle class="mm-timer-fg" id="mmTimerFg" cx="30" cy="30" r="26"></circle>
-      </svg>
-      <div class="mm-timer-num" id="mmTimerNum">10</div>
     </div>
 
     <div class="mm-status-row">
@@ -765,6 +783,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 </div>
 
 
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -777,6 +796,13 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 
 // ── Name/session block left exactly as-is — separate feature, not touched ──
+
+
+function openInviteModal(){ document.getElementById('inviteModal').style.display = 'flex'; }
+function closeInviteModal(){ document.getElementById('inviteModal').style.display = 'none'; }
+
+
+
 function initPlayerName() {
   const inputEl = document.getElementById('playerNameInput');
   if (!inputEl) { console.warn('initPlayerName: #playerNameInput element not found in DOM.'); return; }
