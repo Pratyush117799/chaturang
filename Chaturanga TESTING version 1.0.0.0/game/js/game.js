@@ -82,10 +82,10 @@ class Game {
   constructor() {
     this.board = new Board();
     this.players = [
-      new Player(0, 'red', 0),
-      new Player(1, 'blue', 1),
-      new Player(2, 'green', 2),
-      new Player(3, 'yellow', 3)
+      new Player(0, 'red', 0),    // South — Team 0
+      new Player(1, 'blue', 1),   // West  — Team 1
+      new Player(2, 'green', 0),  // North — Team 0
+      new Player(3, 'yellow', 1)  // East  — Team 1
     ];
     this.turnIndex = 0;
     this.moveHistory = [];
@@ -216,7 +216,7 @@ class Game {
   }
 
   rollDice() {
-    const d = Math.floor(Math.random() * 6) + 1;
+    const d = Math.floor(Math.random() * 4) + 2; // 4-sided Pasaka: values 2-5
     this.lastDice = d;
     this.forcedPiece = this.diceToPiece(d);
     const player = this.getPlayer();
@@ -226,19 +226,33 @@ class Game {
     return d;
   }
 
+  // manual.md §1 — Combat & Capture Rules
+  // - Cannot capture own piece.
+  // - Allies (teammates) CAN capture each other, EXCEPT partner's King.
+  // - Minor pieces cannot capture Major pieces (any target).
+  // - Major pieces can capture anything, including enemy King (required to win).
   canCapture(piece, target) {
     if (!target || target.owner === piece.owner) return false;
+
+    const attackerTeam = this.players[piece.owner]?.team;
+    const targetTeam = this.players[target.owner]?.team;
+    const isTeammate = attackerTeam !== undefined && attackerTeam === targetTeam;
+
+    if (isTeammate && target.type === 'king') return false; // partner's King protected
+
+    const MAJOR = target.type === 'rook' || target.type === 'king';
+    if (piece.isMinor() && MAJOR) return false;
+
     return true;
   }
 
+  // manual.md §2 — 4-sided Pasaka: 2=Ratha,3=Ashva,4=Danti,5=Nara or Rajan
   diceToPiece(d) {
-    if (d === 1) return 'rook';
-    if (d === 2) return 'any';
+    if (d === 2) return 'rook';
     if (d === 3) return 'horse';
     if (d === 4) return 'elephant';
-    if (d === 5) return 'any';
-    if (d === 6) return 'pawn-king';
-    return 'any';
+    if (d === 5) return 'pawn-king';
+    return null; // invalid roll for 4-sided die
   }
 
   getLegalMoves(square) {
@@ -480,9 +494,11 @@ class Game {
   }
 
   handleTeamModeKingCapture(player, capturedPlayer) {
+    // manual.md §4 — Raja Comeback: if the teammate has captured at least one
+    // opponent King, the CAPTURED player's own King is revived (not the teammate's).
     const teammate = this.players.find(p => p.team === capturedPlayer.team && p.id !== capturedPlayer.id);
-    if (teammate && teammate.kingsCaptured > 0 && teammate.kingsCaptured < 2) {
-      this.pendingKingRespawn = { playerId: teammate.id, capturedBy: player.id };
+    if (teammate && teammate.kingsCaptured > 0 && capturedPlayer.kingsCaptured < 2) {
+      this.pendingKingRespawn = { playerId: capturedPlayer.id, capturedBy: player.id };
     }
     if (capturedPlayer.kingsCaptured >= 2) {
       capturedPlayer.frozen = true;
@@ -623,8 +639,6 @@ class Game {
 // ═══════════════════════════════════════════════════════════
 
 Game.prototype.loadCustomArmyIfPresent = function() {
-
-  if (typeof localStorage === 'undefined') return false;
   try {
     const raw = localStorage.getItem('chaturanga_custom_army');
     if (!raw) return false;
@@ -685,8 +699,4 @@ Game.prototype.loadCustomArmyIfPresent = function() {
   }
 };
 
-
-
-
 globalThis.ChaturangaGame = Game;
-if (typeof module !== 'undefined' && module.exports) module.exports = Game; // NEW

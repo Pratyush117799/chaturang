@@ -13,10 +13,8 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // ASSUMPTION: partners sit opposite each other (South-North vs West-East),
-  // per manual.md §5 seating (P1 South, P2 West, P3 North, P4 East).
-  // Confirm this pairing — manual doesn't state it explicitly.
-  var TEAMS = { 1: 3, 3: 1, 2: 4, 4: 2 };
+  // Confirmed pairing: South+North (0,2) vs West+East (1,3) — matches game.js Player ids.
+  var TEAMS = { 0: 2, 2: 0, 1: 3, 3: 1 };
 
   function getPartner(playerId) {
     return TEAMS[playerId] || null;
