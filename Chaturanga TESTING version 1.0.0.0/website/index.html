@@ -17,58 +17,7 @@
   <link rel="stylesheet" href="css/animations.css" />
   <link rel="stylesheet" href="css/chatbot.css" />
   <style>
-    /* How to Play — nav pill */
-    .howto-nav-link{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:8px 16px;
-      margin-left:6px;
-      border:1.5px solid rgba(200,150,12,0.5);
-      border-radius:999px;
-      background:rgba(200,150,12,0.07);
-      color:#eab308 !important;
-      font-weight:600;
-      font-size:0.85rem;
-      white-space:nowrap;
-      position:relative;
-      overflow:hidden;
-      isolation:isolate;
-      transition:background .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease;
-    }
-    .howto-nav-link::before{
-      content:'';
-      position:absolute;
-      inset:0;
-      z-index:-1;
-      background:linear-gradient(120deg, transparent, rgba(234,179,8,0.4), transparent);
-      transform:translateX(-130%);
-      transition:transform .7s ease;
-    }
-    .howto-nav-link:hover::before{ transform:translateX(130%); }
-    .howto-nav-link:hover{
-      background:rgba(200,150,12,0.18);
-      border-color:#eab308;
-      transform:translateY(-2px);
-      box-shadow:0 8px 20px rgba(200,150,12,0.28);
-    }
-
-    .nav-signin {
-      background:rgba(200,150,12,0.18);
-      border-color:#eab308;
-      transform:translateY(-2px);
-      box-shadow:0 8px 20px rgba(200,150,12,0.28);
-      color:#eab308
-    }
-    .howto-nav-link i{
-      animation:howtoIconTilt 2.6s ease-in-out infinite;
-    }
-    @keyframes howtoIconTilt{
-      0%,100%{ transform:rotate(0deg); }
-      50%{ transform:rotate(-10deg); }
-    }
-
-    /* How to Play — hero CTA (reuses .btn-secondary shape, adds its own glow) */
+    /* How to Play — hero CTA glow (reuses .btn-secondary shape) */
     .btn-howto{
       position:relative;
       border-color:rgba(234,179,8,0.55) !important;
@@ -84,50 +33,123 @@
     .btn-howto i{
       animation:howtoIconTilt 2.6s ease-in-out infinite;
     }
-    @media (max-width:880px){
-      .howto-nav-link span{ display:none; }
-      .howto-nav-link{ padding:8px 12px; }
+    @keyframes howtoIconTilt{
+      0%,100%{ transform:rotate(0deg); }
+      50%{ transform:rotate(-10deg); }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
-  <nav id="navbar" class="navbar">
-    <div class="nav-container">
-  <a href="#hero" class="nav-logo">
-    <span class="logo-devanagari">चतुरंग</span>
-    <span class="logo-divider">·</span>
-    <span class="logo-latin">Chaturanga</span>
-  </a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#about" class="nav-link">About</a></li>
-    <li><a href="../game/features/lessons/lessons.html" class="nav-link">Lessons</a></li>
-    <li><a href="#docs" class="nav-link">Documentation</a></li>
-    <li><a href="#contribute" class="nav-link">Contribute</a></li>
-  </ul>
-  <button class="nav-cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">
-    <i class="fa-solid fa-chess-king"></i> Play Now
-  </button>
-  
-  <div class="nav-user" id="navUser">
-    <!-- filled in by JS below: either a "Sign In" link or a logged-in badge -->
-  </div>
-  <a href="../game/features/puzzles/puzzles.html" style="text-decoration: none;">
-    <button class="features-btn" id="puzzlesBtn" aria-label="Puzzles">
-      <i class="fa-solid fa-puzzle-piece"></i>
-      <span>Puzzles</span>
+  <div class="app-shell">
+
+    <!-- Mobile sidebar toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
     </button>
-  </a>
-  <button class="hamburger" id="hamburger" aria-label="Open menu">
-    <span></span><span></span><span></span>
-  </button>
-</div>
-  </nav>
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+    <!-- Sidebar collapse arrow (desktop/tablet) -->
+    <button class="sidebar-arrow-toggle" id="sidebarArrowToggle" aria-label="Collapse sidebar" aria-expanded="true">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="app-sidebar-scroll">
+
+        <!-- Profile chip -->
+        <div class="sidebar-top-bar">
+          <a href="loginpage.html" class="sidebar-profile-btn" id="sidebarProfileBtn">
+            <span class="sidebar-profile-avatar" id="sidebarProfileAvatar"><i class="fa-solid fa-user"></i></span>
+            <span class="sidebar-profile-text">
+              <span class="sidebar-profile-name" id="sidebarProfileName">Guest</span>
+              <span class="sidebar-profile-sub" id="sidebarProfileSub">Sign In</span>
+            </span>
+          </a>
+        </div>
+
+        <!-- Brand -->
+        <a href="#hero" class="sidebar-brand" data-panel="hero">
+          <span class="logo-devanagari">चतुरंग</span>
+          <span class="logo-divider">·</span>
+          <span class="logo-latin">Chaturanga</span>
+        </a>
+        <div class="sidebar-hr"></div>
+
+        <!-- Nav -->
+        <ul class="sidebar-nav" id="sidebarNav">
+          <li class="sidebar-nav-label">Explore</li>
+         <li>
+            <a href="#play" class="sidebar-link" data-panel="play">
+              <i class="fa-solid fa-chess-board link-icon"></i>
+              <span class="link-label">Play</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#about" class="sidebar-link" data-panel="about">
+              <i class="fa-solid fa-scroll link-icon"></i>
+              <span class="link-label">About</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+          
+          <li>
+            <a href="#docs" class="sidebar-link" data-panel="docs">
+              <i class="fa-solid fa-book-open link-icon"></i>
+              <span class="link-label">Documentation</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#contribute" class="sidebar-link" data-panel="contribute">
+              <i class="fa-solid fa-hands-helping link-icon"></i>
+              <span class="link-label">Contribute</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+
+          <li class="sidebar-nav-label">Learn &amp; Train</li>
+          <li>
+            <a href="../game/features/lessons/lessons.html" class="sidebar-link">
+              <i class="fa-solid fa-graduation-cap link-icon"></i>
+              <span class="link-label">Lessons</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+          <li>
+            <a href="../game/features/puzzles/puzzles.html" class="sidebar-link">
+              <i class="fa-solid fa-puzzle-piece link-icon"></i>
+              <span class="link-label">Puzzles</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+          <li>
+            <a href="howtoplay.html" class="sidebar-link">
+              <i class="fa-solid fa-circle-question link-icon"></i>
+              <span class="link-label">How to Play</span>
+              <i class="fa-solid fa-chevron-right link-arrow"></i>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-spacer"></div>
+
+        <!-- Bottom CTA -->
+        <div class="sidebar-bottom">
+         
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-main" id="appMain">
 
   <!-- HERO -->
-  <section id="hero" class="hero-section">
+  <section id="hero" class="section hero-section content-panel active" data-panel="hero">
     <div class="hero-bg" id="heroBg"></div>
     <div class="hero-overlay"></div>
 
@@ -164,15 +186,13 @@
         </div>
       </div>
       <div class="hero-actions">
-        <a href="#play" class="btn-primary"
-          onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'}); return false;">
+        <a href="#play" class="btn-primary" data-panel="play">
           <i class="fa-solid fa-swords"></i> Enter the Battlefield
         </a>
         <a href="howtoplay.html" class="btn-secondary btn-howto">
           <i class="fa-solid fa-graduation-cap"></i> How to Play
         </a>
-        <a href="#about" class="btn-secondary"
-          onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'}); return false;">
+        <a href="#about" class="btn-secondary" data-panel="about">
           <i class="fa-solid fa-scroll"></i> The Legend
         </a>
       </div>
@@ -183,7 +203,7 @@
   </section>
 
   <!-- ABOUT -->
-  <section id="about" class="section about-section">
+  <section id="about" class="section about-section content-panel" data-panel="about">
     <div class="section-ornament top"></div>
     <div class="container">
       <div class="section-header reveal">
@@ -270,7 +290,7 @@
   </section>
 
   <!-- PLAY -->
-  <section id="play" class="section play-section">
+  <section id="play" class="section play-section content-panel" data-panel="play">
     <div class="container">
       <div class="section-header reveal">
         <span class="section-tag">Battlefield</span>
@@ -278,71 +298,32 @@
         <p class="section-subtitle">Choose your campaign. Command your forces on the ancient 8×8 war board.</p>
       </div>
 
-      <!-- Play vs Bot -->
+      <!-- Play vs Bot + Play Online -->
       <div class="play-category reveal">
-        <h3 class="play-cat-title"><i class="fa-solid fa-robot"></i> Play vs Bot</h3>
-        <p class="play-cat-desc">Face the ancient war machines. Select how many of the four armies are controlled by
-          bots.</p>
-        <div class="play-cards">
+       <center> 
+ 
+        <p class="play-cat-desc">Face the ancient war machines offline, or challenge warriors from across the realm
+          online.</p>
 
-          <div class="play-card bot-1" id="playBot1">
+       </center>
+        <div class="play-cards play-cards-duo">
+
+          <button type="button" class="play-card campaign-card bot-campaign-card" id="playBotsCard" aria-haspopup="dialog"
+            aria-controls="botMenuOverlay">
             <div class="play-card-glow"></div>
-            <div class="play-card-inner">
-              <div class="play-card-icon">
-                <i class="fa-solid fa-robot"></i>
-              </div>
-              <div class="play-card-bot-badge">1 Bot</div>
-              <h4>Blue is the Machine</h4>
-              <p>You (Red) vs Blue (Bot). Green &amp; Yellow are allied human players. The simplest challenge.</p>
-              <div class="play-card-armies">
-                <span class="army-dot red-dot" title="Red — You"></span>
-                <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
-                <span class="army-dot green-dot" title="Green — Ally"></span>
-                <span class="army-dot yellow-dot" title="Yellow — Ally"></span>
-              </div>
-              <a href="../game/game.html?botCount=1" class="play-card-btn">
-                <i class="fa-solid fa-play"></i> Begin Campaign
-              </a>
+            <span class="offline-badge"><i class="fa-solid fa-wifi"></i> Offline Supported</span>
+
+            <div class="campaign-media">
+              <img src="./images/fighting_kings.png" alt="Two kings clashing on the battlefield" loading="lazy" />
+              <div class="campaign-media-fade"></div>
             </div>
-          </div>
 
-          <div class="play-card bot-2 featured" id="playBot2">
-            <div class="play-card-glow"></div>
-            <div class="featured-badge"><i class="fa-solid fa-star"></i> Most Popular</div>
-            <div class="play-card-inner">
+            <div class="play-card-inner campaign-inner">
               <div class="play-card-icon">
                 <i class="fa-solid fa-robot"></i>
-                <i class="fa-solid fa-robot"></i>
               </div>
-              <div class="play-card-bot-badge">2 Bots</div>
-              <h4>Team Battle</h4>
-              <p>You &amp; Red vs Blue &amp; Yellow (both Bots). A true 2v2 alliance war — human intuition against
-                machine strategy.</p>
-              <div class="play-card-armies">
-                <span class="army-dot red-dot" title="Red — You"></span>
-                <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
-                <span class="army-dot green-dot" title="Green — Ally"></span>
-                <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
-                    class="fa-solid fa-microchip"></i></span>
-              </div>
-              <a href="../game/game.html?botCount=2" class="play-card-btn">
-                <i class="fa-solid fa-play"></i> Begin Campaign
-              </a>
-            </div>
-          </div>
-
-          <div class="play-card bot-3" id="playBot3">
-            <div class="play-card-glow"></div>
-            <div class="play-card-inner">
-              <div class="play-card-icon">
-                <i class="fa-solid fa-robot"></i>
-                <i class="fa-solid fa-robot"></i>
-                <i class="fa-solid fa-robot"></i>
-              </div>
-              <div class="play-card-bot-badge">3 Bots</div>
-              <h4>Lone Warrior</h4>
-              <p>You (Red) alone vs three bot kingdoms. The ultimate test — outwit three ancient war machines
-                simultaneously.</p>
+              <h4>Face the War Machines</h4>
+              <p>Duel one bot kingdom, or stand alone against three. Choose your odds — no internet required.</p>
               <div class="play-card-armies">
                 <span class="army-dot red-dot" title="Red — You"></span>
                 <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
@@ -351,49 +332,34 @@
                 <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
                     class="fa-solid fa-microchip"></i></span>
               </div>
-              <a href="../game/game.html?botCount=3" class="play-card-btn">
-                <i class="fa-solid fa-play"></i> Begin Campaign
-              </a>
+              <span class="play-card-btn campaign-cta">
+                <i class="fa-solid fa-chess-board"></i> Choose Your Battle
+              </span>
             </div>
-          </div>
-        </div>
-      </div>
+          </button>
 
-      <!-- Play Online -->
-      <div class="play-category reveal">
-        <h3 class="play-cat-title"><i class="fa-solid fa-globe"></i> Play Online</h3>
-        <div class="coming-soon-card">
-          <div class="cs-bg-pattern"></div>
-          <div class="cs-content">
-            <div class="cs-icon"><i class="fa-solid fa-globe"></i></div>
-            <h3>Online Multiplayer</h3>
-            <p>Challenge warriors from across the realm. Form alliances with friends or meet new opponents in the global
-              Ashtāpada.</p>
-                <button 
-  onclick="window.location.href = '../game/lobby.html'" 
-  style="
-    padding: 14px 42px;
-    font-family: 'Cinzel', 'Georgia', serif;
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 3px;
-    color: #2a1800;
-    background: linear-gradient(180deg, #ffe57f 0%, #d4af37 60%, #aa7c11 100%);
-    border: 1px solid #ffe89e;
-    border-radius: 6px;
-    cursor: pointer;
-    text-transform: uppercase;
-    box-shadow: 0 5px 0 #5c4000, 0 10px 20px rgba(0, 0, 0, 0.5);
-    transition: all 0.1s ease;
-  "
-  onmouseover="this.style.filter='brightness(1.15)';"
-  onmouseout="this.style.filter='brightness(1)';"
-  onmousedown="this.style.transform='translateY(4px)'; this.style.boxShadow='0 1px 0 #5c4000, 0 4px 10px rgba(0,0,0,0.5)';"
-  onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 0 #5c4000, 0 10px 20px rgba(0,0,0,0.5)';"
->
-  ⚔️ PLAY
-</button>
-          </div>
+          <a href="../game/lobby.html" class="play-card campaign-card online-campaign-card">
+            <div class="play-card-glow"></div>
+            <span class="offline-badge"><i class="fa-solid fa-globe"></i> Online Required</span>
+
+            <div class="campaign-media">
+              <img src="./images/online_multiplayer.png" alt="Two kings clashing on the battlefield" loading="lazy" />
+              <div class="campaign-media-fade"></div>
+            </div>
+
+            <div class="play-card-inner campaign-inner">
+              <div class="play-card-icon">
+                <i class="fa-solid fa-globe"></i>
+              </div>
+              <h4>Challenge the Realm</h4>
+              <p>Play warriors from across the world. Form alliances with friends or meet new opponents in the global
+                Ashtāpada.</p>
+              <button class="play-card-btn campaign-cta" onclick="{window.location.href = '../game/lobby.html'}">
+                <i class="fa-solid fa-play"></i> Play Online
+              </button>
+            </div>
+          </a>
+
         </div>
       </div>
 
@@ -408,7 +374,7 @@
             <p>Build your own formation on 10×10 Dashapada or 12×12 Vrihadpad battlefields.</p>
             <div class="coming-soon-banner">
               <span class="cs-lotus">🪷</span>
-              <span class="cs-text">Available Now in game!</span>
+              <span class="cs-text">Coming Soon</span>
               <span class="cs-lotus">🪷</span>
             </div>
           </div>
@@ -419,7 +385,7 @@
   </section>
 
   <!-- DOCUMENTATION -->
-  <section id="docs" class="section docs-section">
+  <section id="docs" class="section docs-section content-panel" data-panel="docs">
     <div class="section-ornament top"></div>
     <div class="container">
       <div class="section-header reveal">
@@ -715,7 +681,7 @@ const weights = {
   </section>
 
   <!-- CONTRIBUTE -->
-  <section id="contribute" class="section contribute-section">
+  <section id="contribute" class="section contribute-section content-panel" data-panel="contribute">
     <div class="container">
       <div class="section-header reveal">
         <span class="section-tag">Join the Order</span>
@@ -836,10 +802,10 @@ const weights = {
         <div class="footer-links">
           <h5>Navigate</h5>
           <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#play">Play vs Bot</a></li>
-            <li><a href="#docs">Documentation</a></li>
-            <li><a href="#contribute">Contribute</a></li>
+            <li><a href="#about" data-panel="about">About</a></li>
+            <li><a href="#play" data-panel="play">Play vs Bot</a></li>
+            <li><a href="#docs" data-panel="docs">Documentation</a></li>
+            <li><a href="#contribute" data-panel="contribute">Contribute</a></li>
           </ul>
         </div>
         <div class="footer-links">
@@ -884,6 +850,107 @@ const weights = {
     </div>
   </footer>
 
+    </div>
+    <!-- /app-main -->
+
+    <!-- Bot count selection — full right-panel overlay.
+         NOTE: lives here, as a direct child of .app-shell, rather than
+         nested inside <section id="play">. The play/about/docs/contribute
+         sections use `content-visibility: auto` for performance, which
+         implicitly applies CSS containment — and a `position: fixed`
+         element nested inside a contained ancestor gets positioned
+         relative to that ancestor instead of the viewport. That was
+         cutting the overlay off and making its Start Campaign button
+         unreachable/unscrollable. Keeping it here (still a descendant of
+         .app-shell, so the sidebar-aware `left` offset rules still match)
+         fixes that. -->
+    <div class="bot-menu-overlay" id="botMenuOverlay" role="dialog" aria-modal="true" aria-labelledby="botMenuTitle">
+      <div class="bot-menu-inner">
+        <button type="button" class="bot-menu-exit" id="botMenuExit" aria-label="Exit">
+          <i class="fa-solid fa-arrow-left"></i> <span>Exit</span>
+        </button>
+
+        <div class="bot-menu-header">
+          <span class="section-tag">Play vs Bot</span>
+          <h2 id="botMenuTitle" class="section-title">Choose Your Battle</h2>
+          <p class="section-subtitle">Select how many of the four armies are controlled by bots.</p>
+        </div>
+
+        <div class="bot-menu-options" id="botMenuOptions">
+
+          <button type="button" class="bot-option" data-bots="1">
+            <div class="play-card-glow"></div>
+            <div class="play-card-icon">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="play-card-bot-badge">1 Bot</div>
+            <h4>Blue is the Machine</h4>
+            <p>You (Red) vs Blue (Bot). Green &amp; Yellow are allied human players. The simplest challenge.</p>
+            <div class="play-card-armies">
+              <span class="army-dot red-dot" title="Red — You"></span>
+              <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
+              <span class="army-dot green-dot" title="Green — Ally"></span>
+              <span class="army-dot yellow-dot" title="Yellow — Ally"></span>
+            </div>
+            <span class="bot-option-check"><i class="fa-solid fa-check"></i></span>
+          </button>
+
+          <button type="button" class="bot-option featured" data-bots="2">
+            <div class="play-card-glow"></div>
+            <div class="featured-badge"><i class="fa-solid fa-star"></i> Most Popular</div>
+            <div class="play-card-icon">
+              <i class="fa-solid fa-robot"></i>
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="play-card-bot-badge">2 Bots</div>
+            <h4>Team Battle</h4>
+            <p>You &amp; Red vs Blue &amp; Yellow (both Bots). A true 2v2 alliance war — human intuition against
+              machine strategy.</p>
+            <div class="play-card-armies">
+              <span class="army-dot red-dot" title="Red — You"></span>
+              <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
+              <span class="army-dot green-dot" title="Green — Ally"></span>
+              <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
+                  class="fa-solid fa-microchip"></i></span>
+            </div>
+            <span class="bot-option-check"><i class="fa-solid fa-check"></i></span>
+          </button>
+
+          <button type="button" class="bot-option" data-bots="3">
+            <div class="play-card-glow"></div>
+            <div class="play-card-icon">
+              <i class="fa-solid fa-robot"></i>
+              <i class="fa-solid fa-robot"></i>
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="play-card-bot-badge">3 Bots</div>
+            <h4>Lone Warrior</h4>
+            <p>You (Red) alone vs three bot kingdoms. The ultimate test — outwit three ancient war machines
+              simultaneously.</p>
+            <div class="play-card-armies">
+              <span class="army-dot red-dot" title="Red — You"></span>
+              <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
+              <span class="army-dot green-dot bot-dot" title="Green — Bot"><i
+                  class="fa-solid fa-microchip"></i></span>
+              <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
+                  class="fa-solid fa-microchip"></i></span>
+            </div>
+            <span class="bot-option-check"><i class="fa-solid fa-check"></i></span>
+          </button>
+
+        </div>
+
+        <div class="bot-menu-footer">
+          <a href="../game/game.html?botCount=2" class="play-card-btn bot-menu-start" id="botMenuStart">
+            <i class="fa-solid fa-play"></i> Start Campaign
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /app-shell -->
+
   <!-- Chatbot Floating Button -->
   <button class="chatbot-fab" id="chatbotFab" title="Ask Chaturang AI" aria-label="Open Chatbot">
     <i class="fa-solid fa-comments"></i>
@@ -925,164 +992,163 @@ const weights = {
 
 
 <script>
+  // ---------- Sidebar profile chip ----------
+  function renderSidebarProfile(){
+    var btn = document.getElementById('sidebarProfileBtn');
+    var avatar = document.getElementById('sidebarProfileAvatar');
+    var name = document.getElementById('sidebarProfileName');
+    var sub = document.getElementById('sidebarProfileSub');
+    if (!btn || typeof Session === 'undefined') return;
 
-
-  (function(){
-  var accountEl = document.getElementById('sidebarAccount');
-  var toggleBtn = document.getElementById('accountToggle');
-  var nameEl = document.getElementById('accountName');
-  var subEl = document.getElementById('accountSub');
-  var logoutBtn = document.getElementById('logoutBtn');
-  var signinBtn = document.getElementById('signinBtn');
-
-  if (!accountEl || typeof Session === 'undefined') return;
-
-  function renderAccount(){
     var user = Session.get();
     if (user){
-      nameEl.textContent = user.name || user.email || 'Player';
-      subEl.textContent = (user.name && user.email) ? user.email : 'Signed in';
-      logoutBtn.style.display = '';
-      signinBtn.style.display = 'none';
+      avatar.innerHTML = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
+      name.textContent = user.name || user.email || 'Player';
+      sub.textContent = 'View Profile';
+      btn.href = '../website/userprofile.html';
     } else {
-      nameEl.textContent = 'Guest';
-      subEl.textContent = 'Not signed in';
-      logoutBtn.style.display = 'none';
-      signinBtn.style.display = '';
+      avatar.innerHTML = '<i class="fa-solid fa-user"></i>';
+      name.textContent = 'Guest';
+      sub.textContent = 'Sign In';
+      btn.href = 'loginpage.html';
+    }
+  }
+  renderSidebarProfile();
+  if (typeof Session !== 'undefined') Session.onChange(renderSidebarProfile);
+
+  // ---------- Sidebar panel switching ----------
+  (function(){
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.content-panel'));
+    var panelLinks = Array.prototype.slice.call(document.querySelectorAll('[data-panel]'));
+    var validPanels = panels.map(function(p){ return p.getAttribute('data-panel'); });
+
+    function showPanel(name, updateHash){
+      if (validPanels.indexOf(name) === -1) return;
+      panels.forEach(function(p){
+        p.classList.toggle('active', p.getAttribute('data-panel') === name);
+      });
+      panelLinks.forEach(function(l){
+        if (l.classList.contains('sidebar-link') || l.classList.contains('sidebar-brand')) {
+          l.classList.toggle('active', l.getAttribute('data-panel') === name);
+        }
+      });
+      closeSidebar();
+      window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+      if (updateHash !== false) {
+        history.replaceState(null, '', '#' + name);
+      }
+    }
+    window.appShowPanel = showPanel;
+
+    document.addEventListener('click', function(e){
+      var el = e.target.closest ? e.target.closest('[data-panel]') : null;
+      if (!el) return;
+      e.preventDefault();
+      showPanel(el.getAttribute('data-panel'));
+    });
+
+    var initial = (location.hash || '#hero').replace('#', '');
+    showPanel(validPanels.indexOf(initial) !== -1 ? initial : 'hero', false);
+  })();
+
+  // ---------- Mobile sidebar toggle ----------
+  var sidebarToggleBtn = document.getElementById('sidebarToggle');
+  var appSidebar = document.getElementById('appSidebar');
+  var sidebarScrim = document.getElementById('sidebarScrim');
+
+  function openSidebar(){
+    if (!appSidebar) return;
+    appSidebar.classList.add('open');
+    sidebarScrim.classList.add('open');
+    sidebarToggleBtn.classList.add('open');
+    sidebarToggleBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeSidebar(){
+    if (!appSidebar) return;
+    appSidebar.classList.remove('open');
+    sidebarScrim.classList.remove('open');
+    sidebarToggleBtn.classList.remove('open');
+    sidebarToggleBtn.setAttribute('aria-expanded', 'false');
+  }
+  if (sidebarToggleBtn){
+    sidebarToggleBtn.addEventListener('click', function(){
+      appSidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+  }
+  if (sidebarScrim){
+    sidebarScrim.addEventListener('click', closeSidebar);
+  }
+
+  // ---------- Sidebar arrow collapse (desktop/tablet) ----------
+  var appShell = document.querySelector('.app-shell');
+  var sidebarArrowToggle = document.getElementById('sidebarArrowToggle');
+
+  function setSidebarCollapsed(collapsed){
+    if (!appShell) return;
+    appShell.classList.toggle('sidebar-collapsed', collapsed);
+    if (sidebarArrowToggle){
+      sidebarArrowToggle.setAttribute('aria-expanded', String(!collapsed));
+      sidebarArrowToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    }
+    try { localStorage.setItem('chaturanga_sidebar_collapsed', collapsed ? '1' : '0'); } catch (e) {}
+  }
+
+  if (sidebarArrowToggle && appShell){
+    sidebarArrowToggle.addEventListener('click', function(){
+      setSidebarCollapsed(!appShell.classList.contains('sidebar-collapsed'));
+    });
+    try {
+      if (localStorage.getItem('chaturanga_sidebar_collapsed') === '1'){
+        setSidebarCollapsed(true);
+      }
+    } catch (e) {}
+  }
+
+  // ---------- Play vs Bot: merged card → full-panel selection overlay ----------
+  var playBotsCard = document.getElementById('playBotsCard');
+  var botMenuOverlay = document.getElementById('botMenuOverlay');
+  var botMenuExit = document.getElementById('botMenuExit');
+  var botMenuOptions = document.getElementById('botMenuOptions');
+  var botMenuStart = document.getElementById('botMenuStart');
+
+  function openBotMenu(){
+    if (!botMenuOverlay) return;
+    botMenuOverlay.classList.add('open');
+    document.body.classList.add('no-scroll');
+  }
+  function closeBotMenu(){
+    if (!botMenuOverlay) return;
+    botMenuOverlay.classList.remove('open');
+    document.body.classList.remove('no-scroll');
+  }
+  function selectBotOption(btn){
+    if (!btn || !botMenuOptions) return;
+    var opts = botMenuOptions.querySelectorAll('.bot-option');
+    opts.forEach(function(o){ o.classList.remove('selected'); });
+    btn.classList.add('selected');
+    var count = btn.getAttribute('data-bots') || '2';
+    if (botMenuStart){
+      botMenuStart.href = '../game/game.html?botCount=' + count;
     }
   }
 
-  function closeDropdown(){
-    accountEl.classList.remove('open');
-    toggleBtn.setAttribute('aria-expanded', 'false');
+  if (playBotsCard){
+    playBotsCard.addEventListener('click', openBotMenu);
   }
-
-  toggleBtn.addEventListener('click', function(e){
-    e.stopPropagation();
-    var isOpen = accountEl.classList.toggle('open');
-    toggleBtn.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  // Close on any click outside the account block
-  document.addEventListener('click', function(e){
-    if (!accountEl.contains(e.target)) closeDropdown();
-  });
-
-  // Close on Escape
+  if (botMenuExit){
+    botMenuExit.addEventListener('click', closeBotMenu);
+  }
+  if (botMenuOptions){
+    botMenuOptions.addEventListener('click', function(e){
+      var btn = e.target.closest ? e.target.closest('.bot-option') : null;
+      if (btn) selectBotOption(btn);
+    });
+    // Default selection: "2 Bots" (Most Popular)
+    selectBotOption(botMenuOptions.querySelector('.bot-option.featured'));
+  }
   document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') closeDropdown();
+    if (e.key === 'Escape' && botMenuOverlay && botMenuOverlay.classList.contains('open')) closeBotMenu();
   });
-
-  logoutBtn.addEventListener('click', function(){
-    Session.clear();
-    renderAccount();
-    closeDropdown();
-  });
-
-  signinBtn.addEventListener('click', function(){
-    window.location.href = 'loginpage.html';
-  });
-
-  // If the session changes in another tab (e.g. logout elsewhere),
-  // reflect it here too — this is exactly what Session.onChange is for.
-  Session.onChange(function(){ renderAccount(); });
-
-  renderAccount();
-})();
-
-function renderNavUser() {
-    const navUser = document.getElementById('navUser');
-    if (!navUser) return;
-    navUser.innerHTML = '';
-
-    const user = Session.get();
-
-    if (!user) {
-      const link = document.createElement('a');
-      link.href = 'loginpage.html';
-      link.className = 'nav-signin';
-      link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
-      navUser.appendChild(link);
-      return;
-    }
-
-    // --- Trigger (the avatar + name button) ---
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'nav-user-badge';
-    trigger.setAttribute('aria-haspopup', 'true');
-    trigger.setAttribute('aria-expanded', 'false');
-
-    const avatar = document.createElement('span');
-    avatar.className = 'nav-user-avatar';
-    avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
-
-    const name = document.createElement('span');
-    name.className = 'nav-user-name';
-    name.textContent = user.name || user.email;
-    name.title = user.name || user.email;
-
-    const caret = document.createElement('i');
-    caret.className = 'fa-solid fa-chevron-down nav-user-caret';
-    caret.setAttribute('aria-hidden', 'true');
-
-    trigger.append(avatar, name, caret);
-
-    // --- Dropdown panel ---
-    const dropdown = document.createElement('div');
-    dropdown.className = 'nav-user-dropdown';
-    dropdown.setAttribute('role', 'menu');
-
-    const profileLink = document.createElement('a');
-    profileLink.href = '../website/userprofile.html';
-    profileLink.className = 'nav-dropdown-item';
-    profileLink.setAttribute('role', 'menuitem');
-    profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
-
-    const logoutBtn = document.createElement('button');
-    logoutBtn.type = 'button';
-    logoutBtn.className = 'nav-dropdown-item nav-dropdown-logout';
-    logoutBtn.setAttribute('role', 'menuitem');
-    logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
-
-    dropdown.append(profileLink, logoutBtn);
-    navUser.append(trigger, dropdown);
-
-    // --- Open/close behavior ---
-    function openDropdown() {
-      dropdown.classList.add('open');
-      trigger.setAttribute('aria-expanded', 'true');
-      document.addEventListener('click', onOutsideClick);
-      document.addEventListener('keydown', onKeydown);
-    }
-    function closeDropdown() {
-      dropdown.classList.remove('open');
-      trigger.setAttribute('aria-expanded', 'false');
-      document.removeEventListener('click', onOutsideClick);
-      document.removeEventListener('keydown', onKeydown);
-    }
-    function onOutsideClick(e) {
-      if (!navUser.contains(e.target)) closeDropdown();
-    }
-    function onKeydown(e) {
-      if (e.key === 'Escape') closeDropdown();
-    }
-
-    trigger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
-    });
-
-    logoutBtn.addEventListener('click', function () {
-      closeDropdown();
-      Session.clear();
-      renderNavUser();
-    });
-  }
-
-  renderNavUser();
-  Session.onChange(renderNavUser);
-
  </script>
 
   <!-- Cookie Consent Banner -->

@@ -296,7 +296,7 @@ function engineToWireBoard(game) {
 }
 function getRoomSnapshot(room) {
   return {
-    code: room.code, mode: room.mode, status: room.status,
+    code: room.code, mode: room.mode, status: room.status, private: !!room.private, ownerSeat: 0,
     players: room.players.filter(Boolean).map(p => ({ seat: p.seat, name: p.name, elo: p.elo, connected: p.connected, isBot: !!p.isBot })),
     board: room.board, currentSeat: room.currentSeat, turn: room.turn,
     forcedPiece: room.forcedPiece, diceFace: room.diceFace, chatHistory: room.chatHistory.slice(-30),
@@ -315,7 +315,7 @@ function expectedScore(ratingA, ratingB) { return 1 / (1 + Math.pow(10, (ratingB
 function getLobbySnapshot() {
   const openRooms = [];
   rooms.forEach((room, code) => {
-    if (room.status === 'waiting') {
+    if (room.status === 'waiting' && !room.private) {
       const maxPlayers = 4; // every room is a 4-seat board now
       const filledSeats = room.players.filter(p => p && (p.connected || p.disconnectedAt) && !p.isBot).length;
       const elos = room.players.filter(Boolean).map(p => p.elo);
@@ -653,6 +653,7 @@ io.on('connection', socket => {
         const token = resolveToken(msg.token);
         const userId = resolveUserId(msg.userId);
         const elo = await resolveEloAuthoritative(token, msg.elo, userId);
+        const isPrivate = msg.roomType === 'private';
         let code; do { code = makeRoomCode(); } while (rooms.has(code));
         const player = { seat: 0, name, token, elo, socket, disconnectedAt: null, connected: true, isBot: false, dbUserId: userId };
         tokens.set(token, { roomCode: code, seat: 0 });
@@ -664,7 +665,7 @@ io.on('connection', socket => {
              { seat: 2, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true },
              { seat: 3, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true }];
         const room = {
-          code, mode, status: 'waiting', players,
+          code, mode, status: 'waiting', players, private: isPrivate, ownerToken: token,
           board: null, currentSeat: 0, turn: 0, forcedPiece: null, diceFace: null, chatHistory: [], rematchVotes: new Set(), createdAt: Date.now(), engine: null,
         };
         rooms.set(code, room);
@@ -673,7 +674,9 @@ io.on('connection', socket => {
         socket.join(code);
         send(socket, { type: 'room-created', code, seat: 0, token, snapshot: getRoomSnapshot(room) });
         broadcastLobby();
-        scheduleRoomBotFallback(room); // fills the remaining human seat(s) if no one joins in time
+        // NOTE: no scheduleRoomBotFallback() here — starting the match with
+        // bots filling empty seats is now entirely the room owner's call,
+        // triggered by the 'start-room' message below, not an idle timer.
         break;
       }
 
@@ -733,6 +736,16 @@ io.on('connection', socket => {
         const humanSeatsFilled = room.players.filter(p => p && !p.isBot).length;
         if (humanSeatsFilled >= humanSeatsNeeded) startGame(room);
         else broadcastLobby();
+        break;
+      }
+      case 'start-room': {
+        const room = rooms.get(socket._room);
+        if (!room) { send(socket, { type: 'error', code: 'ROOM_GONE', message: 'Room no longer exists.' }); break; }
+        if (room.status !== 'waiting') break;
+        if (socket._seat !== 0) { send(socket, { type: 'error', code: 'NOT_OWNER', message: 'Only the room owner can start the match.' }); break; }
+        clearRoomBotFallback(room);
+        fillRoomWithBots(room); // any still-empty human seat is handed to a bot
+        startGame(room);
         break;
       }
       case 'reconnect': {
@@ -916,61 +929,75 @@ case 'check-friends-online': {
   if (!userId) { send(socket, { type: 'error', code: 'NOT_LOGGED_IN', message: 'You must be logged in to invite friends.' }); break; }
   if (!targetUserId) break;
   if (!onlineUsers.has(targetUserId)) { send(socket, { type: 'error', code: 'FRIEND_OFFLINE', message: 'That friend is not online right now.' }); break; }
- 
-
-
-  if (socket._room) {
-    const existing = rooms.get(socket._room);
-    if (existing && (existing.status === 'playing' || existing.status === 'waiting')) {
-      send(socket, { type: 'error', code: 'ALREADY_IN_ROOM', message: 'Leave or finish your current match before inviting a friend.' });
-      break;
-    }
-  }
-
 
   const name = String(msg.name || 'Player').slice(0, 20);
   const token = resolveToken(msg.token);
   const elo = await resolveEloAuthoritative(token, msg.elo, userId);
   const mode = msg.mode === '4p' ? '4p' : '2p';
- 
-  // Same room shape as the 'create-room' handler — the inviter takes seat 0
-  // and waits; a 2p room's seats 2/3 are permanent bots as usual.
-  let code; do { code = makeRoomCode(); } while (rooms.has(code));
-  const player = { seat: 0, name, token, elo, socket, disconnectedAt: null, connected: true, isBot: false, dbUserId: userId };
-  tokens.set(token, { roomCode: code, seat: 0 });
-  const players = mode === '4p'
-    ? [player, null, null, null]
-    : [player, null,
-       { seat: 2, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true },
-       { seat: 3, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true }];
-  const room = {
-    code, mode, status: 'waiting', players,
-    board: null, currentSeat: 0, turn: 0, forcedPiece: null, diceFace: null,
-    chatHistory: [], rematchVotes: new Set(), createdAt: Date.now(), engine: null,
-  };
-  rooms.set(code, room);
-  socket._room = code; socket._seat = 0; socket._token = token;
-  socket.leave('lobby');
-  socket.join(code);
-  send(socket, { type: 'room-created', code, seat: 0, token, snapshot: getRoomSnapshot(room) });
-  broadcastLobby();
-  // NOTE: no scheduleRoomBotFallback() here — an invite is either accepted,
-  // declined, or times out on its own 30s clock (below), so bots should
-  // never silently fill a friend-invite room.
- 
+
+  // If the caller is the owner of a room they've already created and it's
+  // still waiting, reuse it instead of spinning up a second one — this is
+  // the "invite friends into the room I just made" flow. Otherwise fall
+  // back to the original behavior: create a fresh room just for this invite.
+  const requestedCode = String(msg.roomCode || '').toUpperCase().trim();
+  let room = requestedCode ? rooms.get(requestedCode) : null;
+  const reusingOwnRoom = !!(room && socket._room === requestedCode && socket._seat === 0 && room.status === 'waiting');
+
+  let code, ephemeralRoom;
+  if (reusingOwnRoom) {
+    code = requestedCode;
+    ephemeralRoom = false;
+  } else {
+    if (socket._room) {
+      const existing = rooms.get(socket._room);
+      if (existing && (existing.status === 'playing' || existing.status === 'waiting')) {
+        send(socket, { type: 'error', code: 'ALREADY_IN_ROOM', message: 'Leave or finish your current match before inviting a friend.' });
+        break;
+      }
+    }
+
+    // Same room shape as the 'create-room' handler — the inviter takes seat 0
+    // and waits; a 2p room's seats 2/3 are permanent bots as usual. Private
+    // by default: this room exists for one specific friend, not public discovery.
+    do { code = makeRoomCode(); } while (rooms.has(code));
+    ephemeralRoom = true;
+    const player = { seat: 0, name, token, elo, socket, disconnectedAt: null, connected: true, isBot: false, dbUserId: userId };
+    tokens.set(token, { roomCode: code, seat: 0 });
+    const players = mode === '4p'
+      ? [player, null, null, null]
+      : [player, null,
+         { seat: 2, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true },
+         { seat: 3, name: ` ${randomBotBaseName()}`, token: makeToken(), elo, socket: null, disconnectedAt: null, connected: true, isBot: true }];
+    room = {
+      code, mode, status: 'waiting', players, private: true, ownerToken: token,
+      board: null, currentSeat: 0, turn: 0, forcedPiece: null, diceFace: null,
+      chatHistory: [], rematchVotes: new Set(), createdAt: Date.now(), engine: null,
+    };
+    rooms.set(code, room);
+    socket._room = code; socket._seat = 0; socket._token = token;
+    socket.leave('lobby');
+    socket.join(code);
+    send(socket, { type: 'room-created', code, seat: 0, token, snapshot: getRoomSnapshot(room) });
+    broadcastLobby();
+    // NOTE: no scheduleRoomBotFallback() here — an invite is either accepted,
+    // declined, or times out on its own 30s clock (below), so bots should
+    // never silently fill a friend-invite room. Starting with bots in the
+    // remaining seats is always the owner's explicit 'start-room' call.
+  }
+
   const inviteId = makeInviteId();
   const timer = setTimeout(() => {
     const inv = pendingInvites.get(inviteId);
     if (!inv) return;
     pendingInvites.delete(inviteId);
     send(inv.fromSocket, { type: 'invite-timeout', inviteId, toName: inv.toName });
-    discardInviteRoom(inv.roomCode);
+    if (inv.ephemeralRoom) discardInviteRoom(inv.roomCode);
   }, INVITE_TIMEOUT_MS);
  
   pendingInvites.set(inviteId, {
   inviteId, fromUserId: userId, fromSocket: socket, fromName: name,
   toUserId: targetUserId, toSocket: null,   // NEW — filled in once we know the invitee is deliverable
-  roomCode: code, mode, timer
+  roomCode: code, mode, timer, ephemeralRoom
 });
  
  const delivered = sendToUser(targetUserId, {
@@ -984,7 +1011,7 @@ if (delivered) {
   if (!delivered) {
     clearTimeout(timer);
     pendingInvites.delete(inviteId);
-    discardInviteRoom(code);
+    if (ephemeralRoom) discardInviteRoom(code);
     send(socket, { type: 'error', code: 'FRIEND_OFFLINE', message: 'That friend just went offline.' });
   }
   break;
@@ -998,7 +1025,7 @@ if (delivered) {
  
   if (!msg.accepted) {
     send(inv.fromSocket, { type: 'invite-declined', inviteId: inv.inviteId, byName: String(msg.name || 'Friend').slice(0, 20) });
-    discardInviteRoom(inv.roomCode);
+    if (inv.ephemeralRoom) discardInviteRoom(inv.roomCode);
     break;
   }
   // Tell the invitee to join-room normally with the reserved code — reuses
@@ -1019,7 +1046,7 @@ pendingInvites.forEach((inv, id) => {
   if (inv.fromSocket === socket) {
     clearTimeout(inv.timer);
     pendingInvites.delete(id);
-    discardInviteRoom(inv.roomCode);
+    if (inv.ephemeralRoom) discardInviteRoom(inv.roomCode);
      if (inv.toSocket) send(inv.toSocket, { type: 'invite-cancelled', inviteId: id }); // NEW
   }
 });

@@ -95,10 +95,7 @@
       z-index: 0;
       overflow: hidden;
       background:
-        radial-gradient(ellipse at 50% -10%, rgba(139, 26, 26, 0.35) 0%, transparent 55%),
-        radial-gradient(ellipse at 15% 100%, rgba(61, 11, 11, 0.55) 0%, transparent 50%),
-        radial-gradient(ellipse at 85% 100%, rgba(61, 11, 11, 0.55) 0%, transparent 50%),
-        linear-gradient(180deg, rgba(18,4,0,0.88) 0%, rgba(26,6,0,0.78) 45%, rgba(18,4,0,0.92) 100%),
+       
         url('images-webp/hero_battlefield.webp') center center / cover no-repeat;
       background-blend-mode: normal, normal, normal, multiply, normal;
     }
@@ -254,11 +251,10 @@
 
     .brand-title .title-latin {
       font-family: var(--font-display);
-      font-weight: 900;
-      font-size: clamp(1.5rem, 5vw, 2.2rem);
-      letter-spacing: 8px;
-      color: var(--sandstone);
-      margin-top: 6px;
+    font-size: 7vw;
+    font-weight: 700;
+    color: var(--sandstone);
+    letter-spacing: 2px;
     }
 
     .brand-subtitle {
@@ -777,7 +773,7 @@
   <!-- Ambient hero-style background: aura, board watermark, embers -->
   <div class="page-atmosphere">
     <div class="atmo-glow"></div>
-    <div class="board-pattern"></div>
+   
     <div class="ember-particles" id="emberParticles"></div>
   </div>
 

@@ -19,7 +19,7 @@
 
 .mm-card{
   max-width:420px;margin:80px auto;padding:36px 28px;
-  background:rgba(20,20,24,.9);border:1px solid rgba(201,168,76,.25);
+  background:rgba(42,14,20,.9);border:1px solid rgba(201,168,76,.25);
   border-radius:14px;text-align:center;
 }
 .mm-title{font-size:1.3rem;font-weight:700;color:var(--gold,#c9a84c);margin-bottom:6px;}
@@ -70,15 +70,25 @@
 
 :root {
   --gold:#c9a84c;--gold2:#e8c96a;--gold3:#f5e4a0;
-  --dark:#0a0802;--dark2:#14100a;--dark3:#1c1508;--dark4:#241c0c;
-  --border:rgba(201,168,76,.18);--border2:rgba(201,168,76,.32);
-  --text:#f0e4c8;--muted:#8a7050;--muted2:#5a4830;
+  --maroon:#5c1420;--maroon2:#7a1e2c;--maroon3:#3a0d15;
+  --dark:#170609;--dark2:#2a0e14;--dark3:#3a141b;--dark4:#4a1b22;
+  --border:rgba(201,168,76,.22);--border2:rgba(201,168,76,.38);
+  --text:#f0e4c8;--muted:#c39a86;--muted2:#8a5d4e;
   --red:#e74c3c;--blue:#60a5fa;--green:#4ade80;--yellow:#fbbf24;
   --board-w: 47vw;
   --sq: clamp(30px, calc(var(--board-w) / 8), 76px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
+html,body{height:100%;color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden}
+/* Translucent maroon wash over the fixed hero battlefield art — cards below
+   still sit on their own opaque backgrounds, so only the gaps/margins
+   between them reveal the art. The nav keeps its own solid background
+   (unaffected) so it stays fully opaque. */
+body{
+  background:
+    linear-gradient(180deg, rgba(30,6,10,.72), rgba(15,4,7,.85)),
+    url('../website/images-webp/hero_battlefield.webp') center / cover no-repeat fixed;
+}
 
 /* ── NAV ─────────────────────────────────────────────────────── */
 .nav{background:var(--dark2);border-bottom:1px solid var(--border);
@@ -132,7 +142,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .qa-btn{flex:1;padding:9px 12px;border-radius:7px;border:none;font-family:'Outfit',sans-serif;
   font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;
   display:flex;align-items:center;justify-content:center;gap:6px}
-.qa-primary{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00}
+.qa-primary{background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;
+  /* flex:0 0 auto overrides .qa-btn's flex:1 — this button sits directly in
+     a flex-column card (.mode-card-rooms) alongside fixed-height siblings,
+     so without this it grows to swallow all the leftover vertical space
+     instead of keeping its natural height. */
+  flex:0 0 auto}
 .qa-primary:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
 .qa-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
 .qa-ghost:hover{border-color:var(--gold);color:var(--gold)}
@@ -161,6 +176,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .rc-meta{display:flex;gap:8px;align-items:center;font-size:.7rem;color:var(--muted)}
 .rc-slots{color:var(--green)}
 .rooms-empty{text-align:center;padding:28px;color:var(--muted);font-size:.82rem;font-style:italic}
+.rooms-section.collapsed{display:none}
+.rs-browse-btn{width:100%;padding:8px 12px;border-radius:7px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.8rem;
+  font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;
+  justify-content:center;gap:7px;margin-top:8px}
+.rs-browse-btn:hover{border-color:var(--gold);color:var(--gold)}
 
 /* ── GAME SCREEN ──────────────────────────────────────────────── */
 .game-layout{max-width:960px;margin:0 auto;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
@@ -285,10 +306,10 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .rcd-copy:hover{color:var(--gold)}
 
 /* RESULT OVERLAY */
-#resultOverlay{position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.9);
+#resultOverlay{position:fixed;inset:0;z-index:9999;background:rgba(20,4,7,.82);
   display:none;align-items:center;justify-content:center;padding:20px}
 #resultOverlay.show{display:flex}
-.result-card{background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border2);
+.result-card{background:linear-gradient(160deg,#3a141b,#170609);border:1px solid var(--border2);
   border-radius:14px;max-width:420px;width:100%;padding:28px 24px;text-align:center;
   box-shadow:0 0 60px rgba(201,168,76,.1)}
 .rc-icon{font-size:2.8rem;margin-bottom:8px}
@@ -339,6 +360,20 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;
   font-size:.78rem;cursor:pointer;transition:all .2s}
 .wc-cancel:hover{border-color:var(--red);color:var(--red)}
+.wc-start{padding:9px 20px;border-radius:7px;border:none;width:100%;margin-bottom:10px;
+  background:linear-gradient(135deg,#c8960c,#7a5c08);color:#1a0e00;font-family:'Outfit',sans-serif;
+  font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px}
+.wc-start:hover{background:linear-gradient(135deg,#e8b52a,#c8960c)}
+.wc-invite{padding:8px 20px;border-radius:7px;border:1px solid var(--border2);width:100%;margin-bottom:10px;
+  background:transparent;color:var(--gold2);font-family:'Outfit',sans-serif;
+  font-size:.78rem;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px}
+.wc-invite:hover{border-color:var(--gold);color:var(--gold)}
+.wc-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:.62rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 9px;border-radius:10px;margin-bottom:14px}
+.wc-type-badge.is-public{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+.wc-type-badge.is-private{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25)}
 .wc-pulse{display:flex;align-items:center;justify-content:center;gap:8px;
   font-size:.78rem;color:var(--muted);margin-bottom:16px}
 .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);
@@ -369,10 +404,104 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .prov-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;
   border-radius:8px;font-size:.6rem;color:var(--muted);border:1px solid var(--border);margin-left:4px}
 
-/* ── ELO SPARKLINE ────────────────────────────────────────────── */
-.elo-sparkline-wrap{margin-top:10px}
-.elo-sparkline-lbl{font-size:.6rem;color:var(--muted);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
-.elo-sparkline{width:100%;height:36px}
+/* ── LOBBY HERO (enlarged glowing rank badge + identity) ─────── */
+.lobby-hero{display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:38px 20px 6px}
+.rank-hero{position:relative;cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;gap:12px;padding:30px 40px 22px;border-radius:22px;max-width:380px;width:100%;
+  background:radial-gradient(circle at 50% 28%,rgba(201,168,76,.12),rgba(20,16,10,.35) 72%);
+  border:1px solid var(--border2);transition:transform .25s ease,box-shadow .25s ease}
+.rank-hero:hover{transform:translateY(-3px);box-shadow:0 12px 44px rgba(201,168,76,.16)}
+.rank-hero:active{transform:translateY(-1px)}
+.rank-hero .rank-badge{font-size:1.05rem;padding:8px 24px;border-radius:22px;margin-top:0;
+  letter-spacing:.06em;position:relative;z-index:1;animation:rankGlow 2.6s ease-in-out infinite}
+@keyframes rankGlow{
+  0%,100%{box-shadow:0 0 10px currentColor,0 0 0 currentColor;filter:brightness(1)}
+  50%{box-shadow:0 0 24px currentColor,0 0 8px currentColor;filter:brightness(1.18)}
+}
+.rank-hero-name-input{background:transparent;border:none;border-bottom:1px solid transparent;
+  color:var(--text);font-family:'Cinzel',serif;font-size:1.15rem;font-weight:600;
+  text-align:center;padding:4px 6px;max-width:230px;transition:border-color .2s}
+.rank-hero-name-input:hover,.rank-hero-name-input:focus{border-bottom-color:var(--border2);outline:none}
+.rank-hero-name-input::placeholder{color:var(--muted);font-family:'Outfit',sans-serif;font-weight:400;font-size:.9rem}
+.rank-hero-elo-row{display:flex;align-items:baseline;justify-content:center;gap:7px;flex-wrap:wrap}
+.rank-hero-elo{font-family:'Cinzel',serif;font-size:2.5rem;font-weight:700;color:var(--gold2);
+  text-shadow:0 0 20px rgba(201,168,76,.5);line-height:1}
+.rank-hero-elo-lbl{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.rank-hero-stats{display:flex;gap:8px;align-items:center;font-size:.72rem;color:var(--muted)}
+.rank-hero-stats .dot{opacity:.4}
+.rank-hero-hint{font-size:.64rem;color:var(--muted);letter-spacing:.04em;
+  display:flex;align-items:center;gap:5px;opacity:.7;margin-top:2px;transition:color .2s}
+.rank-hero:hover .rank-hero-hint{color:var(--gold);opacity:1}
+
+/* ── LOBBY MODE CARDS (ranked / rooms) ───────────────────────── */
+.format-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px 0 18px}
+.format-lbl{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.lobby-modes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:26px}
+@media(max-width:620px){.lobby-modes{grid-template-columns:1fr}}
+.mode-card{background:var(--dark2);border:1px solid var(--border);border-radius:14px;
+  padding:22px 20px 20px;display:flex;flex-direction:column;gap:9px;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mode-card-ranked::before{background:linear-gradient(90deg,#c9a84c,#e8c96a)}
+.mode-card-rooms::before{background:linear-gradient(90deg,#4d6fa8,#60a5fa)}
+.mc-tag{display:inline-flex;align-self:flex-start;align-items:center;gap:5px;font-size:.6rem;
+  letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:8px;margin-bottom:2px}
+.mode-card-ranked .mc-tag{background:rgba(201,168,76,.12);color:var(--gold2);border:1px solid rgba(201,168,76,.25)}
+.mode-card-rooms .mc-tag{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.22)}
+.mc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.mode-card-ranked .mc-icon{background:rgba(201,168,76,.12);color:var(--gold)}
+.mode-card-rooms .mc-icon{background:rgba(96,165,250,.12);color:#60a5fa}
+.mc-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--text);letter-spacing:.03em}
+.mc-sub{font-size:.76rem;color:var(--muted);line-height:1.4;margin-bottom:4px}
+/* Fills the leftover vertical space in the (shorter-content) ranked card so
+   the grid's equal-height stretch doesn't leave an empty gap above the CTA.
+   flex:1 + min-height:0 lets it absorb exactly the space the button used to
+   balloon into, instead of the button doing it. */
+.mc-art{flex:1;min-height:60px;border-radius:10px;overflow:hidden;position:relative;
+  background:rgba(0,0,0,.2);border:1px solid rgba(201,168,76,.12)}
+.mc-art img{width:100%;height:100%;object-fit:cover;display:block;opacity:.92}
+.mc-art::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(20,16,10,0) 55%,rgba(20,16,10,.85) 100%);
+  pointer-events:none}
+/* flex:0 0 auto overrides .qa-btn's flex:1 — without it, the button (the
+   ranked card's only child besides the tag/icon/title/sub) grows to fill
+   all the leftover vertical space left by the taller Rooms card, so it
+   balloons instead of just sitting pinned to the bottom via margin-top:auto */
+.mc-cta{margin-top:auto;flex:0 0 auto}
+
+/* ── SWORD CLASH ANIMATION (Ranked Match button) ─────────────────── */
+.sword-clash{position:relative;width:28px;height:22px;flex-shrink:0;display:inline-block}
+.sword-clash svg{position:absolute;top:0;width:14px;height:22px}
+.sword-clash .sw-blade{fill:#fff6de}
+.sword-clash .sw-hilt{fill:#7a5c08}
+.sword-clash .sw-left{left:-1px;transform-origin:75% 88%;animation:swClashL 1.5s ease-in-out infinite}
+.sword-clash .sw-right{right:-1px;transform:scaleX(-1);transform-origin:25% 88%;animation:swClashR 1.5s ease-in-out infinite}
+@keyframes swClashL{
+  0%,12%{transform:rotate(-38deg) translate(-2px,2px)}
+  45%,55%{transform:rotate(6deg) translate(1px,-1px)}
+  88%,100%{transform:rotate(-38deg) translate(-2px,2px)}
+}
+@keyframes swClashR{
+  0%,12%{transform:scaleX(-1) rotate(-38deg) translate(-2px,2px)}
+  45%,55%{transform:scaleX(-1) rotate(6deg) translate(1px,-1px)}
+  88%,100%{transform:scaleX(-1) rotate(-38deg) translate(-2px,2px)}
+}
+.sword-clash .sw-spark{position:absolute;left:50%;top:32%;width:13px;height:13px;
+  transform:translate(-50%,-50%) scale(.2);border-radius:50%;
+  background:radial-gradient(circle,#fff,#ffe9a8 45%,transparent 72%);
+  opacity:0;pointer-events:none;animation:swSpark 1.5s ease-in-out infinite}
+@keyframes swSpark{
+  0%,40%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}
+  60%,100%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+}
+.mc-invite-link{background:transparent;border:none;color:var(--muted);font-size:.74rem;cursor:pointer;
+  display:flex;align-items:center;gap:6px;padding:2px;transition:color .2s;font-family:'Outfit',sans-serif;
+  align-self:flex-start}
+.mc-invite-link:hover{color:var(--gold)}
+
+/* ── LEADERBOARD MODAL ───────────────────────────────────────── */
+.lb-modal-card{max-width:520px}
 
 /* ── ROOM CARD ELO ────────────────────────────────────────────── */
 .rc-elo-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
@@ -406,7 +535,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 /* ── REALTIME GAME-INVITE TOASTS ─────────────────────────────── */
 #inviteToastContainer{position:fixed;top:70px;right:16px;z-index:10050;
   display:flex;flex-direction:column;gap:10px;max-width:320px}
-.invite-toast{background:linear-gradient(160deg,#1c1508,#100c04);
+.invite-toast{background:linear-gradient(160deg,#3a141b,#170609);
   border:1px solid var(--border2);border-radius:12px;padding:16px 18px;
   min-width:260px;box-shadow:0 8px 30px rgba(0,0,0,.5);
   animation:inviteSlideIn .3s ease;position:relative;overflow:hidden}
@@ -466,62 +595,97 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 <div id="lobbyScreen" class="screen active">
 <div class="lobby-inner">
 
-  <div class="lobby-header">
-    <!-- Player identity -->
-    <div class="player-card">
-      <div class="pc-label">Your Identity</div>
-      <div class="pc-name-row">
-        <input class="pc-name-input" id="playerNameInput" placeholder="Enter your name…" maxlength="20"/>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
-        <div class="pc-elo" id="playerEloDisplay">1200</div>
-        <div class="pc-elo-lbl">Online ELO</div>
+  <!-- Player identity: enlarged glowing rank badge, name + ELO centered -->
+  <div class="lobby-hero">
+    <div class="rank-hero" onclick="openLeaderboardModal()" title="View the global leaderboard">
+      <div class="rank-badge rank-novice" id="playerRankBadge">♟ Shishya</div>
+      <input class="rank-hero-name-input" id="playerNameInput" placeholder="Enter your name…" maxlength="20" onclick="event.stopPropagation()"/>
+      <div class="rank-hero-elo-row">
+        <span class="rank-hero-elo" id="playerEloDisplay">1200</span>
+        <span class="rank-hero-elo-lbl">ELO</span>
         <span class="prov-badge" id="provBadge" style="display:none">
           <i class="fa-solid fa-flask fa-xs"></i> Provisional
         </span>
       </div>
-      <div class="rank-badge rank-novice" id="playerRankBadge">♟ Shishya</div>
-      <div class="elo-sparkline-wrap">
-        <div class="elo-sparkline-lbl">ELO History</div>
-        <svg class="elo-sparkline" id="eloSparkline" viewBox="0 0 200 36" preserveAspectRatio="none">
-          <text x="100" y="22" text-anchor="middle" font-size="9" fill="rgba(201,168,76,.3)" font-family="sans-serif">Play games to build history</text>
-        </svg>
+      <div class="rank-hero-stats" id="eloStats">
+        <span id="statWins">W 0</span><span class="dot">·</span><span id="statLosses">L 0</span><span class="dot">·</span><span id="statGames">0 games</span>
       </div>
-      <div style="display:flex;gap:14px;margin-top:8px;font-size:.7rem;color:var(--muted)" id="eloStats">
-        <span id="statWins">W 0</span><span id="statLosses">L 0</span><span id="statGames">0 games</span>
+      <div class="rank-hero-hint"><i class="fa-solid fa-ranking-star fa-xs"></i> Tap to view leaderboard</div>
+    </div>
+  </div>
+
+  <!-- Shared match format -->
+  <div class="format-row">
+    <span class="format-lbl">Format</span>
+    <div class="mode-toggle" style="margin-bottom:0">
+      <button class="mode-btn active" id="mode2p" onclick="setMode('2p')">2 Players</button>
+      <button class="mode-btn"        id="mode4p" onclick="setMode('4p')">4 Players</button>
+    </div>
+  </div>
+
+  <!-- Ranked match + Rooms -->
+  <div class="lobby-modes">
+    <div class="mode-card mode-card-ranked">
+      <span class="mc-tag"><i class="fa-solid fa-shield-halved fa-xs"></i> Ranked</span>
+      <div class="mc-icon"><i class="fa-solid fa-bolt"></i></div>
+      <div class="mc-title">Ranked Match</div>
+      <div class="mc-sub">Instant matchmaking against a similarly-rated opponent. Wins and losses affect your ELO.</div>
+      <div class="mc-art">
+        <img src="./images/Ranked_match.png" alt="" />
       </div>
+      <button class="qa-btn qa-quickmatch mc-cta" onclick="startQuickMatch()">
+        <span class="sword-clash" aria-hidden="true">
+          <svg class="sw-left" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
+            <path class="sw-blade" d="M7 0 L9 2 L9 13 L7 15 L5 13 L5 2 Z"/>
+            <rect class="sw-hilt" x="3" y="13" width="8" height="2.4" rx="0.6"/>
+            <rect class="sw-hilt" x="6" y="15.4" width="2" height="5.5" rx="0.6"/>
+            <circle class="sw-hilt" cx="7" cy="21" r="1.3"/>
+          </svg>
+          <svg class="sw-right" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
+            <path class="sw-blade" d="M7 0 L9 2 L9 13 L7 15 L5 13 L5 2 Z"/>
+            <rect class="sw-hilt" x="3" y="13" width="8" height="2.4" rx="0.6"/>
+            <rect class="sw-hilt" x="6" y="15.4" width="2" height="5.5" rx="0.6"/>
+            <circle class="sw-hilt" cx="7" cy="21" r="1.3"/>
+          </svg>
+          <span class="sw-spark"></span>
+        </span>
+        Find Ranked Match
+      </button>
     </div>
 
-    <!-- Quick actions -->
-    <div class="quick-actions">
-      <div class="pc-label">Create or Join</div>
-      <div class="mode-toggle">
-        <button class="mode-btn active" id="mode2p" onclick="setMode('2p')">2 Players</button>
-        <button class="mode-btn"        id="mode4p" onclick="setMode('4p')">4 Players</button>
-      </div>
-
-      <div class="qa-row">
-        <button class="qa-btn qa-quickmatch" onclick="startQuickMatch()">
-          <i class="fa-solid fa-bolt fa-xs"></i> Quick Match
+    <div class="mode-card mode-card-rooms">
+      <span class="mc-tag"><i class="fa-solid fa-user-group fa-xs"></i> Unranked</span>
+      <div class="mc-icon"><i class="fa-solid fa-door-open"></i></div>
+      <div class="mc-title">Rooms</div>
+      <div class="mc-sub">Play with friends or anyone in a room you control. Doesn't affect ELO.</div>
+      <div class="mode-toggle" id="roomTypeToggle">
+        <button class="mode-btn active" id="roomTypePublic" onclick="setRoomType('public')" title="Anyone can find and join this room from Open Rooms">
+          <i class="fa-solid fa-earth-americas fa-xs"></i> Public
+        </button>
+        <button class="mode-btn" id="roomTypePrivate" onclick="setRoomType('private')" title="Only joinable by room code or invite">
+          <i class="fa-solid fa-lock fa-xs"></i> Private
         </button>
       </div>
-
+      <button class="qa-btn qa-primary" onclick="createRoom()">
+        <i class="fa-solid fa-plus fa-xs"></i> Create Room
+      </button>
       <div class="qa-row">
-        <button class="qa-btn qa-primary" onclick="createRoom()">
-          <i class="fa-solid fa-plus fa-xs"></i> Create Room
-        </button>
-      </div>
-      <div class="qa-row">
-        <input class="qa-input" id="joinCodeInput" placeholder="Room code (e.g. AB3X7Y)" maxlength="6"/>
+        <input class="qa-input" id="joinCodeInput" placeholder="Room code" maxlength="6"/>
         <button class="qa-btn qa-ghost" onclick="joinRoom()" style="flex:0 0 auto;padding:9px 16px">
           <i class="fa-solid fa-arrow-right-to-bracket fa-xs"></i> Join
         </button>
       </div>
+      <button type="button" class="mc-invite-link" onclick="openFriendsModal()">
+        <i class="fa-solid fa-user-plus fa-xs"></i> Play with friends
+      </button>
+      <button type="button" class="rs-browse-btn" id="browseRoomsBtn" onclick="toggleRoomsBrowser()">
+        <i class="fa-solid fa-list fa-xs"></i> Browse Public Rooms
+      </button>
     </div>
   </div>
 
-  <!-- Open rooms -->
-  <div class="rooms-section">
+  <!-- Open rooms (discoverable public rooms — revealed via "Browse Public Rooms" above) -->
+  <div class="rooms-section collapsed" id="roomsSection">
     <div class="rs-header">
       <div class="rs-title"><i class="fa-solid fa-door-open fa-xs"></i> &nbsp;Open Rooms</div>
       <button class="rs-refresh" onclick="requestLobby()">
@@ -529,38 +693,44 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       </button>
     </div>
     <div class="rooms-grid" id="roomsGrid">
-      <div class="rooms-empty">No open rooms — create one above.</div>
+      <div class="rooms-empty">No open rooms — create a public room above.</div>
     </div>
   </div>
 
-  <!-- Global Leaderboard -->
-  <div class="leaderboard-section">
+</div>
+</div>
+
+<!-- ════════════ LEADERBOARD MODAL ════════════ -->
+<div id="leaderboardModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,4,7,.82);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card lb-modal-card" style="background:linear-gradient(160deg,#3a141b,#170609);border:1px solid var(--border);border-radius:14px;width:100%;padding:24px;box-shadow:0 0 50px rgba(201,168,76,.18);position:relative;max-height:80vh;display:flex;flex-direction:column;">
+    <button type="button" onclick="closeLeaderboardModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
     <div class="lb-header">
       <div class="lb-title"><i class="fa-solid fa-ranking-star fa-xs"></i> &nbsp;Global Leaderboard</div>
       <button class="lb-refresh" onclick="loadLeaderboard()">
         <i class="fa-solid fa-rotate fa-xs"></i> Refresh
       </button>
     </div>
-    <table class="lb-table">
-      <thead><tr>
-        <th>#</th><th>Player</th><th>Rank</th>
-        <th style="text-align:right">ELO</th>
-        <th style="text-align:right">Games</th>
-      </tr></thead>
-      <tbody id="lbBody">
-        <tr><td colspan="5" class="lb-empty">Loading leaderboard…</td></tr>
-      </tbody>
-    </table>
+    <div style="overflow-y:auto;">
+      <table class="lb-table">
+        <thead><tr>
+          <th>#</th><th>Player</th><th>Rank</th>
+          <th style="text-align:right">ELO</th>
+          <th style="text-align:right">Games</th>
+        </tr></thead>
+        <tbody id="lbBody">
+          <tr><td colspan="5" class="lb-empty">Loading leaderboard…</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-
-</div>
 </div>
 
 <!-- ════════════ WAITING SCREEN ════════════ -->
 <div id="waitingScreen" class="screen">
   <div class="waiting-card">
     <div class="wc-title">Waiting for Players</div>
-    <div class="wc-sub">Share the code or scan the QR code below with your opponent. The game starts automatically when all seats are filled.</div>
+    <div class="wc-type-badge" id="wcTypeBadge" style="display:none"></div>
+    <div class="wc-sub" id="wcSub">Share the code or scan the QR code below with your friends.</div>
     <div class="wc-code-big" id="wcCode">——</div>
     <div class="qr-container-waiting" style="margin:12px auto;text-align:center">
       <canvas id="waitingQrCanvas" style="width:130px;height:130px;border-radius:8px;background:#fff;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,0.5)"></canvas>
@@ -570,9 +740,15 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     </div>
     <div class="wc-pulse">
       <div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div>
-      Waiting for opponent…
+      Waiting for players…
     </div>
     <div class="wc-players" id="wcPlayers"></div>
+    <button class="wc-start" id="wcStartBtn" onclick="startRoomNow()" style="display:none">
+      <i class="fa-solid fa-play fa-xs"></i> Start Match Now
+    </button>
+    <button class="wc-invite" id="wcInviteBtn" onclick="openFriendsModal()" style="display:none">
+      <i class="fa-solid fa-user-plus fa-xs"></i> Invite Friends
+    </button>
     <button class="wc-cancel" onclick="cancelRoom()">
       <i class="fa-solid fa-xmark fa-xs"></i> Cancel
     </button>
@@ -635,8 +811,8 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 </div>
 
 <!-- ════════════ INVITE MODAL ════════════ -->
-<div id="inviteModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.88);align-items:center;justify-content:center;padding:20px;">
-  <div class="modal-card" style="background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border);border-radius:14px;max-width:360px;width:100%;padding:24px;text-align:center;box-shadow:0 0 50px rgba(201,168,76,.15);position:relative;">
+<div id="inviteModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,4,7,.82);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="background:linear-gradient(160deg,#3a141b,#170609);border:1px solid var(--border);border-radius:14px;max-width:360px;width:100%;padding:24px;text-align:center;box-shadow:0 0 50px rgba(201,168,76,.15);position:relative;">
     <button type="button" onclick="closeInviteModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
 
     <div style="font-family:'Cinzel',serif;font-size:1.15rem;color:var(--gold);margin-bottom:16px;">
@@ -657,8 +833,8 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 </div>
 
 <!-- ════════════ RESIGN CONFIRMATION DIALOGUE ════════════ -->
-<div id="resignModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.88);align-items:center;justify-content:center;padding:20px;">
-  <div class="modal-card" style="background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border);border-radius:14px;max-width:400px;width:100%;padding:24px;text-align:center;box-shadow:0 0 50px rgba(220,38,38,.25);position:relative;">
+<div id="resignModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,4,7,.82);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="background:linear-gradient(160deg,#3a141b,#170609);border:1px solid var(--border);border-radius:14px;max-width:400px;width:100%;padding:24px;text-align:center;box-shadow:0 0 50px rgba(220,38,38,.25);position:relative;">
     <div style="font-size:2.4rem;color:var(--red);margin-bottom:8px;"><i class="fa-solid fa-flag"></i></div>
     <div style="font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold);margin-bottom:6px;">Resign Match?</div>
     <div style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;line-height:1.5;">Are you sure you want to forfeit this battle? Your opponent will be awarded victory.</div>
@@ -733,8 +909,8 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 </div>
 
 <!-- ════════════ FRIENDS MODAL ════════════ -->
-<div id="friendsModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(8,6,3,.85);align-items:center;justify-content:center;padding:20px;">
-  <div class="modal-card" style="background:linear-gradient(160deg,#1c1508,#100c04);border:1px solid var(--border);border-radius:14px;max-width:480px;width:100%;padding:24px;box-shadow:0 0 50px rgba(201,168,76,.15);position:relative;">
+<div id="friendsModal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,4,7,.8);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-card" style="background:linear-gradient(160deg,#3a141b,#170609);border:1px solid var(--border);border-radius:14px;max-width:480px;width:100%;padding:24px;box-shadow:0 0 50px rgba(201,168,76,.15);position:relative;">
     <button type="button" onclick="closeFriendsModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
 
     <div style="font-family:'Cinzel',serif;font-size:1.25rem;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
@@ -748,6 +924,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       </button>
       <button type="button" class="fm-tab" id="fmTabRequests" onclick="switchFriendsTab('requests')" style="padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:0.8rem;font-weight:600;cursor:pointer;position:relative;">
         Requests (<span id="fmRequestsCount">0</span>)
+      </button>
+      <button type="button" class="fm-tab" id="fmTabAll" onclick="switchFriendsTab('all')" style="padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:0.8rem;font-weight:600;cursor:pointer;">
+        All Warriors
       </button>
       <button type="button" class="fm-tab" id="fmTabAdd" onclick="switchFriendsTab('add')" style="padding:6px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:0.8rem;font-weight:600;cursor:pointer;">
         + Add Friend
@@ -768,7 +947,18 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       </div>
     </div>
 
-    <!-- Tab 3: Add Friend Form -->
+    <!-- Tab 3: All Registered Warriors -->
+    <div id="fmSectionAll" style="display:none;">
+      <input type="text" id="fmAllSearchInput" placeholder="Search warriors by name or email…" oninput="renderAllUsersList()" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:rgba(0,0,0,0.3);color:var(--text);font-family:inherit;font-size:0.8rem;margin-bottom:10px;" />
+      <div id="fmAllUsersList" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;">
+        <div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">Loading warriors...</div>
+      </div>
+      <button type="button" id="fmAllLoadMoreBtn" onclick="loadAllUsers(true)" style="display:none;width:100%;margin-top:10px;padding:7px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.75rem;cursor:pointer;">
+        Load more
+      </button>
+    </div>
+
+    <!-- Tab 4: Add Friend Form -->
     <div id="fmSectionAdd" style="display:none;">
       <div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Send a friend request to a registered warrior by entering their email address.</div>
       <div style="display:flex;gap:8px;margin-bottom:12px;">
@@ -800,6 +990,16 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 function openInviteModal(){ document.getElementById('inviteModal').style.display = 'flex'; }
 function closeInviteModal(){ document.getElementById('inviteModal').style.display = 'none'; }
+
+function openLeaderboardModal(){
+  const modal = document.getElementById('leaderboardModal');
+  if (modal) modal.style.display = 'flex';
+  loadLeaderboard();
+}
+function closeLeaderboardModal(){
+  const modal = document.getElementById('leaderboardModal');
+  if (modal) modal.style.display = 'none';
+}
 
 
 
@@ -886,6 +1086,7 @@ let mmActive = false, mmSecondsLeft = 10, mmCountdownTimer = null;
 const MM_TIMER_CIRC = 163;
 let resignAckTimer = null;
 let LOBBY_MODE = '2p';
+let ROOM_TYPE = 'public';
 
 function connect() {
   setConnStatus('connecting', 'Connecting to server…');
@@ -1672,6 +1873,53 @@ function refreshWaitingPlayers(snap) {
           : `<span style="color:var(--muted2)">Waiting…</span>`}
     </div>`;
   }).join('');
+  updateWaitingOwnerControls(snap);
+}
+
+// Only the owner (seat 0) sees the "Start Match" / "Invite Friends" controls.
+// Starting early hands any still-open human seat to a bot — that choice is
+// the owner's alone; there's no more automatic timeout that does it for them.
+function updateWaitingOwnerControls(snap) {
+  const isOwner = G.mySeat === 0;
+  const maxPlayers = snap.mode === '4p' ? 4 : 2;
+  const filledHumanSeats = (snap.players || []).filter(p => !p.isBot).length;
+  const seatsOpen = maxPlayers - filledHumanSeats;
+
+  const startBtn = document.getElementById('wcStartBtn');
+  const inviteBtn = document.getElementById('wcInviteBtn');
+  if (startBtn) startBtn.style.display = isOwner ? 'flex' : 'none';
+  if (inviteBtn) inviteBtn.style.display = isOwner ? 'flex' : 'none';
+
+  const badge = document.getElementById('wcTypeBadge');
+  if (badge) {
+    const isPrivate = !!snap.private;
+    badge.style.display = 'inline-flex';
+    badge.className = 'wc-type-badge ' + (isPrivate ? 'is-private' : 'is-public');
+    badge.innerHTML = isPrivate
+      ? '<i class="fa-solid fa-lock fa-xs"></i> Private room'
+      : '<i class="fa-solid fa-earth-americas fa-xs"></i> Public room';
+  }
+
+  const sub = document.getElementById('wcSub');
+  if (sub) {
+    if (isOwner) {
+      sub.textContent = seatsOpen > 0
+        ? `Share the code, or invite friends — you can start whenever you're ready. Any open seat gets filled by a bot.`
+        : `All seats are filled — start whenever you're ready.`;
+    } else {
+      sub.textContent = `Share the code or scan the QR code below. Waiting for the room owner to start the match.`;
+    }
+  }
+}
+
+function startRoomNow() {
+  if (!wsConnected) { alert('Not connected to server.'); return; }
+  const snap = G.snapshot;
+  const maxPlayers = snap && snap.mode === '4p' ? 4 : 2;
+  const filledHumanSeats = snap ? (snap.players || []).filter(p => !p.isBot).length : 1;
+  const openSeats = maxPlayers - filledHumanSeats;
+  if (openSeats > 0 && !confirm(`${openSeats} seat${openSeats > 1 ? 's are' : ' is'} still open — start now and fill ${openSeats > 1 ? 'them' : 'it'} with bots?`)) return;
+  send({ type: 'start-room' });
 }
 function cancelRoom() {
   send({ type:'leave-room' });
@@ -1890,11 +2138,27 @@ function setMode(mode) {
   document.getElementById('mode2p').classList.toggle('active', mode==='2p');
   document.getElementById('mode4p').classList.toggle('active', mode==='4p');
 }
+function setRoomType(type) {
+  ROOM_TYPE = type === 'private' ? 'private' : 'public';
+  document.getElementById('roomTypePublic').classList.toggle('active', ROOM_TYPE === 'public');
+  document.getElementById('roomTypePrivate').classList.toggle('active', ROOM_TYPE === 'private');
+}
+function toggleRoomsBrowser() {
+  const section = document.getElementById('roomsSection');
+  const btn = document.getElementById('browseRoomsBtn');
+  const nowOpen = section.classList.toggle('collapsed') === false;
+  if (nowOpen) {
+    requestLobby();
+    btn.innerHTML = '<i class="fa-solid fa-chevron-up fa-xs"></i> Hide Public Rooms';
+  } else {
+    btn.innerHTML = '<i class="fa-solid fa-list fa-xs"></i> Browse Public Rooms';
+  }
+}
 function createRoom() {
   const name = getPlayerName() || document.getElementById('playerNameInput').value.trim() || 'Player';
   if (!name) { alert('Please enter a name first.'); return; }
   if (!wsConnected) { alert('Not connected to server. Please wait or check the server is running.'); return; }
-  send({ type:'create-room', mode:LOBBY_MODE, name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '', userId: getUserId() || '' });
+  send({ type:'create-room', mode:LOBBY_MODE, roomType:ROOM_TYPE, name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '', userId: getUserId() || '' });
 }
 function joinRoom() {
   const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
@@ -1915,6 +2179,7 @@ function openFriendsModal() {
   const modal = document.getElementById('friendsModal');
   if (modal) modal.style.display = 'flex';
   loadFriendsData().then(startFriendsPolling);
+  loadAllUsers();
 }
 
 function closeFriendsModal() {
@@ -1924,7 +2189,7 @@ function closeFriendsModal() {
 }
 
 function switchFriendsTab(tab) {
-  ['friends', 'requests', 'add'].forEach(t => {
+  ['friends', 'requests', 'all', 'add'].forEach(t => {
     const btn = document.getElementById(`fmTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
     const sec = document.getElementById(`fmSection${t.charAt(0).toUpperCase() + t.slice(1)}`);
     if (btn) {
@@ -2018,8 +2283,108 @@ async function loadFriendsData() {
         `).join('');
       }
     }
+    if (allUsersData.length) renderAllUsersList();
   } catch (err) {
     console.error('Error loading friends:', err);
+  }
+}
+
+/* ---------- ALL REGISTERED WARRIORS (browse + send request directly) --- */
+let allUsersData = [];
+let allUsersPage = 1;
+let allUsersHasMore = false;
+let allUsersLoading = false;
+
+async function loadAllUsers(loadMore) {
+  const userId = getUserId();
+  const listEl = document.getElementById('fmAllUsersList');
+  if (!userId) {
+    if (listEl) listEl.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">Please log in with a registered account to browse warriors.</div>';
+    return;
+  }
+  if (allUsersLoading) return;
+  allUsersLoading = true;
+  if (!loadMore) { allUsersPage = 1; allUsersData = []; }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/users?page=${allUsersPage}&limit=50`);
+    const data = await res.json();
+    if (data.success) {
+      allUsersData = loadMore ? allUsersData.concat(data.users) : data.users;
+      allUsersHasMore = allUsersData.length < data.total;
+      allUsersPage += 1;
+      renderAllUsersList();
+      const moreBtn = document.getElementById('fmAllLoadMoreBtn');
+      if (moreBtn) moreBtn.style.display = allUsersHasMore ? 'block' : 'none';
+    }
+  } catch (err) {
+    console.error('Load all users error:', err);
+    if (listEl && !allUsersData.length) listEl.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">Could not load warriors right now.</div>';
+  } finally {
+    allUsersLoading = false;
+  }
+}
+
+function renderAllUsersList() {
+  const el = document.getElementById('fmAllUsersList');
+  if (!el) return;
+  const myId = getUserId();
+  const q = (document.getElementById('fmAllSearchInput')?.value || '').trim().toLowerCase();
+  const friendIds = new Set((currentFriendsData.friends || []).map(f => String(f._id)));
+
+  const list = allUsersData.filter(u => {
+    if (String(u._id) === String(myId)) return false;
+    if (!q) return true;
+    return (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+  });
+
+  if (!list.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:20px;">No warriors found.</div>';
+    return;
+  }
+
+  el.innerHTML = list.map(u => {
+    const isFriend = friendIds.has(String(u._id));
+    return `
+      <div data-user-id="${u._id}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;">
+        <div>
+          <div style="font-weight:600;font-size:0.85rem;color:var(--text);">${escapeHTML(u.name)}</div>
+          <div style="font-size:0.7rem;color:var(--muted);">${u.elo || 1200} ELO · ${escapeHTML(u.email)}</div>
+        </div>
+        ${isFriend
+          ? '<span style="font-size:0.7rem;color:var(--green);white-space:nowrap;"><i class="fa-solid fa-check fa-xs"></i> Friends</span>'
+          : `<button type="button" class="all-user-add-btn" onclick="sendFriendRequestToUser('${u._id}', this)" style="padding:4px 10px;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.15);color:var(--gold);font-size:0.7rem;cursor:pointer;white-space:nowrap;">
+              <i class="fa-solid fa-user-plus fa-xs"></i> Add
+            </button>`}
+      </div>`;
+  }).join('');
+}
+
+async function sendFriendRequestToUser(targetUserId, btnEl) {
+  const userId = getUserId();
+  if (!userId) { alert('Please log in with a registered account first.'); return; }
+  if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = 'Sending…'; }
+  try {
+    const res = await fetch(`${API_BASE}/api/friends/request`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, targetUserId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (btnEl) {
+        btnEl.innerHTML = '<i class="fa-solid fa-check fa-xs"></i> Sent';
+        btnEl.style.color = 'var(--green)';
+        btnEl.style.borderColor = 'var(--green)';
+        btnEl.style.background = 'rgba(74,222,128,.1)';
+      }
+    } else {
+      alert(data.message || 'Failed to send request.');
+      if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '<i class="fa-solid fa-user-plus fa-xs"></i> Add'; }
+    }
+  } catch (err) {
+    console.error('Send friend request error:', err);
+    if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '<i class="fa-solid fa-user-plus fa-xs"></i> Add'; }
   }
 }
 
@@ -2150,13 +2515,17 @@ function inviteFriendToRoom(friendId, friendName) {
   if (!wsConnected) { alert('Not connected to server.'); return; }
   if (!onlineFriendIds.has(String(friendId))) { alert(`${friendName || 'This friend'} is not online right now.`); return; }
 
-  if (G.roomCode && G.snapshot && !G.gameOver &&
+  // If we're the owner of a room we already created and it's still waiting,
+  // invite the friend into THAT room rather than spinning up a new one.
+  const invitingIntoOwnRoom = !!(G.roomCode && G.snapshot && G.mySeat === 0 && G.snapshot.status === 'waiting');
+
+  if (!invitingIntoOwnRoom && G.roomCode && G.snapshot && !G.gameOver &&
       (G.snapshot.status === 'playing' || G.snapshot.status === 'waiting')) {
     alert("You're already in a match — finish or leave it before inviting a friend to a new one.");
     return;
   }
 
-  send({
+  const payload = {
     type: 'invite-friend',
     targetUserId: friendId,
     name: getPlayerName(),
@@ -2164,7 +2533,10 @@ function inviteFriendToRoom(friendId, friendName) {
     token: localStorage.getItem(LS_TOKEN) || '',
     userId: getUserId(),
     mode: LOBBY_MODE
-  });
+  };
+  if (invitingIntoOwnRoom) payload.roomCode = G.roomCode;
+
+  send(payload);
   closeFriendsModal();
   addSystemChat(`Invite sent to ${friendName || 'your friend'} — waiting for a response…`);
 }
