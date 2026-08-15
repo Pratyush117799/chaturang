@@ -168,7 +168,7 @@
           onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'}); return false;">
           <i class="fa-solid fa-swords"></i> Enter the Battlefield
         </a>
-        <a href="howtoplay.html" class="btn-secondary btn-howto">
+        <a href="pages/howtoplay.html" class="btn-secondary btn-howto">
           <i class="fa-solid fa-graduation-cap"></i> How to Play
         </a>
         <a href="#about" class="btn-secondary"
@@ -846,7 +846,7 @@ const weights = {
           <h5>Game Files</h5>
           <ul>
             <li><a href="../game/game.html">Game (v1.0.5.2)</a></li>
-            <li><a href="howtoplay.html">How to Play</a></li>
+            <li><a href="pages/howtoplay.html">How to Play</a></li>
             <li><a href="../game/game.html?botCount=1">1 Bot Mode</a></li>
             <li><a href="../game/game.html?botCount=3">3 Bots Mode</a></li>
             <li><a href="../Chaturanga-version-1.0.3.2/game.html">v1.0.3.2 (Legacy)</a></li>
@@ -921,7 +921,7 @@ const weights = {
 
   <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
-  <script src="session.js"></script>
+  <script src="js/session.js"></script>
 
 
 <script>
@@ -980,7 +980,7 @@ const weights = {
   });
 
   signinBtn.addEventListener('click', function(){
-    window.location.href = 'loginpage.html';
+    window.location.href = 'pages/loginpage.html';
   });
 
   // If the session changes in another tab (e.g. logout elsewhere),
@@ -999,7 +999,7 @@ function renderNavUser() {
 
     if (!user) {
       const link = document.createElement('a');
-      link.href = 'loginpage.html';
+      link.href = 'pages/loginpage.html';
       link.className = 'nav-signin';
       link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
       navUser.appendChild(link);
@@ -1034,7 +1034,7 @@ function renderNavUser() {
     dropdown.setAttribute('role', 'menu');
 
     const profileLink = document.createElement('a');
-    profileLink.href = '../website/userprofile.html';
+    profileLink.href = 'pages/userprofile.html';
     profileLink.className = 'nav-dropdown-item';
     profileLink.setAttribute('role', 'menuitem');
     profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
