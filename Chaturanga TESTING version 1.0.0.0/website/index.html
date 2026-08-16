@@ -189,7 +189,7 @@
         <a href="#play" class="btn-primary" data-panel="play">
           <i class="fa-solid fa-swords"></i> Enter the Battlefield
         </a>
-        <a href="howtoplay.html" class="btn-secondary btn-howto">
+        <a href="pages/howtoplay.html" class="btn-secondary btn-howto">
           <i class="fa-solid fa-graduation-cap"></i> How to Play
         </a>
         <a href="#about" class="btn-secondary" data-panel="about">
@@ -812,7 +812,7 @@ const weights = {
           <h5>Game Files</h5>
           <ul>
             <li><a href="../game/game.html">Game (v1.0.5.2)</a></li>
-            <li><a href="howtoplay.html">How to Play</a></li>
+            <li><a href="pages/howtoplay.html">How to Play</a></li>
             <li><a href="../game/game.html?botCount=1">1 Bot Mode</a></li>
             <li><a href="../game/game.html?botCount=3">3 Bots Mode</a></li>
             <li><a href="../Chaturanga-version-1.0.3.2/game.html">v1.0.3.2 (Legacy)</a></li>
@@ -988,7 +988,7 @@ const weights = {
 
   <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
-  <script src="session.js"></script>
+  <script src="js/session.js"></script>
 
 
 <script>
@@ -1149,6 +1149,119 @@ const weights = {
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && botMenuOverlay && botMenuOverlay.classList.contains('open')) closeBotMenu();
   });
+
+
+  logoutBtn.addEventListener('click', function(){
+    Session.clear();
+    renderAccount();
+    closeDropdown();
+  });
+
+  signinBtn.addEventListener('click', function(){
+    window.location.href = 'pages/loginpage.html';
+  });
+
+  // If the session changes in another tab (e.g. logout elsewhere),
+  // reflect it here too — this is exactly what Session.onChange is for.
+  Session.onChange(function(){ renderAccount(); });
+
+  renderAccount();
+
+
+function renderNavUser() {
+    const navUser = document.getElementById('navUser');
+    if (!navUser) return;
+    navUser.innerHTML = '';
+
+    const user = Session.get();
+
+    if (!user) {
+      const link = document.createElement('a');
+      link.href = 'pages/loginpage.html';
+      link.className = 'nav-signin';
+      link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
+      navUser.appendChild(link);
+      return;
+    }
+
+    // --- Trigger (the avatar + name button) ---
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'nav-user-badge';
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+
+    const avatar = document.createElement('span');
+    avatar.className = 'nav-user-avatar';
+    avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
+
+    const name = document.createElement('span');
+    name.className = 'nav-user-name';
+    name.textContent = user.name || user.email;
+    name.title = user.name || user.email;
+
+    const caret = document.createElement('i');
+    caret.className = 'fa-solid fa-chevron-down nav-user-caret';
+    caret.setAttribute('aria-hidden', 'true');
+
+    trigger.append(avatar, name, caret);
+
+    // --- Dropdown panel ---
+    const dropdown = document.createElement('div');
+    dropdown.className = 'nav-user-dropdown';
+    dropdown.setAttribute('role', 'menu');
+
+    const profileLink = document.createElement('a');
+    profileLink.href = 'pages/userprofile.html';
+    profileLink.className = 'nav-dropdown-item';
+    profileLink.setAttribute('role', 'menuitem');
+    profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
+
+    const logoutBtn = document.createElement('button');
+    logoutBtn.type = 'button';
+    logoutBtn.className = 'nav-dropdown-item nav-dropdown-logout';
+    logoutBtn.setAttribute('role', 'menuitem');
+    logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
+
+    dropdown.append(profileLink, logoutBtn);
+    navUser.append(trigger, dropdown);
+
+    // --- Open/close behavior ---
+    function openDropdown() {
+      dropdown.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+      document.addEventListener('click', onOutsideClick);
+      document.addEventListener('keydown', onKeydown);
+    }
+    function closeDropdown() {
+      dropdown.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onOutsideClick);
+      document.removeEventListener('keydown', onKeydown);
+    }
+    function onOutsideClick(e) {
+      if (!navUser.contains(e.target)) closeDropdown();
+    }
+    function onKeydown(e) {
+      if (e.key === 'Escape') closeDropdown();
+    }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
+    });
+
+    logoutBtn.addEventListener('click', function () {
+      closeDropdown();
+      Session.clear();
+      renderNavUser();
+    });
+  }
+
+  renderNavUser();
+  Session.onChange(renderNavUser);
+
+
  </script>
 
   <!-- Cookie Consent Banner -->

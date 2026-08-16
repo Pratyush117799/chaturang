@@ -1,5 +1,5 @@
 /**
- * Chaturanga v1.0.5 — Random Move Generator (engine)
+ * Chaturanga v1.0.6 — Random Move Generator (engine)
  * Uses game instance: forcedPiece, turnIndex, getLegalMoves, board.
  * Returns { from, to } or null. Does not mutate game.
  */
@@ -14,13 +14,17 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
+  /**
+   * diceToPiece — manual.md §2 (4-sided Pasaka, values 2-5, no wildcard)
+   * 2 = Ratha (rook), 3 = Ashva (horse), 4 = Danti (elephant),
+   * 5 = Nara or Rajan (pawn-king, player's choice)
+   */
   function diceToPiece(d) {
-    if (d === 1) return 'rook';
-    if (d === 2 || d === 5) return 'any';
+    if (d === 2) return 'rook';
     if (d === 3) return 'horse';
     if (d === 4) return 'elephant';
-    if (d === 6) return 'pawn-king';
-    return 'any';
+    if (d === 5) return 'pawn-king';
+    return null; // invalid roll for 4-sided die
   }
 
   function findPiecesOfType(game, playerId, pieceType) {
@@ -32,8 +36,6 @@
         if (!piece || piece.owner !== playerId) continue;
         if (pieceType === 'pawn-king') {
           if (piece.type === 'pawn' || piece.type === 'king') squares.push(sq);
-        } else if (pieceType === 'any') {
-          squares.push(sq);
         } else if (piece.type === pieceType) {
           squares.push(sq);
         }

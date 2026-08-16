@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chaturanga - Login & Register</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Sans+Devanagari:wght@400;600;700&family=Raleway:wght@400;500;600&family=Yatra+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* =====================================================
+       CSS VARIABLES & BASE RESET
+       ===================================================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --maroon: #3d0b0b;
+      --maroon-mid: #5c1a1a;
+      --crimson: #8b1a1a;
+      --gold: #c9a84c;
+      --gold-light: #e8cc80;
+      --gold-dim: #8a6e2f;
+      --sandstone: #e8d5a3;
+      --parchment: #f4ead0;
+      --midnight: #120400;
+      --dark-bg: #1a0600;
+      --text: #f4ead0;
+      --text-muted: #c9b890;
+      --text-dark: #2a0e0e;
+      --error: #e05a5a;
+      --success: #7fb86b;
+      --border-gold: 1px solid rgba(201, 168, 76, 0.3);
+      --radius: 12px;
+      --radius-lg: 22px;
+      --shadow-gold: 0 0 30px rgba(201, 168, 76, 0.15);
+      --shadow-deep: 0 8px 40px rgba(0, 0, 0, 0.6);
+      --font-display: 'Cinzel', serif;
+      --font-deva: 'Noto Sans Devanagari', sans-serif;
+      --font-body: 'Raleway', sans-serif;
+      --font-yatra: 'Yatra One', cursive;
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+    }
+
+    html, body {
+      overscroll-behavior-y: contain;
+      height: 100%;
+      width: 100%;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--dark-bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+      min-height: 100dvh;
+      position: relative;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* =====================================================
+       ATMOSPHERE — hero-style layered background
+       ===================================================== */
+    .page-atmosphere {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background:
+       
+        url('images-webp/hero_battlefield.webp') center center / cover no-repeat;
+      background-blend-mode: normal, normal, normal, multiply, normal;
+    }
+
+    /* faint rotating gold aura behind the card */
+    .atmo-glow {
+      position: absolute;
+      top: 38%;
+      left: 50%;
+      width: 900px;
+      height: 900px;
+      max-width: 220vw;
+      max-height: 220vw;
+      transform: translate(-50%, -50%);
+      background: conic-gradient(from 0deg, rgba(201,168,76,0.10), transparent 25%, rgba(201,168,76,0.06) 50%, transparent 75%, rgba(201,168,76,0.10));
+      animation: rotateGlow 40s linear infinite;
+      will-change: transform;
+      filter: blur(6px);
+    }
+    @keyframes rotateGlow {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* faint 8x8 board pattern watermark, echoes the Ashtapada board */
+    .board-pattern {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 640px;
+      height: 640px;
+      max-width: 160vw;
+      max-height: 160vw;
+      transform: translate(-50%, -50%) rotate(8deg);
+      opacity: 0.05;
+      background-image:
+        linear-gradient(var(--gold) 1px, transparent 1px),
+        linear-gradient(90deg, var(--gold) 1px, transparent 1px);
+      background-size: 12.5% 12.5%;
+    }
+
+    /* rising ember particles */
+    .ember-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .ember {
+      position: absolute;
+      bottom: -10px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold-light);
+      box-shadow: 0 0 6px 2px rgba(232, 204, 128, 0.6);
+      opacity: 0;
+      animation-name: emberRise;
+      animation-timing-function: ease-in;
+      animation-iteration-count: infinite;
+    }
+    @keyframes emberRise {
+      0%   { transform: translateY(0) translateX(0); opacity: 0; }
+      10%  { opacity: 0.9; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-100vh) translateX(var(--drift, 20px)); opacity: 0; }
+    }
+
+    /* =====================================================
+       HERO SHELL — layout wrapper
+       ===================================================== */
+    .hero-shell {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(20px + var(--safe-top)) calc(16px + var(--safe-right)) calc(32px + var(--safe-bottom)) calc(16px + var(--safe-left));
+    }
+
+    .back-home {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold-dim);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 4px;
+      min-height: 32px;
+      transition: color 0.2s ease;
+    }
+    .back-home:hover { color: var(--gold); }
+
+    /* =====================================================
+       BRAND HERO — big title + floating army
+       ===================================================== */
+    .brand-hero {
+      text-align: center;
+      margin: 10px auto 18px;
+      max-width: 560px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid rgba(201, 168, 76, 0.35);
+      border-radius: 999px;
+      background: rgba(201, 168, 76, 0.06);
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 18px;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px 2px rgba(201, 168, 76, 0.7);
+      animation: pulseDot 2.4s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      line-height: 1;
+    }
+
+    .brand-title .title-devanagari {
+      font-family: var(--font-yatra);
+      font-size: clamp(2.4rem, 8vw, 3.4rem);
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 55%, var(--gold-dim) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 40px rgba(201, 168, 76, 0.35);
+      filter: drop-shadow(0 2px 0 rgba(0,0,0,0.4));
+    }
+
+    .brand-title .title-latin {
+      font-family: var(--font-display);
+    font-size: 7vw;
+    font-weight: 700;
+    color: var(--sandstone);
+    letter-spacing: 2px;
+    }
+
+    .brand-subtitle {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .brand-army-row {
+      display: flex;
+      justify-content: center;
+      gap: clamp(14px, 4vw, 30px);
+      margin-top: 22px;
+    }
+
+    .brand-piece {
+      width: clamp(34px, 8vw, 46px);
+      height: clamp(34px, 8vw, 46px);
+      object-fit: contain;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.25));
+      animation: pieceFloat 4.5s ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+    @keyframes pieceFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* =====================================================
+       AUTH CARD
+       ===================================================== */
+    .auth-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .auth-card {
+      background: rgba(26, 6, 0, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: var(--border-gold);
+      border-radius: var(--radius-lg);
+      padding: clamp(26px, 5vw, 42px) clamp(20px, 4vw, 34px);
+      box-shadow: var(--shadow-deep), var(--shadow-gold);
+      contain: layout paint;
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+    }
+
+    @media (max-width: 768px) {
+      .auth-card {
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+      }
+    }
+
+    /* decorative top gold line */
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+    }
+
+    /* corner filigree flourishes */
+    .corner-ornament {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(201, 168, 76, 0.35);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .corner-ornament.tl { top: 14px; left: 14px; border-right: none; border-bottom: none; border-top-left-radius: 10px; }
+    .corner-ornament.tr { top: 14px; right: 14px; border-left: none; border-bottom: none; border-top-right-radius: 10px; }
+    .corner-ornament.bl { bottom: 14px; left: 14px; border-right: none; border-top: none; border-bottom-left-radius: 10px; }
+    .corner-ornament.br { bottom: 14px; right: 14px; border-left: none; border-top: none; border-bottom-right-radius: 10px; }
+
+    /* Inline alert banner */
+    .form-alert {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .form-alert.show { display: flex; animation: fadeIn 0.25s ease; }
+    .form-alert.error {
+      background: rgba(224, 90, 90, 0.12);
+      border: 1px solid rgba(224, 90, 90, 0.4);
+      color: #ffc2c2;
+    }
+    .form-alert.success {
+      background: rgba(201, 168, 76, 0.12);
+      border: 1px solid rgba(201, 168, 76, 0.4);
+      color: var(--gold-light);
+    }
+    .form-alert .alert-icon { flex-shrink: 0; font-size: 0.95rem; line-height: 1.4; }
+
+    /* Tab Switcher */
+    .tab-switcher {
+      display: flex;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 10px;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 7px;
+      transition: var(--transition);
+      min-height: 44px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: var(--midnight);
+      box-shadow: 0 2px 10px rgba(201, 168, 76, 0.3);
+    }
+
+    /* Form Views */
+    .form-view {
+      display: none;
+      animation: fadeIn 0.35s ease forwards;
+    }
+    .form-view.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =====================================================
+       SIGNUP STEPPER — the "epic" centerpiece
+       ===================================================== */
+    .signup-stepper {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      margin-bottom: 26px;
+      padding: 4px 0 2px;
+    }
+
+    .stepper-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      width: 78px;
+    }
+
+    .stepper-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(201, 168, 76, 0.3);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .stepper-step span {
+      font-family: var(--font-display);
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+      text-align: center;
+    }
+
+    .stepper-step.active .stepper-circle {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      border-color: var(--gold-light);
+      color: var(--midnight);
+      box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15), 0 0 18px rgba(201, 168, 76, 0.5);
+      animation: stepPulse 1.8s ease-in-out infinite;
+    }
+    .stepper-step.active span { color: var(--gold-light); }
+
+    .stepper-step.completed .stepper-circle {
+      background: rgba(201, 168, 76, 0.18);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .stepper-step.completed span { color: var(--sandstone); }
+
+    @keyframes stepPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15), 0 0 18px rgba(201, 168, 76, 0.5); }
+      50% { box-shadow: 0 0 0 7px rgba(201, 168, 76, 0.08), 0 0 24px rgba(201, 168, 76, 0.7); }
+    }
+
+    .stepper-line {
+      flex: 1;
+      height: 1.5px;
+      background: rgba(201, 168, 76, 0.25);
+      margin: 20px -6px 0;
+      position: relative;
+      overflow: hidden;
+      max-width: 40px;
+    }
+    .stepper-line::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    .stepper-line.filled::after { transform: scaleX(1); }
+
+    /* Input Fields */
+    .input-group {
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .input-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--sandstone);
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-field {
+      width: 100%;
+      background: rgba(18, 4, 0, 0.6);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 8px;
+      padding: 13px 16px;
+      padding-right: 42px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      min-height: 48px;
+    }
+
+    .input-field::placeholder { color: rgba(201, 184, 144, 0.4); }
+
+    .input-field:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(201, 168, 76, 0.25);
+      background: rgba(18, 4, 0, 0.85);
+    }
+
+    .input-field.invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 10px rgba(224, 90, 90, 0.25);
+    }
+
+    .field-hint {
+      display: none;
+      font-size: 0.72rem;
+      color: var(--error);
+      margin-top: 6px;
+    }
+    .field-hint.show { display: block; }
+
+    /* OTP field — styled to look like six carved slots */
+    .otp-field {
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 1.4rem !important;
+      font-weight: 700;
+      letter-spacing: 10px !important;
+      padding-right: 16px !important;
+      background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0, transparent calc(16.6% - 1px),
+        rgba(201, 168, 76, 0.3) calc(16.6% - 1px), rgba(201, 168, 76, 0.3) 16.6%
+      );
+      color: var(--gold-light);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 6px;
+      background: none;
+      border: none;
+      color: var(--gold-dim);
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 8px;
+      min-width: 40px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+    }
+    .toggle-password:hover { color: var(--gold); }
+
+    /* password strength meter — epic flourish for the signup passcode */
+    .strength-meter {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .strength-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(201, 168, 76, 0.15);
+      transition: background 0.3s ease;
+    }
+    .strength-bar.lit-weak { background: var(--error); }
+    .strength-bar.lit-mid { background: var(--gold); }
+    .strength-bar.lit-strong { background: var(--success); }
+    .strength-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Helper Links & Options */
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+      font-size: 0.8rem;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      min-height: 32px;
+    }
+
+    .checkbox-container input {
+      accent-color: var(--gold);
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+
+    .forgot-link {
+      color: var(--gold);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .forgot-link:hover {
+      color: var(--gold-light);
+      text-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+    }
+
+    /* Primary Action Button */
+    .btn-submit {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--midnight);
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+      min-height: 48px;
+      overflow: hidden;
+    }
+
+    /* sweeping sheen across the epic submit button */
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: skewX(-20deg);
+      animation: sheen 3.4s ease-in-out infinite;
+    }
+    @keyframes sheen {
+      0% { left: -60%; }
+      35%, 100% { left: 130%; }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .btn-submit:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(201, 168, 76, 0.5);
+      }
+    }
+    .btn-submit:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+    .btn-submit:disabled { cursor: not-allowed; opacity: 0.85; }
+
+    .btn-submit .btn-label { transition: opacity 0.15s ease; position: relative; z-index: 1; }
+    .btn-submit.loading .btn-label { opacity: 0; }
+
+    .btn-spinner {
+      display: none;
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(18, 4, 0, 0.35);
+      border-top-color: var(--midnight);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .btn-submit.loading .btn-spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Back to Login Text */
+    .back-login {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .back-login button {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-decoration: underline;
+      padding: 6px;
+      min-height: 32px;
+    }
+
+    /* Responsive Tweaks */
+    @media (max-width: 480px) {
+      .auth-card { padding: 26px 18px; }
+      .form-options { flex-direction: column; align-items: flex-start; }
+      .stepper-step { width: 64px; }
+      .stepper-step span { font-size: 0.54rem; }
+      .otp-field { letter-spacing: 6px !important; }
+    }
+
+    @media (max-width: 360px) {
+      .auth-card { padding: 22px 14px; }
+      .tab-btn { font-size: 0.68rem; padding: 9px 4px; }
+    }
+
+    @media (max-height: 700px) and (min-width: 481px) {
+      .hero-shell { justify-content: flex-start; }
+      .brand-army-row { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient hero-style background: aura, board watermark, embers -->
+  <div class="page-atmosphere">
+    <div class="atmo-glow"></div>
+   
+    <div class="ember-particles" id="emberParticles"></div>
+  </div>
+
+  <div class="hero-shell">
+    <a href="../index.html" class="back-home">← Back to the Battlefield</a>
+
+    <!-- BRAND HERO -->
+    <div class="brand-hero">
+      <span class="hero-badge"><span class="badge-dot"></span> Ancient India · 6th Century CE</span>
+      <div class="brand-title">
+        <span class="title-devanagari">चतुरंग</span>
+        <span class="title-latin">CHATURANGA</span>
+      </div>
+      <p class="brand-subtitle">Enter the Ancient Battlefield</p>
+      <div class="brand-army-row">
+        <img src="../images-webp/raja.webp" alt="Raja" class="brand-piece" style="--delay:0s">
+        <img src="../images-webp/elephant.webp" alt="Hathi" class="brand-piece" style="--delay:0.5s">
+        <img src="../images-webp/horse.webp" alt="Ashva" class="brand-piece" style="--delay:1s">
+        <img src="../images-webp/chariot.webp" alt="Ratha" class="brand-piece" style="--delay:1.5s">
+      </div>
+    </div>
+
+    <!-- AUTH CARD -->
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <span class="corner-ornament tl"></span>
+        <span class="corner-ornament tr"></span>
+        <span class="corner-ornament bl"></span>
+        <span class="corner-ornament br"></span>
+
+        <!-- Shared inline alert (errors / success messages) -->
+        <div class="form-alert" id="form-alert" role="alert" aria-live="polite">
+          <span class="alert-icon" id="alert-icon">⚠</span>
+          <span id="alert-text"></span>
+        </div>
+
+        <!-- Tab Navigation (Login / Sign Up) -->
+        <div class="tab-switcher" id="tab-switcher">
+          <button type="button" class="tab-btn active" data-tab="login" onclick="switchTab('login')">Sign In</button>
+          <button type="button" class="tab-btn" data-tab="signup" onclick="switchTab('signup')">Register</button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <form id="login-form" class="form-view active" novalidate>
+          <div class="input-group">
+            <label class="input-label" for="login-email">Email</label>
+            <div class="input-wrapper">
+              <input type="email" id="login-email" class="input-field" placeholder="warrior@chaturanga.in"
+                     autocomplete="email" inputmode="email" required>
+            </div>
+            <p class="field-hint" id="login-email-hint">Enter a valid email address.</p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="login-password">Passcode</label>
+            <div class="input-wrapper">
+              <input type="password" id="login-password" class="input-field" placeholder="••••••••"
+                     autocomplete="current-password" required>
+              <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePasswordVisibility('login-password', this)">👁</button>
+            </div>
+            <p class="field-hint" id="login-password-hint">Passcode is required.</p>
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-container">
+              <input type="checkbox" id="remember-me" checked>
+              <span>Remember Me</span>
+            </label>
+            <button type="button" class="forgot-link" onclick="switchTab('forgot')">Forgot Code?</button>
+          </div>
+
+          <button type="submit" class="btn-submit" id="login-submit">
+            <span class="btn-label"><i class="fa-solid fa-chess-king"></i> Enter Realm</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <!-- 2. SIGNUP FORM (3-step: details -> verify email -> set password) -->
+        <form id="signup-form" class="form-view" novalidate>
+
+          <!-- Epic progress stepper -->
+          <div class="signup-stepper" id="signupStepper">
+            <div class="stepper-step active" data-step="1">
+              <div class="stepper-circle"><i class="fa-solid fa-user"></i></div>
+              <span>Details</span>
+            </div>
+            <div class="stepper-line" id="stepperLine1"></div>
+            <div class="stepper-step" data-step="2">
+              <div class="stepper-circle"><i class="fa-solid fa-envelope-open-text"></i></div>
+              <span>Verify</span>
+            </div>
+            <div class="stepper-line" id="stepperLine2"></div>
+            <div class="stepper-step" data-step="3">
+              <div class="stepper-circle"><i class="fa-solid fa-key"></i></div>
+              <span>Passcode</span>
+            </div>
+          </div>
+
+          <div id="signup-step1-group">
+            <div class="input-group">
+              <label class="input-label" for="signup-name">Warrior Title / Name</label>
+              <div class="input-wrapper">
+                <input type="text" id="signup-name" class="input-field" placeholder="e.g. Arjun Dev"
+                       autocomplete="name" required>
+              </div>
+              <p class="field-hint" id="signup-name-hint">Please tell us what to call you.</p>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="signup-email">Email Address</label>
+              <div class="input-wrapper">
+                <input type="email" id="signup-email" class="input-field" placeholder="warrior@chaturanga.in"
+                       autocomplete="email" inputmode="email" required>
+              </div>
+              <p class="field-hint" id="signup-email-hint">Enter a valid email address.</p>
+            </div>
+          </div>
+
+          <div id="signup-step2-group" style="display: none;">
+            <div class="input-group">
+              <label class="input-label" for="signup-otp">6-Digit OTP Code</label>
+              <div class="input-wrapper">
+                <input type="text" id="signup-otp" class="input-field otp-field" placeholder="000000"
+                       maxlength="6" autocomplete="one-time-code" inputmode="numeric">
+              </div>
+              <p class="field-hint" id="signup-otp-hint">Enter the 6-digit OTP code sent to your email.</p>
+            </div>
+          </div>
+
+          <div id="signup-step3-group" style="display: none;">
+            <div class="input-group">
+              <label class="input-label" for="signup-password">Secret Passcode</label>
+              <div class="input-wrapper">
+                <input type="password" id="signup-password" class="input-field" placeholder="At least 8 characters"
+                       autocomplete="new-password" minlength="8">
+                <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePasswordVisibility('signup-password', this)">👁</button>
+              </div>
+              <div class="strength-meter" id="strengthMeter">
+                <span class="strength-bar" data-i="0"></span>
+                <span class="strength-bar" data-i="1"></span>
+                <span class="strength-bar" data-i="2"></span>
+                <span class="strength-bar" data-i="3"></span>
+              </div>
+              <p class="strength-label" id="strengthLabel">Passcode strength</p>
+              <p class="field-hint" id="signup-password-hint">Passcode must be at least 8 characters.</p>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="signup-confirm-password">Confirm Passcode</label>
+              <div class="input-wrapper">
+                <input type="password" id="signup-confirm-password" class="input-field" placeholder="At least 8 characters"
+                       autocomplete="new-password" minlength="8">
+                <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePasswordVisibility('signup-confirm-password', this)">👁</button>
+              </div>
+              <p class="field-hint" id="signup-confirm-password-hint">Passwords do not match.</p>
+            </div>
+
+            <div class="form-options">
+              <label class="checkbox-container">
+                <input type="checkbox" id="accept-rules" required>
+                <span>Accept Rules of Engagement</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="signup-submit">
+            <span class="btn-label" id="signup-submit-label"><i class="fa-solid fa-paper-plane"></i> Send OTP</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <!-- 3. FORGOT PASSWORD FORM -->
+        <form id="forgot-form" class="form-view" novalidate>
+          <div class="input-group">
+            <label class="input-label" for="forgot-email">Registered Email Address</label>
+            <div class="input-wrapper">
+              <input type="email" id="forgot-email" class="input-field" placeholder="warrior@chaturanga.in"
+                     autocomplete="email" inputmode="email" required>
+            </div>
+            <p class="field-hint" id="forgot-email-hint">Enter a valid email address.</p>
+          </div>
+
+          <div id="otp-step-group" style="display: none;">
+            <div class="input-group">
+              <label class="input-label" for="forgot-otp">6-Digit OTP Code</label>
+              <div class="input-wrapper">
+                <input type="text" id="forgot-otp" class="input-field otp-field" placeholder="000000"
+                       maxlength="6" autocomplete="one-time-code" inputmode="numeric">
+              </div>
+              <p class="field-hint" id="forgot-otp-hint">Enter the 6-digit OTP code sent to your email.</p>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="forgot-password">New Password</label>
+              <div class="input-wrapper">
+                <input type="password" id="forgot-password" class="input-field" placeholder="••••••••"
+                       autocomplete="new-password" minlength="8">
+                <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePasswordVisibility('forgot-password', this)">👁</button>
+              </div>
+              <p class="field-hint" id="forgot-password-hint">Password must be at least 8 characters.</p>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="forgot-confirm-password">Confirm New Password</label>
+              <div class="input-wrapper">
+                <input type="password" id="forgot-confirm-password" class="input-field" placeholder="••••••••"
+                       autocomplete="new-password" minlength="8">
+                <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePasswordVisibility('forgot-confirm-password', this)">👁</button>
+              </div>
+              <p class="field-hint" id="forgot-confirm-password-hint">Passwords do not match.</p>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="forgot-submit">
+            <span class="btn-label" id="forgot-submit-label"><i class="fa-solid fa-paper-plane"></i> Send OTP Code</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+
+          <div class="back-login">
+            Remembered? <button type="button" onclick="switchTab('login')">Return to Sign In</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared session helper (same file included on every page of the site) -->
+  <script src="../js/session.js"></script>
+
+  <!-- PAGE LOGIC -->
+  <script>
+    // Point this at wherever the Express server actually runs.
+    const API_BASE = 'http://localhost:5000';
+
+    // If a session already exists (from a previous visit), skip the auth
+    // screen entirely.
+    if (Session.isLoggedIn()) {
+      window.location.href = 'index.html';
+    }
+
+    function renderNavUser() {
+      const navUser = document.getElementById('navUser');
+      if (!navUser) return;
+      navUser.innerHTML = '';
+
+      const user = Session.get();
+
+      if (user) {
+        const badge = document.createElement('div');
+        badge.className = 'nav-user-badge';
+
+        const avatar = document.createElement('span');
+        avatar.className = 'nav-user-avatar';
+        avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
+
+        const name = document.createElement('span');
+        name.className = 'nav-user-name';
+        name.textContent = user.name || user.email;
+        name.title = user.name || user.email;
+
+        const logoutBtn = document.createElement('button');
+        logoutBtn.type = 'button';
+        logoutBtn.className = 'nav-logout-btn';
+        logoutBtn.setAttribute('aria-label', 'Log out');
+        logoutBtn.title = 'Log out';
+        logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i>';
+        logoutBtn.addEventListener('click', function () {
+          Session.clear();
+          renderNavUser();
+        });
+
+        badge.appendChild(avatar);
+        badge.appendChild(name);
+        badge.appendChild(logoutBtn);
+        navUser.appendChild(badge);
+      } else {
+        const link = document.createElement('a');
+        link.href = 'loginpage.html';
+        link.className = 'nav-signin-link';
+        link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
+        navUser.appendChild(link);
+      }
+    }
+
+    renderNavUser();
+    Session.onChange(renderNavUser);
+
+    /* ---------- Ember particles ---------- */
+    (function spawnEmbers() {
+      const field = document.getElementById('emberParticles');
+      const count = window.innerWidth < 480 ? 14 : 24;
+      for (let i = 0; i < count; i++) {
+        const ember = document.createElement('span');
+        ember.className = 'ember';
+        const left = Math.random() * 100;
+        const duration = 7 + Math.random() * 8;
+        const delay = Math.random() * 10;
+        const drift = (Math.random() * 60 - 30) + 'px';
+        ember.style.left = left + '%';
+        ember.style.animationDuration = duration + 's';
+        ember.style.animationDelay = delay + 's';
+        ember.style.setProperty('--drift', drift);
+        field.appendChild(ember);
+      }
+    })();
+
+    /* ---------- Tab switching ---------- */
+    function switchTab(target) {
+      const switcher = document.getElementById('tab-switcher');
+      const tabs = switcher.querySelectorAll('.tab-btn');
+      const forms = document.querySelectorAll('.form-view');
+
+      switcher.style.display = (target === 'forgot') ? 'none' : 'flex';
+      tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === target));
+      forms.forEach(form => form.classList.toggle('active', form.id === `${target}-form`));
+
+      if (target !== 'signup') resetSignupForm();
+      hideAlert();
+    }
+
+    /* ---------- Inline alert banner ---------- */
+    const alertEl = document.getElementById('form-alert');
+    const alertIconEl = document.getElementById('alert-icon');
+    const alertTextEl = document.getElementById('alert-text');
+
+    function showAlert(message, type) {
+      alertEl.classList.remove('error', 'success');
+      alertEl.classList.add('show', type);
+      alertIconEl.textContent = type === 'success' ? '✓' : '⚠';
+      alertTextEl.textContent = message;
+    }
+
+    function hideAlert() {
+      alertEl.classList.remove('show', 'error', 'success');
+    }
+
+    /* ---------- Field validation helpers ---------- */
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function setFieldValidity(inputEl, hintEl, valid) {
+      inputEl.classList.toggle('invalid', !valid);
+      if (hintEl) hintEl.classList.toggle('show', !valid);
+    }
+
+    /* ---------- Button loading state ---------- */
+    function setLoading(buttonEl, isLoading) {
+      buttonEl.classList.toggle('loading', isLoading);
+      buttonEl.disabled = isLoading;
+    }
+
+    /* ---------- Password visibility toggle ---------- */
+    function togglePasswordVisibility(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      btn.style.color = showing ? 'var(--gold-dim)' : 'var(--gold)';
+      btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+    }
+
+    /* ---------- Signup stepper visuals ---------- */
+    function setStepperState(step) {
+      document.querySelectorAll('#signupStepper .stepper-step').forEach(el => {
+        const s = parseInt(el.dataset.step, 10);
+        el.classList.remove('active', 'completed');
+        if (s < step) el.classList.add('completed');
+        else if (s === step) el.classList.add('active');
+      });
+      document.getElementById('stepperLine1').classList.toggle('filled', step > 1);
+      document.getElementById('stepperLine2').classList.toggle('filled', step > 2);
+    }
+
+    /* ---------- Passcode strength meter ---------- */
+    const strengthBars = () => document.querySelectorAll('#strengthMeter .strength-bar');
+    function updateStrength(password) {
+      let score = 0;
+      if (password.length >= 8) score++;
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+      if (/\d/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
+
+      const labels = ['Too short', 'Weak passcode', 'Fair passcode', 'Strong passcode', 'Mighty passcode'];
+      const cls = score <= 1 ? 'lit-weak' : (score <= 2 ? 'lit-mid' : 'lit-strong');
+
+      strengthBars().forEach((bar, i) => {
+        bar.classList.remove('lit-weak', 'lit-mid', 'lit-strong');
+        if (password.length === 0) return;
+        if (i < score) bar.classList.add(cls);
+      });
+      document.getElementById('strengthLabel').textContent = password.length === 0 ? 'Passcode strength' : labels[score];
+    }
+    document.getElementById('signup-password').addEventListener('input', function () {
+      updateStrength(this.value);
+    });
+
+    /* ---------- API helper ---------- */
+    async function callApi(path, body) {
+      let res;
+      try {
+        res = await fetch(`${API_BASE}${path}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      } catch (networkErr) {
+        return { success: false, message: 'Could not reach the server — make sure the backend is running on localhost:5000.' };
+      }
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        return { success: false, message: 'Unexpected response from the server.' };
+      }
+      if (!res.ok && data.success === undefined) {
+        data.success = false;
+      }
+      return data;
+    }
+
+    /* ---------- LOGIN ---------- */
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      hideAlert();
+
+      const emailEl = document.getElementById('login-email');
+      const passwordEl = document.getElementById('login-password');
+      const email = emailEl.value.trim();
+      const password = passwordEl.value;
+
+      const emailValid = EMAIL_RE.test(email);
+      const passwordValid = password.length > 0;
+      setFieldValidity(emailEl, document.getElementById('login-email-hint'), emailValid);
+      setFieldValidity(passwordEl, document.getElementById('login-password-hint'), passwordValid);
+      if (!emailValid || !passwordValid) return;
+
+      const submitBtn = document.getElementById('login-submit');
+      setLoading(submitBtn, true);
+
+      const result = await callApi('/api/auth/login', { email, password });
+
+      setLoading(submitBtn, false);
+
+      if (result.success) {
+        const remember = document.getElementById('remember-me').checked;
+        Session.save(result.user, remember);
+        showAlert('Welcome back! Taking you to the battlefield...', 'success');
+        setTimeout(() => { window.location.href = 'index.html'; }, 900);
+      } else {
+        showAlert(result.message || 'Invalid credentials.', 'error');
+      }
+    });
+
+    /* ---------- SIGNUP (3-step) ---------- */
+    let signupStep = 1;
+
+    function resetSignupForm() {
+      signupStep = 1;
+      document.getElementById('signup-step1-group').style.display = 'block';
+      document.getElementById('signup-step2-group').style.display = 'none';
+      document.getElementById('signup-step3-group').style.display = 'none';
+      document.getElementById('signup-submit-label').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send OTP';
+      document.getElementById('signup-name').disabled = false;
+      document.getElementById('signup-email').disabled = false;
+      setStepperState(1);
+    }
+
+    document.getElementById('signup-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      hideAlert();
+
+      const submitBtn = document.getElementById('signup-submit');
+      const submitLabel = document.getElementById('signup-submit-label');
+
+      if (signupStep === 1) {
+        const nameEl = document.getElementById('signup-name');
+        const emailEl = document.getElementById('signup-email');
+        const name = nameEl.value.trim();
+        const email = emailEl.value.trim();
+
+        const nameValid = name.length > 0;
+        const emailValid = EMAIL_RE.test(email);
+        setFieldValidity(nameEl, document.getElementById('signup-name-hint'), nameValid);
+        setFieldValidity(emailEl, document.getElementById('signup-email-hint'), emailValid);
+        if (!nameValid || !emailValid) return;
+
+        setLoading(submitBtn, true);
+        const result = await callApi('/api/auth/register/send-otp', { name, email });
+        setLoading(submitBtn, false);
+
+        if (result.success) {
+          signupStep = 2;
+          nameEl.disabled = true;
+          emailEl.disabled = true;
+          document.getElementById('signup-step2-group').style.display = 'block';
+          submitLabel.innerHTML = '<i class="fa-solid fa-envelope-open-text"></i> Verify Email';
+          setStepperState(2);
+          showAlert(result.message || 'OTP sent to your email. Check your inbox!', 'success');
+        } else {
+          showAlert(result.message || 'Failed to send OTP.', 'error');
+        }
+
+      } else if (signupStep === 2) {
+        const otpEl = document.getElementById('signup-otp');
+        const email = document.getElementById('signup-email').value.trim();
+        const otp = otpEl.value.trim();
+
+        const otpValid = /^\d{6}$/.test(otp);
+        setFieldValidity(otpEl, document.getElementById('signup-otp-hint'), otpValid);
+        if (!otpValid) return;
+
+        setLoading(submitBtn, true);
+        const result = await callApi('/api/auth/register/verify-otp', { email, otp });
+        setLoading(submitBtn, false);
+
+        if (result.success) {
+          signupStep = 3;
+          document.getElementById('signup-step2-group').style.display = 'none';
+          document.getElementById('signup-step3-group').style.display = 'block';
+          submitLabel.innerHTML = '<i class="fa-solid fa-crown"></i> Pledge Allegiance';
+          setStepperState(3);
+          showAlert(result.message || 'Email verified! Now set your password.', 'success');
+        } else {
+          showAlert(result.message || 'OTP verification failed.', 'error');
+        }
+
+      } else {
+        const passwordEl = document.getElementById('signup-password');
+        const confirmEl = document.getElementById('signup-confirm-password');
+        const acceptEl = document.getElementById('accept-rules');
+        const email = document.getElementById('signup-email').value.trim();
+        const password = passwordEl.value;
+        const confirmPassword = confirmEl.value;
+
+        const passwordValid = password.length >= 8;
+        const matchValid = password === confirmPassword;
+        setFieldValidity(passwordEl, document.getElementById('signup-password-hint'), passwordValid);
+        setFieldValidity(confirmEl, document.getElementById('signup-confirm-password-hint'), matchValid);
+        if (!passwordValid || !matchValid) return;
+
+        if (!acceptEl.checked) {
+          showAlert('Please accept the Rules of Engagement to continue.', 'error');
+          return;
+        }
+
+        setLoading(submitBtn, true);
+        const result = await callApi('/api/auth/register/set-password', { email, password });
+        setLoading(submitBtn, false);
+
+        if (result.success) {
+          Session.save(result.user, true);
+          showAlert('Account created! Taking you to the battlefield...', 'success');
+          setTimeout(() => { window.location.href = 'index.html'; }, 900);
+        } else {
+          showAlert(result.message || 'Registration failed.', 'error');
+        }
+      }
+    });
+
+    /* ---------- FORGOT PASSWORD & OTP ---------- */
+    let forgotStep = 1;
+
+    document.getElementById('forgot-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      hideAlert();
+
+      const emailEl = document.getElementById('forgot-email');
+      const otpStepGroup = document.getElementById('otp-step-group');
+      const otpEl = document.getElementById('forgot-otp');
+      const pwEl = document.getElementById('forgot-password');
+      const confirmEl = document.getElementById('forgot-confirm-password');
+      const submitBtn = document.getElementById('forgot-submit');
+      const submitLabel = document.getElementById('forgot-submit-label');
+
+      const email = emailEl.value.trim();
+      const emailValid = EMAIL_RE.test(email);
+      setFieldValidity(emailEl, document.getElementById('forgot-email-hint'), emailValid);
+      if (!emailValid) return;
+
+      if (forgotStep === 1) {
+        setLoading(submitBtn, true);
+        const result = await callApi('/api/auth/send-otp', { email });
+        setLoading(submitBtn, false);
+
+        if (result.success) {
+          forgotStep = 2;
+          emailEl.disabled = true;
+          if (otpStepGroup) otpStepGroup.style.display = 'block';
+          if (submitLabel) submitLabel.innerHTML = '<i class="fa-solid fa-key"></i> Verify OTP & Reset Password';
+          showAlert(result.message || 'OTP sent to your email. Check your inbox!', 'success');
+        } else {
+          showAlert(result.message || 'Failed to send OTP.', 'error');
+        }
+      } else {
+        const otp = otpEl ? otpEl.value.trim() : '';
+        const password = pwEl ? pwEl.value : '';
+        const confirmPassword = confirmEl ? confirmEl.value : '';
+
+        const otpValid = /^\d{6}$/.test(otp);
+        const pwValid = password.length >= 8;
+        const matchValid = (password === confirmPassword);
+
+        if (otpEl) setFieldValidity(otpEl, document.getElementById('forgot-otp-hint'), otpValid);
+        if (pwEl) setFieldValidity(pwEl, document.getElementById('forgot-password-hint'), pwValid);
+        if (confirmEl) setFieldValidity(confirmEl, document.getElementById('forgot-confirm-password-hint'), matchValid);
+
+        if (!otpValid || !pwValid || !matchValid) return;
+
+        setLoading(submitBtn, true);
+        const result = await callApi('/api/auth/forgot-password', { email, otp, newPassword: password });
+        setLoading(submitBtn, false);
+
+        if (result.success) {
+          showAlert(result.message || 'Password reset successfully! Returning to sign in...', 'success');
+          const loginEmailInput = document.getElementById('login-email');
+          if (loginEmailInput) loginEmailInput.value = email;
+          setTimeout(() => {
+            forgotStep = 1;
+            emailEl.disabled = false;
+            if (otpStepGroup) otpStepGroup.style.display = 'none';
+            if (submitLabel) submitLabel.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send OTP Code';
+            switchTab('login');
+          }, 1500);
+        } else {
+          showAlert(result.message || 'OTP verification failed.', 'error');
+        }
+      }
+    });
+
+    // Clear a field's error state as soon as the person edits it again.
+    document.querySelectorAll('.input-field').forEach(function (input) {
+      input.addEventListener('input', function () {
+        input.classList.remove('invalid');
+        const hint = document.getElementById(input.id + '-hint');
+        if (hint) hint.classList.remove('show');
+      });
+    });
+  </script>
+</body>
+</html>

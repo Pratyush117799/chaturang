@@ -30,8 +30,8 @@ const pageRoutes = {
     '/contact':                       '/website/pages/contact.html',
     '/what-is-chaturanga':            '/website/pages/what-is-chaturanga.html',
     '/chaturanga-vs-chess-vs-xiangqi':'/website/pages/chaturanga-vs-chess-vs-xiangqi.html',
-    '/how-to-play':                   '/website/howtoplay.html',
-    '/howtoplay':                     '/website/howtoplay.html',
+    '/how-to-play':                   '/website/pages/howtoplay.html',
+    '/howtoplay':                     '/website/pages/howtoplay.html',
 };
 
 // ─── Helper: serve custom error page with correct HTTP status ────────────────

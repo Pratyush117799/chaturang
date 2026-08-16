@@ -24,7 +24,9 @@ let SEARCH_DEADLINE = Infinity; // wall-clock cutoff, in ms since epoch
 
   // ── Constants ──────────────────────────────────────────────────────────────
   const PIECE_VALUES = { pawn: 1, horse: 3, elephant: 3, rook: 5, king: 100 };
-  const DICE_TO_FORCED = { 1:'rook', 2:'any', 3:'horse', 4:'elephant', 5:'any', 6:'pawn-king' };
+  // manual.md §2 — 4-sided Pasaka: 2=Ratha,3=Ashva,4=Danti,5=Nara or Rajan
+  const DICE_TO_FORCED = { 2:'rook', 3:'horse', 4:'elephant', 5:'pawn-king' };
+  const DICE_FACES = [2, 3, 4, 5];
   const MAX_QDEPTH = 4;
 
   // ── Shared helpers (self-contained) ───────────────────────────────────────
@@ -380,8 +382,8 @@ let SEARCH_DEADLINE = Infinity; // wall-clock cutoff, in ms since epoch
     const savedForced = game.forcedPiece;
     let totalExpected  = 0;
 
-    // Dice chance node: average over all 6 outcomes
-    for (let d = 1; d <= 6; d++) {
+    // Dice chance node: average over all 4 Pasaka outcomes
+    for (const d of DICE_FACES) {
       game.forcedPiece = DICE_TO_FORCED[d];
       const moves = getAllLegalMoves(game);
 
@@ -391,7 +393,7 @@ let SEARCH_DEADLINE = Infinity; // wall-clock cutoff, in ms since epoch
         game.turnIndex = nextActivePlayer(game, currentPlayer);
         const score = expectiTeamAB(game, depth - 1, alpha, beta, playerId, useQuiesc, tt);
         game.turnIndex = savedT;
-        totalExpected += score / 6;
+        totalExpected += score / 4;
         continue;
       }
 
@@ -423,7 +425,7 @@ let SEARCH_DEADLINE = Infinity; // wall-clock cutoff, in ms since epoch
         if (beta <= alpha) break;
       }
 
-      totalExpected += bestForDice / 6;
+      totalExpected += bestForDice / 4;
     }
 
     game.forcedPiece = savedForced;
@@ -456,7 +458,7 @@ let SEARCH_DEADLINE = Infinity; // wall-clock cutoff, in ms since epoch
   // Applied only in the first 4 half-moves.
   const OPENING_NUDGES = {
     // Dice=rook: prefer rooks toward central files (c-f) or open lines
-    '0_1': ['a','h','b','g'], // discourage edge rooks early
+    '0_2': ['a','h','b','g'], // discourage edge rooks early
     // Dice=horse: strongly prefer central jumps
     '0_3': ['b','g'],        // b-horse and g-horse to center
     // Dice=elephant: prefer elephants near center diagonals
