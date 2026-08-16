@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const path = require('path');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env.local') });
@@ -301,7 +301,7 @@ app.post('/api/auth/register/set-password', async (req, res) => {
       return res.status(409).json({ success: false, message: 'Email already registered' });
     }
 
-    const user = await User.create({ name: pending.name, email: cleanEmail, password });
+    const user = await User.create({ name: pending.name, email: cleanEmail, password, elo: 200 });
     await PendingRegistration.deleteOne({ email: cleanEmail });
 
     res.status(201).json({ success: true, message: 'Registered successfully', user });
@@ -583,20 +583,28 @@ app.get('/api/friends/list/:userId', async (req, res) => {
 // SEND a friend request by email
 app.post('/api/friends/request', async (req, res) => {
   try {
-    const { userId, targetEmail } = req.body;
-    if (!userId || !targetEmail) {
-      return res.status(400).json({ success: false, message: 'User ID and Target Email are required' });
+    const { userId, targetEmail, targetUserId } = req.body;
+    if (!userId || (!targetEmail && !targetUserId)) {
+      return res.status(400).json({ success: false, message: 'User ID and a target email or user ID are required' });
     }
 
     const sender = await User.findById(userId);
     if (!sender) return res.status(404).json({ success: false, message: 'Sender user not found' });
 
-    const cleanEmail = targetEmail.toLowerCase().trim();
-    if (sender.email.toLowerCase() === cleanEmail) {
-      return res.status(400).json({ success: false, message: 'You cannot send a friend request to yourself.' });
+    let target;
+    if (targetUserId) {
+      // Sent from the "All Warriors" list, where we already have the id.
+      if (String(targetUserId) === String(sender._id)) {
+        return res.status(400).json({ success: false, message: 'You cannot send a friend request to yourself.' });
+      }
+      target = await User.findById(targetUserId);
+    } else {
+      const cleanEmail = targetEmail.toLowerCase().trim();
+      if (sender.email.toLowerCase() === cleanEmail) {
+        return res.status(400).json({ success: false, message: 'You cannot send a friend request to yourself.' });
+      }
+      target = await User.findOne({ email: cleanEmail });
     }
-
-    const target = await User.findOne({ email: cleanEmail });
     if (!target) {
       return res.status(404).json({ success: false, message: 'No registered user found with that email address.' });
     }
