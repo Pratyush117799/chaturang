@@ -539,15 +539,68 @@
       el.className = 'rank-badge ' + r.cls;
     }
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      // 1. Get Session Data
-      const user = Session.get();
-      if (!user) {
-        window.location.href = "login.html"; // Redirect to login if unauthenticated
-        return;
+    // Reads ?id= (or ?userId=) from the URL. Present + non-empty -> viewing
+    // that user's profile. Empty/absent -> falls back to the session user.
+    function getTargetUserIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('id') || params.get('userId') || '';
+      return raw.trim();
+    }
+
+    // The top-left back button and the "Back to Main Menu" link should
+    // return the user to wherever they came from: the lobby if they got
+    // here from a friend's name, the main menu otherwise. Landing point is
+    // read from ?from=lobby; falls back to the referrer, then the main menu.
+    function setupBackButton() {
+      const params = new URLSearchParams(window.location.search);
+      const from = (params.get('from') || '').toLowerCase();
+
+      let backHref = '../index.html';
+      if (from === 'lobby') {
+        backHref = '../../game/lobby.html';
+      } else if (!from && document.referrer && /\/game\/lobby(\.html)?(\?|#|$)/.test(document.referrer)) {
+        backHref = '../../game/lobby.html';
       }
 
-      const userId = user.id || user._id;
+      document.querySelectorAll('.nav-back-btn, .nav-back').forEach(el => el.setAttribute('href', backHref));
+    }
+
+    // Nav mini profile (top-right) always reflects who is actually logged
+    // in on this browser -- not necessarily the profile being viewed.
+    function renderNavFromSession(sessionUser) {
+      const nameEl = document.getElementById("navUserName");
+      const eloEl = document.getElementById("navUserElo");
+      const initialEl = document.getElementById("navUserInitial");
+      if (!nameEl || !eloEl || !initialEl) return;
+
+      if (sessionUser) {
+        const displayName = sessionUser.name || sessionUser.email || 'Player';
+        nameEl.textContent = displayName;
+        eloEl.textContent = typeof sessionUser.elo === 'number' ? `${sessionUser.elo} ELO` : '—';
+        initialEl.textContent = displayName.trim().charAt(0).toUpperCase();
+      } else {
+        nameEl.textContent = 'Guest';
+        eloEl.textContent = '—';
+        initialEl.textContent = '?';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      setupBackButton();
+
+      // 1. Figure out whose profile to show: a URL param wins over the
+      // logged-in session user.
+      const paramUserId = getTargetUserIdFromUrl();
+      const sessionUser = Session.get();
+      const sessionUserId = sessionUser ? (sessionUser.id || sessionUser._id) : null;
+      const userId = paramUserId || sessionUserId;
+
+      renderNavFromSession(sessionUser);
+
+      if (!userId) {
+        window.location.href = "login.html"; // Redirect to login if unauthenticated and no profile was requested
+        return;
+      }
 
       try {
         // 2. Fetch fresh user data from API
@@ -574,12 +627,7 @@
         document.getElementById("profRating").textContent = elo;
         renderRankBadge(elo);
 
-        // 5. Render nav mini profile
-        document.getElementById("navUserName").textContent = profile.name;
-        document.getElementById("navUserElo").textContent = `${elo} ELO`;
-        document.getElementById("navUserInitial").textContent = (profile.name || '?').trim().charAt(0).toUpperCase();
-
-        // 6. Compute wins / losses / win rate from the last 50 games
+        // 5. Compute wins / losses / win rate from the last 50 games
         // (a "quit" still counts against you, same convention the lobby uses)
         const games = profile.last50games || [];
         const wins = games.filter(g => g.result === 'win').length;
@@ -591,7 +639,7 @@
         document.getElementById("statLosses").textContent = losses;
         document.getElementById("statWinRate").textContent = `${winRate}%`;
 
-        // 7. Render Match History Table
+        // 6. Render Match History Table
         const tbody = document.getElementById("historyBody");
         tbody.innerHTML = "";
 

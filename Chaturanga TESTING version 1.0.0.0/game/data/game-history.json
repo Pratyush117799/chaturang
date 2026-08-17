@@ -438,5 +438,65 @@
     "gameType": "3bot",
     "roomCode": "6C8Q9Y",
     "ts": 1786807835652
+  },
+  {
+    "token": "msvsn23o3yxw55vr",
+    "userId": "6a7f3ec39f287c1e237ff9f0",
+    "name": "GAUTOMATED",
+    "result": "quit",
+    "reason": "resign",
+    "gameType": "3bot",
+    "roomCode": "3FEUYQ",
+    "ts": 1786885051616
+  },
+  {
+    "token": "msvthp5lba3vbvxs",
+    "userId": "6a7f3ec39f287c1e237ff9f0",
+    "name": "GAUTOMATED",
+    "result": "quit",
+    "reason": "resign",
+    "gameType": "3bot",
+    "roomCode": "9EMJ39",
+    "ts": 1786885811338
+  },
+  {
+    "token": "msvtq4cpakcv4s63",
+    "userId": "6a7f3ec39f287c1e237ff9f0",
+    "name": "GAUTOMATED",
+    "result": "quit",
+    "reason": "resign",
+    "gameType": "3bot",
+    "roomCode": "7MKGFG",
+    "ts": 1786886579066
+  },
+  {
+    "token": "mswyy26lypsgvmnv",
+    "userId": "6a7f3ec39f287c1e237ff9f0",
+    "name": "GAUTOMATED",
+    "result": "quit",
+    "reason": "resign",
+    "gameType": "3bot",
+    "roomCode": "GUKBXP",
+    "ts": 1786955252171
+  },
+  {
+    "token": "mswz2c597kjm32x3",
+    "userId": "6a7f3ec39f287c1e237ff9f0",
+    "name": "GAUTOMATED",
+    "result": "quit",
+    "reason": "resign",
+    "gameType": "3bot",
+    "roomCode": "QUDST7",
+    "ts": 1786955853724
+  },
+  {
+    "token": "mswz2c597kjm32x3",
+    "userId": "6a7f3ec39f287c1e237ff9f0",
+    "name": "GAUTOMATED",
+    "result": "quit",
+    "reason": "resign",
+    "gameType": "3bot",
+    "roomCode": "QUDST7",
+    "ts": 1786955864929
   }
 ]
