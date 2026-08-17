@@ -96,7 +96,7 @@
       overflow: hidden;
       background:
        
-        url('images-webp/hero_battlefield.webp') center center / cover no-repeat;
+        url('../images-webp/hero_battlefield.webp') center center / cover no-repeat;
       background-blend-mode: normal, normal, normal, multiply, normal;
     }
 
@@ -778,7 +778,7 @@
   </div>
 
   <div class="hero-shell">
-    <a href="../index.html" class="back-home">← Back to the Battlefield</a>
+  
 
     <!-- BRAND HERO -->
     <div class="brand-hero">
@@ -814,6 +814,16 @@
         <div class="tab-switcher" id="tab-switcher">
           <button type="button" class="tab-btn active" data-tab="login" onclick="switchTab('login')">Sign In</button>
           <button type="button" class="tab-btn" data-tab="signup" onclick="switchTab('signup')">Register</button>
+        </div>
+
+        <!-- 0. ALREADY LOGGED IN VIEW (shown instead of the forms when a session exists) -->
+        <div id="already-logged-in-view" class="form-view" style="text-align:center;">
+          <p style="margin: 4px 0 24px; color: var(--text-muted); font-size: 0.95rem;">
+            Welcome back, <strong id="logged-in-name" style="color: var(--gold-light);"></strong>. Your battlefield awaits.
+          </p>
+          <button type="button" class="btn-submit" id="enter-realm-btn" onclick="window.location.href='../index.html'">
+            <span class="btn-label"><i class="fa-solid fa-chess-king"></i> Enter</span>
+          </button>
         </div>
 
         <!-- 1. LOGIN FORM -->
@@ -1009,10 +1019,24 @@
     // Point this at wherever the Express server actually runs.
     const API_BASE = 'http://localhost:5000';
 
-    // If a session already exists (from a previous visit), skip the auth
-    // screen entirely.
-    if (Session.isLoggedIn()) {
-      window.location.href = 'index.html';
+    // If a session already exists (from a previous visit), swap the
+    // Sign In / Register card for a single "Enter" button.
+    function renderAuthCard() {
+      const user = Session.get();
+      const switcher = document.getElementById('tab-switcher');
+      const loggedInView = document.getElementById('already-logged-in-view');
+      const authForms = document.querySelectorAll('#login-form, #signup-form, #forgot-form');
+
+      if (user) {
+        switcher.style.display = 'none';
+        authForms.forEach(form => form.classList.remove('active'));
+        document.getElementById('logged-in-name').textContent = user.name || user.email;
+        loggedInView.classList.add('active');
+      } else {
+        loggedInView.classList.remove('active');
+        switcher.style.display = 'flex';
+        switchTab('login');
+      }
     }
 
     function renderNavUser() {
@@ -1061,6 +1085,9 @@
 
     renderNavUser();
     Session.onChange(renderNavUser);
+
+    renderAuthCard();
+    Session.onChange(renderAuthCard);
 
     /* ---------- Ember particles ---------- */
     (function spawnEmbers() {
@@ -1220,7 +1247,7 @@
         const remember = document.getElementById('remember-me').checked;
         Session.save(result.user, remember);
         showAlert('Welcome back! Taking you to the battlefield...', 'success');
-        setTimeout(() => { window.location.href = 'index.html'; }, 900);
+        setTimeout(() => { window.location.href = '../index.html'; }, 900);
       } else {
         showAlert(result.message || 'Invalid credentials.', 'error');
       }

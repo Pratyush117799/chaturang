@@ -640,6 +640,7 @@ class Game {
 
 Game.prototype.loadCustomArmyIfPresent = function() {
   try {
+    if (typeof localStorage === 'undefined') return false; // server-side: no browser storage, nothing to load
     const raw = localStorage.getItem('chaturanga_custom_army');
     if (!raw) return false;
     const config = JSON.parse(raw);
@@ -700,3 +701,10 @@ Game.prototype.loadCustomArmyIfPresent = function() {
 };
 
 globalThis.ChaturangaGame = Game;
+
+// Node (server.js) loads this file via require('./js/game.js') and expects
+// the Game class back directly -- module.exports was missing, which is why
+// `new Game()` failed with "Game is not a constructor".
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Game;
+}

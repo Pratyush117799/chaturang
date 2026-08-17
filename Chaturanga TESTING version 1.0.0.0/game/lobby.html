@@ -204,6 +204,32 @@ body{
 .pr-conn{font-size:.6rem;color:var(--muted2)}
 .pr-conn.online{color:var(--green)}
 
+/* Edge king badges — shown around the board instead of the sidebar names */
+.board-with-kings{position:relative;display:inline-block}
+.edge-king{position:absolute;display:flex;align-items:center;gap:6px;padding:5px 10px;
+  border-radius:20px;background:var(--dark2);border:1px solid var(--border);
+  font-family:'Cinzel',serif;font-size:.72rem;color:var(--text);white-space:nowrap;
+  z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.4);
+  transition:box-shadow .2s ease,border-color .2s ease}
+.edge-king .ek-icon{font-size:1.05rem;line-height:1}
+.edge-king .ek-name{max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.edge-king .ek-conn{font-size:.55rem;color:var(--muted2)}
+.edge-king .ek-conn.online{color:var(--green)}
+.edge-king.active-seat{border-color:var(--gold);box-shadow:0 0 14px rgba(201,168,76,.55),0 2px 10px rgba(0,0,0,.4)}
+.edge-king.empty-seat{opacity:.45;font-style:italic}
+.edge-king-top{top:-16px;left:50%;transform:translate(-50%,-100%)}
+.edge-king-bottom{bottom:-16px;left:50%;transform:translate(-50%,100%)}
+.edge-king-left{left:-16px;top:50%;transform:translate(-100%,-50%);flex-direction:column}
+.edge-king-right{right:-16px;top:50%;transform:translate(100%,-50%);flex-direction:column}
+@media (max-width:700px){
+  .edge-king{font-size:.62rem;padding:4px 8px;gap:4px}
+  .edge-king .ek-name{max-width:64px}
+  .edge-king-top{top:-12px}
+  .edge-king-bottom{bottom:-12px}
+  .edge-king-left{left:-12px}
+  .edge-king-right{right:-12px}
+}
+
 /* ── INVITE BUTTON + MODAL ───────────────────────────────────── */
 .invite-btn{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);
   background:rgba(201,168,76,.08);color:var(--gold);font-family:'Outfit',sans-serif;
@@ -558,6 +584,7 @@ body{
   width:100%;animation:itTimerShrink 30s linear forwards}
 @keyframes itTimerShrink{from{width:100%}to{width:0%}}
 
+.friend-name-link:hover{color:var(--gold);text-decoration:underline}
 .friend-online-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;
   background:#555;display:inline-block;margin-right:5px}
 .friend-online-dot.online{background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.6)}
@@ -765,10 +792,6 @@ body{
       <i class="fa-solid fa-user-plus fa-xs"></i> Invite Player
     </button>
 
-    <div class="players-list" id="playersListEl">
-      <!-- rendered dynamically -->
-    </div>
-
     <div class="info-card">
       <div class="ic-label">Turn</div>
       <div class="ic-val" id="turnDisplay">—</div>
@@ -783,7 +806,13 @@ body{
   <!-- Center: board + vertical controls -->
   <div class="game-center">
     <div class="board-row">
-      <div id="gameBoardWrap"></div>
+      <div class="board-with-kings">
+        <div class="edge-king edge-king-top" id="edgeKingTop"></div>
+        <div class="edge-king edge-king-right" id="edgeKingRight"></div>
+        <div class="edge-king edge-king-bottom" id="edgeKingBottom"></div>
+        <div class="edge-king edge-king-left" id="edgeKingLeft"></div>
+        <div id="gameBoardWrap"></div>
+      </div>
 
       <div class="game-controls-vertical">
         <!-- Dice box doubles as the roll button -->
@@ -977,7 +1006,7 @@ body{
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<script src="../website/session.js"></script>
+<script src="../website/js/session.js"></script>
 
 <script>
 'use strict';
@@ -1028,6 +1057,16 @@ function getUserId() {
   const user = Session.get();
   const id = user && (user.id || user._id);
   return id ? String(id) : null;
+}
+
+// Where userprofile.html lives relative to this page. Adjust this if your
+// folder layout differs -- it's the one place this path is defined.
+const USER_PROFILE_PAGE = '../website/pages/userprofile.html';
+
+// Friends-list click handler: jump to that friend's profile. `from=lobby`
+// lets the profile page's back button bring the user right back here.
+function goToFriendProfile(friendId) {
+  window.location.href = `${USER_PROFILE_PAGE}?id=${encodeURIComponent(friendId)}&from=lobby`;
 }
 
 const WS_URL = (location.protocol==='https:'?'wss:':'ws:') +
@@ -1409,7 +1448,7 @@ function onMoveMade(msg) {
   G.board = msg.board; G.currentSeat = msg.currentSeat; G.turn = msg.turn;
   G.forcedPiece = null; G.diceFace = null; G.lastFrom = msg.from; G.lastTo = msg.to;
   G.selectedSq = null; G.legalMoves = []; G.phase = 'roll';
-  updateDiceDisplay(); updateTurnDisplay(); renderGameBoard(); updateActionButtons();
+  updateDiceDisplay(); updateTurnDisplay(); renderGameBoard(); updateActionButtons(); updateEdgeKingsTurn();
   if (!msg.gameOver) {
     const isMyTurn = G.currentSeat === G.mySeat;
     setStatus(isMyTurn ? 'Your turn — roll the Pāśaka.' : `${SEAT_NAMES[G.currentSeat]}'s turn.`);
@@ -1418,7 +1457,7 @@ function onMoveMade(msg) {
 function onTurnForfeited(msg) {
   G.currentSeat = msg.currentSeat; G.turn = msg.turn;
   G.forcedPiece = null; G.diceFace = null; G.selectedSq = null; G.legalMoves = []; G.phase = 'roll';
-  updateDiceDisplay(); updateTurnDisplay(); renderGameBoard(); updateActionButtons();
+  updateDiceDisplay(); updateTurnDisplay(); renderGameBoard(); updateActionButtons(); updateEdgeKingsTurn();
   setStatus(G.currentSeat === G.mySeat ? 'Your turn — roll.' : `${SEAT_NAMES[msg.seat]} forfeited. ${SEAT_NAMES[G.currentSeat]}'s turn.`);
 }
 
@@ -1822,19 +1861,55 @@ function updateActionButtons() {
   const resignBtn = document.getElementById('resignBtn');
   if (resignBtn) resignBtn.disabled = G.gameOver;
 }
+// Board edge each seat's home occupies, in absolute (unrotated) board space:
+// seat 0 = bottom, 1 = right, 2 = top, 3 = left (see game.js initPosition —
+// each player's king sits on that edge: d1, h4, e8, a5). The board is drawn
+// rotated per-viewer (seatToScreen) so the viewer's own seat is always at
+// the bottom; the same rotation applies here so the king badges always sit
+// next to the matching army.
+const EDGE_ELS = { bottom: 'edgeKingBottom', right: 'edgeKingRight', top: 'edgeKingTop', left: 'edgeKingLeft' };
+const EDGE_ORDER = ['bottom', 'right', 'top', 'left'];
+
 function renderPlayers(players) {
-  const el = document.getElementById('playersListEl');
-  if (!players || !players.length) { el.innerHTML=''; return; }
-  el.innerHTML = players.map(p => {
-    const isActive = p.seat === G.currentSeat, isMe = p.seat === G.mySeat;
-    return `<div class="player-row ${isActive?'active-seat':''}">
-      <div class="pr-swatch" style="background:${PCOLORS[p.seat]||'#888'}"></div>
-      <div class="pr-name">${escapeHTML(p.name)}${isMe?' (You)':''}</div>
-      <div class="pr-elo">${p.elo}</div>
-      <div class="pr-conn ${p.connected?'online':''}">${p.connected?'●':'○'}</div>
-    </div>`;
-  }).join('');
+  const viewerSeat = G.mySeat ?? 0;
+  const list = players || [];
+
+  EDGE_ORDER.forEach((edge, i) => {
+    const seat = (viewerSeat + i) % 4;
+    const el = document.getElementById(EDGE_ELS[edge]);
+    if (!el) return;
+
+    const p = list.find(x => x.seat === seat);
+    const isActive = seat === G.currentSeat;
+    const isMe = seat === G.mySeat;
+
+    el.classList.toggle('active-seat', isActive);
+    el.classList.toggle('empty-seat', !p);
+
+    if (!p) {
+      el.innerHTML = `<span class="ek-icon" style="color:${PCOLORS[seat] || '#888'}">♚</span><span class="ek-name">${SEAT_NAMES[seat] || 'Open'}</span>`;
+      return;
+    }
+
+    el.innerHTML = `
+      <span class="ek-icon" style="color:${PCOLORS[seat] || '#888'}">♚</span>
+      <span class="ek-name">${escapeHTML(p.name)}${isMe ? ' (You)' : ''}</span>
+      <span class="ek-conn ${p.connected ? 'online' : ''}">${p.connected ? '●' : '○'}</span>
+    `;
+  });
+
   document.getElementById('yourSeatDisplay').textContent = `${SEAT_NAMES[G.mySeat]||'?'} (Seat ${G.mySeat})`;
+}
+
+// Cheap re-highlight of whose turn it is on the edge badges, without needing
+// a fresh players array — call this whenever G.currentSeat changes.
+function updateEdgeKingsTurn() {
+  const viewerSeat = G.mySeat ?? 0;
+  EDGE_ORDER.forEach((edge, i) => {
+    const seat = (viewerSeat + i) % 4;
+    const el = document.getElementById(EDGE_ELS[edge]);
+    if (el) el.classList.toggle('active-seat', seat === G.currentSeat);
+  });
 }
 function renderRoomQrCode(code) {
   if (!code) return;
@@ -2241,7 +2316,7 @@ async function loadFriendsData() {
         fEl.innerHTML = data.friends.map(f => `
           <div data-friend-id="${f._id}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;">
             <div>
-              <div style="font-weight:600;font-size:0.85rem;color:var(--text);display:flex;align-items:center;">
+              <div class="friend-name-link" onclick="goToFriendProfile('${f._id}')" title="View profile" style="font-weight:600;font-size:0.85rem;color:var(--text);display:flex;align-items:center;cursor:pointer;width:fit-content;">
                 <span class="friend-online-dot ${onlineFriendIds.has(String(f._id)) ? 'online' : ''}"></span>${escapeHTML(f.name)}
               </div>
               <div style="font-size:0.7rem;color:var(--muted);">${f.elo || 1200} ELO · ${escapeHTML(f.email)}</div>
