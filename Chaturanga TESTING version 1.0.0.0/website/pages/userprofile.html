@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -281,6 +280,29 @@
   @media (max-width: 600px) {
     .rating-pill { margin-left: 0; }
   }
+
+  /* ── Rank badge (same tiers/colors as the lobby, for consistency) ──── */
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+    font-family: var(--font-body);
+  }
+  .rank-novice     { background: rgba(156,163,175,.12); color: #9ca3af; border: 1px solid rgba(156,163,175,.25); }
+  .rank-warrior    { background: rgba(96,165,250,.12);  color: #60a5fa; border: 1px solid rgba(96,165,250,.25); }
+  .rank-charioteer { background: rgba(74,222,128,.12);  color: #4ade80; border: 1px solid rgba(74,222,128,.25); }
+  .rank-archer     { background: rgba(251,191,36,.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
+  .rank-master     { background: rgba(167,139,250,.12); color: #a78bfa; border: 1px solid rgba(167,139,250,.25); }
+  .rank-brahmastra {
+    background: linear-gradient(135deg, rgba(201,168,76,.18), rgba(245,228,160,.12));
+    color: #f5e4a0; border: 1px solid rgba(201,168,76,.4);
+  }
  
   /* ── Stats row ───────────────────────────────────────────────────── */
   .stats-grid {
@@ -443,6 +465,7 @@
         <p id="profJoined"><i class="fa-solid fa-calendar"></i> —</p>
       </div>
       <div class="rating-pill">
+        <div class="rank-badge rank-novice" id="profRankBadge">♟ —</div>
         <div class="rating-value" id="profRating">—</div>
         <div class="rating-label">Rating</div>
       </div>
@@ -495,6 +518,27 @@
 
   <script src="../js/session.js"></script>
   <script>
+    // Same ELO tiers as the lobby's rank system — kept in sync so a player's
+    // rank badge always matches what they see in the lobby.
+    const RANKS = [
+      { min: 0,    max: 999,  icon: '♟', label: 'Shishya',    cls: 'rank-novice'     },
+      { min: 1000, max: 1199, icon: '♞', label: 'Yoddha',      cls: 'rank-warrior'    },
+      { min: 1200, max: 1399, icon: '♝', label: 'Sarathi',     cls: 'rank-charioteer' },
+      { min: 1400, max: 1599, icon: '♜', label: 'Arjuna',      cls: 'rank-archer'     },
+      { min: 1600, max: 1799, icon: '♚', label: 'Maharaja',    cls: 'rank-master'     },
+      { min: 1800, max: 9999, icon: '✦', label: 'Brahmastra',  cls: 'rank-brahmastra' },
+    ];
+    function getRank(elo) {
+      return RANKS.slice().reverse().find(r => elo >= r.min) || RANKS[0];
+    }
+    function renderRankBadge(elo) {
+      const el = document.getElementById('profRankBadge');
+      if (!el) return;
+      const r = getRank(elo);
+      el.textContent = `${r.icon} ${r.label}`;
+      el.className = 'rank-badge ' + r.cls;
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
       // 1. Get Session Data
       const user = Session.get();
@@ -515,29 +559,57 @@
         }
 
         const profile = data.user;
+        const elo = typeof profile.elo === 'number' ? profile.elo : 1200;
 
         // 3. Render Profile Info
         document.getElementById("profName").textContent = profile.name;
         document.getElementById("profEmail").innerHTML = `<i class="fa-solid fa-envelope"></i> ${profile.email}`;
+        document.getElementById("profJoined").innerHTML = `<i class="fa-solid fa-calendar"></i> Joined ${
+          profile.createdAt
+            ? new Date(profile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+            : 'Unknown'
+        }`;
 
-        // 4. Render Match History Table
+        // 4. Render ELO + rank badge
+        document.getElementById("profRating").textContent = elo;
+        renderRankBadge(elo);
+
+        // 5. Render nav mini profile
+        document.getElementById("navUserName").textContent = profile.name;
+        document.getElementById("navUserElo").textContent = `${elo} ELO`;
+        document.getElementById("navUserInitial").textContent = (profile.name || '?').trim().charAt(0).toUpperCase();
+
+        // 6. Compute wins / losses / win rate from the last 50 games
+        // (a "quit" still counts against you, same convention the lobby uses)
+        const games = profile.last50games || [];
+        const wins = games.filter(g => g.result === 'win').length;
+        const losses = games.filter(g => g.result === 'defeat' || g.result === 'quitted').length;
+        const winRate = games.length > 0 ? Math.round((wins / games.length) * 100) : 0;
+
+        document.getElementById("statGames").textContent = games.length;
+        document.getElementById("statWins").textContent = wins;
+        document.getElementById("statLosses").textContent = losses;
+        document.getElementById("statWinRate").textContent = `${winRate}%`;
+
+        // 7. Render Match History Table
         const tbody = document.getElementById("historyBody");
         tbody.innerHTML = "";
 
-        if (!profile.last50games || profile.last50games.length === 0) {
+        if (!games.length) {
           tbody.innerHTML = `<tr><td colspan="3" class="no-data">No matches recorded yet.</td></tr>`;
           return;
         }
 
-        profile.last50games.forEach(game => {
+        // Most recent games first
+        games.slice().sort((a, b) => new Date(b.endedAt || 0) - new Date(a.endedAt || 0)).forEach(game => {
           const row = document.createElement("tr");
 
-          const dateStr = game.endedAt 
+          const dateStr = game.endedAt
             ? new Date(game.endedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             : "—";
 
-          const badgeClass = game.result === 'win' ? 'badge-win' 
-                          : game.result === 'defeat' ? 'badge-defeat' 
+          const badgeClass = game.result === 'win' ? 'badge-win'
+                          : game.result === 'defeat' ? 'badge-defeat'
                           : 'badge-quitted';
 
           row.innerHTML = `
