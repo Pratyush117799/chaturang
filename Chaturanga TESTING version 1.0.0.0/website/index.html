@@ -61,7 +61,7 @@
 
         <!-- Profile chip -->
         <div class="sidebar-top-bar">
-          <a href="loginpage.html" class="sidebar-profile-btn" id="sidebarProfileBtn">
+          <a href="pages/loginpage.html" class="sidebar-profile-btn" id="sidebarProfileBtn">
             <span class="sidebar-profile-avatar" id="sidebarProfileAvatar"><i class="fa-solid fa-user"></i></span>
             <span class="sidebar-profile-text">
               <span class="sidebar-profile-name" id="sidebarProfileName">Guest</span>
@@ -1005,12 +1005,12 @@ const weights = {
       avatar.innerHTML = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
       name.textContent = user.name || user.email || 'Player';
       sub.textContent = 'View Profile';
-      btn.href = '../website/pages/userprofile.html';
+      btn.href = 'pages/userprofile.html';
     } else {
       avatar.innerHTML = '<i class="fa-solid fa-user"></i>';
       name.textContent = 'Guest';
       sub.textContent = 'Sign In';
-      btn.href = 'loginpage.html';
+      btn.href = 'pages/loginpage.html';
     }
   }
   renderSidebarProfile();

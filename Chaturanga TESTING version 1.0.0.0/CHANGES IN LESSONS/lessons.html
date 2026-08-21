@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Lessons — v2.0.0</title>
+  <meta name="description" content="Learn Chaturanga through interactive lessons rooted in Indian philosophy — Mahabharata, Bhagavad Gita, Panchatantra, Ramayana and Chanakya Niti."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../../css/styles.css"/>
+  <link rel="stylesheet" href="../../css/animations.css"/>
+  <link rel="stylesheet" href="../../css/themes.css"/>
+  <script>(function(){var t=localStorage.getItem('chaturanga_theme');if(t&&t!=='classic')document.documentElement.className='theme-'+t;})();</script>
+  <style>
+    :root{--gold:#c9a84c;--dark2:#17130a;--border:rgba(201,168,76,.18);--text:#e3dcc9}
+    body{font-family:'Outfit',sans-serif}
+
+    .lessons-wrap{max-width:1080px;margin:0 auto;padding:28px 20px 100px}
+    .lw-title{font-family:'Cinzel',serif;font-size:1.9rem;color:var(--gold);margin:6px 0 4px;text-align:center}
+    .lw-sub{text-align:center;font-size:.85rem;color:#9a9284;font-style:italic;margin-bottom:26px}
+
+    /* Difficulty filter tabs */
+    .diff-tabs{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+    .diff-tab{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;color:#9a9284;cursor:pointer;padding:8px 16px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.8rem;transition:color .15s,background .15s}
+    .diff-tab i{font-size:1.15rem}
+    .diff-tab:hover{background:rgba(201,168,76,.06);color:var(--text)}
+    .diff-tab.active{color:var(--gold)}
+    .diff-tab.active::after{content:'';display:block;width:100%;height:2px;background:var(--gold);margin-top:2px;border-radius:2px}
+
+    .search-box{max-width:640px;margin:0 auto 30px;position:relative}
+    .search-box input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px 12px 42px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem}
+    .search-box input::placeholder{color:#7a7364}
+    .search-box i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#7a7364}
+
+    /* Course cards */
+    .course-grid{display:flex;flex-direction:column;gap:0}
+    .course-card{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:center;padding:20px 6px;text-decoration:none;border-bottom:1px solid var(--border);transition:background .15s}
+    .course-card:last-child{border-bottom:none}
+    .course-card:hover{background:rgba(201,168,76,.04)}
+    .course-thumb{height:168px;border-radius:14px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;color:#fff;border:2px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.35);background:linear-gradient(135deg,#3a3226,#1c1810)}
+    .course-thumb img{width:100%;height:100%;object-fit:cover;object-position:center 30%;transition:transform .3s ease}
+    .course-card:hover .course-thumb img{transform:scale(1.06)}
+    .course-thumb::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.15) 45%,rgba(0,0,0,0) 65%);z-index:1}
+    .course-thumb .thumb-icon{position:absolute;top:10px;left:10px;width:30px;height:30px;border-radius:50%;background:rgba(23,19,10,.75);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--gold);z-index:2}
+    .course-thumb .thumb-label{position:absolute;bottom:10px;left:14px;right:14px;font-family:'Cinzel',serif;font-weight:700;font-size:1.08rem;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.8);z-index:2}
+    .course-info h3{font-family:'Cinzel',serif;color:var(--text);margin:0 0 6px;font-size:1.15rem}
+    .course-info p{margin:0 0 10px;font-size:.85rem;color:#a89f8d;line-height:1.5}
+    .course-meta{display:flex;gap:14px;align-items:center;font-size:.75rem;color:#8b8370}
+    .course-meta .pill{border:1px solid var(--border);padding:2px 10px;border-radius:10px;text-transform:capitalize}
+    .course-progress-mini{display:flex;align-items:center;gap:6px}
+    .course-progress-mini .bar{width:70px;height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+    .course-progress-mini .fill{height:100%;background:linear-gradient(90deg,#c9a84c,#4ade80)}
+
+    .empty-state{text-align:center;padding:60px 0;color:#8b8370;font-size:.9rem}
+
+    @media(max-width:640px){
+      .course-card{grid-template-columns:1fr;gap:12px}
+      .course-thumb{height:140px}
+    }
+  </style>
+</head>
+<body>
+<nav class="top-nav" style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <a href="../../" class="nav-logo" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+    <i class="fa-solid fa-graduation-cap" style="color:var(--gold)"></i>
+    <span style="font-family:'Cinzel',serif;color:var(--gold)">Chaturanga Lessons</span>
+    <span class="nav-version">v2.0.0</span>
+  </a>
+  <div style="display:flex;gap:10px">
+    <a href="../../lessons/vyuha-formations.html" class="nav-icon-btn" title="Vyuha Formations" style="text-decoration:none"><i class="fa-brands fa-pagelines"></i></a>
+    <a id="acharyaLink" href="../../lessons/acharya.html" class="nav-icon-btn" title="Ask Acharya" style="text-decoration:none"><i class="fa-solid fa-chalkboard-user"></i></a>
+    <a href="puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none"><i class="fa-solid fa-puzzle-piece"></i></a>
+    <a href="../../" class="nav-icon-btn" title="Tournament" style="text-decoration:none"><i class="fa-solid fa-trophy"></i></a>
+    <a href="../../" class="nav-icon-btn" title="Game" style="text-decoration:none"><i class="fa-solid fa-chess-board"></i></a>
+  </div>
+</nav>
+
+<div class="lessons-wrap">
+  <h1 class="lw-title">Chaturanga Lessons</h1>
+  <p class="lw-sub">Learn the ancient game through wisdom drawn from the Mahabharata, Ramayana, Panchatantra and Arthashastra</p>
+
+  <div class="diff-tabs" id="diffTabs"></div>
+
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="searchInput" type="text" placeholder="Search lessons…"/>
+  </div>
+
+  <div class="course-grid" id="courseGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none">No lessons match your search.</div>
+</div>
+
+<script src="../../lessons/lesson-data.js"></script>
+<script src="../../lessons/lesson-engine.js"></script>
+<script>
+const CAT_META={
+  basics:{icon:'fa-chess-pawn', label:'Pieces & Basics', desc:'Learn how each piece moves, captures, and the sacred law of the dice.', img:'../../images/lessons/basics.png'},
+  opening:{icon:'fa-horse', label:'Opening Principles', desc:'Deploy your army and seize command of the centre before the clash begins.', img:'../../images/lessons/opening.png'},
+  tactics:{icon:'fa-chess-rook', label:'Tactics', desc:'Pins, forks and leaps — combinations that win material by force.', img:'../../images/lessons/tactics.png'},
+  endgame:{icon:'fa-flag-checkered', label:'Endgame Technique', desc:'Methodical, decisive play to close out the battle when few pieces remain.', img:'../../images/lessons/endgame.png'},
+  alliance:{icon:'fa-handshake', label:'Team Alliance', desc:'Coordinate with your teammate in 4-player Chaturaji for a shared victory.', img:'../../images/lessons/alliance.png'},
+  advanced:{icon:'fa-crown', label:'Advanced Strategy', desc:'Asymmetry, zugzwang and multi-piece combinations for the seasoned player.', img:'../../images/lessons/advanced.png'}
+};
+const DIFF_ORDER=['newbie','beginner','intermediate','advanced'];
+const DIFF_ICON={all:'fa-layer-group',newbie:'fa-seedling',beginner:'fa-book-open',intermediate:'fa-trophy',advanced:'fa-crown'};
+const DIFF_LABEL={all:'All',newbie:'NewBie',beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
+
+let activeDiff='all';
+let searchTerm='';
+
+function courseData(){
+  const lessons=globalThis.ChaturangaLessonData||[];
+  const cats=[...new Set(lessons.map(l=>l.category))];
+  return cats.map(cat=>{
+    const catLessons=lessons.filter(l=>l.category===cat);
+    const counts={};
+    catLessons.forEach(l=>counts[l.difficulty]=(counts[l.difficulty]||0)+1);
+    const repDiff=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+    const doneCount=catLessons.filter(l=>globalThis.ChaturangaLessonEngine.isCompleted(l.id)).length;
+    return {cat, lessons:catLessons, difficulty:repDiff, doneCount, total:catLessons.length};
+  });
+}
+
+function buildTabs(){
+  const el=document.getElementById('diffTabs');
+  el.innerHTML='';
+  ['all',...DIFF_ORDER].forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='diff-tab'+(d===activeDiff?' active':'');
+    btn.innerHTML='<i class="fa-solid '+DIFF_ICON[d]+'"></i><span>'+DIFF_LABEL[d]+'</span>';
+    btn.onclick=()=>{activeDiff=d;buildTabs();buildGrid();};
+    el.appendChild(btn);
+  });
+}
+
+function buildGrid(){
+  const grid=document.getElementById('courseGrid');
+  const empty=document.getElementById('emptyState');
+  grid.innerHTML='';
+  const term=searchTerm.trim().toLowerCase();
+  let shown=0;
+
+  courseData().forEach(c=>{
+    if(activeDiff!=='all' && c.difficulty!==activeDiff) return;
+    const meta=CAT_META[c.cat]||{icon:'fa-book',label:c.cat,desc:'',img:''};
+    if(term && !(meta.label.toLowerCase().includes(term) || meta.desc.toLowerCase().includes(term) || c.lessons.some(l=>l.title.toLowerCase().includes(term)))) return;
+
+    shown++;
+    const a=document.createElement('a');
+    a.className='course-card';
+    a.href='course.html?cat='+c.cat;
+    const pct=c.total? Math.round(c.doneCount/c.total*100):0;
+    a.innerHTML=
+      '<div class="course-thumb">'+
+        '<img src="'+meta.img+'" alt="'+meta.label+'" loading="lazy" onerror="this.remove()"/>'+
+        '<span class="thumb-icon"><i class="fa-solid '+meta.icon+'"></i></span>'+
+        '<span class="thumb-label">'+meta.label+'</span>'+
+      '</div>'+
+      '<div class="course-info">'+
+        '<h3>'+meta.label+'</h3>'+
+        '<p>'+meta.desc+'</p>'+
+        '<div class="course-meta">'+
+          '<span>'+c.total+' Lessons</span>'+
+          '<span class="pill">'+DIFF_LABEL[c.difficulty]+'</span>'+
+          '<span class="course-progress-mini"><span class="bar"><span class="fill" style="width:'+pct+'%"></span></span>'+c.doneCount+'/'+c.total+'</span>'+
+        '</div>'+
+      '</div>';
+    grid.appendChild(a);
+  });
+
+  empty.style.display=shown?'none':'block';
+}
+
+document.getElementById('searchInput').addEventListener('input', e=>{searchTerm=e.target.value;buildGrid();});
+
+buildTabs();
+buildGrid();
+</script>
+</body>
+</html>

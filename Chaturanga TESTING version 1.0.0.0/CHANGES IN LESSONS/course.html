@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Lessons — Course</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../../css/styles.css"/>
+  <link rel="stylesheet" href="../../css/animations.css"/>
+  <link rel="stylesheet" href="../../css/themes.css"/>
+  <script>(function(){var t=localStorage.getItem('chaturanga_theme');if(t&&t!=='classic')document.documentElement.className='theme-'+t;})();</script>
+  <style>
+    :root{--gold:#c9a84c;--dark2:#17130a;--border:rgba(201,168,76,.18);--text:#e3dcc9}
+    body{font-family:'Outfit',sans-serif}
+    .cw-wrap{max-width:760px;margin:0 auto;padding:24px 20px 100px}
+    .cw-back{display:inline-flex;align-items:center;gap:8px;color:var(--gold);text-decoration:none;font-size:.85rem;margin-bottom:18px}
+    .cw-back:hover{opacity:.8}
+
+    .cw-hero{display:grid;grid-template-columns:260px 1fr;gap:26px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:22px;background:rgba(201,168,76,.03);margin-bottom:26px}
+    .cw-thumb{height:200px;border-radius:12px;position:relative;overflow:hidden;border:2px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.35);background:linear-gradient(135deg,#3a3226,#1c1810)}
+    .cw-thumb img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+    .cw-thumb::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 55%);z-index:1}
+    .cw-thumb .cw-thumb-icon{position:absolute;top:10px;left:10px;width:32px;height:32px;border-radius:50%;background:rgba(23,19,10,.75);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--gold);z-index:2}
+    .cw-hero h1{font-family:'Cinzel',serif;color:var(--gold);margin:0 0 8px;font-size:1.5rem}
+    .cw-hero p{margin:0 0 12px;color:#a89f8d;font-size:.9rem;line-height:1.55}
+    .cw-hero-meta{display:flex;gap:12px;align-items:center;font-size:.78rem;color:#8b8370}
+    .cw-hero-meta .pill{border:1px solid var(--border);padding:2px 10px;border-radius:10px}
+    .cw-hero-bar{width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+    .cw-hero-bar .fill{height:100%;background:linear-gradient(90deg,#c9a84c,#4ade80)}
+
+    .lesson-row{display:flex;align-items:center;gap:16px;padding:16px 4px;text-decoration:none;border-bottom:1px solid var(--border);transition:background .15s}
+    .lesson-row:last-child{border-bottom:none}
+    .lesson-row:hover{background:rgba(201,168,76,.05)}
+    .lesson-num{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold)}
+    .lesson-num.done{background:#4ade80;border-color:#4ade80;color:#0b1a0b}
+    .lesson-body{flex:1;min-width:0}
+    .lesson-body h4{margin:0 0 3px;font-family:'Cinzel',serif;font-size:.98rem;color:var(--text)}
+    .lesson-body p{margin:0;font-size:.78rem;color:#8b8370;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .lesson-tags{display:flex;align-items:center;gap:10px;flex-shrink:0;font-size:.72rem;color:#8b8370}
+    .lesson-tags .pill{border:1px solid var(--border);padding:2px 9px;border-radius:9px;text-transform:capitalize}
+    .lesson-row i.chev{color:#6d6656}
+
+    @media(max-width:600px){
+      .cw-hero{grid-template-columns:1fr}
+      .cw-thumb{height:160px}
+      .lesson-tags .pill{display:none}
+    }
+  </style>
+</head>
+<body>
+<nav class="top-nav" style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <a href="../../" class="nav-logo" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+    <i class="fa-solid fa-graduation-cap" style="color:var(--gold)"></i>
+    <span style="font-family:'Cinzel',serif;color:var(--gold)">Chaturanga Lessons</span>
+  </a>
+  <div style="display:flex;gap:10px">
+    <a href="puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none"><i class="fa-solid fa-puzzle-piece"></i></a>
+    <a href="../../" class="nav-icon-btn" title="Game" style="text-decoration:none"><i class="fa-solid fa-chess-board"></i></a>
+  </div>
+</nav>
+
+<div class="cw-wrap">
+  <a class="cw-back" href="lessons.html"><i class="fa-solid fa-arrow-left"></i> Lessons</a>
+
+  <div class="cw-hero" id="hero"></div>
+
+  <div id="lessonList"></div>
+</div>
+
+<script src="../../lessons/lesson-data.js"></script>
+<script src="../../lessons/lesson-engine.js"></script>
+<script>
+const CAT_META={
+  basics:{icon:'fa-chess-pawn', label:'Pieces & Basics', desc:'Learn how each piece moves, captures, and the sacred law of the dice.', img:'../../images/lessons/basics.png'},
+  opening:{icon:'fa-horse', label:'Opening Principles', desc:'Deploy your army and seize command of the centre before the clash begins.', img:'../../images/lessons/opening.png'},
+  tactics:{icon:'fa-chess-rook', label:'Tactics', desc:'Pins, forks and leaps — combinations that win material by force.', img:'../../images/lessons/tactics.png'},
+  endgame:{icon:'fa-flag-checkered', label:'Endgame Technique', desc:'Methodical, decisive play to close out the battle when few pieces remain.', img:'../../images/lessons/endgame.png'},
+  alliance:{icon:'fa-handshake', label:'Team Alliance', desc:'Coordinate with your teammate in 4-player Chaturaji for a shared victory.', img:'../../images/lessons/alliance.png'},
+  advanced:{icon:'fa-crown', label:'Advanced Strategy', desc:'Asymmetry, zugzwang and multi-piece combinations for the seasoned player.', img:'../../images/lessons/advanced.png'}
+};
+
+const params=new URLSearchParams(location.search);
+const cat=params.get('cat');
+const lessons=(globalThis.ChaturangaLessonData||[]).filter(l=>l.category===cat);
+const meta=CAT_META[cat]||{icon:'fa-book',label:cat||'Lessons',desc:'',color:'linear-gradient(135deg,#555,#888)'};
+
+function buildHero(){
+  const doneCount=lessons.filter(l=>globalThis.ChaturangaLessonEngine.isCompleted(l.id)).length;
+  const pct=lessons.length? Math.round(doneCount/lessons.length*100):0;
+  document.getElementById('hero').innerHTML=
+    '<div class="cw-thumb"><img src="'+meta.img+'" alt="'+meta.label+'" onerror="this.remove()"/><span class="cw-thumb-icon"><i class="fa-solid '+meta.icon+'"></i></span></div>'+
+    '<div>'+
+      '<h1>'+meta.label+'</h1>'+
+      '<p>'+meta.desc+'</p>'+
+      '<div class="cw-hero-meta"><span>'+lessons.length+' Lessons</span><span class="pill">'+doneCount+'/'+lessons.length+' complete</span></div>'+
+      '<div class="cw-hero-bar"><div class="fill" style="width:'+pct+'%"></div></div>'+
+    '</div>';
+}
+
+function buildList(){
+  const el=document.getElementById('lessonList');
+  el.innerHTML='';
+  lessons.forEach((l,i)=>{
+    const done=globalThis.ChaturangaLessonEngine.isCompleted(l.id);
+    const row=document.createElement('a');
+    row.className='lesson-row';
+    row.href='play.html?lesson='+l.id;
+    row.innerHTML=
+      '<div class="lesson-num'+(done?' done':'')+'">'+(done?'<i class="fa-solid fa-check"></i>':(i+1))+'</div>'+
+      '<div class="lesson-body"><h4>'+l.title+'</h4><p>'+(l.culturalSource||'')+'</p></div>'+
+      '<div class="lesson-tags"><span class="pill">'+l.difficulty+'</span><span>'+l.steps.length+' ch.</span></div>'+
+      '<i class="fa-solid fa-chevron-right chev"></i>';
+    el.appendChild(row);
+  });
+}
+
+if(!lessons.length){
+  document.getElementById('hero').innerHTML='<p style="grid-column:1/-1;color:#8b8370">No lessons found for this category.</p>';
+} else {
+  buildHero();
+  buildList();
+}
+</script>
+</body>
+</html>

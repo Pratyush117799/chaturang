@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chaturanga Lessons — Play</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../../css/styles.css"/>
+  <link rel="stylesheet" href="../../css/animations.css"/>
+  <link rel="stylesheet" href="../../css/themes.css"/>
+  <script>(function(){var t=localStorage.getItem('chaturanga_theme');if(t&&t!=='classic')document.documentElement.className='theme-'+t;})();</script>
+  <style>
+    :root{
+      --gold:#c9a84c;--dark2:#17130a;--border:rgba(201,168,76,.18);--text:#e3dcc9;
+      --sq:clamp(38px,7.6vw,68px);
+      --green:#4ade80;--red:#f87171;
+    }
+    body{font-family:'Outfit',sans-serif}
+
+    .pw-wrap{max-width:1080px;margin:0 auto;padding:20px 20px 100px}
+    .pw-back{display:inline-flex;align-items:center;gap:8px;color:var(--gold);text-decoration:none;font-size:.85rem}
+    .pw-back:hover{opacity:.8}
+    .pw-titlebar{display:flex;align-items:baseline;gap:10px;margin:10px 0 22px;flex-wrap:wrap}
+    .pw-titlebar h1{font-family:'Cinzel',serif;color:var(--gold);font-size:1.4rem;margin:0}
+    .pw-titlebar .culture{font-size:.78rem;color:#9a9284;font-style:italic}
+
+    .pw-grid{display:grid;grid-template-columns:1fr 380px;gap:36px;align-items:start}
+
+    /* ===== BOARD SIDE ===== */
+    .board-col{display:flex;flex-direction:column;align-items:center;position:relative}
+    .board-frame{position:relative;border:1px solid var(--border);border-radius:14px;padding:14px;background:rgba(255,255,255,.015)}
+    .ls-board{display:grid;grid-template-columns:repeat(8,var(--sq))}
+    .ls-sq{width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s}
+    .ls-sq.light{background:#f0d9b5}.ls-sq.dark{background:#b58863}
+    .ls-sq.highlight{outline:3px solid var(--gold);outline-offset:-3px;box-shadow:inset 0 0 10px rgba(201,168,76,.3)}
+    .ls-sq.selected{background:rgba(201,168,76,.55) !important}
+    .ls-sq.hint-from{outline:3px solid #4ac9e0;outline-offset:-3px;animation:hintPulse 1.1s ease-in-out infinite}
+    .ls-sq.hint-to::after{content:'';width:34%;height:34%;background:rgba(74,201,224,.55);border-radius:50%;display:block}
+    .ls-sq.wrong-flash{animation:wrongPulse .7s ease}
+    @keyframes hintPulse{0%,100%{box-shadow:inset 0 0 10px rgba(74,201,224,.25)}50%{box-shadow:inset 0 0 16px rgba(74,201,224,.6)}}
+    @keyframes wrongPulse{0%{background:rgba(248,113,113,.7) !important}100%{}}
+    .ls-piece{width:86%;height:86%;object-fit:cover;clip-path:circle(44% at center);position:absolute;top:7%;left:7%;z-index:2;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.7));transition:transform .12s ease}
+
+    .board-badge{position:absolute;top:-16px;right:-16px;width:38px;height:38px;border-radius:50%;background:var(--dark2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;opacity:0;transform:scale(.6);transition:opacity .18s,transform .18s;z-index:3}
+    .board-badge.show{opacity:1;transform:scale(1)}
+    .board-badge.correct{border-color:var(--green);color:var(--green)}
+    .board-badge.wrong{border-color:var(--red);color:var(--red)}
+
+    /* ===== RIGHT PANEL ===== */
+    .panel{position:sticky;top:16px}
+    .panel-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .panel-head .icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--gold);text-decoration:none;flex-shrink:0}
+    .panel-head .icon-btn:hover{background:rgba(201,168,76,.08)}
+    .panel-head h3{margin:0;font-family:'Cinzel',serif;font-size:1.05rem;color:var(--text)}
+
+    .status-box{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px;min-height:96px;transition:border-color .15s,background .15s}
+    .status-box.neutral{background:rgba(255,255,255,.02)}
+    .status-box.correct{border-color:var(--green);background:rgba(74,222,128,.06)}
+    .status-box.wrong{border-color:var(--red);background:rgba(248,113,113,.06)}
+    .status-box.complete{border-color:var(--gold);background:rgba(201,168,76,.08);text-align:center}
+    .status-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#8b8370;margin-bottom:8px}
+    .status-title{font-weight:700;font-size:.98rem;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .status-title.correct{color:var(--green)}
+    .status-title.wrong{color:var(--red)}
+    .narration{font-size:.86rem;line-height:1.6;color:var(--text);margin-bottom:10px}
+    .instruction{font-size:.82rem;color:var(--gold);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;gap:8px;align-items:flex-start}
+    .status-msg{font-size:.86rem;line-height:1.6;color:var(--text)}
+    .status-sub{font-size:.76rem;color:#8b8370;margin-top:8px;font-style:italic}
+
+    .badge-pill{display:inline-block;background:linear-gradient(135deg,#c9a84c,#f0cc7a);color:#1a1306;border-radius:12px;padding:4px 14px;font-size:.78rem;font-weight:700;margin:6px 0}
+    .moral{font-size:.82rem;color:#ccc;font-style:italic;margin-top:8px;line-height:1.5}
+
+    .chapter-tracker{margin-bottom:18px}
+    .chapter-tracker .ct-label{display:flex;justify-content:space-between;font-size:.78rem;color:#8b8370;margin-bottom:6px}
+    .ct-bar{width:100%;height:7px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
+    .ct-bar .fill{height:100%;background:linear-gradient(90deg,#c9a84c,#4ade80);transition:width .25s}
+
+    .btn-row{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+    .btn-primary{background:linear-gradient(135deg,#a13c3c,#c94f4f);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Outfit',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;text-align:center;text-decoration:none;display:block}
+    .btn-primary:hover{filter:brightness(1.08)}
+    .btn-outline{background:none;border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-outline:hover{background:rgba(201,168,76,.08)}
+    .btn-outline.active{background:rgba(74,201,224,.12);border-color:#4ac9e0;color:#4ac9e0}
+    .btn-outline:disabled{opacity:.35;cursor:not-allowed}
+
+    .panel-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+    .foot-icon{color:#8b8370;background:none;border:none;cursor:pointer;font-size:.95rem;padding:6px}
+    .foot-icon:hover{color:var(--gold)}
+    .foot-nav{display:flex;gap:6px}
+    .foot-nav a{color:#8b8370;text-decoration:none;padding:6px 10px;border-radius:6px}
+    .foot-nav a:hover{background:rgba(201,168,76,.08);color:var(--gold)}
+    .foot-nav a.disabled{opacity:.25;pointer-events:none}
+
+    .copied-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark2);border:1px solid var(--gold);color:var(--gold);padding:8px 16px;border-radius:8px;font-size:.8rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+    .copied-toast.show{opacity:1}
+
+    @media(max-width:900px){
+      .pw-grid{grid-template-columns:1fr}
+      .panel{position:static}
+      .board-col{margin-bottom:10px}
+    }
+  </style>
+</head>
+<body>
+<nav class="top-nav" style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+  <a href="../../" class="nav-logo" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+    <i class="fa-solid fa-graduation-cap" style="color:var(--gold)"></i>
+    <span style="font-family:'Cinzel',serif;color:var(--gold)">Chaturanga Lessons</span>
+  </a>
+  <div style="display:flex;gap:10px">
+    <a href="puzzles.html" class="nav-icon-btn" title="Puzzles" style="text-decoration:none"><i class="fa-solid fa-puzzle-piece"></i></a>
+    <a href="../../" class="nav-icon-btn" title="Game" style="text-decoration:none"><i class="fa-solid fa-chess-board"></i></a>
+  </div>
+</nav>
+
+<div class="pw-wrap">
+  <a class="pw-back" id="backLink" href="lessons.html"><i class="fa-solid fa-arrow-left"></i> <span id="backLabel">Lessons</span></a>
+  <div class="pw-titlebar">
+    <h1 id="lessonTitle"></h1>
+    <span class="culture" id="lessonCulture"></span>
+  </div>
+
+  <div class="pw-grid">
+    <div class="board-col">
+      <div class="board-frame">
+        <div class="board-badge" id="boardBadge"></div>
+        <div class="ls-board" id="board"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div id="statusBoxContainer"></div>
+
+      <div class="chapter-tracker" id="chapterTracker"></div>
+
+      <div class="btn-row" id="btnRow"></div>
+
+      <div class="panel-footer">
+        <button class="foot-icon" id="shareBtn" title="Copy link"><i class="fa-solid fa-share-nodes"></i></button>
+        <div class="foot-nav" id="footNav"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="copied-toast" id="copiedToast">Link copied!</div>
+
+<script src="../../lessons/lesson-data.js"></script>
+<script src="../../lessons/lesson-engine.js"></script>
+<script>
+const PIECE_SYMBOLS={pawn:'♟',horse:'♞',elephant:'♝',rook:'♜',king:'♚'};
+const PLAYER_COLORS=['red','blue','green','yellow'];
+const PIECE_NAMES={pawn:'Nara',horse:'Ashwa',elephant:'Danti',rook:'Ratha',king:'Raja'};
+
+const engine=globalThis.ChaturangaLessonEngine;
+const params=new URLSearchParams(location.search);
+const lessonId=params.get('lesson');
+const lesson=(globalThis.ChaturangaLessonData||[]).find(l=>l.id===lessonId);
+
+if(!lesson){
+  document.querySelector('.pw-wrap').innerHTML='<a class="pw-back" href="lessons.html"><i class="fa-solid fa-arrow-left"></i> Lessons</a><p style="color:#8b8370;margin-top:20px">Lesson not found.</p>';
+  throw new Error('Lesson not found');
+}
+
+const catLessons=(globalThis.ChaturangaLessonData||[]).filter(l=>l.category===lesson.category);
+const catIndex=catLessons.findIndex(l=>l.id===lesson.id);
+
+let boardMap=null;
+let selectedSq=null;
+let hintOn=false;
+let awaitingAdvance=false;
+let lastResult=null; // {valid, ...} of the most recent attempt, cleared when moving on
+
+function defaultBoard(){
+  return {
+    'a1':{owner:0,type:'rook'}, 'e1':{owner:0,type:'king'},
+    'h8':{owner:1,type:'king'}, 'h7':{owner:1,type:'rook'}
+  };
+}
+function freshBoardMap(l){
+  const boardDef=l.boardState||defaultBoard();
+  const map=new Map();
+  Object.entries(boardDef).forEach(([sq,v])=>{
+    map.set(sq, typeof v==='string'
+      ? (([o,t])=>({owner:parseInt(o),type:t}))(v.split(':'))
+      : v);
+  });
+  return map;
+}
+function reconstructBoard(l, uptoStep){
+  const map=freshBoardMap(l);
+  for(let i=0;i<uptoStep;i++){
+    const step=l.steps[i];
+    if(step && step.expectedMove){
+      const piece=map.get(step.expectedMove.from);
+      if(piece){ map.set(step.expectedMove.to,piece); map.delete(step.expectedMove.from); }
+    }
+  }
+  return map;
+}
+
+function init(){
+  document.getElementById('lessonTitle').textContent=lesson.title;
+  document.getElementById('lessonCulture').textContent=lesson.culturalSource||'';
+  document.getElementById('backLink').href='course.html?cat='+lesson.category;
+  document.getElementById('backLabel').textContent='Back';
+
+  const {currentStep}=engine.startLesson(lesson);
+  boardMap=reconstructBoard(lesson, currentStep);
+
+  renderBoard();
+  renderStatusBox();
+  renderChapterTracker();
+  renderButtons();
+  renderFootNav();
+
+  document.getElementById('shareBtn').onclick=copyLink;
+}
+
+function copyLink(){
+  navigator.clipboard?.writeText(location.href).then(()=>{
+    const t=document.getElementById('copiedToast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),1400);
+  });
+}
+
+function renderFootNav(){
+  const prev=catLessons[catIndex-1];
+  const next=catLessons[catIndex+1];
+  const el=document.getElementById('footNav');
+  el.innerHTML=
+    '<a class="'+(prev?'':'disabled')+'" href="'+(prev?'play.html?lesson='+prev.id:'#')+'" title="'+(prev?prev.title:'')+'"><i class="fa-solid fa-chevron-left"></i></a>'+
+    '<a class="'+(next?'':'disabled')+'" href="'+(next?'play.html?lesson='+next.id:'#')+'" title="'+(next?next.title:'')+'"><i class="fa-solid fa-chevron-right"></i></a>';
+}
+
+function renderChapterTracker(){
+  const total=lesson.steps.length;
+  const step=Math.min(engine.currentStep, total);
+  const done=step>=total;
+  const num=done?total:step+1;
+  document.getElementById('chapterTracker').innerHTML=
+    '<div class="ct-label"><span>Chapter '+num+' / '+total+'</span>'+(done?'<span style="color:var(--green)"><i class="fa-solid fa-check"></i> Complete</span>':'')+'</div>'+
+    '<div class="ct-bar"><div class="fill" style="width:'+Math.round((done?total:step)/total*100)+'%"></div></div>';
+}
+
+function currentStepObj(){
+  return engine.getCurrentStepData();
+}
+
+function renderStatusBox(){
+  const box=document.getElementById('statusBoxContainer');
+  const stepData=currentStepObj();
+
+  if(!stepData){
+    // Lesson complete
+    box.innerHTML=
+      '<div class="status-box complete">'+
+        '<div class="status-title" style="justify-content:center;color:var(--gold)"><i class="fa-solid fa-award"></i> Lesson Complete!</div>'+
+        '<div class="badge-pill">'+(lesson.completionReward||'')+'</div>'+
+        (lesson.moralLesson?'<div class="moral">📜 '+lesson.moralLesson+'</div>':'')+
+      '</div>';
+    showBoardBadge('correct');
+    return;
+  }
+
+  if(lastResult && lastResult.valid){
+    box.innerHTML=
+      '<div class="status-box correct">'+
+        '<div class="status-title correct"><i class="fa-solid fa-circle-check"></i> Correct!</div>'+
+        '<div class="status-msg">'+(lastResult.successMessage||'Well done!')+'</div>'+
+      '</div>';
+    showBoardBadge('correct');
+  } else if(lastResult && !lastResult.valid){
+    box.innerHTML=
+      '<div class="status-box wrong">'+
+        '<div class="status-title wrong"><i class="fa-solid fa-circle-xmark"></i> Not Quite</div>'+
+        '<div class="status-msg">'+(lastResult.wrongMessage||'Try again.')+'</div>'+
+        '<div class="status-sub">It\'s alright — make another move.</div>'+
+      '</div>';
+    showBoardBadge('wrong');
+  } else {
+    box.innerHTML=
+      '<div class="status-box neutral">'+
+        '<div class="status-label">Step '+(engine.currentStep+1)+'</div>'+
+        '<div class="narration">'+(stepData.narration||'')+'</div>'+
+        '<div class="instruction"><i class="fa-solid fa-arrow-right" style="margin-top:2px"></i><span>'+(stepData.instruction||'')+'</span></div>'+
+      '</div>';
+    hideBoardBadge();
+  }
+}
+
+function showBoardBadge(kind){
+  const el=document.getElementById('boardBadge');
+  el.className='board-badge show '+kind;
+  el.innerHTML=kind==='correct'?'<i class="fa-solid fa-check"></i>':'<i class="fa-solid fa-xmark"></i>';
+}
+function hideBoardBadge(){
+  document.getElementById('boardBadge').className='board-badge';
+}
+
+function renderButtons(){
+  const row=document.getElementById('btnRow');
+  const stepData=currentStepObj();
+  row.innerHTML='';
+
+  if(!stepData){
+    // complete
+    const next=catLessons[catIndex+1];
+    const a=document.createElement('a');
+    a.className='btn-primary';
+    if(next){ a.href='play.html?lesson='+next.id; a.textContent='Continue to: '+next.title; }
+    else { a.href='course.html?cat='+lesson.category; a.textContent='Back to Course'; }
+    row.appendChild(a);
+    return;
+  }
+
+  if(awaitingAdvance){
+    const btn=document.createElement('button');
+    btn.className='btn-primary';
+    btn.textContent='Next';
+    btn.onclick=onNext;
+    row.appendChild(btn);
+    return;
+  }
+
+  if(lastResult && !lastResult.valid){
+    const btn=document.createElement('button');
+    btn.className='btn-primary';
+    btn.textContent='Retry';
+    btn.onclick=onRetry;
+    row.appendChild(btn);
+    return;
+  }
+
+  if(!stepData.allowAnyMove){
+    const hintBtn=document.createElement('button');
+    hintBtn.className='btn-outline'+(hintOn?' active':'');
+    hintBtn.innerHTML='<i class="fa-solid fa-lightbulb"></i> '+(hintOn?'Hide Hint':'Hint');
+    hintBtn.onclick=onHint;
+    row.appendChild(hintBtn);
+  } else {
+    const btn=document.createElement('button');
+    btn.className='btn-primary';
+    btn.textContent='Continue';
+    btn.onclick=()=>attemptMove('','');
+    row.appendChild(btn);
+  }
+}
+
+function onHint(){
+  hintOn=!hintOn;
+  renderBoard();
+  renderButtons();
+}
+
+function onNext(){
+  awaitingAdvance=false;
+  lastResult=null;
+  hintOn=false;
+  renderBoard();
+  renderStatusBox();
+  renderChapterTracker();
+  renderButtons();
+}
+
+function onRetry(){
+  lastResult=null;
+  renderStatusBox();
+  renderButtons();
+}
+
+function onSquareClick(sq){
+  const stepData=currentStepObj();
+  if(!stepData || awaitingAdvance) return;
+  if(lastResult && !lastResult.valid){
+    // clicking board after a wrong attempt starts a fresh try
+    lastResult=null;
+    renderStatusBox();
+    renderButtons();
+  }
+
+  if(stepData.allowAnyMove){
+    attemptMove(sq,sq);
+    return;
+  }
+
+  if(selectedSq){
+    if(selectedSq===sq){ selectedSq=null; renderBoard(); return; }
+    attemptMove(selectedSq,sq);
+    return;
+  }
+
+  const piece=boardMap.get(sq);
+  if(piece && piece.owner===0){ selectedSq=sq; renderBoard(); }
+}
+
+function attemptMove(from,to){
+  let piece=null;
+  const movesSquare = from && from!==to;
+  if(movesSquare){
+    piece=boardMap.get(from);
+    boardMap.set(to,piece);
+    boardMap.delete(from);
+  }
+
+  const res=engine.validatePlayerMove(from,to);
+
+  if(!res.valid && movesSquare){
+    boardMap.set(from,piece);
+    boardMap.delete(to);
+    flashWrong(from);
+  }
+
+  selectedSq=null;
+  lastResult=res;
+  hintOn=false;
+
+  if(res.valid && !res.complete) awaitingAdvance=true;
+  if(res.valid && res.complete){ engine.saveProgress(lesson.id,true); }
+
+  renderBoard();
+  renderStatusBox();
+  renderButtons();
+  if(res.valid) renderChapterTracker();
+}
+
+function flashWrong(sq){
+  const el=document.querySelector('.ls-sq[data-sq="'+sq+'"]');
+  if(!el) return;
+  el.classList.add('wrong-flash');
+  setTimeout(()=>el.classList.remove('wrong-flash'),700);
+}
+
+function renderBoard(){
+  const el=document.getElementById('board');
+  el.innerHTML='';
+  const stepData=currentStepObj();
+  const highlights=(stepData&&stepData.highlight)||[];
+  const hintFrom=hintOn && stepData && stepData.expectedMove ? stepData.expectedMove.from : null;
+  const hintTo=hintOn && stepData && stepData.expectedMove ? stepData.expectedMove.to : null;
+
+  for(let r=8;r>=1;r--){
+    for(let f=0;f<8;f++){
+      const sq=String.fromCodePoint(97+f)+r;
+      const cell=document.createElement('div');
+      cell.className='ls-sq '+((f+r)%2===0?'light':'dark');
+      cell.setAttribute('data-sq',sq);
+      if(highlights.includes(sq)) cell.classList.add('highlight');
+      if(selectedSq===sq) cell.classList.add('selected');
+      if(hintFrom===sq) cell.classList.add('hint-from');
+      if(hintTo===sq) cell.classList.add('hint-to');
+
+      const piece=boardMap.get(sq);
+      if(piece){
+        const img=document.createElement('img');
+        img.className='ls-piece';
+        const typeStr=(PIECE_NAMES[piece.type]||piece.type).toLowerCase();
+        img.src='../../images/pieces/'+PLAYER_COLORS[piece.owner]+'_'+typeStr+'.webp';
+        img.onerror=()=>{
+          img.style.display='none';
+          const span=document.createElement('span');
+          span.style.fontSize='calc(var(--sq)*.55)';
+          span.textContent=PIECE_SYMBOLS[piece.type]||'?';
+          cell.appendChild(span);
+        };
+        cell.appendChild(img);
+      }
+      cell.onclick=()=>onSquareClick(sq);
+      el.appendChild(cell);
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>

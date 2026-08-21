@@ -1,0 +1,5 @@
+1. convert the png/jpeg images to webp
+
+2. Integrate the newly changes made in lessons from the CHANGES IN LESSONS folder with the website
+
+3. Use the background image (new image made for background of the website when a player scrolls down the home page . ( The old image originally being used will still remain but when we scroll down , the newly made background image will appear with options to reach profile,play online, puzzles, lessons).
