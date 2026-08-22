@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const game = new globalThis.ChaturangaGame();
     globalThis._chaturangaGame = game;
+    window.game = game;
     if (globalThis.ChaturangaSeer) {
       globalThis.ChaturangaSeer.startGame({ format: 'Standard', date: new Date().toLocaleDateString() });
     }
@@ -24,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-function initUI(game) {
+function initUI(initialGame) {
+  let game = initialGame;
   const boardEl = document.getElementById('board');
   if (!boardEl) {
     console.error('Chaturanga: Board element not found!');
@@ -67,8 +69,43 @@ function initUI(game) {
   let currentTimeControl = safeLS.getItem('chaturanga_tc') || 'chirantan';
   let activeClock        = null;
   let clockUI            = null;
-  let gameStartTime      = 0;
   let isMuted            = safeLS.getItem('chaturanga_muted') === 'true';
+
+  function initGameClock() {
+    if (activeClock) {
+      activeClock.destroy();
+    }
+    clockUI = null;
+    
+    // Remove duplicate clock strip if it exists
+    const oldStrip = document.getElementById('cha-clock-strip');
+    if (oldStrip) oldStrip.remove();
+
+    gameStartTime = Date.now();
+    const playerCount = (game.players ? game.players.filter(p => !p.eliminated).length : 0) || 4;
+    if (typeof ChaturangaClock !== 'undefined') {
+      activeClock = ChaturangaClock.create(currentTimeControl, playerCount, {
+        onTick: (playerIndex, snapshot) => {
+          if (clockUI) clockUI.update(snapshot);
+        },
+        onExpire: (playerIndex) => {
+          if (clockUI) clockUI.showFlagfall(playerIndex);
+          console.log(`Player ${playerIndex} flagfell — auto-forfeit their future turns`);
+        },
+        onExpiredTurn: (playerIndex) => {
+          game.forfeitTurn(playerIndex);
+          if (activeClock) activeClock.endTurn(playerIndex);
+          if (activeClock) activeClock.beginTurn(game.turnIndex);
+          render();
+          tryAutoRoll();
+        },
+      });
+      clockUI = ChaturangaClockUI.initClockUI('board', currentTimeControl, playerCount);
+      if (activeClock) {
+        activeClock.beginTurn(game.turnIndex);
+      }
+    }
+  }
 
   initMuteControl(isMuted, (val) => { 
     isMuted = val; 
@@ -87,6 +124,48 @@ function initUI(game) {
       currentTimeControl
     );
   }
+
+  globalThis._chaturangaRestart = function(newBotCount) {
+    // 1. Create a new game instance
+    game = new globalThis.ChaturangaGame();
+    globalThis._chaturangaGame = game;
+    window.game = game;
+    
+    // 2. Clear state
+    selectedSquare = null;
+    legalMoves = [];
+    isAnimating = false;
+    dragSource = null;
+    
+    // 3. Reset stats/history
+    seerCaptures = 0;
+    seerPieceCount = {};
+    lastMoveFrom = null;
+    lastMoveTo = null;
+    
+    // 4. Set bot count
+    game.setBotConfig(newBotCount);
+    
+    // 5. Update UI selectors / settings drawer
+    if (botCountEl) botCountEl.value = String(newBotCount);
+    if (autoRollDiceEl) autoRollDiceEl.checked = (newBotCount === 4);
+    
+    // 6. Reinitialize clock
+    initGameClock();
+    
+    // 7. Restart Seer
+    if (globalThis.ChaturangaSeer) {
+      globalThis.ChaturangaSeer.startGame({ format: 'Standard', date: new Date().toLocaleDateString() });
+    }
+    
+    // 8. Render the fresh board
+    render();
+    
+    // 9. Try auto roll for bots
+    if (newBotCount > 0) {
+      setTimeout(tryAutoRoll, 900);
+    }
+  };
 
 // ── State ────────────────────────────────────────────────────────────
   let selectedSquare = null;
@@ -134,7 +213,8 @@ function initUI(game) {
     function pieceImageUrl(piece) {
       const color = COLOR_NAMES[piece.color] || piece.color;
       const type  = PIECE_NAMES[piece.type]  || piece.type;
-      return 'images/pieces/' + color + '_' + type.toLowerCase() + '.webp';
+      const prefix = document.getElementById('gameContainer') ? '../game/' : '';
+      return prefix + 'images/pieces/' + color.toLowerCase() + '_' + type.toLowerCase() + '.webp';
     }
 
     function pieceLetter(piece) {
@@ -535,10 +615,13 @@ function initUI(game) {
       const isRolled = game.lastDice !== null;
       const diceVal = isRolled ? game.lastDice : '?';
 
-      if (diceFace) {
-        diceFace.innerHTML = '<span>' + (isRolled ? game.lastDice : '<i class="fa-solid fa-question"></i>') + '</span>';
-      }
-      if (focusDiceFace) { focusDiceFace.textContent = diceVal; }
+      // Update the engraved number on the Pāśaka die face
+      const diceNumEl = document.getElementById('diceFaceNumber');
+      if (diceNumEl) diceNumEl.textContent = diceVal;
+
+      // Update the focus overlay die number
+      const focusNumEl = document.getElementById('focusDiceFaceNumber');
+      if (focusNumEl) focusNumEl.textContent = diceVal;
 
       const forcedName = game.forcedPiece ? (globalThis.Dice?.getPieceName(game.forcedPiece) ?? game.forcedPiece) : null;
       const forcedText = forcedName ? 'Move: ' + forcedName : 'Roll the Pāśaka';
@@ -552,7 +635,8 @@ function initUI(game) {
       for (let i = 0; i < 4; i++) {
         const cell = document.getElementById('diceCell' + i);
         if (cell) {
-          const face = cell.querySelector('.dc-face');
+          // Support both .dice-cell-face (new) and .dc-face (legacy fallback)
+          const face = cell.querySelector('.dice-cell-face') || cell.querySelector('.dc-face');
           const pDice = game.playerLastDice[i];
           if (face) { face.textContent = pDice !== null ? pDice : '—'; }
           const isCurrent = game.turnIndex === i && (game.getPlayer() && !game.getPlayer().eliminated);
@@ -729,8 +813,9 @@ function initUI(game) {
         }
         if (globalThis.Dice) {
           playDiceSfx();
-          if (diceFace) { diceFace.classList.add('rolling'); }
-          setTimeout(() => { if (diceFace) { diceFace.classList.remove('rolling'); } }, 660);
+          const dieWrap = document.getElementById('diceFaceWrap');
+          if (dieWrap) { dieWrap.classList.add('rolling'); }
+          setTimeout(() => { if (dieWrap) { dieWrap.classList.remove('rolling'); } }, 660);
           globalThis.Dice.roll(game, diceFace, () => {
             render();
             if (game.autoForfeitIfNoMove()) {
@@ -814,8 +899,9 @@ function initUI(game) {
       }
       if (globalThis.Dice) {
         playDiceSfx();
-        if (diceFace) { diceFace.classList.add('rolling'); }
-        setTimeout(() => { if (diceFace) { diceFace.classList.remove('rolling'); } }, 660);
+        const dieWrap = document.getElementById('diceFaceWrap');
+        if (dieWrap) { dieWrap.classList.add('rolling'); }
+        setTimeout(() => { if (dieWrap) { dieWrap.classList.remove('rolling'); } }, 660);
         globalThis.Dice.roll(game, diceFace, () => {
           render();
           if (game.autoForfeitIfNoMove()) {
@@ -872,6 +958,20 @@ function initUI(game) {
     function showKingRespawnModal() { if (activeClock) activeClock.pause();
       if (kingRespawnModal) {
         kingRespawnModal.style.display = 'flex';
+        const respawn = game.pendingKingRespawn;
+        const isPromotion = respawn && respawn.capturedBy === respawn.playerId;
+        const h3 = kingRespawnModal.querySelector('h3');
+        const hint = kingRespawnModal.querySelector('.modal-hint');
+        const pDesc = kingRespawnModal.querySelector('p:not(.modal-hint)');
+        if (isPromotion) {
+          if (h3) h3.textContent = 'Nara Promoted to Raja!';
+          if (pDesc) pDesc.textContent = 'Your Nara marched to the Raja column and has been promoted to a new Raja!';
+          if (hint) hint.textContent = 'Click any empty square to place your new Raja on the board.';
+        } else {
+          if (h3) h3.textContent = 'Raja Respawn';
+          if (pDesc) pDesc.textContent = 'Your teammate captured an enemy Raja! Your King may return to the battlefield.';
+          if (hint) hint.textContent = 'Click any empty square to place your Raja.';
+        }
         const cb = document.getElementById('cancelRespawn');
         if (cb) cb.onclick = () => { game.pendingKingRespawn = null; render(); };
       }
@@ -1028,39 +1128,7 @@ function initUI(game) {
 
 
   // Start Clock
-  if (activeClock) {
-      activeClock.destroy();
-  }
-  clockUI = null;
-  gameStartTime = Date.now();
-  const playerCount = (game.players ? game.players.filter(p => !p.eliminated).length : 0) || 4;
-  if (typeof ChaturangaClock !== 'undefined') {
-      activeClock = ChaturangaClock.create(currentTimeControl, playerCount, {
-        onTick: (playerIndex, snapshot) => {
-          if (clockUI) clockUI.update(snapshot);
-        },
-        onExpire: (playerIndex) => {
-          if (clockUI) clockUI.showFlagfall(playerIndex);
-          console.log(`Player ${playerIndex} flagfell — auto-forfeit their future turns`);
-        },
-        onExpiredTurn: (playerIndex) => {
-          // Auto forfeit logic
-          game.forfeitTurn(playerIndex);
-          if (activeClock) activeClock.endTurn(playerIndex);
-          if (activeClock) activeClock.beginTurn(game.turnIndex);
-          render();
-          tryAutoRoll();
-        },
-      });
-      // Try to find the board container, which is usually a wrapper around #board.
-      // In game.html it's typically <main class="board-wrapper"> or we can inject into 'board' parent.
-      clockUI = ChaturangaClockUI.initClockUI('board', currentTimeControl, playerCount);
-      
-      // Begin first turn
-      if (activeClock) {
-          activeClock.beginTurn(game.turnIndex);
-      }
-  }
+  initGameClock();
   performRender();
 }
 

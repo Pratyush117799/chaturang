@@ -1,0 +1,104 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 160" width="80" height="160">
+  <defs>
+    <!-- Ivory/bone crackle texture pattern -->
+    <filter id="crackle">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grey"/>
+      <feBlend in="SourceGraphic" in2="grey" mode="multiply" result="blended"/>
+      <feComponentTransfer in="blended">
+        <feFuncA type="linear" slope="1"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="inner-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="rgba(80,50,10,0.35)"/>
+    </filter>
+    <!-- Gradient for the die body: warm parchment ivory -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#b8925a"/>
+      <stop offset="20%"  stop-color="#d4a96a"/>
+      <stop offset="50%"  stop-color="#e8c88a"/>
+      <stop offset="80%"  stop-color="#d4a96a"/>
+      <stop offset="100%" stop-color="#b8925a"/>
+    </linearGradient>
+    <!-- Top cap gradient -->
+    <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#d4b07a"/>
+      <stop offset="100%" stop-color="#b8905a"/>
+    </linearGradient>
+    <!-- Bead gradient -->
+    <radialGradient id="beadGrad" cx="40%" cy="35%" r="60%">
+      <stop offset="0%"   stop-color="#c8a060"/>
+      <stop offset="100%" stop-color="#8a6030"/>
+    </radialGradient>
+    <!-- Number engraving filter -->
+    <filter id="engrave">
+      <feDropShadow dx="0.5" dy="0.5" stdDeviation="0.5" flood-color="rgba(60,30,0,0.8)"/>
+    </filter>
+  </defs>
+
+  <!-- ── BODY of the die ── -->
+  <!-- Chamfered corners: body rectangle with rounded corners -->
+  <rect x="6" y="16" width="68" height="128" rx="8" ry="8" fill="url(#bodyGrad)" filter="url(#inner-shadow)"/>
+
+  <!-- Face dividing lines (the 4 vertical faces, simulated) -->
+  <!-- Left edge shadow to give 3D perspective -->
+  <rect x="6" y="16" width="8" height="128" rx="0" ry="0" fill="rgba(80,40,0,0.18)" rx="8"/>
+  <rect x="66" y="16" width="8" height="128" rx="0" ry="0" fill="rgba(80,40,0,0.12)" rx="8"/>
+
+  <!-- ── TOP CAP ── -->
+  <rect x="8" y="6" width="64" height="18" rx="8" ry="8" fill="url(#capGrad)" filter="url(#engrave)"/>
+  <!-- cap highlight -->
+  <ellipse cx="40" cy="10" rx="22" ry="4" fill="rgba(255,235,190,0.35)"/>
+
+  <!-- ── BEAD BORDER — TOP ── -->
+  <!-- Row of beads below the cap -->
+  <g fill="url(#beadGrad)" filter="url(#engrave)">
+    <!-- 10 beads across top border -->
+    <circle cx="11" cy="22" r="2.2"/>
+    <circle cx="18" cy="22" r="2.2"/>
+    <circle cx="25" cy="22" r="2.2"/>
+    <circle cx="32" cy="22" r="2.2"/>
+    <circle cx="39" cy="22" r="2.2"/>
+    <circle cx="46" cy="22" r="2.2"/>
+    <circle cx="53" cy="22" r="2.2"/>
+    <circle cx="60" cy="22" r="2.2"/>
+    <circle cx="67" cy="22" r="2.2"/>
+    <circle cx="74" cy="22" r="2.2"/>
+  </g>
+
+  <!-- ── BEAD BORDER — BOTTOM ── -->
+  <g fill="url(#beadGrad)" filter="url(#engrave)">
+    <circle cx="11" cy="138" r="2.2"/>
+    <circle cx="18" cy="138" r="2.2"/>
+    <circle cx="25" cy="138" r="2.2"/>
+    <circle cx="32" cy="138" r="2.2"/>
+    <circle cx="39" cy="138" r="2.2"/>
+    <circle cx="46" cy="138" r="2.2"/>
+    <circle cx="53" cy="138" r="2.2"/>
+    <circle cx="60" cy="138" r="2.2"/>
+    <circle cx="67" cy="138" r="2.2"/>
+    <circle cx="74" cy="138" r="2.2"/>
+  </g>
+
+  <!-- ── FACE BORDER / FRAME ── -->
+  <rect x="10" y="27" width="60" height="108" rx="4" ry="4"
+        fill="none" stroke="rgba(100,60,10,0.5)" stroke-width="1.2"/>
+
+  <!-- Corner flourish marks (simulated) -->
+  <text x="14" y="37" font-size="7" fill="rgba(80,45,10,0.55)" font-family="serif">❧</text>
+  <text x="57" y="37" font-size="7" fill="rgba(80,45,10,0.55)" font-family="serif">❧</text>
+  <text x="14" y="134" font-size="7" fill="rgba(80,45,10,0.55)" font-family="serif">❧</text>
+  <text x="57" y="134" font-size="7" fill="rgba(80,45,10,0.55)" font-family="serif">❧</text>
+
+  <!-- ── ENGRAVED NUMBER — the visible face ── -->
+  <text id="die-number"
+        x="40" y="97"
+        text-anchor="middle" dominant-baseline="middle"
+        font-family="'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif"
+        font-size="52" font-weight="700"
+        fill="rgba(60,30,5,0.82)"
+        filter="url(#engrave)">1</text>
+
+  <!-- Subtle right-face perspective strip (shows 3D) -->
+  <rect x="68" y="18" width="4" height="124" rx="4" fill="rgba(90,50,0,0.15)"/>
+</svg>

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/animations.css" />
     <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/pasaka-die.css" />
     <script>
         // Apply theme early to avoid flash
         (function() {
@@ -28,7 +29,7 @@
     </script>
 </head>
 
-<body>\n
+<body class="game-page">\n
   <!-- BUG-001 FIX: Removed absolute-positioned website integration header that caused
        the nav bar to scroll with the page (drift bug). The internal fixed .top-nav is
        the canonical game navigation and is sufficient. -->
@@ -85,8 +86,13 @@
         <i class="fa-solid fa-wifi"></i>
       </button>
             <button id="rollBtn" class="nav-roll-btn" title="Roll the Pāśaka dice">
-        <i class="fa-solid fa-dice-d6"></i>
-        <span>Roll Dice</span>
+        <!-- Inline mini Pāśaka die icon -->
+        <svg width="14" height="22" viewBox="0 0 14 22" style="vertical-align:middle;margin-right:4px;" aria-hidden="true">
+          <rect x="1" y="3" width="12" height="16" rx="3" fill="#c89a50" stroke="#8a6030" stroke-width="1"/>
+          <rect x="1" y="1" width="12" height="5" rx="3" fill="#dab870"/>
+          <text x="7" y="14" text-anchor="middle" font-size="8" font-weight="bold" fill="#3a1e05" font-family="serif">N</text>
+        </svg>
+        <span>Cast Pāśaka</span>
       </button>
             <button id="forfeitBtn" class="nav-forfeit-btn" title="Forfeit Turn" disabled>
         <i class="fa-solid fa-flag"></i>
@@ -151,19 +157,40 @@
                 </div>
             </div>
 
-            <!-- Dice Panel -->
+            <!-- Dice Panel — Pāśaka 4-sided die -->
             <div class="dice-panel">
+                <div class="pasaka-label">Pāśaka Casting (पासा)</div>
                 <div class="dice-face-wrap">
-                    <div id="diceFace" class="dice-face-large">
-                        <i class="fa-solid fa-question"></i>
+                    <!-- 3-D elongated Pāśaka die -->
+                    <div id="diceFaceWrap" class="pasaka-die-wrap">
+                        <div id="diceFace" class="pasaka-die">
+                            <div class="pasaka-die__body">
+                                <div class="pasaka-die__cap"></div>
+                                <div class="pasaka-die__beads-top">
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                </div>
+                                <div class="pasaka-die__beads-bot">
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                    <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                                </div>
+                                <div class="pasaka-die__frame"></div>
+                                <div id="diceFaceNumber" class="pasaka-die__number">?</div>
+                            </div>
+                        </div>
                     </div>
                     <div id="forcedPiece" class="forced-label">Roll the Pāśaka</div>
                 </div>
+                <!-- Per-player last-roll strip -->
                 <div class="dice-strip">
-                    <div class="dice-cell" id="diceCell0"><span class="dc-label">R</span><span class="dc-val dc-face">—</span></div>
-                    <div class="dice-cell" id="diceCell1"><span class="dc-label">B</span><span class="dc-val dc-face">—</span></div>
-                    <div class="dice-cell" id="diceCell2"><span class="dc-label">G</span><span class="dc-val dc-face">—</span></div>
-                    <div class="dice-cell" id="diceCell3"><span class="dc-label">Y</span><span class="dc-val dc-face">—</span></div>
+                    <div class="dice-cell" id="diceCell0"><span class="dc-label">R</span><span class="dc-val dice-cell-face">—</span></div>
+                    <div class="dice-cell" id="diceCell1"><span class="dc-label">B</span><span class="dc-val dice-cell-face">—</span></div>
+                    <div class="dice-cell" id="diceCell2"><span class="dc-label">G</span><span class="dc-val dice-cell-face">—</span></div>
+                    <div class="dice-cell" id="diceCell3"><span class="dc-label">Y</span><span class="dc-val dice-cell-face">—</span></div>
                 </div>
             </div>
 
@@ -222,7 +249,11 @@
             <!-- Mobile-only quick controls -->
             <div class="mobile-controls">
                 <button id="rollBtnMobile" class="mob-btn mob-roll">
-          <i class="fa-solid fa-dice-d6"></i> Roll Pāśaka
+          <svg width="11" height="18" viewBox="0 0 14 22" style="vertical-align:middle;margin-right:3px;" aria-hidden="true">
+            <rect x="1" y="3" width="12" height="16" rx="3" fill="#c89a50" stroke="#8a6030" stroke-width="1"/>
+            <rect x="1" y="1" width="12" height="5" rx="3" fill="#dab870"/>
+            <text x="7" y="14" text-anchor="middle" font-size="8" font-weight="bold" fill="#3a1e05" font-family="serif">N</text>
+          </svg> Cast Pāśaka
         </button>
                 <button id="forfeitBtnMobile" class="mob-btn mob-forfeit" disabled>
           <i class="fa-solid fa-flag"></i> Forfeit
@@ -453,7 +484,30 @@
 
     <!-- ═══ FOCUS DICE OVERLAY ═══ -->
     <div id="focusDiceOverlay" class="focus-overlay">
-        <div id="focusDiceFace" class="focus-dice">?</div>
+        <!-- 3-D Pāśaka die (small overlay version) -->
+        <div class="focus-die-3d">
+            <div id="focusDiceFaceWrap" class="pasaka-die-wrap" style="width:52px;height:104px;">
+                <div id="focusDiceFace" class="pasaka-die">
+                    <div class="pasaka-die__body">
+                        <div class="pasaka-die__cap"></div>
+                        <div class="pasaka-die__beads-top">
+                            <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                            <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                            <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                            <span class="pasaka-die__bead"></span>
+                        </div>
+                        <div class="pasaka-die__beads-bot">
+                            <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                            <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                            <span class="pasaka-die__bead"></span><span class="pasaka-die__bead"></span>
+                            <span class="pasaka-die__bead"></span>
+                        </div>
+                        <div class="pasaka-die__frame"></div>
+                        <div id="focusDiceFaceNumber" class="pasaka-die__number" style="font-size:2.4rem;">?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="focusForced" class="focus-forced">Roll</div>
     </div>
 
@@ -545,6 +599,7 @@
 
     <!-- Scripts — load order matters -->
     <script src="js/game.js"></script>
+    <script src="js/pasaka-die.js"></script>
     <script src="js/dice.js"></script>
     <script src="engine/randomMoveGenerator.js"></script>
     <script src="js/bot/randomMove.js"></script>

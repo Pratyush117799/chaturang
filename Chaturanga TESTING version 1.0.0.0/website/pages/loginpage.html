@@ -297,9 +297,9 @@
     }
 
     .auth-card {
-      background: rgba(26, 6, 0, 0.82);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(26, 6, 0, 0.35);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
       border: var(--border-gold);
       border-radius: var(--radius-lg);
       padding: clamp(26px, 5vw, 42px) clamp(20px, 4vw, 34px);
@@ -766,6 +766,78 @@
       .hero-shell { justify-content: flex-start; }
       .brand-army-row { display: none; }
     }
+
+    /* =====================================================
+       OAUTH CSS STYLING
+       ===================================================== */
+    .oauth-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 22px 0 16px 0;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-family: var(--font-display);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .oauth-divider::before,
+    .oauth-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+    }
+    .oauth-divider:not(:empty)::before {
+      margin-right: 12px;
+    }
+    .oauth-divider:not(:empty)::after {
+      margin-left: 12px;
+    }
+
+    .oauth-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-oauth {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text);
+      background: rgba(201, 168, 76, 0.04);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      min-height: 48px;
+    }
+    .btn-oauth:hover {
+      background: rgba(201, 168, 76, 0.1);
+      border-color: rgba(201, 168, 76, 0.45);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.1);
+    }
+    .btn-oauth:active {
+      transform: translateY(0);
+    }
+    .btn-oauth i {
+      font-size: 1.1rem;
+    }
+    .btn-oauth.btn-google i {
+      color: #ea4335;
+    }
+    .btn-oauth.btn-github i {
+      color: #f0f6fc;
+    }
   </style>
 </head>
 <body>
@@ -859,6 +931,17 @@
             <span class="btn-label"><i class="fa-solid fa-chess-king"></i> Enter Realm</span>
             <span class="btn-spinner" aria-hidden="true"></span>
           </button>
+
+          <div class="oauth-divider">Or continue with Google / other OAuth providers</div>
+
+          <div class="oauth-buttons">
+            <button type="button" class="btn-oauth btn-google" onclick="initiateOAuth('google')">
+              <i class="fa-brands fa-google"></i> Sign In with Google
+            </button>
+            <button type="button" class="btn-oauth btn-github" onclick="initiateOAuth('github')">
+              <i class="fa-brands fa-github"></i> Sign In with GitHub
+            </button>
+          </div>
         </form>
 
         <!-- 2. SIGNUP FORM (3-step: details -> verify email -> set password) -->
@@ -1017,7 +1100,7 @@
   <!-- PAGE LOGIC -->
   <script>
     // Point this at wherever the Express server actually runs.
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = 'https://chaturang-1-8qw3.onrender.com';
 
     // If a session already exists (from a previous visit), swap the
     // Sign In / Register card for a single "Enter" button.
@@ -1437,6 +1520,37 @@
         if (hint) hint.classList.remove('show');
       });
     });
+
+    /* =====================================================
+       OAUTH JAVASCRIPT LOGIC
+       ===================================================== */
+    function initiateOAuth(provider) {
+      window.location.href = `${API_BASE}/api/auth/${provider}`;
+    }
+
+    // Process OAuth callback parameters from URL
+    (function handleOAuthCallback() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('oauth_success') === 'true') {
+        const id = params.get('id');
+        const name = params.get('name');
+        const email = params.get('email');
+        if (id && name && email) {
+          const user = { _id: id, name, email };
+          Session.save(user, true); // Save session in localStorage by default
+          showAlert('Welcome back, warrior! Taking you to the battlefield...', 'success');
+          // Clean the query parameters from the address bar
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setTimeout(() => {
+            window.location.href = '../index.html';
+          }, 900);
+        }
+      } else if (params.get('oauth_error')) {
+        showAlert('OAuth Error: ' + decodeURIComponent(params.get('oauth_error')), 'error');
+        // Clean the query parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    })();
   </script>
 </body>
 </html>

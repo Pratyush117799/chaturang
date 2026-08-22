@@ -13,10 +13,12 @@
   const navLinks = document.getElementById('navLinks');
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 60) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
+    if (navbar) {
+      if (navbar && window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
     }
     updateScrollSpy();
   }, { passive: true });

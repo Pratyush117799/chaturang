@@ -42,8 +42,8 @@
 
 /* ─── Reset ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
+html.game-page { scroll-behavior: smooth; }
+body.game-page {
   font-family: 'Outfit', system-ui, sans-serif;
   background: var(--bg-base);
   color: var(--text-primary);
@@ -54,9 +54,9 @@ body {
   background-image: radial-gradient(ellipse at 20% 10%, rgba(200,120,10,0.04) 0%, transparent 60%),
                     radial-gradient(ellipse at 80% 90%, rgba(150,80,5,0.05) 0%, transparent 60%);
 }
-a { color: inherit; text-decoration: none; }
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
-select { font-family: inherit; }
+#gameContainer a, body.game-page a { color: inherit; text-decoration: none; }
+#gameContainer button, body.game-page button { cursor: pointer; border: none; background: none; font-family: inherit; }
+#gameContainer select, body.game-page select { font-family: inherit; }
 
 /* ─── TOP NAV ─── */
 .top-nav {
@@ -307,31 +307,31 @@ select { font-family: inherit; }
 
 /* ─── DICE PANEL ─── */
 .dice-panel {
-  padding: 16px;
+  padding: 14px 12px;
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
+/* Override pasaka-widget defaults for sidebar context */
+.dice-panel .pasaka-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+}
+
+/* Constrain the die height inside the compact sidebar */
+.dice-panel .pasaka-die-wrap {
+  width: 48px;
+  height: 96px;
+}
+
+/* Legacy square die kept as hidden fallback */
 .dice-face-wrap { text-align: center; }
 .dice-face-large {
-  width: 70px; height: 70px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #2c2310 0%, #3d3018 100%);
-  border: 2px solid var(--border-strong);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.2rem;
-  color: var(--gold-light);
-  margin: 0 auto 10px;
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.07);
-  transition: all var(--transition);
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
+  display: none; /* hidden — replaced by pasaka-die */
 }
-.dice-face-large.rolling { animation: diceRoll 0.6s ease-out; }
-.dice-face-large i { font-size: 1.4rem; }
 
 .forced-label {
   font-size: 0.76rem;
@@ -901,19 +901,20 @@ img.piece[data-piece-type="pawn"]:hover {
   align-items: center;
   gap: 6px;
   z-index: 300;
-  background: rgba(26,20,8,0.9);
+  background: rgba(26,20,8,0.92);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   padding: 14px 24px;
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow);
 }
-.focus-dice {
-  font-size: 2.8rem;
-  font-weight: 700;
-  font-family: 'Cinzel', serif;
-  color: var(--gold-light);
+/* Pāśaka die inside focus overlay */
+.focus-overlay .pasaka-die-wrap {
+  width: 52px;
+  height: 104px;
 }
+/* Legacy focus-dice text — hidden, replaced by 3D die */
+.focus-dice { display: none; }
 .focus-forced { font-size: 0.82rem; color: var(--amber); font-style: italic; }
 
 /* ─── SCROLLBAR STYLING ─── */

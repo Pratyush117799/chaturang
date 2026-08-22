@@ -379,9 +379,12 @@ class Game {
 
   checkPawnPromotion(square, piece) {
     if (piece.type !== 'pawn') return false;
-    const [, r] = this.squareToCoords(square);
-    const promotionRank = (piece.owner === 0 || piece.owner === 3) ? 8 : 1;
-    return r + 1 === promotionRank;
+    const [f, r] = this.squareToCoords(square);
+    if (piece.owner === 0) return r === 7;
+    if (piece.owner === 2) return r === 0;
+    if (piece.owner === 1) return f === 0;
+    if (piece.owner === 3) return f === 7;
+    return false;
   }
 
   makeMove(from, to) {
@@ -417,14 +420,25 @@ class Game {
     const promotedType = this.getPromotionPieceType(piece.owner, square);
     if (!promotedType) return null;
 
-    const newPiece = new Piece(promotedType, piece.color, piece.owner);
-    this.board.set(square, newPiece);
     if (promotedType === 'king') {
+      // King promotion exception: placed on any vacant square, not the end square
+      this.board.set(square, null);
+      this.pendingKingRespawn = { playerId: piece.owner, capturedBy: piece.owner };
+      
       const player = this.players[piece.owner];
       player.hasKingOnBoard = true;
       player.kingsCaptured = Math.max(0, player.kingsCaptured - 1);
+      player.eliminated = false;
+      
+      if (player.isBot) {
+        this.autoRespawnBotKing(piece.owner);
+      }
+      return 'king';
+    } else {
+      const newPiece = new Piece(promotedType, piece.color, piece.owner);
+      this.board.set(square, newPiece);
+      return promotedType;
     }
-    return promotedType;
   }
 
   recordMove(from, to, piece, target, promotedType) {
@@ -499,6 +513,9 @@ class Game {
     const teammate = this.players.find(p => p.team === capturedPlayer.team && p.id !== capturedPlayer.id);
     if (teammate && teammate.kingsCaptured > 0 && capturedPlayer.kingsCaptured < 2) {
       this.pendingKingRespawn = { playerId: capturedPlayer.id, capturedBy: player.id };
+      if (capturedPlayer.isBot) {
+        this.autoRespawnBotKing(capturedPlayer.id);
+      }
     }
     if (capturedPlayer.kingsCaptured >= 2) {
       capturedPlayer.frozen = true;
@@ -516,6 +533,70 @@ class Game {
     player.kingsCaptured = Math.max(0, player.kingsCaptured - 1);
     this.pendingKingRespawn = null;
     return true;
+  }
+
+  autoRespawnBotKing(playerId) {
+    const vacantSquares = [];
+    for (let r = 1; r <= 8; r++) {
+      for (let f = 0; f < 8; f++) {
+        const sq = String.fromCharCode(97 + f) + r;
+        if (this.board.isEmpty(sq)) {
+          vacantSquares.push(sq);
+        }
+      }
+    }
+    if (vacantSquares.length === 0) return;
+
+    let bestSquare = vacantSquares[0];
+    let bestScore = -1000;
+
+    for (const sq of vacantSquares) {
+      let score = 0;
+      let underAttack = false;
+      
+      // Check if any opponent can attack sq
+      for (let r = 1; r <= 8; r++) {
+        for (let f = 0; f < 8; f++) {
+          const oSq = String.fromCharCode(97 + f) + r;
+          const piece = this.board.get(oSq);
+          if (piece && this.players[piece.owner].team !== this.players[playerId].team) {
+            const moves = this.getLegalMoves(oSq);
+            if (moves.includes(sq)) {
+              underAttack = true;
+            }
+          }
+        }
+      }
+
+      if (underAttack) {
+        score -= 50;
+      }
+
+      // Proximity to own/ally pieces
+      let minDistance = 100;
+      for (let r = 1; r <= 8; r++) {
+        for (let f = 0; f < 8; f++) {
+          const oSq = String.fromCharCode(97 + f) + r;
+          const piece = this.board.get(oSq);
+          if (piece && this.players[piece.owner].team === this.players[playerId].team) {
+            const [f1, r1] = this.squareToCoords(sq);
+            const [f2, r2] = this.squareToCoords(oSq);
+            const dist = Math.abs(f1 - f2) + Math.abs(r1 - r2);
+            if (dist < minDistance) minDistance = dist;
+          }
+        }
+      }
+      if (minDistance < 100) {
+        score -= minDistance;
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestSquare = sq;
+      }
+    }
+
+    this.respawnKing(bestSquare);
   }
 
   checkGameEnd() {

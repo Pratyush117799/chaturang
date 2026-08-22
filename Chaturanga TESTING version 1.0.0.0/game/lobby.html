@@ -369,6 +369,54 @@ body{
   animation:rprogress 120s linear forwards}
 @keyframes rprogress{from{width:100%}to{width:0%}}
 
+/* ── APP TOASTS (react-toastify style) ──────────────────────────── */
+#appToastContainer{
+  position:fixed;top:16px;right:16px;z-index:10100;
+  display:flex;flex-direction:column;gap:10px;
+  width:min(340px, calc(100vw - 32px));
+  pointer-events:none;
+}
+.app-toast{
+  position:relative;overflow:hidden;pointer-events:auto;
+  display:flex;align-items:flex-start;gap:10px;
+  background:linear-gradient(160deg,#2a0e14,#170609);
+  border:1px solid var(--border2);border-left:3px solid var(--gold);
+  border-radius:10px;padding:12px 14px;padding-right:30px;
+  box-shadow:0 6px 24px rgba(0,0,0,.5);
+  font-family:'Outfit',sans-serif;
+  animation:atSlideIn .28s cubic-bezier(.21,1.02,.73,1) forwards;
+}
+.app-toast.leaving{animation:atSlideOut .22s ease forwards}
+@keyframes atSlideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes atSlideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
+
+.app-toast.success{border-left-color:var(--green)}
+.app-toast.error{border-left-color:var(--red)}
+.app-toast.warning{border-left-color:var(--yellow)}
+.app-toast.info{border-left-color:var(--blue)}
+
+.at-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;margin-top:1px}
+.app-toast.success .at-icon{background:rgba(74,222,128,.15);color:var(--green)}
+.app-toast.error .at-icon{background:rgba(231,76,60,.15);color:var(--red)}
+.app-toast.warning .at-icon{background:rgba(251,191,36,.15);color:var(--yellow)}
+.app-toast.info .at-icon{background:rgba(96,165,250,.15);color:var(--blue)}
+
+.at-body{flex:1;min-width:0;font-size:.8rem;color:var(--text);line-height:1.45;word-wrap:break-word}
+.at-close{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);
+  cursor:pointer;font-size:.7rem;padding:4px;line-height:1;opacity:.7;transition:opacity .15s}
+.at-close:hover{opacity:1;color:var(--text)}
+.at-progress{position:absolute;bottom:0;left:0;height:2px;background:var(--gold);
+  animation-name:atProgress;animation-timing-function:linear;animation-fill-mode:forwards}
+.app-toast.success .at-progress{background:var(--green)}
+.app-toast.error .at-progress{background:var(--red)}
+.app-toast.warning .at-progress{background:var(--yellow)}
+.app-toast.info .at-progress{background:var(--blue)}
+@keyframes atProgress{from{width:100%}to{width:0%}}
+@media (max-width:520px){
+  #appToastContainer{top:auto;bottom:16px;right:12px;left:12px;width:auto}
+}
+
 /* WAITING SCREEN */
 .waiting-card{background:var(--dark2);border:1px solid var(--border);border-radius:12px;
   padding:32px 28px;max-width:420px;margin:40px auto;text-align:center}
@@ -606,8 +654,8 @@ body{
       <span class="friends-badge" id="friendsBadge" style="display:none;position:absolute;top:-4px;right:-8px;background:var(--red);color:#fff;font-size:0.6rem;font-weight:700;border-radius:10px;padding:2px 6px;">0</span>
     </button>
     <a href="game.html"  class="nav-link"><i class="fa-solid fa-chess-board fa-xs"></i> Game</a>
-    <a href="puzzles.html" class="nav-link"><i class="fa-solid fa-puzzle-piece fa-xs"></i> Puzzles</a>
-    <a href="akhara.html"  class="nav-link"><i class="fa-solid fa-dumbbell fa-xs"></i> Akhara</a>
+    <a href="features/puzzles/puzzles.html" class="nav-link"><i class="fa-solid fa-puzzle-piece fa-xs"></i> Puzzles</a>
+    <a href="features/akhara/akhara.html"  class="nav-link"><i class="fa-solid fa-dumbbell fa-xs"></i> Akhara</a>
   </div>
 </nav>
 
@@ -897,6 +945,9 @@ body{
     <span id="rematchCountdown" style="font-size:.72rem;color:var(--muted)"></span>
   </div>
 </div>
+
+<!-- APP TOASTS (react-toastify-style notifications, replaces alert()) -->
+<div id="appToastContainer"></div>
 
 <!-- REALTIME GAME-INVITE TOASTS (react-toastify-style popups) -->
 <div id="inviteToastContainer"></div>
@@ -1216,7 +1267,7 @@ function handleMessage(msg) {
       if (msg.code === 'ROOM_NOT_FOUND') {
         localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_ROOM);
         savedToken = null; savedRoom = null;
-      } else if (msg.code === 'ROOM_FULL') { alert(msg.message); }
+      } else if (msg.code === 'ROOM_FULL') { showToast(msg.message, 'error'); }
       if (msg.code === 'RESIGN_FAILED') {
         clearTimeout(resignAckTimer);
         const btn = document.getElementById('resignBtn');
@@ -1262,8 +1313,8 @@ function onLobbyUpdate(rooms) {
 
 function startQuickMatch() {
   const name = getPlayerName() || 'Player';
-  if (!name) { alert('Please enter a name first.'); return; }
-  if (!wsConnected) { alert('Not connected to server.'); return; }
+  if (!name) { showToast('Please enter a name first.', 'warning'); return; }
+  if (!wsConnected) { showToast('Not connected to server.', 'error'); return; }
   mmActive = true;
   showScreen('matchmakingScreen');
   document.getElementById('mmBotFallback').style.display = 'none';
@@ -1988,7 +2039,7 @@ function updateWaitingOwnerControls(snap) {
 }
 
 function startRoomNow() {
-  if (!wsConnected) { alert('Not connected to server.'); return; }
+  if (!wsConnected) { showToast('Not connected to server.', 'error'); return; }
   const snap = G.snapshot;
   const maxPlayers = snap && snap.mode === '4p' ? 4 : 2;
   const filledHumanSeats = snap ? (snap.players || []).filter(p => !p.isBot).length : 1;
@@ -2020,6 +2071,37 @@ function copyRoomLink() {
 }
 function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ---------- APP TOASTS (react-toastify-style, replaces alert()) ---------- */
+const TOAST_ICONS = {
+  success: 'fa-solid fa-check',
+  error:   'fa-solid fa-circle-exclamation',
+  warning: 'fa-solid fa-triangle-exclamation',
+  info:    'fa-solid fa-circle-info'
+};
+function showToast(message, type = 'info', duration = 4500) {
+  const container = document.getElementById('appToastContainer');
+  if (!container) { console.warn('Toast:', message); return; }
+
+  const el = document.createElement('div');
+  el.className = `app-toast ${type}`;
+  el.innerHTML = `
+    <div class="at-icon"><i class="${TOAST_ICONS[type] || TOAST_ICONS.info} fa-xs"></i></div>
+    <div class="at-body">${escapeHTML(message)}</div>
+    <button type="button" class="at-close" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
+    <div class="at-progress" style="animation-duration:${duration}ms"></div>`;
+
+  const dismiss = () => {
+    if (!el.isConnected) return;
+    el.classList.add('leaving');
+    setTimeout(() => el.remove(), 220);
+  };
+  el.querySelector('.at-close').addEventListener('click', dismiss);
+  const timer = setTimeout(dismiss, duration);
+  el.addEventListener('mouseenter', () => clearTimeout(timer));
+
+  container.appendChild(el);
 }
 
 function updateEloDisplay() {
@@ -2231,24 +2313,63 @@ function toggleRoomsBrowser() {
 }
 function createRoom() {
   const name = getPlayerName() || document.getElementById('playerNameInput').value.trim() || 'Player';
-  if (!name) { alert('Please enter a name first.'); return; }
-  if (!wsConnected) { alert('Not connected to server. Please wait or check the server is running.'); return; }
+  if (!name) { showToast('Please enter a name first.', 'warning'); return; }
+  if (!wsConnected) { showToast('Not connected to server. Please wait or check the server is running.', 'error'); return; }
   send({ type:'create-room', mode:LOBBY_MODE, roomType:ROOM_TYPE, name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '', userId: getUserId() || '' });
 }
 function joinRoom() {
   const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
-  if (!code || code.length !== 6) { alert('Enter a valid 6-character room code.'); return; }
+  if (!code || code.length !== 6) { showToast('Enter a valid 6-character room code.', 'warning'); return; }
   joinByCode(code);
 }
 function joinByCode(code) {
   const name = getPlayerName() || 'Player';
-  if (!wsConnected) { alert('Not connected to server.'); return; }
+  if (!wsConnected) { showToast('Not connected to server.', 'error'); return; }
   send({ type:'join-room', code, name, elo:getOnlineElo(), token: localStorage.getItem(LS_TOKEN) || '', userId: getUserId() || '' });
 }
 function requestLobby() { send({ type:'get-lobby' }); }
 
 /* ---------- FRIENDS & SOCIAL SYSTEM CLIENT ---------- */
 let currentFriendsData = { friends: [], friendRequests: [] };
+
+/* Tracks users we've already sent an outgoing friend request to, so the
+   "Add" button doesn't get shown (and re-clickable) for someone we've
+   already requested. Persisted per-account in localStorage so it survives
+   modal close/reopen and page reloads, since the list endpoint only
+   returns confirmed friends + incoming requests, not our outgoing ones. */
+const LS_SENT_REQUESTS = 'chaturanga_sentFriendRequests';
+function getSentRequestIds() {
+  const userId = getUserId();
+  if (!userId) return new Set();
+  try {
+    const all = JSON.parse(localStorage.getItem(LS_SENT_REQUESTS) || '{}');
+    return new Set((all[userId] || []).map(String));
+  } catch (err) { return new Set(); }
+}
+function addSentRequestId(targetUserId) {
+  const userId = getUserId();
+  if (!userId) return;
+  try {
+    const all = JSON.parse(localStorage.getItem(LS_SENT_REQUESTS) || '{}');
+    const set = new Set((all[userId] || []).map(String));
+    set.add(String(targetUserId));
+    all[userId] = [...set];
+    localStorage.setItem(LS_SENT_REQUESTS, JSON.stringify(all));
+  } catch (err) { /* ignore storage errors */ }
+}
+// Called once a friend request resolves (accepted/rejected) so a future
+// request to the same person isn't permanently blocked as "pending".
+function clearSentRequestId(targetUserId) {
+  const userId = getUserId();
+  if (!userId) return;
+  try {
+    const all = JSON.parse(localStorage.getItem(LS_SENT_REQUESTS) || '{}');
+    const set = new Set((all[userId] || []).map(String));
+    set.delete(String(targetUserId));
+    all[userId] = [...set];
+    localStorage.setItem(LS_SENT_REQUESTS, JSON.stringify(all));
+  } catch (err) { /* ignore storage errors */ }
+}
 
 function openFriendsModal() {
   const modal = document.getElementById('friendsModal');
@@ -2292,6 +2413,25 @@ async function loadFriendsData() {
     if (!data.success) return;
 
     currentFriendsData = data;
+
+    // If the server tells us about our own outgoing requests, trust it as
+    // the source of truth. Otherwise fall back to the local record from
+    // when we clicked "Add". Either way, once someone becomes a friend
+    // (or a request is no longer outstanding) it should stop showing as
+    // pending, so we reconcile against the friends list too.
+    const serverOutgoing = data.sentRequests || data.outgoingRequests || data.pendingRequests || null;
+    if (serverOutgoing) {
+      const ids = serverOutgoing.map(r => String(r.targetUserId || r.toUserId || r._id || r));
+      const userId2 = getUserId();
+      if (userId2) {
+        try {
+          const all = JSON.parse(localStorage.getItem(LS_SENT_REQUESTS) || '{}');
+          all[userId2] = ids;
+          localStorage.setItem(LS_SENT_REQUESTS, JSON.stringify(all));
+        } catch (err) { /* ignore storage errors */ }
+      }
+    }
+    (data.friends || []).forEach(f => clearSentRequestId(f._id));
 
     const friendsCount = (data.friends || []).length;
     const requestsCount = (data.friendRequests || []).length;
@@ -2406,6 +2546,7 @@ function renderAllUsersList() {
   const myId = getUserId();
   const q = (document.getElementById('fmAllSearchInput')?.value || '').trim().toLowerCase();
   const friendIds = new Set((currentFriendsData.friends || []).map(f => String(f._id)));
+  const pendingIds = getSentRequestIds();
 
   const list = allUsersData.filter(u => {
     if (String(u._id) === String(myId)) return false;
@@ -2420,24 +2561,31 @@ function renderAllUsersList() {
 
   el.innerHTML = list.map(u => {
     const isFriend = friendIds.has(String(u._id));
+    const isPending = !isFriend && pendingIds.has(String(u._id));
+    let actionHtml;
+    if (isFriend) {
+      actionHtml = '<span style="font-size:0.7rem;color:var(--green);white-space:nowrap;"><i class="fa-solid fa-check fa-xs"></i> Friends</span>';
+    } else if (isPending) {
+      actionHtml = '<span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;"><i class="fa-solid fa-clock fa-xs"></i> Requested</span>';
+    } else {
+      actionHtml = `<button type="button" class="all-user-add-btn" onclick="sendFriendRequestToUser('${u._id}', this)" style="padding:4px 10px;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.15);color:var(--gold);font-size:0.7rem;cursor:pointer;white-space:nowrap;">
+              <i class="fa-solid fa-user-plus fa-xs"></i> Add
+            </button>`;
+    }
     return `
       <div data-user-id="${u._id}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(201,168,76,.05);border:1px solid var(--border);border-radius:8px;">
         <div>
           <div style="font-weight:600;font-size:0.85rem;color:var(--text);">${escapeHTML(u.name)}</div>
           <div style="font-size:0.7rem;color:var(--muted);">${u.elo || 1200} ELO · ${escapeHTML(u.email)}</div>
         </div>
-        ${isFriend
-          ? '<span style="font-size:0.7rem;color:var(--green);white-space:nowrap;"><i class="fa-solid fa-check fa-xs"></i> Friends</span>'
-          : `<button type="button" class="all-user-add-btn" onclick="sendFriendRequestToUser('${u._id}', this)" style="padding:4px 10px;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.15);color:var(--gold);font-size:0.7rem;cursor:pointer;white-space:nowrap;">
-              <i class="fa-solid fa-user-plus fa-xs"></i> Add
-            </button>`}
+        ${actionHtml}
       </div>`;
   }).join('');
 }
 
 async function sendFriendRequestToUser(targetUserId, btnEl) {
   const userId = getUserId();
-  if (!userId) { alert('Please log in with a registered account first.'); return; }
+  if (!userId) { showToast('Please log in with a registered account first.', 'warning'); return; }
   if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = 'Sending…'; }
   try {
     const res = await fetch(`${API_BASE}/api/friends/request`, {
@@ -2447,14 +2595,13 @@ async function sendFriendRequestToUser(targetUserId, btnEl) {
     });
     const data = await res.json();
     if (data.success) {
+      addSentRequestId(targetUserId);
       if (btnEl) {
-        btnEl.innerHTML = '<i class="fa-solid fa-check fa-xs"></i> Sent';
-        btnEl.style.color = 'var(--green)';
-        btnEl.style.borderColor = 'var(--green)';
-        btnEl.style.background = 'rgba(74,222,128,.1)';
+        btnEl.outerHTML = '<span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;"><i class="fa-solid fa-clock fa-xs"></i> Requested</span>';
       }
+      showToast('Friend request sent!', 'success');
     } else {
-      alert(data.message || 'Failed to send request.');
+      showToast(data.message || 'Failed to send request.', 'error');
       if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '<i class="fa-solid fa-user-plus fa-xs"></i> Add'; }
     }
   } catch (err) {
@@ -2465,10 +2612,10 @@ async function sendFriendRequestToUser(targetUserId, btnEl) {
 
 async function submitSendFriendRequest() {
   const userId = getUserId();
-  if (!userId) { alert('Please log in with a registered account first.'); return; }
+  if (!userId) { showToast('Please log in with a registered account first.', 'warning'); return; }
   const emailInput = document.getElementById('fmAddEmailInput');
   const targetEmail = emailInput ? emailInput.value.trim() : '';
-  if (!targetEmail) { alert('Please enter a target email address.'); return; }
+  if (!targetEmail) { showToast('Please enter a target email address.', 'warning'); return; }
 
   const msgEl = document.getElementById('fmAddMsg');
   try {
@@ -2484,6 +2631,9 @@ async function submitSendFriendRequest() {
       msgEl.textContent = data.message || (data.success ? 'Request sent!' : 'Failed to send request.');
     }
     if (data.success) {
+      const targetId = data.targetUserId || data.userId2 || (data.user && data.user._id);
+      if (targetId) addSentRequestId(targetId);
+      showToast('Friend request sent!', 'success');
       emailInput.value = '';
       loadFriendsData();
     }
@@ -2587,8 +2737,8 @@ function onFriendsOnlineStatus(msg) {
 // like "Create Room" does, then asks the server to push a game-invite popup
 // to the friend's socket instead of us having to share a code manually.
 function inviteFriendToRoom(friendId, friendName) {
-  if (!wsConnected) { alert('Not connected to server.'); return; }
-  if (!onlineFriendIds.has(String(friendId))) { alert(`${friendName || 'This friend'} is not online right now.`); return; }
+  if (!wsConnected) { showToast('Not connected to server.', 'error'); return; }
+  if (!onlineFriendIds.has(String(friendId))) { showToast(`${friendName || 'This friend'} is not online right now.`, 'warning'); return; }
 
   // If we're the owner of a room we already created and it's still waiting,
   // invite the friend into THAT room rather than spinning up a new one.
@@ -2596,7 +2746,7 @@ function inviteFriendToRoom(friendId, friendName) {
 
   if (!invitingIntoOwnRoom && G.roomCode && G.snapshot && !G.gameOver &&
       (G.snapshot.status === 'playing' || G.snapshot.status === 'waiting')) {
-    alert("You're already in a match — finish or leave it before inviting a friend to a new one.");
+    showToast("You're already in a match — finish or leave it before inviting a friend to a new one.", 'warning');
     return;
   }
 
