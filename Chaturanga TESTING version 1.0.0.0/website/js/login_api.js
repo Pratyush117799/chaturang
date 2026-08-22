@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env.local') });
-
+console.log(process.env.GITHUB_CLIENT_ID)
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -711,6 +711,205 @@ app.post('/api/friends/remove', async (req, res) => {
   } catch (err) {
     console.error('Remove friend error:', err);
     res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ---------------------------------------------------------
+// OAuth Authentication (Google & GitHub)
+// ---------------------------------------------------------
+
+// --- Google OAuth ---
+app.get('/api/auth/google', (req, res) => {
+  const client_id = process.env.GOOGLE_CLIENT_ID;
+  const redirect_uri = process.env.GOOGLE_REDIRECT_URI;
+  if (!client_id || !redirect_uri) {
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:8765'}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('Google OAuth is not configured on the server.')}`);
+  }
+
+  const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+  const options = {
+    redirect_uri,
+    client_id,
+    access_type: 'offline',
+    response_type: 'code',
+    prompt: 'consent',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ].join(' '),
+  };
+  
+  const q = new URLSearchParams(options);
+  res.redirect(`${rootUrl}?${q.toString()}`);
+});
+
+app.get('/api/auth/google/callback', async (req, res) => {
+  const code = req.query.code;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8765';
+  if (!code) {
+    return res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('No authorization code returned from Google')}`);
+  }
+
+  try {
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+        grant_type: 'authorization_code',
+      }),
+    });
+
+    const tokenData = await tokenResponse.json();
+    if (!tokenData.access_token) {
+      console.error('Google token exchange error:', tokenData);
+      return res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('Google token exchange failed')}`);
+    }
+
+    const profileResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    });
+    const profile = await profileResponse.json();
+
+    if (!profile.email) {
+      return res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('No email associated with Google profile')}`);
+    }
+
+    const email = profile.email.toLowerCase().trim();
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const name = profile.name || email.split('@')[0];
+      const crypto = require('crypto');
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      user = await User.create({
+        name,
+        email,
+        password: randomPassword,
+        elo: 200,
+      });
+      // Send a welcome email asynchronously
+      sendMail(user.email, 'Welcome to Chaturanga', user.name, registerEmailHtml(user.name));
+    } else {
+      // Send a login notification asynchronously
+      sendMail(user.email, 'New login to Chaturanga', user.name, loginEmailHtml(user.name));
+    }
+
+    const redirectUrl = new URL(`${frontendUrl}/website/pages/loginpage.html`);
+    redirectUrl.searchParams.set('oauth_success', 'true');
+    redirectUrl.searchParams.set('id', user._id.toString());
+    redirectUrl.searchParams.set('name', user.name);
+    redirectUrl.searchParams.set('email', user.email);
+
+    res.redirect(redirectUrl.toString());
+  } catch (error) {
+    console.error('Google OAuth callback error:', error);
+    res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent(error.message)}`);
+  }
+});
+
+// --- GitHub OAuth ---
+app.get('/api/auth/github', (req, res) => {
+  const client_id = process.env.GITHUB_CLIENT_ID;
+  const redirect_uri = process.env.GITHUB_REDIRECT_URI;
+  if (!client_id || !redirect_uri) {
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:8765'}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('GitHub OAuth is not configured on the server.')}`);
+  }
+
+  const rootUrl = 'https://github.com/login/oauth/authorize';
+  const options = {
+    client_id,
+    redirect_uri,
+    scope: 'user:email',
+  };
+  const q = new URLSearchParams(options);
+  res.redirect(`${rootUrl}?${q.toString()}`);
+});
+
+app.get('/api/auth/github/callback', async (req, res) => {
+  const code = req.query.code;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8765';
+  if (!code) {
+    return res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('No authorization code returned from GitHub')}`);
+  }
+
+  try {
+    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+        redirect_uri: process.env.GITHUB_REDIRECT_URI,
+      }),
+    });
+
+    const tokenData = await tokenResponse.json();
+    if (!tokenData.access_token) {
+      console.error('GitHub token exchange error:', tokenData);
+      return res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('GitHub token exchange failed')}`);
+    }
+
+    const profileResponse = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+        'User-Agent': 'Chaturanga-App',
+      },
+    });
+    const profile = await profileResponse.json();
+
+    let email = profile.email;
+    if (!email) {
+      const emailResponse = await fetch('https://api.github.com/user/emails', {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          'User-Agent': 'Chaturanga-App',
+        },
+      });
+      const emails = await emailResponse.json();
+      const primaryEmail = emails.find(e => e.primary && e.verified);
+      email = primaryEmail ? primaryEmail.email : (emails[0] ? emails[0].email : null);
+    }
+
+    if (!email) {
+      return res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent('No verified primary email associated with GitHub profile')}`);
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    let user = await User.findOne({ email: cleanEmail });
+
+    if (!user) {
+      const name = profile.name || profile.login || cleanEmail.split('@')[0];
+      const crypto = require('crypto');
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      user = await User.create({
+        name,
+        email: cleanEmail,
+        password: randomPassword,
+        elo: 200,
+      });
+      sendMail(user.email, 'Welcome to Chaturanga', user.name, registerEmailHtml(user.name));
+    } else {
+      sendMail(user.email, 'New login to Chaturanga', user.name, loginEmailHtml(user.name));
+    }
+
+    const redirectUrl = new URL(`${frontendUrl}/website/pages/loginpage.html`);
+    redirectUrl.searchParams.set('oauth_success', 'true');
+    redirectUrl.searchParams.set('id', user._id.toString());
+    redirectUrl.searchParams.set('name', user.name);
+    redirectUrl.searchParams.set('email', user.email);
+
+    res.redirect(redirectUrl.toString());
+  } catch (error) {
+    console.error('GitHub OAuth callback error:', error);
+    res.redirect(`${frontendUrl}/website/pages/loginpage.html?oauth_error=${encodeURIComponent(error.message)}`);
   }
 });
 

@@ -1443,11 +1443,12 @@ html, body {
     transform: translateY(0);
 }
 
-.app-shell.sidebar-collapsed .bot-menu-overlay { left: 0; }
+@media (min-width: 981px) {
+    .app-shell.sidebar-collapsed .bot-menu-overlay { left: var(--app-sidebar-w-collapsed); }
+}
 
 @media (max-width: 1180px) and (min-width: 981px) {
     .bot-menu-overlay { left: var(--app-sidebar-w-collapsed); }
-    .app-shell.sidebar-collapsed .bot-menu-overlay { left: 0; }
 }
 
 @media (max-width: 980px) {
@@ -1493,11 +1494,12 @@ html, body {
     }
 }
 
-.app-shell.sidebar-collapsed .bot-menu-exit { left: 24px; }
+@media (min-width: 981px) {
+    .app-shell.sidebar-collapsed .bot-menu-exit { left: calc(24px + var(--app-sidebar-w-collapsed)); }
+}
 
 @media (max-width: 1180px) and (min-width: 981px) {
     .bot-menu-exit { left: calc(24px + var(--app-sidebar-w-collapsed)); }
-    .app-shell.sidebar-collapsed .bot-menu-exit { left: 24px; }
 }
 
 @media (max-width: 980px) {
@@ -3434,57 +3436,30 @@ table {
 }
 .sidebar-scrim.open { opacity: 1; visibility: visible; }
 
-/* ---------- SIDEBAR ARROW COLLAPSE (desktop / tablet) ---------- */
-/* A slim tab pinned to the sidebar's edge — a sharp ">" you click to
-   collapse the sidebar fully off-canvas, and click again ("<") to bring
-   it back. Only relevant where the sidebar sits inline (>980px); on
-   phones the existing hamburger + scrim already handles it. */
-.sidebar-arrow-toggle {
-    position: fixed;
-    top: 50%;
-    left: var(--app-sidebar-w);
-    z-index: 1050;
-    width: 26px;
-    height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(165deg, #2d0a0a 0%, #1a0600 100%);
-    color: var(--gold);
-    border: 1px solid rgba(201, 168, 76, 0.35);
-    border-left: none;
-    border-radius: 0 10px 10px 0;
-    cursor: pointer;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.45);
-    transform: translateY(-50%);
-    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease, box-shadow 0.2s ease;
-}
-.sidebar-arrow-toggle i {
-    font-size: 0.8rem;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-@media (hover: hover) and (pointer: fine) {
-    .sidebar-arrow-toggle:hover {
-        background: linear-gradient(165deg, #3d1010 0%, #240800 100%);
-        box-shadow: 4px 0 20px rgba(201, 168, 76, 0.3);
-        border-color: var(--gold);
+/* ---------- SIDEBAR COLLAPSE (desktop / tablet) ---------- */
+/* Clicking the collapse button in the sidebar header (Claude-style)
+   shrinks the sidebar down to a slim icon-only rail — it never
+   disappears entirely on desktop/tablet. Only relevant where the
+   sidebar sits inline (>980px); on phones the hamburger + scrim
+   drawer already handles opening/closing it. */
+@media (min-width: 981px) {
+    .app-shell.sidebar-collapsed .app-sidebar {
+        width: var(--app-sidebar-w-collapsed);
     }
-}
-
-.app-shell.sidebar-collapsed .app-sidebar { transform: translateX(-100%); }
-.app-shell.sidebar-collapsed .app-main { margin-left: 0; }
-.app-shell.sidebar-collapsed .sidebar-arrow-toggle { left: 0; }
-.app-shell.sidebar-collapsed .sidebar-arrow-toggle i { transform: rotate(180deg); }
-
-/* Hidden on phones — the hamburger + scrim drawer covers this there. */
-@media (max-width: 980px) {
-    .sidebar-arrow-toggle { display: none; }
-}
-
-/* Match the icon-rail width in the collapsed-to-icons breakpoint. */
-@media (max-width: 1180px) and (min-width: 981px) {
-    .sidebar-arrow-toggle { left: var(--app-sidebar-w-collapsed); }
-    .app-shell.sidebar-collapsed .sidebar-arrow-toggle { left: 0; }
+    .app-shell.sidebar-collapsed .app-main {
+        margin-left: var(--app-sidebar-w-collapsed);
+    }
+    .app-shell.sidebar-collapsed .sidebar-profile-text,
+    .app-shell.sidebar-collapsed .sidebar-brand .logo-latin,
+    .app-shell.sidebar-collapsed .sidebar-link .link-label,
+    .app-shell.sidebar-collapsed .sidebar-link .link-arrow,
+    .app-shell.sidebar-collapsed .sidebar-nav-label { display: none; }
+    .app-shell.sidebar-collapsed .sidebar-profile-btn { justify-content: center; padding: 6px; border-radius: 50%; width: 50px; height: 50px; }
+    .app-shell.sidebar-collapsed .sidebar-brand { justify-content: center; padding: 4px 0 20px; }
+    .app-shell.sidebar-collapsed .sidebar-link { justify-content: center; padding: 12px 0; }
+    .app-shell.sidebar-collapsed .sidebar-link .link-icon { width: auto; }
+    .sidebar-collapse-btn i { transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+    .app-shell.sidebar-collapsed .sidebar-collapse-btn i { transform: rotate(180deg); }
 }
 
 /* ---------- MAIN CONTENT ---------- */
@@ -3532,6 +3507,10 @@ table {
     .sidebar-toggle { display: flex; }
     .sidebar-scrim { display: block; }
     .app-shell .section:first-of-type { padding-top: 100px; }
+    /* Icon-rail collapse is a desktop/tablet concept — on phones the
+       hamburger already opens/closes the full drawer, so hide the
+       in-sidebar collapse button to avoid a control that does nothing. */
+    .sidebar-header { display: none; }
 }
 
 @media (max-width: 400px) {

@@ -73,15 +73,24 @@ Depending on the setup/dice used, one of two dice systems can be adopted:
 ## 4. King Revival & Promotion Rules
 
 ### Nara Promotion
-* When a Nara reaches the opposite end of the board (the 8th rank relative to its starting direction), it is promoted.
-* **Promotion Type:** It gets promoted to the corresponding piece of the board column it reaches (based on the original piece layout of that column). It can be promoted to a King (Rajan) if it reaches the King's starting column.
-* **Combat capability:** A promoted Nara can capture opponent pieces, except for the opponent's King.
+* When a Nara reaches the **opposite end of the board** (the 8th rank relative to its starting direction), it is immediately promoted.
+* **Promotion Type — Column-Based:** The Nara is promoted to the piece that **originally occupied that column** in its own army's starting position.
+  * **Ratha column** (a or h) → Promotes to **Ratha** (Chariot)
+  * **Ashwa column** (b or g) → Promotes to **Ashwa** (Knight)
+  * **Danti column** (c or f) → Promotes to **Danti** (Elephant)
+  * **Raja column** (d or e) → Promotes to **Raja** (King) — see special rule below
+
+> [!IMPORTANT]
+> **Raja Promotion Exception:** Unlike Ratha, Ashwa, and Danti — which automatically replace the Nara on the end square — when a Nara promotes to a **Raja**, the end square is **cleared** and the new Raja is **placed by the player on any vacant square** anywhere on the board. This gives the player strategic freedom to position their new King safely.
+
+> [!NOTE]
+> This is a fundamental difference from modern chess: in chess a promoted pawn becomes a Queen on the same square, with no choice of placement. In Chaturanga, a Raja-promoted Nara grants the player a free placement move anywhere on the board!
 
 ### Raja Comeback (Revival)
 If a team's King (Rajan) has been captured, there are two ways he can return to the game:
-1. **Nara Promotion:** If the corresponding Nara of the captured King's side reaches the end of the board, the King is revived.
+1. **Nara Promotion:** If the corresponding Nara of the captured King's side reaches the end of the board in the **Raja column**, the King is revived.
 2. **Teammate Capture:** If the teammate captures at least one of the opponent team's Kings, the captured partner King is revived.
-* **Placement:** The revived King is placed on any vacant, unchecked square on the board.
+* **Placement:** The revived King is placed on **any vacant square** on the board (not just the starting square).
 
 ### Permanent Elimination
 * If a King is captured a **second time** (killed twice), he cannot return to the game.

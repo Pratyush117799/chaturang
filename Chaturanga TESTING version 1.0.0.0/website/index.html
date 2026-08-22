@@ -1,1428 +1,1292 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chaturanga — The Ancient Indian War Game</title>
-  <meta name="description"
-    content="Chaturanga, the ancient Indian board game — ancestor of Chess. Play online, study authentic research, and explore the origins of modern chess." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Yatra+One&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Noto+Sans+Devanagari:wght@400;700&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/animations.css" />
-  <link rel="stylesheet" href="css/chatbot.css" />
-  <style>
-    /* How to Play — hero CTA glow (reuses .btn-secondary shape) */
-    .btn-howto{
-      position:relative;
-      border-color:rgba(234,179,8,0.55) !important;
-      animation:howtoGlow 3.2s ease-in-out infinite;
-    }
-    .btn-howto:hover{
-      animation-play-state:paused;
-    }
-    @keyframes howtoGlow{
-      0%,100%{ box-shadow:0 0 0 rgba(234,179,8,0); }
-      50%{ box-shadow:0 0 24px rgba(234,179,8,0.38); }
-    }
-    .btn-howto i{
-      animation:howtoIconTilt 2.6s ease-in-out infinite;
-    }
-    @keyframes howtoIconTilt{
-      0%,100%{ transform:rotate(0deg); }
-      50%{ transform:rotate(-10deg); }
-    }
-  </style>
-</head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chaturanga — The Ancient Indian Game of War and Strategy</title>
+<meta name="description" content="Chaturanga, the ancient Indian game of war and strategy. Play offline against AI, challenge the realm online, solve puzzles, and master the art of the Ashtāpada." />
 
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+  :root{
+    --midnight:#0a0806;
+    --panel:#120d09;
+    --gold:#c9a84c;
+    --gold-light:#e8c874;
+    --gold-dim:rgba(201,168,76,0.35);
+    --sandstone:#ede3c8;
+    --text-muted:#a89a78;
+    --maroon:#3d0b0b;
+    --font-display:'Cinzel', serif;
+    --font-body:'Raleway', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--midnight);
+    color:var(--sandstone);
+    font-family:var(--font-body);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ============ HEADER ============ */
+  .site-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:14px 40px;
+    background:linear-gradient(180deg,#0d0a06 0%, #0a0705 100%);
+    border-bottom:1px solid var(--gold-dim);
+    position:relative;
+    z-index:50;
+  }
+  .site-header::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-1px;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(201,168,76,0.55) 20%, rgba(201,168,76,0.55) 80%, transparent);
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .brand-crest{
+    width:50px; height:50px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, #1c2c44, #0a1220 70%);
+    border:2px solid var(--gold);
+    box-shadow:0 0 14px rgba(201,168,76,0.25), inset 0 0 8px rgba(0,0,0,0.6);
+    flex-shrink:0;
+  }
+  .brand-crest i{ color:var(--gold-light); font-size:1.3rem; }
+  .brand-text{ display:flex; flex-direction:column; line-height:1.15; }
+  .brand-title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.7rem;
+    letter-spacing:2px;
+    background:linear-gradient(180deg, var(--gold-light), var(--gold) 70%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .brand-tagline{
+    font-family:var(--font-body);
+    font-size:0.62rem;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-top:3px;
+  }
+
+  .main-nav{
+    display:flex;
+    align-items:center;
+    gap:38px;
+  }
+  .main-nav a{
+    position:relative;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:0.92rem;
+    letter-spacing:0.5px;
+    color:var(--sandstone);
+    padding-bottom:10px;
+    transition:color .2s ease;
+    white-space:nowrap;
+  }
+  .main-nav a:hover{ color:var(--gold-light); }
+  .main-nav a.active{ color:var(--gold-light); }
+  .main-nav a.active::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:3px;
+    border-radius:2px;
+    background:linear-gradient(90deg, var(--gold), var(--gold-light));
+    box-shadow:0 0 8px rgba(201,168,76,0.6);
+  }
+
+  .header-actions{
+    display:flex;
+    align-items:center;
+    gap:22px;
+  }
+  .icon-btn{
+    background:none;
+    border:none;
+    color:var(--sandstone);
+    font-size:1.05rem;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:34px; height:34px;
+    border-radius:50%;
+    transition:background .2s ease, color .2s ease;
+  }
+  .icon-btn:hover{ background:rgba(201,168,76,0.12); color:var(--gold-light); }
+  .notif-badge{
+    position:absolute;
+    top:-2px; right:-2px;
+    background:#c22b2b;
+    color:#fff;
+    font-size:0.62rem;
+    font-weight:700;
+    width:16px; height:16px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:1.5px solid var(--midnight);
+  }
+
+  .user-chip{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .user-avatar{
+    width:42px; height:42px;
+    border-radius:50%;
+    border:2px solid var(--gold);
+    background:radial-gradient(circle at 35% 30%, #6b1f1f, #2a0d0d 75%);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold-light);
+    font-size:1.1rem;
+    flex-shrink:0;
+    overflow:hidden;
+  }
+  .user-info{ display:flex; flex-direction:column; line-height:1.3; }
+  .user-name{ font-weight:600; font-size:0.92rem; color:var(--sandstone); }
+  .user-rating{
+    display:flex; align-items:center; gap:5px;
+    font-size:0.78rem; color:var(--gold);
+    font-weight:600;
+  }
+  .user-rating i{ font-size:0.7rem; }
+  .user-chip-arrow{ color:var(--text-muted); font-size:0.75rem; margin-left:2px; }
+
+  /* ============ HERO ============ */
+  .hero{
+    flex:1;
+    display:flex;
+    align-items:stretch;
+    min-height:0;
+  }
+  .hero[hidden]{ display:none; }
+
+  .hero-cards{
+    flex:0 0 44%;
+    max-width:44%;
+    padding:36px 40px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    align-content:space-evenly;
+  }
+
+  .feature-card{
+    position:relative;
+    background:rgba(201,168,76,0.03);
+    border:1px solid var(--gold-dim);
+    border-radius:6px;
+    padding:28px 20px 24px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:10px;
+    transition:transform .25s ease, background .25s ease, border-color .25s ease;
+    cursor:pointer;
+  }
+  .feature-card:hover{
+    transform:translateY(-4px);
+    background:rgba(201,168,76,0.08);
+    border-color:rgba(201,168,76,0.6);
+  }
+  /* corner brackets */
+  .feature-card::before, .feature-card::after,
+  .feature-card .fc-corner-br, .feature-card .fc-corner-bl{
+    content:"";
+    position:absolute;
+    width:16px; height:16px;
+    border:1.5px solid var(--gold);
+    opacity:0.85;
+  }
+  .feature-card::before{ top:6px; left:6px; border-right:none; border-bottom:none; }
+  .feature-card::after{ top:6px; right:6px; border-left:none; border-bottom:none; }
+  .feature-card .fc-corner-bl{ bottom:6px; left:6px; border-right:none; border-top:none; }
+  .feature-card .fc-corner-br{ bottom:6px; right:6px; border-left:none; border-top:none; }
+
+  .fc-icon{
+    width:60px; height:60px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold);
+    font-size:1.7rem;
+    margin-bottom:2px;
+  }
+  .fc-icon.fc-icon-circle{
+    border-radius:50%;
+    border:2px solid var(--gold);
+    background:radial-gradient(circle at 35% 30%, #6b1f1f, #2a0d0d 75%);
+    overflow:hidden;
+  }
+  .fc-icon-crossed{
+    font-size:1.6rem;
+    letter-spacing:-4px;
+    transform:rotate(0deg);
+  }
+  .fc-title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.15rem;
+    letter-spacing:1px;
+    color:var(--gold-light);
+    text-transform:uppercase;
+  }
+  .fc-desc{
+    font-size:0.82rem;
+    line-height:1.45;
+    color:var(--text-muted);
+  }
+
+  .hero-art{
+    flex:1;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-art img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .hero-art::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, var(--midnight) 0%, rgba(10,8,6,0) 12%);
+  }
+
+  /* ============ STATS BAR ============ */
+  .stats-bar{
+    display:flex;
+    align-items:stretch;
+    background:linear-gradient(180deg, #0d0a06 0%, #0a0705 100%);
+    border-top:1px solid var(--gold-dim);
+  }
+  .stat-item{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    padding:16px 12px;
+    border-right:1px solid rgba(201,168,76,0.18);
+  }
+  .stat-item:last-child{ border-right:none; }
+  .stat-icon{
+    color:var(--gold);
+    font-size:1.3rem;
+    width:34px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .stat-text{ display:flex; flex-direction:column; line-height:1.3; }
+  .stat-label{
+    font-size:0.68rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .stat-value{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.05rem;
+    color:var(--sandstone);
+  }
+
+  /* ============ FOOTER ============ */
+  .site-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:20px 40px;
+    background:var(--midnight);
+    border-top:1px solid rgba(201,168,76,0.15);
+    flex-wrap:wrap;
+  }
+  .footer-brand{ display:flex; flex-direction:column; gap:2px; }
+  .footer-brand-name{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:0.95rem;
+    letter-spacing:1.5px;
+    color:var(--gold-light);
+  }
+  .footer-copy{ font-size:0.75rem; color:var(--text-muted); }
+
+  .footer-links{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:0.78rem;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .footer-links a:hover{ color:var(--gold-light); }
+  .footer-links .sep{ color:rgba(201,168,76,0.35); }
+
+  .footer-social{ display:flex; align-items:center; gap:10px; }
+  .footer-social a{
+    width:32px; height:32px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--sandstone);
+    font-size:0.85rem;
+    transition:background .2s ease, color .2s ease;
+  }
+  .footer-social a:hover{ background:var(--gold); color:var(--midnight); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1100px){
+    .hero{ flex-direction:column; }
+    .hero-cards{ flex:none; max-width:100%; width:100%; }
+    .hero-art{ min-height:320px; }
+    .hero-art::before{ background:linear-gradient(180deg, var(--midnight) 0%, rgba(10,8,6,0) 12%); }
+  }
+  @media (max-width: 820px){
+    .site-header{ flex-wrap:wrap; padding:14px 20px; }
+    .main-nav{ order:3; width:100%; justify-content:space-between; gap:14px; overflow-x:auto; padding-top:8px; }
+    .hero-cards{ grid-template-columns:1fr 1fr; padding:24px 20px; }
+    .stats-bar{ flex-wrap:wrap; }
+    .stat-item{ flex:1 1 50%; border-bottom:1px solid rgba(201,168,76,0.18); }
+    .site-footer{ flex-direction:column; text-align:center; }
+  }
+  @media (max-width: 560px){
+    .hero-cards{ grid-template-columns:1fr; }
+    .brand-tagline{ display:none; }
+    .user-info{ display:none; }
+  }
+
+  /* ============ PROFILE VIEW (merged from userprofile.html) ============ */
+  .profile-page{
+    --border-gold:1px solid rgba(201,168,76,0.3);
+    --radius:12px;
+    --radius-lg:20px;
+    --shadow-gold:0 0 30px rgba(201,168,76,0.15);
+    --shadow-deep:0 8px 40px rgba(0,0,0,0.5);
+    --transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+    --win-color:#4caf50;
+    --loss-color:#e05a5a;
+    --quit-color:#ff9800;
+
+    position:relative;
+    display:none;
+    flex:1;
+    background:var(--midnight);
+    color:var(--sandstone);
+    padding:44px 40px;
+    overflow:hidden;
+  }
+  .profile-page.active{ display:block; }
+
+  /* Same hero-battle artwork as the home view — shown clearly, with a
+     warm bronze/amber scrim (no red/maroon) so text stays readable while
+     the sunset battle scene reads through behind every card. */
+  .profile-page::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:url('images/hero-battle.webp');
+    background-size:cover;
+    background-position:center 30%;
+    z-index:0;
+  }
+  .profile-page::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(circle at 85% 10%, rgba(232,200,116,0.10) 0%, transparent 45%),
+      linear-gradient(180deg, rgba(10,8,6,0.55) 0%, rgba(10,8,6,0.72) 40%, rgba(10,8,6,0.9) 100%);
+    z-index:0;
+  }
+
+  .profile-page .container{ position:relative; z-index:1; max-width:900px; margin:0 auto; }
+
+  .profile-page .view-back-row{ margin-bottom:24px; }
+  .profile-page .view-back-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:40px; height:40px; flex-shrink:0;
+    border-radius:50%;
+    color:var(--gold);
+    background:rgba(201,168,76,0.08);
+    border:var(--border-gold);
+    transition:var(--transition); cursor:pointer;
+  }
+  .profile-page .view-back-btn i{ font-size:1rem; transition:transform .2s ease; }
+  .profile-page .view-back-btn:hover{
+    background:rgba(201,168,76,0.18); color:var(--gold-light);
+    box-shadow:var(--shadow-gold); transform:translateX(-2px);
+  }
+  .profile-page .view-back-btn:hover i{ transform:translateX(-2px); }
+
+  .profile-card{
+    background:linear-gradient(145deg, rgba(18,13,9,0.82), rgba(58,38,14,0.78));
+    backdrop-filter:blur(1px);
+    -webkit-backdrop-filter:blur(2px);
+    border:var(--border-gold); border-radius:var(--radius-lg); padding:32px;
+    display:flex; align-items:center; gap:24px;
+    box-shadow:var(--shadow-deep), var(--shadow-gold); margin-bottom:28px;
+    position:relative; overflow:hidden;
+  }
+  .profile-card::after{
+    content:""; position:absolute; top:-50%; right:-20%; width:300px; height:300px;
+    background:radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .avatar-large{
+    font-size:2.8rem; color:var(--midnight);
+    background:linear-gradient(135deg, var(--gold), var(--gold-light));
+    width:90px; height:90px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    box-shadow:0 0 20px rgba(201,168,76,0.3); border:2px solid var(--gold-light);
+  }
+  .profile-details{ min-width:0; }
+  .profile-details h1{ margin:0 0 6px 0; font-family:var(--font-display); font-size:2rem; color:var(--sandstone); letter-spacing:1px; }
+  .profile-details p{ margin:4px 0; color:var(--text-muted); font-size:0.95rem; display:flex; align-items:center; gap:8px; }
+  .profile-details p i{ color:var(--gold-dim); width:16px; text-align:center; }
+
+  .rating-pill{ margin-left:auto; text-align:center; flex:0 0 auto; }
+  .rating-pill .rating-value{ font-family:var(--font-display); font-size:1.8rem; color:var(--gold-light); font-weight:700; line-height:1; }
+  .rating-pill .rating-label{ font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
+
+  .rank-badge{ display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:12px; font-size:0.65rem; font-weight:600; margin-bottom:6px; letter-spacing:0.04em; font-family:var(--font-body); }
+  .rank-novice{ background:rgba(156,163,175,.12); color:#9ca3af; border:1px solid rgba(156,163,175,.25); }
+  .rank-warrior{ background:rgba(96,165,250,.12); color:#60a5fa; border:1px solid rgba(96,165,250,.25); }
+  .rank-charioteer{ background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.25); }
+  .rank-archer{ background:rgba(251,191,36,.12); color:#fbbf24; border:1px solid rgba(251,191,36,.25); }
+  .rank-master{ background:rgba(167,139,250,.12); color:#a78bfa; border:1px solid rgba(167,139,250,.25); }
+  .rank-brahmastra{ background:linear-gradient(135deg, rgba(201,168,76,.18), rgba(245,228,160,.12)); color:#f5e4a0; border:1px solid rgba(201,168,76,.4); }
+
+  .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:36px; }
+  .stat-card{
+    background:rgba(18,13,9,0.72);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border:var(--border-gold); border-radius:var(--radius); padding:18px 12px; text-align:center; transition:var(--transition);
+  }
+  .stat-card:hover{ border-color:var(--gold); box-shadow:var(--shadow-gold); }
+  .stat-card i{ color:var(--gold-dim); font-size:1rem; margin-bottom:8px; display:block; }
+  .stat-card .stat-value{ font-family:var(--font-display); font-size:1.5rem; font-weight:700; color:var(--gold-light); line-height:1; }
+  .stat-card .stat-label{ margin-top:6px; font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; }
+  .stat-card.wins .stat-value{ color:var(--win-color); }
+  .stat-card.losses .stat-value{ color:var(--loss-color); }
+
+  .profile-page .section-title{ font-family:var(--font-display); font-size:1.4rem; color:var(--sandstone); margin-bottom:20px; border-bottom:1px solid rgba(201,168,76,0.25); padding-bottom:10px; letter-spacing:0.8px; display:flex; align-items:center; gap:10px; }
+  .profile-page .section-title::before{ content:'✦'; color:var(--gold); font-size:1rem; }
+
+  .table-container{
+    background:rgba(18,13,9,0.72);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border:var(--border-gold); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-deep);
+  }
+  .history-table{ width:100%; border-collapse:collapse; text-align:left; }
+  .history-table th, .history-table td{ padding:16px 20px; }
+  .history-table th{ background:rgba(58,38,14,0.55); color:var(--gold-light); font-family:var(--font-display); font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; border-bottom:1px solid rgba(201,168,76,0.2); }
+  .history-table tr{ border-bottom:1px solid rgba(201,168,76,0.08); transition:background .2s ease; }
+  .history-table tbody tr:hover{ background:rgba(201,168,76,0.04); }
+  .history-table tbody tr:last-child{ border-bottom:none; }
+
+  .badge{ display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:100px; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; font-family:var(--font-display); }
+  .badge-win{ background:rgba(76,175,80,0.15); color:var(--win-color); border:1px solid rgba(76,175,80,0.3); }
+  .badge-defeat{ background:rgba(224,90,90,0.15); color:var(--loss-color); border:1px solid rgba(224,90,90,0.3); }
+  .badge-quitted{ background:rgba(255,152,0,0.15); color:var(--quit-color); border:1px solid rgba(255,152,0,0.3); }
+
+  .no-data{ text-align:center; padding:48px; color:var(--text-muted); font-style:italic; }
+
+  @media (max-width: 640px){
+    .stats-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 600px){
+    .profile-page{ padding:24px 20px; }
+    .profile-card{ flex-direction:column; text-align:center; padding:24px; gap:16px; }
+    .profile-details p{ justify-content:center; }
+    .rating-pill{ margin-left:0; }
+    .history-table th, .history-table td{ padding:12px 14px; font-size:0.85rem; }
+  }
+
+  /* ============ LEARN VIEW (merged from tutorial.html) ============ */
+  /* Reuses .profile-page for the shared hero-battle background, scrim
+     and blurred container treatment — same aesthetic as the Profile
+     view, just with its own content underneath. */
+  .learn-page .container{ max-width:980px; }
+
+  .learn-heading{ text-align:center; margin-bottom:30px; }
+  .learn-heading h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.9rem;
+    letter-spacing:1px;
+    color:var(--sandstone);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .learn-heading h1::before{ content:'✦'; color:var(--gold); font-size:1.1rem; }
+  .learn-heading p{
+    font-size:0.9rem;
+    color:var(--text-muted);
+    margin-top:8px;
+    letter-spacing:0.3px;
+  }
+
+  /* Difficulty tabs — pill buttons matching the site's gold/sandstone palette */
+  .learn-difficulty-tabs{
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:28px;
+  }
+  .learn-difficulty-tab{
+    display:flex; align-items:center; gap:8px;
+    background:rgba(18,13,9,0.72);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:var(--border-gold);
+    color:var(--text-muted);
+    font-family:var(--font-body);
+    padding:10px 20px;
+    border-radius:999px;
+    font-size:0.85rem;
+    cursor:pointer;
+    transition:var(--transition);
+  }
+  .learn-difficulty-tab i{ font-size:0.9rem; }
+  .learn-difficulty-tab:hover{ border-color:var(--gold); color:var(--sandstone); }
+  .learn-difficulty-tab.active{
+    background:linear-gradient(135deg, var(--gold), var(--gold-light));
+    color:var(--midnight);
+    border-color:transparent;
+    font-weight:700;
+    box-shadow:var(--shadow-gold);
+  }
+
+  /* Category cards — same stepped/staggered stack as the standalone
+     tutorial, restyled with the same card language as .stat-card /
+     .table-container so it reads as native to this page. */
+  .learn-category-stack{ max-width:640px; margin:0 auto; }
+  .learn-category-item{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    width:100%;
+    background:rgba(18,13,9,0.72);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:var(--border-gold);
+    border-radius:var(--radius);
+    padding:16px 20px;
+    cursor:pointer;
+    text-align:left;
+    font-family:var(--font-body);
+    color:var(--sandstone);
+    transition:var(--transition);
+    position:relative;
+  }
+  .learn-category-item + .learn-category-item{ margin-top:12px; }
+  .learn-category-item:hover{
+    border-color:var(--gold);
+    box-shadow:var(--shadow-gold);
+    transform:translateX(4px);
+  }
+  .learn-category-item:focus-visible{ outline:2px solid var(--gold-light); outline-offset:2px; }
+  .lci-left{ display:flex; align-items:center; gap:14px; min-width:0; }
+  .lci-icon{
+    width:42px; height:42px; border-radius:10px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(201,168,76,0.1);
+    border:1px solid rgba(201,168,76,0.3);
+    color:var(--gold-light);
+    font-size:1.05rem;
+  }
+  .lci-text h4{
+    font-family:var(--font-display);
+    font-size:0.98rem;
+    color:var(--sandstone);
+    margin:0 0 3px;
+    letter-spacing:0.4px;
+  }
+  .lci-text p{ font-size:0.78rem; color:var(--text-muted); margin:0; }
+  .lci-count{
+    font-size:0.72rem; color:var(--gold);
+    white-space:nowrap;
+    border:1px solid rgba(201,168,76,0.3);
+    padding:3px 10px; border-radius:999px;
+    flex-shrink:0;
+  }
+
+  /* Cards enter with a gentle fade/rise, staggered slightly in time
+     (not in position) so they animate in one after another while
+     staying perfectly aligned. */
+  @keyframes lciFadeIn{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .learn-category-item{
+    animation: lciFadeIn 0.4s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  .learn-category-stack{ transition: opacity 0.16s ease; }
+  .learn-category-stack.is-switching{ opacity: 0; }
+
+  /* ============ SMOOTH VIEW TRANSITIONS ============ */
+  @keyframes viewFadeIn{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .view-enter{ animation:viewFadeIn 0.45s cubic-bezier(0.4,0,0.2,1) both; }
+
+  :root {
+  --gold-primary: #f5d061;
+  --gold-glow: rgba(245, 208, 97, 0.35);
+  --border-gold: 1px solid rgba(245, 208, 97, 0.25);
+  --radius: 16px;
+  --shadow-deep: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px var(--gold-glow);
+}
+
+/* --- insane container style --- */
+.table-container {
+  position: relative;
+  background: radial-gradient(
+      100% 100% at 50% 0%, 
+      rgba(245, 208, 97, 0.08) 0%, 
+      rgba(18, 13, 9, 0.85) 100%
+    );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: var(--border-gold);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-deep);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+/* subtle hover glow effect on the container */
+.table-container:hover {
+  border-color: rgba(245, 208, 97, 0.5);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(245, 208, 97, 0.5);
+}
+
+/* --- table styling --- */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e6dfd5;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  text-align: left;
+}
+
+/* header design */
+.history-table thead tr {
+  background: rgba(245, 208, 97, 0.05);
+  border-bottom: 1px solid rgba(245, 208, 97, 0.2);
+}
+
+.history-table th {
+  padding: 16px 24px; /* matches data cells for clean alignment */
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold-primary);
+  text-shadow: 0 0 10px var(--gold-glow);
+  text-align: left; /* explicitly forces left alignment */
+}
+
+/* row interactions */
+.history-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.history-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.history-table tbody tr:hover {
+  background: rgba(245, 208, 97, 0.08);
+  transform: scale(1.008);
+}
+
+.history-table td {
+  padding: 16px 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left; /* ensures table data matches header alignment */
+}
+
+/* --- placeholder/loading state --- */
+.no-data {
+  text-align: center;
+  padding: 40px 20px !important;
+  color: #a09585;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  animation: pulseText 2s infinite ease-in-out;
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; text-shadow: 0 0 8px var(--gold-glow); }
+}
+
+
+
+</style>
+</head>
 <body>
 
-  <div class="app-shell">
-
-    <!-- Mobile sidebar toggle -->
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span>
-    </button>
-    <div class="sidebar-scrim" id="sidebarScrim"></div>
-
-    <!-- Sidebar collapse arrow (desktop/tablet) -->
-    <button class="sidebar-arrow-toggle" id="sidebarArrowToggle" aria-label="Collapse sidebar" aria-expanded="true">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-
-    <!-- SIDEBAR -->
-    <aside class="app-sidebar" id="appSidebar">
-      <div class="app-sidebar-scroll">
-
-        <!-- Profile chip -->
-        <div class="sidebar-top-bar">
-          <a href="pages/loginpage.html" class="sidebar-profile-btn" id="sidebarProfileBtn">
-            <span class="sidebar-profile-avatar" id="sidebarProfileAvatar"><i class="fa-solid fa-user"></i></span>
-            <span class="sidebar-profile-text">
-              <span class="sidebar-profile-name" id="sidebarProfileName">Guest</span>
-              <span class="sidebar-profile-sub" id="sidebarProfileSub">Sign In</span>
-            </span>
-          </a>
-        </div>
-
-        <!-- Brand -->
-        <a href="#hero" class="sidebar-brand" data-panel="hero">
-          <span class="logo-devanagari">चतुरंग</span>
-          <span class="logo-divider">·</span>
-          <span class="logo-latin">Chaturanga</span>
-        </a>
-        <div class="sidebar-hr"></div>
-
-        <!-- Nav -->
-        <ul class="sidebar-nav" id="sidebarNav">
-          <li class="sidebar-nav-label">Explore</li>
-         <li>
-            <a href="#play" class="sidebar-link" data-panel="play">
-              <i class="fa-solid fa-chess-board link-icon"></i>
-              <span class="link-label">Play</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-          <li>
-            <a href="#about" class="sidebar-link" data-panel="about">
-              <i class="fa-solid fa-scroll link-icon"></i>
-              <span class="link-label">About</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-          
-          <li>
-            <a href="#docs" class="sidebar-link" data-panel="docs">
-              <i class="fa-solid fa-book-open link-icon"></i>
-              <span class="link-label">Documentation</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-          <li>
-            <a href="#contribute" class="sidebar-link" data-panel="contribute">
-              <i class="fa-solid fa-hands-helping link-icon"></i>
-              <span class="link-label">Contribute</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-
-          <li class="sidebar-nav-label">Learn &amp; Train</li>
-          <li>
-            <a href="../game/features/lessons/lessons.html" class="sidebar-link">
-              <i class="fa-solid fa-graduation-cap link-icon"></i>
-              <span class="link-label">Lessons</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-          <li>
-            <a href="../game/features/puzzles/puzzles.html" class="sidebar-link">
-              <i class="fa-solid fa-puzzle-piece link-icon"></i>
-              <span class="link-label">Puzzles</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-          <li>
-            <a href="howtoplay.html" class="sidebar-link">
-              <i class="fa-solid fa-circle-question link-icon"></i>
-              <span class="link-label">How to Play</span>
-              <i class="fa-solid fa-chevron-right link-arrow"></i>
-            </a>
-          </li>
-        </ul>
-
-        <div class="sidebar-spacer"></div>
-
-        <!-- Bottom CTA -->
-        <div class="sidebar-bottom">
-         
-        </div>
-
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-crest"><i class="fa-solid fa-chess-king"></i></div>
+      <div class="brand-text">
+        <span class="brand-title">CHATURANGA</span>
+        <span class="brand-tagline">The Ancient Indian Game of<br />War and Strategy</span>
       </div>
-    </aside>
+    </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="app-main" id="appMain">
+    <nav class="main-nav">
+      <a href="#home" class="active" data-view="home">Home</a>
+      <a href="../game/game.html">Play</a>
+      <a href="../game/features/puzzles/puzzles.html">Puzzles</a>
+      <a href="#learn" data-view="learn">Learn</a>
+      <a href="pages/community.html">Community</a>
+      <a href="pages/about.html">About</a>
+    </nav>
 
-  <!-- HERO -->
-  <section id="hero" class="section hero-section content-panel active" data-panel="hero">
-    <div class="hero-bg" id="heroBg"></div>
-    <div class="hero-overlay"></div>
+    <div class="header-actions">
+      <button class="icon-btn" title="Search" aria-label="Search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+      <button class="icon-btn" title="Notifications" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="notif-badge">3</span>
+      </button>
+      <a href="#profile" class="user-chip" data-view="profile">
+        <span class="user-avatar"><i class="fa-solid fa-user"></i></span>
+        <span class="user-info">
+          <span class="user-name" id="headerUserName">Arjun</span>
+          <span class="user-rating"><i class="fa-solid fa-crown"></i> <span id="headerUserElo">1846</span></span>
+        </span>
+        <i class="fa-solid fa-chevron-down user-chip-arrow"></i>
+      </a>
+    </div>
+  </header>
 
-    <!-- Animated army silhouettes -->
-  
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="home-view">
+    <div class="hero-cards">
 
-    <!-- Floating ember particles -->
-    <div class="particles" id="particles"></div>
+      <a href="../game/features/puzzles/puzzles.html" class="feature-card">
+        <span class="fc-corner-bl"></span><span class="fc-corner-br"></span>
+        <span class="fc-icon"><i class="fa-solid fa-puzzle-piece"></i></span>
+        <span class="fc-title">Puzzles</span>
+        <span class="fc-desc">Solve and improve<br />your strategy</span>
+      </a>
 
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-dot"></span> Ancient India · 6th Century CE
-      </div>
-      <h1 class="hero-title">
-        <span class="title-devanagari">चतुरंग</span>
-        <span class="title-latin">CHATURANGA</span>
-      </h1>
-      <p class="hero-subtitle">
-        The Probabilistic Game of Kings — where Elephant, Horse, Chariot &amp; Foot Soldier command the battlefield.
-        <br />The ancient ancestor of all chess — reborn.
-      </p>
-      <div class="hero-army-icons">
-        <div class="hero-piece" data-name="Raja · King">
-          <img src="images-webp/raja.webp" alt="Raja" />
-        </div>
-        <div class="hero-piece" data-name="Hathi · Elephant">
-          <img src="images-webp/elephant.webp" alt="Hathi" />
-        </div>
-        <div class="hero-piece" data-name="Ashva · Horse">
-          <img src="images-webp/horse.webp" alt="Ashva" />
-        </div>
-        <div class="hero-piece" data-name="Ratha · Chariot">
-          <img src="images-webp/chariot.webp" alt="Ratha" />
-        </div>
-      </div>
-      <div class="hero-actions">
-        <a href="#play" class="btn-primary" data-panel="play">
-          <i class="fa-solid fa-swords"></i> Enter the Battlefield
-        </a>
-        <a href="pages/howtoplay.html" class="btn-secondary btn-howto">
-          <i class="fa-solid fa-graduation-cap"></i> How to Play
-        </a>
-        <a href="#about" class="btn-secondary" data-panel="about">
-          <i class="fa-solid fa-scroll"></i> The Legend
+      <a href="#learn" class="feature-card" data-view="learn">
+        <span class="fc-corner-bl"></span><span class="fc-corner-br"></span>
+        <span class="fc-icon"><i class="fa-solid fa-book-open"></i></span>
+        <span class="fc-title">learn</span>
+        <span class="fc-desc">Learn ancient tactics<br />and master the game</span>
+      </a>
+
+      <a href="../game/game.html?botCount=1" class="feature-card">
+        <span class="fc-corner-bl"></span><span class="fc-corner-br"></span>
+        <span class="fc-icon fc-icon-circle"><i class="fa-solid fa-chess-king"></i></span>
+        <span class="fc-title">Offline</span>
+        <span class="fc-desc">Play against AI<br />anytime</span>
+      </a>
+
+      <a href="../game/lobby.html" class="feature-card">
+        <span class="fc-corner-bl"></span><span class="fc-corner-br"></span>
+        <span class="fc-icon fc-icon-crossed">⚔</span>
+        <span class="fc-title">Play Online</span>
+        <span class="fc-desc">Challenge players<br />around the world</span>
+      </a>
+
+      <a href="../game/features/akhara/akhara.html" class="feature-card">
+        <span class="fc-corner-bl"></span><span class="fc-corner-br"></span>
+        <span class="fc-icon"><i class="fa-solid fa-bullseye"></i></span>
+        <span class="fc-title">Practice</span>
+        <span class="fc-desc">Sharpen your skills<br />and test your strategy</span>
+      </a>
+
+      <a href="#profile" class="feature-card" data-view="profile">
+        <span class="fc-corner-bl"></span><span class="fc-corner-br"></span>
+        <span class="fc-icon"><i class="fa-solid fa-circle-user"></i></span>
+        <span class="fc-title">Profile</span>
+        <span class="fc-desc">Track progress,<br />stats and achievements</span>
+      </a>
+
+    </div>
+
+    <div class="hero-art">
+      <img src="images/hero-battle.webp" alt="Chaturanga armies marching toward an ancient temple at sunset, with a carved stone chess board in the foreground" />
+    </div>
+  </section>
+
+  <!-- ============ PROFILE VIEW (merged from pages/userprofile.html) ============ -->
+  <section id="profile-view" class="profile-page">
+    <div class="container">
+      <div class="view-back-row">
+        <a href="#home" class="view-back-btn" data-view="home" aria-label="Back to main menu" title="Back to main menu">
+          <i class="fa-solid fa-arrow-left"></i>
         </a>
       </div>
-      <div class="hero-scroll-hint">
-        <i class="fa-solid fa-chevron-down"></i>
+
+      <!-- User Header Card -->
+      <div class="profile-card">
+        <div class="avatar-large">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="profile-details">
+          <h1 id="profName">Loading...</h1>
+          <p id="profEmail"><i class="fa-solid fa-envelope"></i> —</p>
+          <p id="profJoined"><i class="fa-solid fa-calendar"></i> —</p>
+        </div>
+        <div class="rating-pill">
+          <div class="rank-badge rank-novice" id="profRankBadge">♟ —</div>
+          <div class="rating-value" id="profRating">—</div>
+          <div class="rating-label">Rating</div>
+        </div>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fa-solid fa-chess-board"></i>
+          <div class="stat-value" id="statGames">—</div>
+          <div class="stat-label">Games Played</div>
+        </div>
+        <div class="stat-card wins">
+          <i class="fa-solid fa-trophy"></i>
+          <div class="stat-value" id="statWins">—</div>
+          <div class="stat-label">Wins</div>
+        </div>
+        <div class="stat-card losses">
+          <i class="fa-solid fa-chess-king"></i>
+          <div class="stat-value" id="statLosses">—</div>
+          <div class="stat-label">Losses</div>
+        </div>
+        <div class="stat-card">
+          <i class="fa-solid fa-percent"></i>
+          <div class="stat-value" id="statWinRate">—</div>
+          <div class="stat-label">Win Rate</div>
+        </div>
+      </div>
+
+      <!-- Match History Section -->
+      <h2 class="section-title">Recent Matches (Last 50)</h2>
+
+      <div class="table-container">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Result</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr>
+              <td colspan="3" class="no-data">Fetching game records...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <!-- ABOUT -->
-  <section id="about" class="section about-section content-panel" data-panel="about">
-    <div class="section-ornament top"></div>
+  <!-- ============ LEARN VIEW (merged from tutorial.html) ============ -->
+  <section id="learn-view" class="profile-page learn-page">
     <div class="container">
-      <div class="section-header reveal">
-        <span class="section-tag">The Legend</span>
-        <h2 class="section-title">चतुरंग — The Game of Four Divisions</h2>
-        <p class="section-subtitle">Born in ancient India, this probabilistic war game commanded kings and scholars
-          alike for over 1,500 years.</p>
+      <div class="view-back-row">
+        <a href="#home" class="view-back-btn" data-view="home" aria-label="Back to main menu" title="Back to main menu">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
       </div>
 
-      <div class="about-grid">
-        <div class="about-card reveal" data-delay="0">
-          <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
-          <h3>Ancient Origins</h3>
-          <p>Chaturanga — Sanskrit for "four divisions" — represents the four branches of the Gupta Empire's military:
-            <strong>Hastī</strong> (elephant), <strong>Ashva</strong> (horse), <strong>Ratha</strong> (chariot), and
-            <strong>Padāti</strong> (infantry). First documented in the 6th century CE, it is the oldest known ancestor
-            of modern Chess, Xiangqi, and Shogi.</p>
-        </div>
-        <div class="about-card reveal" data-delay="100">
-          <div class="card-icon"><i class="fa-solid fa-dice"></i></div>
-          <h3>The Uncertainty Element</h3>
-          <p>Unlike Chess, Chaturanga includes a <strong>die (pāśaka)</strong> — you must move the piece whose number
-            appears on the roll. A roll of 1 forces the Ratha, 3 forces the Ashwa, 4 forces the Danti, and 6 allows the
-            Nara or Raja. This <em>uncertainty of fate</em> reflects ancient Indian philosophy of dharma and destiny.
-          </p>
-        </div>
-        <div class="about-card reveal" data-delay="200">
-          <div class="card-icon"><i class="fa-solid fa-users"></i></div>
-          <h3>Four Kingdoms at War</h3>
-          <p>The classic form is a <strong>4-player alliance game</strong> on the Ashtāpada (8×8 board). Red &amp; Green
-            form one alliance; Blue &amp; Yellow another. You play for your team — if your king falls, your ally can
-            revive you. The last alliance standing wins the Ashtāpada.</p>
-        </div>
-        <div class="about-card reveal" data-delay="300">
-          <div class="card-icon"><i class="fa-solid fa-chess-king"></i></div>
-          <h3>Distinct from Chess</h3>
-          <p>There is <strong>no Queen</strong> — only the Raja (King) and his four forces. Minor pieces (Nara, Ashva,
-            Hathi) <strong>cannot capture Major pieces</strong> (Ratha, Raja). A slain king can return — if your
-            teammate captures an enemy king, your Raja respawns anywhere on the board. Stalemate means <em>the one who
-              stalemates wins</em>.</p>
-        </div>
+      <div class="learn-heading">
+        <h1>Choose Your Path</h1>
+        <p>Pick a difficulty, then a category, to begin</p>
       </div>
 
-      <!-- Army Showcase -->
-      <div class="army-showcase reveal">
-        <h3 class="showcase-title">The Chaturanga Army</h3>
-        <div class="army-units">
-          <div class="unit-card">
-            <img src="images-webp/raja.webp" alt="Raja" class="unit-img" />
-            <div class="unit-info">
-              <span class="unit-name">राजा · Raja</span>
-              <span class="unit-role">King · Moves one step any direction · ∞ pts</span>
-              <span class="unit-die">Dice: 6</span>
-            </div>
-          </div>
-          <div class="unit-card">
-            <img src="images-webp/chariot.webp" alt="Ratha" class="unit-img" />
-            <div class="unit-info">
-              <span class="unit-name">रथ · Ratha</span>
-              <span class="unit-role">Chariot · Moves like Rook · 5 pts</span>
-              <span class="unit-die">Dice: 1</span>
-            </div>
-          </div>
-          <div class="unit-card">
-            <img src="images-webp/horse.webp" alt="Ashva" class="unit-img" />
-            <div class="unit-info">
-              <span class="unit-name">अश्व · Ashva</span>
-              <span class="unit-role">Horse · L-shape like Knight · 3 pts</span>
-              <span class="unit-die">Dice: 3</span>
-            </div>
-          </div>
-          <div class="unit-card">
-            <img src="images-webp/elephant.webp" alt="Danti" class="unit-img" />
-            <div class="unit-info">
-              <span class="unit-name">हाथी · Danti</span>
-              <span class="unit-role">Elephant · 2 diagonals, leaps · 2 pts</span>
-              <span class="unit-die">Dice: 4</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="section-ornament bottom"></div>
-  </section>
-
-  <!-- PLAY -->
-  <section id="play" class="section play-section content-panel" data-panel="play">
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="section-tag">Battlefield</span>
-        <h2 class="section-title">Enter the Ashtāpada</h2>
-        <p class="section-subtitle">Choose your campaign. Command your forces on the ancient 8×8 war board.</p>
-      </div>
-
-      <!-- Play vs Bot + Play Online -->
-      <div class="play-category reveal">
-       <center> 
- 
-        <p class="play-cat-desc">Face the ancient war machines offline, or challenge warriors from across the realm
-          online.</p>
-
-       </center>
-        <div class="play-cards play-cards-duo">
-
-          <button type="button" class="play-card campaign-card bot-campaign-card" id="playBotsCard" aria-haspopup="dialog"
-            aria-controls="botMenuOverlay">
-            <div class="play-card-glow"></div>
-            <span class="offline-badge"><i class="fa-solid fa-wifi"></i> Offline Supported</span>
-
-            <div class="campaign-media">
-              <img src="./images/fighting_kings.png" alt="Two kings clashing on the battlefield" loading="lazy" />
-              <div class="campaign-media-fade"></div>
-            </div>
-
-            <div class="play-card-inner campaign-inner">
-              <div class="play-card-icon">
-                <i class="fa-solid fa-robot"></i>
-              </div>
-              <h4>Face the War Machines</h4>
-              <p>Duel one bot kingdom, or stand alone against three. Choose your odds — no internet required.</p>
-              <div class="play-card-armies">
-                <span class="army-dot red-dot" title="Red — You"></span>
-                <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
-                <span class="army-dot green-dot bot-dot" title="Green — Bot"><i
-                    class="fa-solid fa-microchip"></i></span>
-                <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
-                    class="fa-solid fa-microchip"></i></span>
-              </div>
-              <span class="play-card-btn campaign-cta">
-                <i class="fa-solid fa-chess-board"></i> Choose Your Battle
-              </span>
-            </div>
-          </button>
-
-          <a href="../game/lobby.html" class="play-card campaign-card online-campaign-card">
-            <div class="play-card-glow"></div>
-            <span class="offline-badge"><i class="fa-solid fa-globe"></i> Online Required</span>
-
-            <div class="campaign-media">
-              <img src="./images/online_multiplayer.png" alt="Two kings clashing on the battlefield" loading="lazy" />
-              <div class="campaign-media-fade"></div>
-            </div>
-
-            <div class="play-card-inner campaign-inner">
-              <div class="play-card-icon">
-                <i class="fa-solid fa-globe"></i>
-              </div>
-              <h4>Challenge the Realm</h4>
-              <p>Play warriors from across the world. Form alliances with friends or meet new opponents in the global
-                Ashtāpada.</p>
-              <button class="play-card-btn campaign-cta" onclick="{window.location.href = '../game/lobby.html'}">
-                <i class="fa-solid fa-play"></i> Play Online
-              </button>
-            </div>
-          </a>
-
-        </div>
-      </div>
-
-      <!-- Create Your Own Battalion (compact) -->
-      <div class="play-category reveal">
-        <h3 class="play-cat-title"><i class="fa-solid fa-chess"></i> Create Your Battalion</h3>
-        <div class="coming-soon-card battalion-card">
-          <div class="cs-bg-pattern"></div>
-          <div class="cs-content">
-            <div class="cs-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            <h3>Custom Armies &amp; Extended Boards</h3>
-            <p>Build your own formation on 10×10 Dashapada or 12×12 Vrihadpad battlefields.</p>
-            <div class="coming-soon-banner">
-              <span class="cs-lotus">🪷</span>
-              <span class="cs-text">Coming Soon</span>
-              <span class="cs-lotus">🪷</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      </div>
-  </section>
-
-  <!-- DOCUMENTATION -->
-  <section id="docs" class="section docs-section content-panel" data-panel="docs">
-    <div class="section-ornament top"></div>
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="section-tag">Scholars' Hall</span>
-        <h2 class="section-title">Documentation &amp; Research</h2>
-        <p class="section-subtitle">Authentic historical sources, algorithmic designs, and the living academic record of
-          Chaturanga.</p>
-      </div>
-
-      <!-- Tab navigation -->
-      <div class="docs-tabs reveal">
-        <button class="docs-tab active" data-tab="research"><i class="fa-solid fa-landmark"></i> Authentic
-          Research</button>
-        <button class="docs-tab" data-tab="algorithms"><i class="fa-solid fa-code"></i> Algorithm &amp; Bot
-          Engine</button>
-        <button class="docs-tab" data-tab="rules"><i class="fa-solid fa-scroll"></i> Rules &amp; Moves</button>
-        <button class="docs-tab" data-tab="versions"><i class="fa-solid fa-code-branch"></i> Version History</button>
-      </div>
-
-      <!-- Tab: Authentic Research -->
-      <div class="docs-content active" id="tab-research">
-        <div class="research-grid">
-          <article class="research-card reveal">
-            <div class="research-meta">
-              <span class="research-era">~6th Century CE</span>
-              <span class="research-type">Primary Source</span>
-            </div>
-            <h4>The Harshacharita Reference</h4>
-            <p>Bāṇabhaṭṭa's biographical work on King Harsha (7th century CE) contains one of the earliest literary
-              references to chaturanga as a game played by the nobility. The text describes the four-division formation
-              as both a military reality and a game of intellectual strategy.</p>
-            <div class="research-citation">
-              <i class="fa-solid fa-quote-left"></i>
-              "The game reflects the order of the cosmos — four forces, four directions, one sovereign dharma."
-            </div>
-          </article>
-
-          <article class="research-card reveal" data-delay="100">
-            <div class="research-meta">
-              <span class="research-era">~1030 CE</span>
-              <span class="research-type">Islamic Scholarship</span>
-            </div>
-            <h4>Al-Bīrūnī — Kitāb al-Hind</h4>
-            <p>Persian scholar Abū Rayhān Al-Bīrūnī documented Chaturanga in his monumental work on India. He noted
-              similarities to chess and described the four-player variant with dice, confirming the ancient Indian
-              origin of the game. His accounts are among the most reliable cross-cultural records.</p>
-            <blockquote class="research-quote">
-              "The Hindus have a game like chess for four persons, played according to the throw of dice. The pieces are
-              elephant, horse, ship, and foot soldier..."
-              <cite>— Al-Bīrūnī, Kitāb al-Hind (c. 1030 CE)</cite>
-            </blockquote>
-          </article>
-
-          <article class="research-card reveal" data-delay="200">
-            <div class="research-meta">
-              <span class="research-era">1913</span>
-              <span class="research-type">Foundational Research</span>
-            </div>
-            <h4>H.J.R. Murray — A History of Chess</h4>
-            <p>Harold James Ruthven Murray's landmark study <em>A History of Chess</em> (1913, Oxford) remains a
-              definitive academic reference. Murray traced the evolution from Chaturanga through Chatrang (Persia) to
-              Shatranj (Arabic world) to modern chess, establishing the Indian origin theory as scholarly consensus.</p>
-            <div class="research-citation">
-              <i class="fa-solid fa-book"></i>
-              Murray, H.J.R. (1913). <em>A History of Chess.</em> Oxford: Clarendon Press. Chapter II: The Indian Game.
-            </div>
-          </article>
-
-          <article class="research-card reveal" data-delay="300">
-            <div class="research-meta">
-              <span class="research-era">Digital Age</span>
-              <span class="research-type">Project Research</span>
-            </div>
-            <h4>Authentic Rules &amp; Variant Analysis</h4>
-            <p>The Chaturanga project founders conducted a comprehensive analysis of rule variants across historical
-              sources — Maṅgalagiri version, Abul-fazl's version (Ain-i-Akbari), and regional South/North Indian
-              variants. Key distinctions catalogued:</p>
-            <ul class="research-list">
-              <li>Elephant movement — 3 documented variants (2-diagonal, 2-orthogonal, or Thai-inspired)</li>
-              <li>Minor vs Major capture hierarchy (unique to this project's 1.0.3.2 rules)</li>
-              <li>King respawn mechanic — sourced from Maṅgalagiri MS</li>
-              <li>Dice assignment: 1=Ratha, 3=Ashwa, 4=Danti, 6=Nara/Raja</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="researchers-section reveal">
-          <h3>Founders &amp; Researchers</h3>
-          <div class="researchers-grid">
-            <div class="researcher-card">
-              <div class="researcher-avatar"><i class="fa-solid fa-user-graduate"></i></div>
-              <div class="researcher-info">
-                <h5>Project Founders</h5>
-                <p>The Chaturanga project was initiated by a team of researchers passionate about reviving ancient
-                  Indian board games. Their handwritten notes, rule analysis, and algorithm designs form the foundation
-                  of this digital implementation.</p>
-              </div>
-            </div>
-            <div class="researcher-card">
-              <div class="researcher-avatar"><i class="fa-solid fa-brain"></i></div>
-              <div class="researcher-info">
-                <h5>Bot Engine Team</h5>
-                <p>The bot algorithm uses a probabilistic decision tree with minimax + alpha-beta pruning adapted for
-                  Chaturanga's dice uncertainty. The engine accounts for forced pieces, minor/major capture rules, and
-                  team alliance logic.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: Algorithms -->
-      <div class="docs-content" id="tab-algorithms">
-        <div class="algo-section">
-          <div class="algo-card reveal">
-            <div class="algo-icon"><i class="fa-solid fa-sitemap"></i></div>
-            <h4>Probabilistic Decision Tree</h4>
-            <p>Chaturanga is a probabilistic game — unlike deterministic Chess, the bot must reason about all possible
-              dice outcomes before choosing a move. The engine builds a decision tree where each node represents a game
-              state, and branches are weighted by dice probability.</p>
-            <div class="algo-spec">
-              <span><i class="fa-solid fa-dice"></i> Dice faces: 4 (1, 3, 4, 6)</span>
-              <span><i class="fa-solid fa-code-branch"></i> Branching factor: ~15-40 moves/state</span>
-              <span><i class="fa-solid fa-layer-group"></i> Search depth: 2-3 plies (configurable)</span>
-            </div>
-          </div>
-          <div class="algo-card reveal" data-delay="100">
-            <div class="algo-icon"><i class="fa-solid fa-chess-board"></i></div>
-            <h4>Random Move Generator (v1.0.3.2)</h4>
-            <p>The current bot (v1.0.3) uses an enhanced random move generator — it picks legal moves for the forced
-              piece, with preference scoring based on captures, board center control, and king safety. The engine
-              respects minor/major capture constraints.</p>
-            <pre class="code-snippet"><code>// Piece priority weights
-const weights = {
-  king:     { capture_major: 100, center: 5 },
-  rook:     { capture_any:   80,  center: 8 },
-  horse:    { capture_minor: 30,  center: 6 },
-  elephant: { capture_minor: 20,  center: 4 },
-  pawn:     { advance:       10,  capture: 15 }
-};</code></pre>
-          </div>
-          <div class="algo-card reveal" data-delay="200">
-            <div class="algo-icon"><i class="fa-solid fa-microchip"></i></div>
-            <h4>Planned: Minimax + Alpha-Beta Pruning</h4>
-            <p>The roadmap includes a full minimax implementation adapted for 4-player alliance games. Standard minimax
-              assumes two adversaries; the alliance variant requires a coalition utility function that balances
-              individual piece values against team win conditions.</p>
-            <div class="algo-spec">
-              <span><i class="fa-solid fa-users"></i> 4-player coalition minimax</span>
-              <span><i class="fa-solid fa-scissors"></i> Alpha-beta pruning for speed</span>
-              <span><i class="fa-solid fa-chart-bar"></i> Piece value: P=1, H=3, E=2, R=5, K=∞</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: Rules -->
-      <div class="docs-content" id="tab-rules">
-        <div class="rules-section">
-          <div class="rules-block reveal">
-            <h4><i class="fa-solid fa-dice"></i> The Dice (Pāśaka)</h4>
-            <div class="dice-table">
-              <div class="dice-row header">
-                <span>Roll</span><span>Piece Forced</span><span>Sanskrit</span>
-              </div>
-              <div class="dice-row"><span class="die-val">1</span><span>Ratha (Chariot/Rook)</span><span>रथ</span></div>
-              <div class="dice-row"><span class="die-val">3</span><span>Ashwa (Horse/Knight)</span><span>अश्व</span>
-              </div>
-              <div class="dice-row"><span class="die-val">4</span><span>Danti (Elephant)</span><span>दन्ती</span></div>
-              <div class="dice-row"><span class="die-val">6</span><span>Nara (Pawn) or Raja (King)</span><span>नर /
-                  राजा</span></div>
-            </div>
-          </div>
-
-          <div class="rules-block reveal" data-delay="100">
-            <h4><i class="fa-solid fa-chess"></i> Piece Movements</h4>
-            <div class="move-grid">
-              <div class="move-card">
-                <strong>Raja (King)</strong>
-                <p>One step in any direction (8-directional). Can be captured, but ally can revive it.</p>
-              </div>
-              <div class="move-card">
-                <strong>Ratha (Chariot)</strong>
-                <p>Any number of squares along ranks or files — like the chess Rook. Cannot jump.</p>
-              </div>
-              <div class="move-card">
-                <strong>Ashva (Horse)</strong>
-                <p>L-shape: 2 squares in one direction + 1 perpendicular. Jumps over pieces like the Knight.</p>
-              </div>
-              <div class="move-card">
-                <strong>Danti (Elephant)</strong>
-                <p>Exactly 2 squares diagonally, leaping over any piece. 4 possible target squares.</p>
-              </div>
-              <div class="move-card">
-                <strong>Nara (Pawn)</strong>
-                <p>One step forward. Captures diagonally. No double-move on first step. No en passant.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="rules-block reveal" data-delay="200">
-            <h4><i class="fa-solid fa-shield"></i> Key Rules (v1.0.3.2)</h4>
-            <ul class="rules-list">
-              <li><strong>Minor cannot capture Major.</strong> Nara, Ashva, Danti cannot capture Ratha or Raja.</li>
-              <li><strong>Major captures any.</strong> Ratha and Raja can capture any piece.</li>
-              <li><strong>King Respawn.</strong> If your teammate captures an enemy Raja, your own Raja may be placed on
-                any empty square.</li>
-              <li><strong>Max 3 manual forfeits</strong> per player—then you must always use your forced piece.</li>
-              <li><strong>Stalemate = Win.</strong> If you can't move your forced piece, you win (not lose as in Chess).
-              </li>
-              <li><strong>No castling, no en passant, no Queen.</strong></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: Version History -->
-      <div class="docs-content" id="tab-versions">
-        <div class="version-timeline">
-          <div class="version-item current reveal">
-            <div class="ver-dot"></div>
-            <div class="ver-info">
-              <div class="ver-header">
-                <span class="ver-num">v1.0.5.2</span>
-                <span class="ver-badge current-badge">Current</span>
-              </div>
-              <h4>Premium UI · New Piece Artwork · Seer Engine</h4>
-              <ul>
-                <li>High-resolution authentic Indian piece artwork (Raja, Ashwa, Danti, Ratha, Nara)</li>
-                <li>Chess.com-style 3-panel desktop layout · full mobile viewport</li>
-                <li>Drag-and-drop pieces · smooth CSS move animations</li>
-                <li>Sound effects (capture, dice roll) via Web Audio API</li>
-                <li>Seer Engine analytics stub (move count, captures, insights)</li>
-                <li>Integrated AI Chatbot on website homepage</li>
-              </ul>
-            </div>
-          </div>
-          <div class="version-item reveal">
-            <div class="ver-dot"></div>
-            <div class="ver-info">
-              <div class="ver-header"><span class="ver-num">v1.0.3.2</span></div>
-              <h4>Refined Rules &amp; Bot Engine</h4>
-              <ul>
-                <li>Minor/Major capture hierarchy fully enforced</li>
-                <li>Max 3 manual forfeits · Bot engine with heuristic stubs</li>
-                <li>Focus mode, resizable board (70%–130%)</li>
-                <li>King respawn modal on teammate capture</li>
-              </ul>
-            </div>
-          </div>
-          <div class="version-item reveal" data-delay="100">
-            <div class="ver-dot"></div>
-            <div class="ver-info">
-              <div class="ver-header"><span class="ver-num">v1.0.2</span></div>
-              <h4>Alliance Mode &amp; CSS Polish</h4>
-              <ul>
-                <li>Team mode (Red+Green vs Blue+Yellow)</li>
-                <li>Game state persistence via localStorage</li>
-                <li>Improved dice animation</li>
-                <li>History panel with download</li>
-              </ul>
-            </div>
-          </div>
-          <div class="version-item reveal" data-delay="200">
-            <div class="ver-dot"></div>
-            <div class="ver-info">
-              <div class="ver-header"><span class="ver-num">v1.0.1</span></div>
-              <h4>4-Player Foundation</h4>
-              <ul>
-                <li>4-player Chaturaji (four-handed chess) board</li>
-                <li>Dice-forced movement implemented</li>
-                <li>Basic piece movement rules</li>
-                <li>Elimination and forfeit mechanics</li>
-              </ul>
-            </div>
-          </div>
-          <div class="version-item reveal" data-delay="300">
-            <div class="ver-dot"></div>
-            <div class="ver-info">
-              <div class="ver-header"><span class="ver-num">v1.0.0</span></div>
-              <h4>Initial Release</h4>
-              <ul>
-                <li>Proof-of-concept Chaturanga implementation</li>
-                <li>Core board rendering and piece placement</li>
-                <li>Basic click-to-move interface</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="section-ornament bottom"></div>
-  </section>
-
-  <!-- CONTRIBUTE -->
-  <section id="contribute" class="section contribute-section content-panel" data-panel="contribute">
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="section-tag">Join the Order</span>
-        <h2 class="section-title">Contribute to Chaturanga</h2>
-        <p class="section-subtitle">Help revive this ancient game. Every contribution — code, research, or art — adds a
-          piece to the Ashtāpada.</p>
-      </div>
-
-      <div class="contribute-grid">
-        <div class="contribute-card reveal">
-          <div class="contrib-icon"><i class="fa-solid fa-code"></i></div>
-          <h4>Code</h4>
-          <p>Help improve the bot engine, add new features, fix bugs, or port the game to new platforms.</p>
-          <ul class="contrib-list">
-            <li>Implement Minimax + Alpha-Beta bot</li>
-            <li>Add online multiplayer with WebSockets</li>
-            <li>Build the Custom Battalion editor</li>
-            <li>Improve mobile responsiveness</li>
-          </ul>
-        </div>
-
-        <div class="contribute-card reveal" data-delay="100">
-          <div class="contrib-icon"><i class="fa-solid fa-book"></i></div>
-          <h4>Research</h4>
-          <p>Locate and document primary sources, rule variants, or regional traditions of Chaturanga.</p>
-          <ul class="contrib-list">
-            <li>Sanskrit manuscript analysis</li>
-            <li>Regional variant documentation</li>
-            <li>Comparison with Xiangqi / Shogi</li>
-            <li>Historical artwork and board archaeology</li>
-          </ul>
-        </div>
-
-        <div class="contribute-card reveal" data-delay="200">
-          <div class="contrib-icon"><i class="fa-solid fa-palette"></i></div>
-          <h4>Art &amp; Design</h4>
-          <p>Create authentic artwork, piece designs, board skins, or animations inspired by ancient Indian art.</p>
-          <ul class="contrib-list">
-            <li>Piece sprite design (Pala art style)</li>
-            <li>Board texture art</li>
-            <li>Animated battle sequences</li>
-            <li>UI/UX for new game modes</li>
-          </ul>
-        </div>
-
-        <div class="contribute-card reveal" data-delay="300">
-          <div class="contrib-icon"><i class="fa-solid fa-comments"></i></div>
-          <h4>Community</h4>
-          <p>Spread the word, test the game, report bugs, or teach Chaturanga to your community.</p>
-          <ul class="contrib-list">
-            <li>Beta testing &amp; bug reports</li>
-            <li>Write tutorials or guides</li>
-            <li>Translate documentation</li>
-            <li>Organize local tournaments</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="contribute-cta reveal">
-        <div class="contribute-cta-inner">
-          <h3>How to Get Started</h3>
-          <ol class="contrib-steps">
-            <li>
-              <span class="step-num">1</span>
-              <div class="step-content">
-                <strong>Explore the repository</strong>
-                <p>Download or clone the <code>chaturang</code> project folder. Study the structure under
-                  <code>Chaturanga version 1.0.5.2/</code>.</p>
-              </div>
-            </li>
-            <li>
-              <span class="step-num">2</span>
-              <div class="step-content">
-                <strong>Run the game locally</strong>
-                <p>Open <code>index.html</code> or <code>game.html</code> directly in your browser. For the server
-                  backend: <code>cd server &amp;&amp; npm install &amp;&amp; npm start</code>.</p>
-              </div>
-            </li>
-            <li>
-              <span class="step-num">3</span>
-              <div class="step-content">
-                <strong>Pick a task</strong>
-                <p>Check the <code>planning/</code> folder for the roadmap, bot engine spec, and rules matrix. Choose
-                  what interests you.</p>
-              </div>
-            </li>
-            <li>
-              <span class="step-num">4</span>
-              <div class="step-content">
-                <strong>Submit your work</strong>
-                <p>Create a pull request or share your changes with the project maintainers. All contributions are
-                  welcome.</p>
-              </div>
-            </li>
-          </ol>
-        </div>
-      </div>
+      <div class="learn-difficulty-tabs" id="learnDifficultyTabs"></div>
+      <div class="learn-category-stack" id="learnCategoryStack"></div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-ornament"></div>
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <span class="logo-devanagari">चतुरंग</span>
-            <span class="logo-divider">·</span>
-            <span class="logo-latin">Chaturanga</span>
-          </div>
-          <p>The ancient Indian 4-player war game &amp; ancestor of Chess. Revived for the digital age.</p>
-          <div class="footer-version">
-            <span class="version-pill">v1.0.5.2</span>
-            <a href="../game/game.html" class="version-link">Play now →</a>
-          </div>
-        </div>
-        <div class="footer-links">
-          <h5>Navigate</h5>
-          <ul>
-            <li><a href="#about" data-panel="about">About</a></li>
-            <li><a href="#play" data-panel="play">Play vs Bot</a></li>
-            <li><a href="#docs" data-panel="docs">Documentation</a></li>
-            <li><a href="#contribute" data-panel="contribute">Contribute</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h5>Game Files</h5>
-          <ul>
-            <li><a href="../game/game.html">Game (v1.0.5.2)</a></li>
-            <li><a href="pages/howtoplay.html">How to Play</a></li>
-            <li><a href="../game/game.html?botCount=1">1 Bot Mode</a></li>
-            <li><a href="../game/game.html?botCount=3">3 Bots Mode</a></li>
-            <li><a href="../Chaturanga-version-1.0.3.2/game.html">v1.0.3.2 (Legacy)</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h5>Resources</h5>
-          <ul>
-            <li><a href="../Chaturanga-version-1.0.3.2/planning/RULES_AND_MATRIX.md" target="_blank">Rules Matrix</a></li>
-            <li><a href="../Chaturanga-version-1.0.3.2/planning/BOT_ENGINE.md" target="_blank">Bot Engine Spec</a></li>
-            <li><a href="../rules.txt" target="_blank">Original Rules</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h5>Legal &amp; Info</h5>
-          <ul>
-            <li><a href="pages/about.html">About Us</a></li>
-            <li><a href="pages/faq.html">FAQ</a></li>
-            <li><a href="pages/privacy-policy.html">Privacy Policy</a></li>
-            <li><a href="pages/terms.html">Terms &amp; Conditions</a></li>
-            <li><a href="pages/contact.html">Contact Us</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p class="footer-quote">
-          <i class="fa-solid fa-quote-left"></i>
-          "The draw by stalemate is absent — the player who stalemates wins."
-          <i class="fa-solid fa-quote-right"></i>
-        </p>
-        <p class="footer-credits">
-          Chaturanga Project · Ancient Indian Game Revival · Built with ♟ by the Chaturanga team
-        </p>
-      </div>
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <span class="footer-brand-name">CHATURANGA</span>
+      <span class="footer-copy">© 2024 Chaturanga. All rights reserved.</span>
+    </div>
+
+    <div class="footer-links">
+      <a href="pages/terms.html">Terms of Service</a>
+      <span class="sep">|</span>
+      <a href="pages/privacy-policy.html">Privacy Policy</a>
+      <span class="sep">|</span>
+      <a href="pages/contact.html">Contact Us</a>
+      <span class="sep">|</span>
+      <a href="pages/faq.html">FAQ</a>
+    </div>
+
+    <div class="footer-social">
+      <a href="#" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="#" title="Twitter" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+      <a href="#" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+      <a href="#" title="Discord" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
     </div>
   </footer>
 
-    </div>
-    <!-- /app-main -->
-
-    <!-- Bot count selection — full right-panel overlay.
-         NOTE: lives here, as a direct child of .app-shell, rather than
-         nested inside <section id="play">. The play/about/docs/contribute
-         sections use `content-visibility: auto` for performance, which
-         implicitly applies CSS containment — and a `position: fixed`
-         element nested inside a contained ancestor gets positioned
-         relative to that ancestor instead of the viewport. That was
-         cutting the overlay off and making its Start Campaign button
-         unreachable/unscrollable. Keeping it here (still a descendant of
-         .app-shell, so the sidebar-aware `left` offset rules still match)
-         fixes that. -->
-    <div class="bot-menu-overlay" id="botMenuOverlay" role="dialog" aria-modal="true" aria-labelledby="botMenuTitle">
-      <div class="bot-menu-inner">
-        <button type="button" class="bot-menu-exit" id="botMenuExit" aria-label="Exit">
-          <i class="fa-solid fa-arrow-left"></i> <span>Exit</span>
-        </button>
-
-        <div class="bot-menu-header">
-          <span class="section-tag">Play vs Bot</span>
-          <h2 id="botMenuTitle" class="section-title">Choose Your Battle</h2>
-          <p class="section-subtitle">Select how many of the four armies are controlled by bots.</p>
-        </div>
-
-        <div class="bot-menu-options" id="botMenuOptions">
-
-          <button type="button" class="bot-option" data-bots="1">
-            <div class="play-card-glow"></div>
-            <div class="play-card-icon">
-              <i class="fa-solid fa-robot"></i>
-            </div>
-            <div class="play-card-bot-badge">1 Bot</div>
-            <h4>Blue is the Machine</h4>
-            <p>You (Red) vs Blue (Bot). Green &amp; Yellow are allied human players. The simplest challenge.</p>
-            <div class="play-card-armies">
-              <span class="army-dot red-dot" title="Red — You"></span>
-              <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
-              <span class="army-dot green-dot" title="Green — Ally"></span>
-              <span class="army-dot yellow-dot" title="Yellow — Ally"></span>
-            </div>
-            <span class="bot-option-check"><i class="fa-solid fa-check"></i></span>
-          </button>
-
-          <button type="button" class="bot-option featured" data-bots="2">
-            <div class="play-card-glow"></div>
-            <div class="featured-badge"><i class="fa-solid fa-star"></i> Most Popular</div>
-            <div class="play-card-icon">
-              <i class="fa-solid fa-robot"></i>
-              <i class="fa-solid fa-robot"></i>
-            </div>
-            <div class="play-card-bot-badge">2 Bots</div>
-            <h4>Team Battle</h4>
-            <p>You &amp; Red vs Blue &amp; Yellow (both Bots). A true 2v2 alliance war — human intuition against
-              machine strategy.</p>
-            <div class="play-card-armies">
-              <span class="army-dot red-dot" title="Red — You"></span>
-              <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
-              <span class="army-dot green-dot" title="Green — Ally"></span>
-              <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
-                  class="fa-solid fa-microchip"></i></span>
-            </div>
-            <span class="bot-option-check"><i class="fa-solid fa-check"></i></span>
-          </button>
-
-          <button type="button" class="bot-option" data-bots="3">
-            <div class="play-card-glow"></div>
-            <div class="play-card-icon">
-              <i class="fa-solid fa-robot"></i>
-              <i class="fa-solid fa-robot"></i>
-              <i class="fa-solid fa-robot"></i>
-            </div>
-            <div class="play-card-bot-badge">3 Bots</div>
-            <h4>Lone Warrior</h4>
-            <p>You (Red) alone vs three bot kingdoms. The ultimate test — outwit three ancient war machines
-              simultaneously.</p>
-            <div class="play-card-armies">
-              <span class="army-dot red-dot" title="Red — You"></span>
-              <span class="army-dot blue-dot bot-dot" title="Blue — Bot"><i class="fa-solid fa-microchip"></i></span>
-              <span class="army-dot green-dot bot-dot" title="Green — Bot"><i
-                  class="fa-solid fa-microchip"></i></span>
-              <span class="army-dot yellow-dot bot-dot" title="Yellow — Bot"><i
-                  class="fa-solid fa-microchip"></i></span>
-            </div>
-            <span class="bot-option-check"><i class="fa-solid fa-check"></i></span>
-          </button>
-
-        </div>
-
-        <div class="bot-menu-footer">
-          <a href="../game/game.html?botCount=2" class="play-card-btn bot-menu-start" id="botMenuStart">
-            <i class="fa-solid fa-play"></i> Start Campaign
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-  <!-- /app-shell -->
-
-  <!-- Chatbot Floating Button -->
-  <button class="chatbot-fab" id="chatbotFab" title="Ask Chaturang AI" aria-label="Open Chatbot">
-    <i class="fa-solid fa-comments"></i>
-    <span class="chatbot-fab-label">Ask AI</span>
-  </button>
-
-  <!-- Chatbot Panel -->
-  <div class="chatbot-panel" id="chatbotPanel" role="dialog" aria-label="Chaturanga AI Chatbot">
-    <div class="chatbot-header">
-      <div class="chatbot-header-info">
-        <div class="chatbot-avatar"><i class="fa-solid fa-chess-king"></i></div>
-        <div>
-          <div class="chatbot-name">Chaturang AI</div>
-          <div class="chatbot-status"><span class="chatbot-online-dot"></span> Online</div>
-        </div>
-      </div>
-      <button class="chatbot-close" id="chatbotClose" aria-label="Close chatbot"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="chatbot-messages" id="chatbotMessages">
-      <div class="bot-msg">
-        <span class="bot-bubble">Namaste! I am the Chaturang AI — your guide to the ancient war game. Ask me about rules, pieces, strategy, or the history of Chaturanga! 🪷</span>
-      </div>
-      <div class="chatbot-quick-replies" id="quickReplies">
-        <button class="quick-reply" data-q="How do I play?">How do I play?</button>
-        <button class="quick-reply" data-q="What are the pieces?">What are the pieces?</button>
-        <button class="quick-reply" data-q="What is v1.0.4?">What's in v1.0.4?</button>
-        <button class="quick-reply" data-q="How does the dice work?">How does dice work?</button>
-      </div>
-    </div>
-    <div class="chatbot-input-row">
-      <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Ask about Chaturanga…" autocomplete="off" />
-      <button class="chatbot-send" id="chatbotSend" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-  </div>
-
-  <script src="js/main.js"></script>
-  <script src="js/chatbot.js"></script>
   <script src="js/session.js"></script>
-
-
-<script>
-  // ---------- Sidebar profile chip ----------
-  function renderSidebarProfile(){
-    var btn = document.getElementById('sidebarProfileBtn');
-    var avatar = document.getElementById('sidebarProfileAvatar');
-    var name = document.getElementById('sidebarProfileName');
-    var sub = document.getElementById('sidebarProfileSub');
-    if (!btn || typeof Session === 'undefined') return;
-
-    var user = Session.get();
-    if (user){
-      avatar.innerHTML = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
-      name.textContent = user.name || user.email || 'Player';
-      sub.textContent = 'View Profile';
-      btn.href = 'pages/userprofile.html';
-    } else {
-      avatar.innerHTML = '<i class="fa-solid fa-user"></i>';
-      name.textContent = 'Guest';
-      sub.textContent = 'Sign In';
-      btn.href = 'pages/loginpage.html';
-    }
-  }
-  renderSidebarProfile();
-  if (typeof Session !== 'undefined') Session.onChange(renderSidebarProfile);
-
-  // ---------- Sidebar panel switching ----------
-  (function(){
-    var panels = Array.prototype.slice.call(document.querySelectorAll('.content-panel'));
-    var panelLinks = Array.prototype.slice.call(document.querySelectorAll('[data-panel]'));
-    var validPanels = panels.map(function(p){ return p.getAttribute('data-panel'); });
-
-    function showPanel(name, updateHash){
-      if (validPanels.indexOf(name) === -1) return;
-      panels.forEach(function(p){
-        p.classList.toggle('active', p.getAttribute('data-panel') === name);
-      });
-      panelLinks.forEach(function(l){
-        if (l.classList.contains('sidebar-link') || l.classList.contains('sidebar-brand')) {
-          l.classList.toggle('active', l.getAttribute('data-panel') === name);
-        }
-      });
-      closeSidebar();
-      window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
-      if (updateHash !== false) {
-        history.replaceState(null, '', '#' + name);
-      }
-    }
-    window.appShowPanel = showPanel;
-
-    document.addEventListener('click', function(e){
-      var el = e.target.closest ? e.target.closest('[data-panel]') : null;
-      if (!el) return;
-      e.preventDefault();
-      showPanel(el.getAttribute('data-panel'));
-    });
-
-    var initial = (location.hash || '#hero').replace('#', '');
-    showPanel(validPanels.indexOf(initial) !== -1 ? initial : 'hero', false);
-  })();
-
-  // ---------- Mobile sidebar toggle ----------
-  var sidebarToggleBtn = document.getElementById('sidebarToggle');
-  var appSidebar = document.getElementById('appSidebar');
-  var sidebarScrim = document.getElementById('sidebarScrim');
-
-  function openSidebar(){
-    if (!appSidebar) return;
-    appSidebar.classList.add('open');
-    sidebarScrim.classList.add('open');
-    sidebarToggleBtn.classList.add('open');
-    sidebarToggleBtn.setAttribute('aria-expanded', 'true');
-  }
-  function closeSidebar(){
-    if (!appSidebar) return;
-    appSidebar.classList.remove('open');
-    sidebarScrim.classList.remove('open');
-    sidebarToggleBtn.classList.remove('open');
-    sidebarToggleBtn.setAttribute('aria-expanded', 'false');
-  }
-  if (sidebarToggleBtn){
-    sidebarToggleBtn.addEventListener('click', function(){
-      appSidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-    });
-  }
-  if (sidebarScrim){
-    sidebarScrim.addEventListener('click', closeSidebar);
-  }
-
-  // ---------- Sidebar arrow collapse (desktop/tablet) ----------
-  var appShell = document.querySelector('.app-shell');
-  var sidebarArrowToggle = document.getElementById('sidebarArrowToggle');
-
-  function setSidebarCollapsed(collapsed){
-    if (!appShell) return;
-    appShell.classList.toggle('sidebar-collapsed', collapsed);
-    if (sidebarArrowToggle){
-      sidebarArrowToggle.setAttribute('aria-expanded', String(!collapsed));
-      sidebarArrowToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
-    }
-    try { localStorage.setItem('chaturanga_sidebar_collapsed', collapsed ? '1' : '0'); } catch (e) {}
-  }
-
-  if (sidebarArrowToggle && appShell){
-    sidebarArrowToggle.addEventListener('click', function(){
-      setSidebarCollapsed(!appShell.classList.contains('sidebar-collapsed'));
-    });
-    try {
-      if (localStorage.getItem('chaturanga_sidebar_collapsed') === '1'){
-        setSidebarCollapsed(true);
-      }
-    } catch (e) {}
-  }
-
-  // ---------- Play vs Bot: merged card → full-panel selection overlay ----------
-  var playBotsCard = document.getElementById('playBotsCard');
-  var botMenuOverlay = document.getElementById('botMenuOverlay');
-  var botMenuExit = document.getElementById('botMenuExit');
-  var botMenuOptions = document.getElementById('botMenuOptions');
-  var botMenuStart = document.getElementById('botMenuStart');
-
-  function openBotMenu(){
-    if (!botMenuOverlay) return;
-    botMenuOverlay.classList.add('open');
-    document.body.classList.add('no-scroll');
-  }
-  function closeBotMenu(){
-    if (!botMenuOverlay) return;
-    botMenuOverlay.classList.remove('open');
-    document.body.classList.remove('no-scroll');
-  }
-  function selectBotOption(btn){
-    if (!btn || !botMenuOptions) return;
-    var opts = botMenuOptions.querySelectorAll('.bot-option');
-    opts.forEach(function(o){ o.classList.remove('selected'); });
-    btn.classList.add('selected');
-    var count = btn.getAttribute('data-bots') || '2';
-    if (botMenuStart){
-      botMenuStart.href = '../game/game.html?botCount=' + count;
-    }
-  }
-
-  if (playBotsCard){
-    playBotsCard.addEventListener('click', openBotMenu);
-  }
-  if (botMenuExit){
-    botMenuExit.addEventListener('click', closeBotMenu);
-  }
-  if (botMenuOptions){
-    botMenuOptions.addEventListener('click', function(e){
-      var btn = e.target.closest ? e.target.closest('.bot-option') : null;
-      if (btn) selectBotOption(btn);
-    });
-    // Default selection: "2 Bots" (Most Popular)
-    selectBotOption(botMenuOptions.querySelector('.bot-option.featured'));
-  }
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && botMenuOverlay && botMenuOverlay.classList.contains('open')) closeBotMenu();
-  });
-
-
-  logoutBtn.addEventListener('click', function(){
-    Session.clear();
-    renderAccount();
-    closeDropdown();
-  });
-
-  signinBtn.addEventListener('click', function(){
-    window.location.href = 'pages/loginpage.html';
-  });
-
-  // If the session changes in another tab (e.g. logout elsewhere),
-  // reflect it here too — this is exactly what Session.onChange is for.
-  Session.onChange(function(){ renderAccount(); });
-
-  renderAccount();
-
-
-function renderNavUser() {
-    const navUser = document.getElementById('navUser');
-    if (!navUser) return;
-    navUser.innerHTML = '';
-
-    const user = Session.get();
-
-    if (!user) {
-      const link = document.createElement('a');
-      link.href = 'pages/loginpage.html';
-      link.className = 'nav-signin';
-      link.innerHTML = '<i class="fa-solid fa-user"></i> <span>Sign In</span>';
-      navUser.appendChild(link);
-      return;
-    }
-
-    // --- Trigger (the avatar + name button) ---
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'nav-user-badge';
-    trigger.setAttribute('aria-haspopup', 'true');
-    trigger.setAttribute('aria-expanded', 'false');
-
-    const avatar = document.createElement('span');
-    avatar.className = 'nav-user-avatar';
-    avatar.textContent = (user.name || user.email || '?').trim().charAt(0).toUpperCase();
-
-    const name = document.createElement('span');
-    name.className = 'nav-user-name';
-    name.textContent = user.name || user.email;
-    name.title = user.name || user.email;
-
-    const caret = document.createElement('i');
-    caret.className = 'fa-solid fa-chevron-down nav-user-caret';
-    caret.setAttribute('aria-hidden', 'true');
-
-    trigger.append(avatar, name, caret);
-
-    // --- Dropdown panel ---
-    const dropdown = document.createElement('div');
-    dropdown.className = 'nav-user-dropdown';
-    dropdown.setAttribute('role', 'menu');
-
-    const profileLink = document.createElement('a');
-    profileLink.href = 'pages/userprofile.html';
-    profileLink.className = 'nav-dropdown-item';
-    profileLink.setAttribute('role', 'menuitem');
-    profileLink.innerHTML = '<i class="fa-solid fa-user"></i> View Profile';
-
-    const logoutBtn = document.createElement('button');
-    logoutBtn.type = 'button';
-    logoutBtn.className = 'nav-dropdown-item nav-dropdown-logout';
-    logoutBtn.setAttribute('role', 'menuitem');
-    logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Logout';
-
-    dropdown.append(profileLink, logoutBtn);
-    navUser.append(trigger, dropdown);
-
-    // --- Open/close behavior ---
-    function openDropdown() {
-      dropdown.classList.add('open');
-      trigger.setAttribute('aria-expanded', 'true');
-      document.addEventListener('click', onOutsideClick);
-      document.addEventListener('keydown', onKeydown);
-    }
-    function closeDropdown() {
-      dropdown.classList.remove('open');
-      trigger.setAttribute('aria-expanded', 'false');
-      document.removeEventListener('click', onOutsideClick);
-      document.removeEventListener('keydown', onKeydown);
-    }
-    function onOutsideClick(e) {
-      if (!navUser.contains(e.target)) closeDropdown();
-    }
-    function onKeydown(e) {
-      if (e.key === 'Escape') closeDropdown();
-    }
-
-    trigger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
-    });
-
-    logoutBtn.addEventListener('click', function () {
-      closeDropdown();
-      Session.clear();
-      renderNavUser();
-    });
-  }
-
-  renderNavUser();
-  Session.onChange(renderNavUser);
-
-
- </script>
-
-  <!-- Cookie Consent Banner -->
-  <div class="cookie-banner" id="cookieBanner">
-    <div class="cookie-content">
-      <i class="fa-solid fa-cookie-bite cookie-banner-icon"></i>
-      <p>
-        We use cookies to analyze site traffic, remember your preferences, and serve personalized ads. 
-        By clicking <strong>"Accept All"</strong>, you consent to our use of cookies in accordance with our 
-        <a href="pages/privacy-policy.html" target="_blank">Privacy Policy</a>.
-      </p>
-    </div>
-    <div class="cookie-actions">
-      <button class="cookie-btn cookie-btn-reject" id="cookieReject">Reject Non-Essential</button>
-      <button class="cookie-btn cookie-btn-accept" id="cookieAccept">Accept All</button>
-    </div>
-  </div>
-
-  <style>
-    .cookie-banner {
-      position: fixed;
-      bottom: -150px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 850px;
-      background: rgba(26, 6, 0, 0.98);
-      border: 1px solid rgba(201, 168, 76, 0.35);
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.65), 0 0 30px rgba(201, 168, 76, 0.1);
-      border-radius: 16px;
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      z-index: 9999;
-      transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-      backdrop-filter: blur(12px);
-    }
-    .cookie-banner.show {
-      bottom: 24px;
-    }
-    .cookie-content {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex: 1;
-    }
-    .cookie-banner-icon {
-      font-size: 2rem;
-      color: var(--gold);
-      flex-shrink: 0;
-      animation: cookieWiggle 5s ease-in-out infinite;
-    }
-    @keyframes cookieWiggle {
-      0%, 100% { transform: rotate(0deg); }
-      10% { transform: rotate(-8deg); }
-      20% { transform: rotate(8deg); }
-      30% { transform: rotate(-5deg); }
-      40% { transform: rotate(5deg); }
-      50% { transform: rotate(0deg); }
-    }
-    .cookie-content p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin: 0;
-    }
-    .cookie-content strong {
-      color: var(--sandstone);
-    }
-    .cookie-content a {
-      color: var(--gold);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: var(--transition);
-    }
-    .cookie-content a:hover {
-      color: var(--gold-light);
-    }
-    .cookie-actions {
-      display: flex;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-    .cookie-btn {
-      font-family: var(--font-display);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .cookie-btn-accept {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--midnight);
-      border: none;
-    }
-    .cookie-btn-accept:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
-    }
-    .cookie-btn-reject {
-      background: rgba(201, 168, 76, 0.05);
-      color: var(--gold);
-      border: 1px solid rgba(201, 168, 76, 0.35);
-    }
-    .cookie-btn-reject:hover {
-      background: rgba(201, 168, 76, 0.15);
-      border-color: var(--gold);
-    }
-    @media (max-width: 768px) {
-      .cookie-banner {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-        padding: 18px;
-        text-align: center;
-      }
-      .cookie-content {
-        flex-direction: column;
-        gap: 10px;
-      }
-      .cookie-actions {
-        justify-content: center;
-        width: 100%;
-      }
-      .cookie-btn {
-        flex: 1;
-      }
-    }
-  </style>
-
   <script>
-    // Cookie Consent Banner Script
-    document.addEventListener("DOMContentLoaded", function() {
-      const banner = document.getElementById("cookieBanner");
-      const acceptBtn = document.getElementById("cookieAccept");
-      const rejectBtn = document.getElementById("cookieReject");
-      
-      const consent = localStorage.getItem("chaturanga_cookie_consent");
-      
-      if (!consent) {
-        setTimeout(() => {
-          banner.classList.add("show");
-        }, 1500);
+    // ============================================================
+    // View switching (Home <-> Profile <-> Learn) — merged from
+    // pages/userprofile.html and the standalone tutorial.html so both
+    // now live inside index.html as in-page views, swapped without a
+    // full reload, with the nav and footer staying put.
+    // ============================================================
+    const VIEWS = ['home', 'profile', 'learn'];
+
+    const homeView = document.getElementById('home-view');
+    const profileView = document.getElementById('profile-view');
+    const learnView = document.getElementById('learn-view');
+
+    let profileLoaded = false;
+    let learnInitialized = false;
+
+    function updateNavActive(view){
+      document.querySelectorAll('.main-nav a[data-view]').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('data-view') === view);
+      });
+    }
+
+    function showView(view){
+      if (!VIEWS.includes(view)) view = 'home';
+      const isHome = view === 'home';
+      const isProfile = view === 'profile';
+      const isLearn = view === 'learn';
+
+      homeView.hidden = !isHome;
+      profileView.classList.toggle('active', isProfile);
+      learnView.classList.toggle('active', isLearn);
+      updateNavActive(view);
+
+      if (isProfile) loadProfile();
+      if (isLearn) initLearnView();
+
+      // Smooth fade/slide-in on whichever view just became active,
+      // instead of the view just snapping into place.
+      const activeEl = isHome ? homeView : (isProfile ? profileView : learnView);
+      activeEl.classList.remove('view-enter');
+      void activeEl.offsetWidth; // force reflow so the animation restarts every time
+      activeEl.classList.add('view-enter');
+    }
+
+    document.querySelectorAll('[data-view]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const view = el.getAttribute('data-view');
+        const hash = '#' + view;
+        if (location.hash !== hash) history.pushState(null, '', hash);
+        showView(view);
+      });
+    });
+
+    window.addEventListener('popstate', () => {
+      const hashView = location.hash.replace('#', '');
+      showView(VIEWS.includes(hashView) ? hashView : 'home');
+    });
+
+    // ============================================================
+    // Learn view — difficulty → category drill-down
+    // (merged from tutorial.html)
+    // ============================================================
+    const LEARN_DIFF_META = [
+      { id:'newbie',       label:'Newbie',       icon:'fa-seedling'   },
+      { id:'beginner',     label:'Beginner',     icon:'fa-book-open'  },
+      { id:'intermediate', label:'Intermediate', icon:'fa-trophy'     },
+      { id:'advanced',     label:'Advanced',     icon:'fa-crown'      }
+    ];
+
+    const LEARN_CATEGORY_META = {
+      basics:   { icon:'fa-chess-pawn',    label:'Pieces & Basics',    desc:'Learn how each piece moves, captures, and the sacred law of the dice.' },
+      opening:  { icon:'fa-horse',         label:'Opening Principles', desc:'Deploy your army and seize command of the centre before the clash begins.' },
+      tactics:  { icon:'fa-chess-rook',    label:'Tactics',            desc:'Pins, forks and leaps — combinations that win material by force.' },
+      endgame:  { icon:'fa-flag-checkered',label:'Endgame Technique',  desc:'Methodical, decisive play to close out the battle when few pieces remain.' },
+      alliance: { icon:'fa-handshake',     label:'Team Alliance',      desc:'Coordinate with your teammate in 4-player Chaturaji for a shared victory.' },
+      advanced: { icon:'fa-crown',         label:'Advanced Strategy',  desc:'Asymmetry, zugzwang and multi-piece combinations for the seasoned player.' }
+    };
+
+    // Which categories appear under each difficulty tab, and how many
+    // lessons currently exist for that (category, difficulty) pair.
+    const LEARN_DIFF_CATEGORIES = {
+      newbie:       [ { cat:'basics',   count:3 } ],
+      beginner:     [ { cat:'opening',  count:3 } ],
+      intermediate: [ { cat:'tactics',  count:3 }, { cat:'endgame', count:3 }, { cat:'alliance', count:2 } ],
+      advanced:     [ { cat:'alliance', count:1 }, { cat:'advanced', count:3 } ]
+    };
+
+    let learnActiveDifficulty = 'newbie';
+
+    function learnGoToCategory(catId){
+      // Categories live alongside the lessons hub, one page per category.
+      window.location.href = './pages/' + catId + '.html';
+    }
+
+    function buildLearnTabs(){
+      const tabsEl = document.getElementById('learnDifficultyTabs');
+      if (!tabsEl) return;
+
+      // Build the tab buttons once; on later calls just update which one
+      // carries .active so the existing CSS transition can animate the
+      // change, instead of destroying/recreating buttons every switch.
+      if (tabsEl.children.length){
+        updateLearnTabsActive();
+        return;
       }
-      
-      function setConsent(value) {
-        localStorage.setItem("chaturanga_cookie_consent", value);
-        banner.classList.remove("show");
-        
-        // Dispatch custom event for analytical tools/AdSense scripts to listen to
-        window.dispatchEvent(new CustomEvent("cookieConsentChanged", { detail: { consent: value } }));
+
+      LEARN_DIFF_META.forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'learn-difficulty-tab' + (d.id === learnActiveDifficulty ? ' active' : '');
+        btn.dataset.diff = d.id;
+        btn.innerHTML = '<i class="fa-solid ' + d.icon + '"></i><span>' + d.label + '</span>';
+        btn.addEventListener('click', () => {
+          if (d.id === learnActiveDifficulty) return;
+          learnActiveDifficulty = d.id;
+          updateLearnTabsActive();
+          renderLearnCategoriesTransition();
+        });
+        tabsEl.appendChild(btn);
+      });
+    }
+
+    function updateLearnTabsActive(){
+      const tabsEl = document.getElementById('learnDifficultyTabs');
+      if (!tabsEl) return;
+      tabsEl.querySelectorAll('.learn-difficulty-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.diff === learnActiveDifficulty);
+      });
+    }
+
+    function buildLearnCategories(){
+      const stackEl = document.getElementById('learnCategoryStack');
+      if (!stackEl) return;
+      stackEl.innerHTML = '';
+      const entries = LEARN_DIFF_CATEGORIES[learnActiveDifficulty] || [];
+      entries.forEach((entry, i) => {
+        const meta = LEARN_CATEGORY_META[entry.cat] || { icon:'fa-book', label:entry.cat, desc:'' };
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'learn-category-item';
+        item.style.animationDelay = (i * 60) + 'ms';
+        item.innerHTML =
+          '<span class="lci-left">' +
+            '<span class="lci-icon"><i class="fa-solid ' + meta.icon + '"></i></span>' +
+            '<span class="lci-text"><h4>' + meta.label + '</h4><p>' + meta.desc + '</p></span>' +
+          '</span>' +
+          '<span class="lci-count">' + entry.count + ' lesson' + (entry.count === 1 ? '' : 's') + '</span>';
+        item.addEventListener('click', () => learnGoToCategory(entry.cat));
+        stackEl.appendChild(item);
+      });
+    }
+
+    // Fades the current card list out, swaps in the new difficulty's
+    // cards, then fades/rises them back in — used whenever the tab
+    // changes on an already-visible learn view.
+    function renderLearnCategoriesTransition(){
+      const stackEl = document.getElementById('learnCategoryStack');
+      if (!stackEl) { buildLearnCategories(); return; }
+      stackEl.classList.add('is-switching');
+      window.setTimeout(() => {
+        buildLearnCategories();
+        stackEl.classList.remove('is-switching');
+      }, 160);
+    }
+
+    function renderLearnDrillDown(){
+      buildLearnTabs();
+      buildLearnCategories();
+    }
+
+    function initLearnView(){
+      if (learnInitialized) return;
+      learnInitialized = true;
+      renderLearnDrillDown();
+    }
+
+    // ============================================================
+    // Profile data loading (merged from pages/userprofile.html)
+    // ============================================================
+    const RANKS = [
+      { min: 0,    max: 999,  icon: '♟', label: 'Shishya',    cls: 'rank-novice'     },
+      { min: 1000, max: 1199, icon: '♞', label: 'Yoddha',      cls: 'rank-warrior'    },
+      { min: 1200, max: 1399, icon: '♝', label: 'Sarathi',     cls: 'rank-charioteer' },
+      { min: 1400, max: 1599, icon: '♜', label: 'Arjuna',      cls: 'rank-archer'     },
+      { min: 1600, max: 1799, icon: '♚', label: 'Maharaja',    cls: 'rank-master'     },
+      { min: 1800, max: 9999, icon: '✦', label: 'Brahmastra',  cls: 'rank-brahmastra' },
+    ];
+    function getRank(elo) {
+      return RANKS.slice().reverse().find(r => elo >= r.min) || RANKS[0];
+    }
+    function renderRankBadge(elo) {
+      const el = document.getElementById('profRankBadge');
+      if (!el) return;
+      const r = getRank(elo);
+      el.textContent = `${r.icon} ${r.label}`;
+      el.className = 'rank-badge ' + r.cls;
+    }
+
+    // Reads ?id= (or ?userId=) from the URL. Present + non-empty -> viewing
+    // that user's profile. Empty/absent -> falls back to the session user.
+    function getTargetUserIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('id') || params.get('userId') || '';
+      return raw.trim();
+    }
+
+    // The header user-chip always reflects who is actually logged in on
+    // this browser -- not necessarily the profile being viewed.
+    function renderHeaderFromSession(sessionUser) {
+      const nameEl = document.getElementById('headerUserName');
+      const eloEl = document.getElementById('headerUserElo');
+      if (!nameEl || !eloEl) return;
+
+      if (sessionUser) {
+        nameEl.textContent = sessionUser.name || sessionUser.email || 'Player';
+        eloEl.textContent = typeof sessionUser.elo === 'number' ? sessionUser.elo : '—';
+      } else {
+        nameEl.textContent = 'Guest';
+        eloEl.textContent = '—';
       }
-      
-      acceptBtn.addEventListener("click", () => setConsent("accepted"));
-      rejectBtn.addEventListener("click", () => setConsent("rejected"));
+    }
+
+    async function loadProfile() {
+      if (profileLoaded) return;
+      profileLoaded = true;
+
+      // Figure out whose profile to show: a URL param wins over the
+      // logged-in session user.
+      const paramUserId = getTargetUserIdFromUrl();
+      const sessionUser = (typeof Session !== 'undefined' && Session.get) ? Session.get() : null;
+      const sessionUserId = sessionUser ? (sessionUser.id || sessionUser._id) : null;
+      const userId = paramUserId || sessionUserId;
+
+      renderHeaderFromSession(sessionUser);
+
+      if (!userId) {
+        window.location.href = 'pages/login.html'; // Redirect to login if unauthenticated and no profile was requested
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/user/${userId}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error('Failed to load user profile');
+        }
+
+        const profile = data.user;
+        const elo = typeof profile.elo === 'number' ? profile.elo : 1200;
+
+        document.getElementById('profName').textContent = profile.name;
+        document.getElementById('profEmail').innerHTML = `<i class="fa-solid fa-envelope"></i> ${profile.email}`;
+        document.getElementById('profJoined').innerHTML = `<i class="fa-solid fa-calendar"></i> Joined ${
+          profile.createdAt
+            ? new Date(profile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+            : 'Unknown'
+        }`;
+
+        document.getElementById('profRating').textContent = elo;
+        renderRankBadge(elo);
+
+        // Compute wins / losses / win rate from the last 50 games
+        // (a "quit" still counts against you, same convention the lobby uses)
+        const games = profile.last50games || [];
+        const wins = games.filter(g => g.result === 'win').length;
+        const losses = games.filter(g => g.result === 'defeat' || g.result === 'quitted').length;
+        const winRate = games.length > 0 ? Math.round((wins / games.length) * 100) : 0;
+
+        document.getElementById('statGames').textContent = games.length;
+        document.getElementById('statWins').textContent = wins;
+        document.getElementById('statLosses').textContent = losses;
+        document.getElementById('statWinRate').textContent = `${winRate}%`;
+
+        const tbody = document.getElementById('historyBody');
+        tbody.innerHTML = '';
+
+        if (!games.length) {
+          tbody.innerHTML = `<tr><td colspan="3" class="no-data">No matches recorded yet.</td></tr>`;
+          return;
+        }
+
+        // Most recent games first
+        games.slice().sort((a, b) => new Date(b.endedAt || 0) - new Date(a.endedAt || 0)).forEach(game => {
+          const row = document.createElement('tr');
+
+          const dateStr = game.endedAt
+            ? new Date(game.endedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            : '—';
+
+          const badgeClass = game.result === 'win' ? 'badge-win'
+                          : game.result === 'defeat' ? 'badge-defeat'
+                          : 'badge-quitted';
+
+          row.innerHTML = `
+            <td>${game.type || 'Standard'}</td>
+            <td><span class="badge ${badgeClass}">${game.result}</span></td>
+            <td>${dateStr}</td>
+          `;
+
+          tbody.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error(err);
+        profileLoaded = false; // allow a retry next time the view is opened
+        document.getElementById('historyBody').innerHTML = `
+          <tr><td colspan="3" class="no-data">Error loading profile data.</td></tr>
+        `;
+      }
+    }
+
+    // ---- Initial route on page load ----
+    document.addEventListener('DOMContentLoaded', () => {
+      const sessionUser = (typeof Session !== 'undefined' && Session.get) ? Session.get() : null;
+      renderHeaderFromSession(sessionUser);
+      showView(location.hash === '#profile' ? 'profile' : 'home');
     });
   </script>
 </body>
